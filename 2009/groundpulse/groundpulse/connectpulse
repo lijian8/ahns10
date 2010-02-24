@@ -1,0 +1,9 @@
+#!/usr/bin/kermit +
+kermit
+set line /dev/ttyS0
+set speed 19200 
+set carrier-watch off
+set flow-control none
+set stop-bits 1
+set parity odd 
+connect

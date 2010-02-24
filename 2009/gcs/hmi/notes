@@ -1,0 +1,149 @@
+void sendFloat(float input)
+{
+	// Write a float to the socket as a binary character array.
+	//float* pointerToInput = &input;
+	//char* characterPointerToInput = pointerToInput;
+	//udpSocket->write(characterPointerToInput, sizeof(float));
+	udpSocket->write(&input, sizeof(float));
+}
+/*
+bool recieveFloat(float& output)
+{
+	// Is there data?
+	if(udpSocket->hasPendingDatagrams())
+	{
+		// Yes.
+		// 
+		udpSocket->read(&output, sizeof(float));
+		return true;
+	}
+	
+	return false;
+}
+*/
+
+void recieveFloat(void)
+{
+	// Is there data?
+	if(udpSocket->hasPendingDatagrams())
+	{
+		// Yes.
+		// Define a space to put the data into and read the data out.
+		float data;
+		//float* pointerToData = &data;
+		//char* characterPointerToData = pointerToInput;
+		//udpSocket->read(characterPointerToData, sizeof(float));
+		udpSocket->read((char*)&data, sizeof(float));
+		printf("We recieved %d.\n", data);
+	}
+}
+
+float data;
+if(recieveFloat(data))
+{
+	printf("We recieved %d.\n", data);
+}
+
+float bob;
+char* jim = (char*)bob;
+int jim = (int)bob;
+
+
+class bob
+{
+	mutex workLock;
+	mutex running;
+	bool quit;
+	work* itemOfWork;
+
+	bob()
+	 : quit(false)
+	 , itemOfWork(NULL)
+	{
+		startThread(thread());
+	}
+	
+	~bob()
+	{
+		workLock.aquire();
+		quit = true;
+		workLock.release();
+		running.aquire();
+	}
+	
+	setWork(work newWork)
+	{
+		workLock.aquire();
+		while(itemOfWork != null)
+		{
+			workLock.release();
+			workLock.aquire();		
+		}
+		itemOfWork = newWork;
+		workLock.release();
+	}
+		
+	static void thread()
+	{
+		running.aquire();
+		workLock.aquire();
+		while(quit == false)
+		{
+			if(itemOfWork == NULL)
+			{
+				workLock.release();
+				workLock.aquire();
+				continue;
+			}
+			
+			work* myWork = itemOfWork;
+			itemOfWork = NULL;
+			workLock.release();
+			
+			//work
+			myWork->whatever();
+		}
+		running.release();
+	}
+
+}
+
+
+class bob
+{
+	mutex workLock;
+	mutex running;
+	bool quit;
+
+	bob()
+	 : quit(false)
+	 , itemOfWork(NULL)
+	{
+		startThread(thread());
+	}
+	
+	~bob()
+	{
+		workLock.aquire();
+		quit = true;
+		workLock.release();
+		running.aquire();
+	}
+		
+	static void thread()
+	{
+		running.aquire();
+		workLock.aquire();
+		while(quit == false)
+		{
+			workLock.release();
+
+			//work
+			//pickup variable etc
+			
+			workLock.aquire();
+		}
+		running.release();
+	}
+
+}
