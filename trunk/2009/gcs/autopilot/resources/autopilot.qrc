@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="about" >
+    <file>AHNS_Logo_small.png</file>
+    <file>AHNS_Logo.png</file>
+    <file>QUT_Logo_2Lines_CMYK.jpg</file>
+    <file>starry.jpg</file>
+  </qresource>
+</RCC>

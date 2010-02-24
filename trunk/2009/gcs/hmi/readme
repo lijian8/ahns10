@@ -1,0 +1,20 @@
+Ground Station Readme
+
+To build and compile the project:
+
+do:
+
+$make
+
+or:
+
+$qmake 
+$make
+
+or:
+
+$qmake -project
+$qmake
+$make
+
+If you are unsure on what needs to be done go for the last one, it does the most.
