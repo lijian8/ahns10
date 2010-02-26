@@ -4,7 +4,7 @@
 #include "ui_GUIofficial.h"
 #include "ui_UDPconnection.h"
 #include "ahns_logger.h"
-
+#include <stdint.h>
 #include <QWidget>
 #include <QDialog>
 #include <QString>

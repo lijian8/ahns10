@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstdlib>
+#include <stdio.h>
 #include "include/AH.h"
 
 #include <GL/glut.h>
