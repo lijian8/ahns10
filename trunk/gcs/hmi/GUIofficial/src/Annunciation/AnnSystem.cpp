@@ -556,6 +556,10 @@ int ahnsStatus::printStatus(char* buff, QString apIP, QString txPort, QString rx
 						sprintf(szHostIP, "%s", inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
 						//cout << string(szHostIP) << endl;
 					}
+					else if (string(curif->if_name) == "eth1") //MBP interface
+					{
+						sprintf(szHostIP, "%s", inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
+					}
 				}
 			}
 			if_freenameindex(ifs);

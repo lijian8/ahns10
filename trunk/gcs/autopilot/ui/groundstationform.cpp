@@ -47,7 +47,7 @@
 #define GROUNDPULSE_BAUD B19200
 #define HMI_RX_PORT 45454
 #define HMI_TX_PORT 45455
-#define HMI_IP "169.254.4.154"
+#define HMI_IP "192.168.0.13"
 
 using namespace std;
 using namespace uplink;
