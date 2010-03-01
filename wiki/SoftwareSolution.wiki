@@ -1,11 +1,28 @@
+#summary Overview of the AHNS Ground and Airborne Software
 #labels Phase-Requirements,Phase-Design
-#Overview of the AHNS Ground and Airborne Software
-= High Level Objectives =
+= Ground and Airborne Software Systems =
+== High Level Objectives System Requirements and Acceptance Tests ==
+=== HLO-4 Autonomous Hovering Flight ===
+An autopilot system should be developed to enable sustained indoor autonomous hovering flight. The control system should be designed to enable future ingress and egress manerourvers to longitudinal and hovering flight.
+----
+*Airborne System Requirements*
+|| *System Requirement* || *Definition* || *Acceptance Test* ||
+|| SR-4-01 ||  ||  ||
 
-= System Requirements and Acceptance Tests=
+----
+=== HLO-5 Ground Control Station ===
+A ground control station that supports appropriate command and system setting input and data display and logging should be developed. The design should be derived from previous AHNS developments and enable future ground station developments.
+----
+*Ground Control Station System Requirements*
+|| *System Requirement* || *Definition* || *Acceptance Test* ||
+|| SR-5-01 || The GCS shall receive telemetry from the airborne system using 802.11g WLAN || AT-5-01 ||
+|| SR-5-02 || The GCS shall provide an airborne uplink capability for gain and reference parameters using 802.11g WLAN || AT-5-02 ||
+|| SR-5-03 || The GCS shall log all received and transmitted telemetry and uplink communications || AT-5-03 ||
+|| SR-5-03 || _...   || AT-5-03 ||
 
-= Legacy Architecture =
 
-= Preliminary Design = 
+== Legacy Architecture ==
 
-= Details =
+== Preliminary Design ==
+
+== Details ==
