@@ -1,4 +1,5 @@
 #summary The Architecture of the on-board hardware for the AHNS helicopter
+#labels Phase-Design
 
 = Introduction =
 
@@ -89,7 +90,7 @@ http://www.sparkfun.com/commerce/product_info.php?products_id=8656 <font color="
 
 This is revision 2 of the architecture, The entire Architecture has been revised. All mode control unit componants have been put into a single <br /> block and a design doc will explain how it all works. 
 
-[AHNS-2010-HA-rev2.pdf]
+[http://ahns10.googlecode.com/svn/docproject/unofficial_ahns/AHNS-2010-HA-rev2.pdf AHNS-2010-HA-rev2]
 
 ==Finansial Budget ==
 
