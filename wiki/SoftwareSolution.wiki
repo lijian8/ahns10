@@ -7,7 +7,9 @@ An autopilot system should be developed to enable sustained indoor autonomous ho
 ----
 *Airborne System Requirements*
 || *System Requirement* || *Definition* || *Acceptance Test* ||
-|| SR-4-01 ||  ||  ||
+|| SR-4-01 || The airborne control system shall provide control updates at a minimum rate of 50Hz || AT-4-01 ||
+|| SR-4-02 || The airborne control system gain and reference parameters shall be updatable in flight using an 802.11g WLAN uplink from the GCS || AT-4-02 ||
+|| SR-4-03 || The airborne software shall transmit telemetry data including state data to the GCS using 802.11g WLAN || AT-4-03 ||
 
 ----
 === HLO-5 Ground Control Station ===
@@ -16,9 +18,11 @@ A ground control station that supports appropriate command and system setting in
 *Ground Control Station System Requirements*
 || *System Requirement* || *Definition* || *Acceptance Test* ||
 || SR-5-01 || The GCS shall receive telemetry from the airborne system using 802.11g WLAN || AT-5-01 ||
-|| SR-5-02 || The GCS shall provide an airborne uplink capability for gain and reference parameters using 802.11g WLAN || AT-5-02 ||
-|| SR-5-03 || The GCS shall log all received and transmitted telemetry and uplink communications || AT-5-03 ||
-|| SR-5-03 || _...   || AT-5-03 ||
+|| SR-5-02 || The GCS shall provide an airborne uplink capability for autopilot gain and reference parameters using 802.11g WLAN || AT-5-02 ||
+|| SR-5-03 || The GCS shall log all telemetry and uplink data communications || AT-5-03 ||
+|| SR-5-04 || Aircraft State data received shall be displayable on the GCS along with appropriate time reference || AT-5-04 ||
+|| SR-5-05 || The GCS shall provide avionics system health monitoring including telemetry, uplink, radio control and battery level status read-outs || AT-5-05 ||
+|| SR-5-06 || The GCS shall enable flight mode switching between manual and autonomous  || AT-5-06 ||
 
 
 == Legacy Architecture ==
