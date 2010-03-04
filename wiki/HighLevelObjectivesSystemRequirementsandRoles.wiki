@@ -38,12 +38,12 @@ This Wiki outlines the 2010 HLO's, SR's and roles that the project must meet to 
 ==System Requirements ==
 
 || *System Requirement* || *Definition* || *Acceptance Test* ||
-|| SR-M-?? || The airborne system shall provide control updates at a minimum rate of 50Hz || AT-M-?? ||
-|| SR-M-?? || The autopilot system gain and reference parameters shall be updatable in flight using an 802.11g WLAN uplink from the GCS || AT-M-?? ||
-|| SR-M-?? || The airborne system shall transmit telemetry data including state data to the GCS using 802.11g WLAN || AT-M-?? ||
-|| SR-M-?? || The airborne system shall receive and process measurement data from the state estimation and localisation sensors; supporting IMU, Camera, IR, Ultrasonic and Magnetic compass devices. || AT-M-?? ||
-|| SR-M-?? || The airborne system shall transmit all servo pulse width modulated inputs, including radio control inputs, to the GCS for the purposes of flight analysis. || AT-M-?? ||
-|| SR-M-?? || The airborne system shall collect avionics system health monitoring information in the form of radio control link status, flight mode status and battery level || AT-M-?? ||
+|| SR-B-?? || The airborne system shall provide control updates at a minimum rate of 50Hz || AT-?? ||
+|| SR-B-?? || The autopilot system gain and reference parameters shall be updatable in flight using an 802.11g WLAN uplink from the GCS || AT-?? ||
+|| SR-B-?? || The airborne system shall transmit telemetry data including state data to the GCS using 802.11g WLAN || AT-?? ||
+|| SR-D-?? || The airborne system shall receive and process measurement data from the state estimation and localisation sensors; supporting IMU, Camera, IR, Ultrasonic and Magnetic compass devices. || AT-?? ||
+|| SR-D-?? || The airborne system shall transmit all actuator inputs, including radio control inputs, to the GCS for the purposes of flight analysis and logging. || AT-?? ||
+|| SR-D-?? || The airborne system shall collect avionics system health monitoring information in the form of radio control link status, flight mode status and battery level || AT-?? ||
 || SR-M-?? || The autopilot shall maintain an autonomous hover with steady-state and overshoot errors not exceeding 20% in each channel. || AT-M-?? ||
 || SR-M-?? || The autopilot shall provide station keeping based on pre-defined computer vision ground reference locations. || AT-M-?? ||
 || SR-M-?? || The GCS shall log all telemetry and uplink data communications || AT-M-?? ||
