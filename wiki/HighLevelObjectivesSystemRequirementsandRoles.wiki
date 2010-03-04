@@ -45,7 +45,7 @@ This Wiki outlines the 2010 HLO's, SR's and roles that the project must meet to 
 || SR-B-04 || The estimator shall provide Euler angle and rate estimation for the system at minimum rate of 50 Hz. || AT-04 ||
 || SR-B-05 || The estimator shall provide altitude estimation for the system at minimum rate of 50 Hz.  || AT-05 ||
 || SR-B-06 || The estimator shall provide x and y estimation in an Earth fixed co-ordinate system at minimum rate of 50 Hz. || AT-06 ||
-|| SR-B-07 || The system shall image processing to aid in state estimation of x and y in an Earth fixed co-ordinate system. || AT-07 ||
+|| SR-B-07 || The system shall use image processing to aid in state estimation of x and y in an Earth fixed co-ordinate system. || AT-07 ||
 || SR-B-08 || The autopilot system gain and reference parameters shall be updatable in flight using an 802.11g WLAN uplink from the GCS || AT-08 ||
 || SR-B-09 || The airborne system shall transmit telemetry data including state data to the GCS using 802.11g WLAN || AT-09 ||
 || SR-D-01 || The platform shall be capable of maintaining controlled flight with a total payload of 400 grams. || AT-10 ||
