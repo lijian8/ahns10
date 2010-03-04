@@ -50,9 +50,9 @@ This Wiki outlines the 2010 HLO's, SR's and roles that the project must meet to 
 || SR-M-?? || Aircraft State data and control inputs received shall be displayable on the GCS along with appropriate time references. || AT-M-?? ||
 || SR-M-?? || The GCS shall provide display of avionics system health monitoring including telemetry, uplink, radio control link and battery level status read-outs. || AT-M-?? ||
 || SR-M-?? || The GCS shall enable autopilot flight mode switching between manual, autonomous hover and autonomous station keeping. || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
+|| SR-M-?? || The platform shall have the ability to be manually manoeuvred with a radio controller || AT-M-?? ||
+|| SR-M-?? || The platform shall be capable of maintaining controlled flight with a total payload of 400 grams. || AT-M-?? ||
+|| SR-M-?? || The platform shall be developed and maintained to facilitate flight and on board hardware integration. || AT-M-?? ||
 || SR-M-?? ||  || AT-M-?? ||
 || SR-M-?? ||  || AT-M-?? ||
 || SR-M-?? ||  || AT-M-?? ||
