@@ -1,4 +1,5 @@
 #summary One-sentence summary of this page.
+#labels Phase-Requirements
 
 = Introduction =
 
@@ -44,27 +45,20 @@ This Wiki outlines the 2010 HLO's, SR's and roles that the project must meet to 
 || SR-D-?? || The airborne system shall receive and process measurement data from the state estimation and localisation sensors; supporting IMU, Camera, IR, Ultrasonic and Magnetic compass devices. || AT-?? ||
 || SR-D-?? || The airborne system shall transmit all actuator inputs, including radio control inputs, to the GCS for the purposes of flight analysis and logging. || AT-?? ||
 || SR-D-?? || The airborne system shall collect avionics system health monitoring information in the form of radio control link status, flight mode status and battery level || AT-?? ||
-|| SR-M-?? || The autopilot shall maintain an autonomous hover with steady-state and overshoot errors not exceeding 20% in each channel. || AT-M-?? ||
-|| SR-M-?? || The autopilot shall provide station keeping based on pre-defined computer vision ground reference locations. || AT-M-?? ||
-|| SR-M-?? || The GCS shall log all telemetry and uplink data communications || AT-M-?? ||
-|| SR-M-?? || Aircraft State data and control inputs received shall be displayable on the GCS along with appropriate time references. || AT-M-?? ||
-|| SR-M-?? || The GCS shall provide display of avionics system health monitoring including telemetry, uplink, radio control link and battery level status read-outs. || AT-M-?? ||
-|| SR-M-?? || The GCS shall enable autopilot flight mode switching between manual, autonomous hover and autonomous station keeping. || AT-M-?? ||
-|| SR-M-?? || The platform shall have the ability to be manually manoeuvred with a radio controller || AT-M-?? ||
-|| SR-M-?? || The platform shall be capable of maintaining controlled flight with a total payload of 400 grams. || AT-M-?? ||
-|| SR-M-?? || The platform shall be developed and maintained to facilitate flight and on board hardware integration. || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
-|| SR-M-?? ||  || AT-M-?? ||
+|| SR-D-?? || The autopilot shall maintain an autonomous hover with steady-state and overshoot errors not exceeding 20% in each channel. || AT-?? ||
+|| SR-B-?? || The autopilot shall provide station keeping based on pre-defined computer vision ground reference locations. || AT-?? ||
+|| SR-D-?? || The GCS shall log all telemetry and uplink data communications || AT-?? ||
+|| SR-D-?? || Aircraft State data and control inputs received shall be displayable on the GCS along with appropriate time references. || AT-?? ||
+|| SR-D-?? || The GCS shall provide display of avionics system health monitoring including telemetry, uplink, radio control link and battery level status read-outs. || AT-?? ||
+|| SR-B-?? || The GCS shall enable autopilot flight mode switching between manual, autonomous hover and autonomous station keeping. || AT-M-?? ||
+|| SR-B-?? || The platform shall have the ability to be manually manoeuvred with a radio controller || AT-?? ||
+|| SR-D-?? || The platform shall be capable of maintaining controlled flight with a total payload of 400 grams. || AT-?? ||
+|| SR-D-?? || The platform shall be developed and maintained to facilitate flight and on board hardware integration. || AT-?? ||
+|| SR-?-?? ||  || AT-?? ||
+|| SR-?-?? ||  || AT-?? ||
+|| SR-?-?? ||  || AT-?? ||
+|| SR-?-?? ||  || AT-?? ||
+|| SR-?-?? ||  || AT-?? ||
 
 ----
 
