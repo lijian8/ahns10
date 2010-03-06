@@ -12,7 +12,7 @@
 || AHNS-2010-SY-PM-001 || Project Management Plan || Hamilton || Kincel || No || Not finished. || No || No ||
 || AHNS-2010-SY-MM-001 || Minutes of Meeting 20/12/09 || Hamilton || - || Yes || Finished || - || Yes ||
 || AHNS-2010-AP-TS-001 || Flight Computer Trade Study || Molloy || Hamilton || No || Not finished || No || No ||
-||  ||  ||  ||  ||  ||  ||  ||  ||
+|| AHNS-2010-AF-TS-001 || Airframe Trade Study || Kincel || Molloy || Yes || Awaiting approval from Checker. || No || No ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
