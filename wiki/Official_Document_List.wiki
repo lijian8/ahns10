@@ -8,7 +8,7 @@
 || AHNS-2010-SY-HL-001 || High Level Objectives || Hamilton || O'Sullivan || Yes || Awaiting approval from Checker. || No || No ||
 || AHNS-2010-SY-SR-001 ||  System Requirements || Hamilton || Molloy || No || Not finished. || No || No ||
 || AHNS-2010-SY-PM-001 || Project Management Plan || Hamilton || Kincel || No || Not finished. || No || No ||
-||  ||  ||  ||  ||  ||  ||  ||  ||
+|| AHNS-2010-SY-MM-001 || Minutes of Meeting 20/12/09 || Hamilton || - || Yes || Finsihed || - || Yes ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
