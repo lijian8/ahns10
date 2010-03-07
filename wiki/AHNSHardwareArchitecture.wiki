@@ -106,9 +106,7 @@ This is revision 2 of the architecture, The entire Architecture has been revised
 ||Blackfin Camera and Processor||$195.00 USD||
 ||Lens Option Set||$29.00 USD||
 ||Blackfin Postage||$60.00 USD||
-||Compass Module||$149.95 USD||
-||Sparkfun Postage||$25.49 USD||
-|| *TOTAL:* || *$817.76 USD* ||
+|| *TOTAL:* || *$642.32 USD* ||
 
 ===Australian Orders: ===
 
