@@ -11,7 +11,7 @@ This Wave contains information on the proposed hardware components for the proje
 ==Flight Computer==
 
 The proposed Flight Computer is the Gumstix Overo Fire. <font color="#FF0000> ($219.00 USD) </font>
-<br />The following link points to the [http://www.gumstix.com/store/catalog/product_info.php?products_id=226 Gumstix Overo Fire information page.]
+<br />The following link points to the [http://www.gumstix.com/store/catalog/product_info.php?products_id=227 Gumstix Overo Fire information page.]
 
 
 It uses the TI OMAP 3503 which we can install Linux or Windows CS on:
@@ -21,8 +21,10 @@ It uses the TI OMAP 3503 which we can install Linux or Windows CS on:
 The Pinto expansion board should be adequete for our purposes:    <font color="#FF0000>    ($27.50 USD) </font>
 <br />The following link points to the [http://www.gumstix.com/store/catalog/product_info.php?products_id=239 Gumstix Pinto Expansion Board.]
 
+The Summit expansion board should also be purchased for debuging:     <font color="#FF0000>    ($49.00 USD) </font> 
+<br />The following link points to the [http://www.gumstix.com/store/catalog/product_info.php?products_id=215 Gumstix Summit Expansion Board.]
 
-This will give us access to:
+This will give us access to (Pinto):
   * 2 x UARTS
   * 6 x PWM lines
   * 6 x ADC lines
@@ -99,13 +101,14 @@ This is revision 2 of the architecture, The entire Architecture has been revised
 || *Item* || *Cost* ||
 ||Gumstix Overo Fire||$219.00 USD||
 ||Pinto expansion board||$27.50 USD||
+||Summit expansion board||$49.00 USD||
 ||Gumstix Postage||$62.82 USD||
 ||Blackfin Camera and Processor||$195.00 USD||
 ||Lens Option Set||$29.00 USD||
 ||Blackfin Postage||$60.00 USD||
 ||Compass Module||$149.95 USD||
 ||Sparkfun Postage||$25.49 USD||
-|| *TOTAL:* || *$768.90 USD* ||
+|| *TOTAL:* || *$817.76 USD* ||
 
 ===Australian Orders: ===
 
