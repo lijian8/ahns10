@@ -32,6 +32,6 @@ This list states the exact item and quantity of overseas parts.
 ==Blackfin==
 
 || *Item Name* || *Cat. Num.* || *Quantity* || *Price* || *Total Price* ||
-|| SRV-1 Blackfin Camera || srv-1c || 1 || 195.00 US ||195.00 US || 
+|| SRV-1 Blackfin Camera || srv-1c || 1 || 175.50 US ||175.50 US || 
 || Postage || N/A || 1 || 60.00 US || 60.00 US ||
-||  ||  ||  || *TOTAL:* || *255.00 US* ||
+||  ||  ||  || *TOTAL:* || *235.50 US* ||
