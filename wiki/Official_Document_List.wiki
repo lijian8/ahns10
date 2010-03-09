@@ -7,13 +7,13 @@
 = Documents =
 
 || *Document Number* || *Document Name* || *Writer* || *Checker* || *Written* || *Status* || *Checked* || *Done* || 
-|| AHNS-2010-SY-HL-001 || High Level Objectives || Hamilton || O'Sullivan || Yes || Awaiting approval from Checker. || No || No ||
-|| AHNS-2010-SY-SR-001 ||  System Requirements || Hamilton || Molloy || Yes || Awaiting approval from Checker. || No || No ||
-|| AHNS-2010-SY-PM-001 || Project Management Plan || Hamilton || Kincel || No || Not finished. || No || No ||
-|| AHNS-2010-SY-MM-001 || Minutes of Meeting 20/12/09 || Hamilton || - || Yes || Finished || - || Yes ||
-|| AHNS-2010-AP-TS-001 || Flight Computer Trade Study || Molloy || Hamilton || Yes || Awaiting approval from Checker. || No || No ||
-|| AHNS-2010-AF-TS-001 || Airframe Trade Study || Kincel || Molloy || Yes || Awaiting approval from Checker. || No || No ||
-||  ||  ||  ||  ||  ||  ||  ||  ||
+|| AHNS-2010-SY-HL-001 || High Level Objectives || MH || LO || Yes || Awaiting approval from Checker. || No || No ||
+|| AHNS-2010-SY-SR-001 ||  System Requirements || MH || TM || Yes || Awaiting approval from Checker. || No || No ||
+|| AHNS-2010-SY-PM-001 || Project Management Plan || MH || MK || No || Not finished. || No || No ||
+|| AHNS-2010-SY-MM-001 || Minutes of Meeting 20/12/09 || MH || - || Yes || Finished || - || Yes ||
+|| AHNS-2010-AP-TS-001 || Flight Computer Trade Study || TM || MH || Yes || Awaiting approval from Checker. || No || No ||
+|| AHNS-2010-AF-TS-001 || Airframe Trade Study || MK || TM || Yes || Awaiting approval from Checker. || No || No ||
+|| AHNS-2010-SY-DD-001 || Preliminary Design Document || LO || MH || No || Not finished.  || No || No ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
 ||  ||  ||  ||  ||  ||  ||  ||  ||
