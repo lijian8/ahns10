@@ -1,1 +1,1 @@
-#summary Autonomous Helicopter Navigation Project
+#summary Autonomous Helicopter Navigation System
