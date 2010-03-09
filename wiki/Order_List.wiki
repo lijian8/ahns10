@@ -1,0 +1,37 @@
+#summary List of Overseas Orders
+
+= Introduction =
+
+This list states the exact item and quantity of overseas parts.
+
+
+= Details =
+==Mikrokopter==
+
+|| *Item Name* || *Cat. Num.* || *Quantity* || *Price* || *Total Price* ||
+|| MK40 - Frameset || N/A || 1 || 54.95 EU || 54.95 EU || 
+|| BL-Ctrl V1.2 (SMD preassembled) || N/A || 4 || 39.95 EU || 159.80 EU ||
+|| Robbe ROXXY BL-Outrunner 2824-34 || N/A || 4 || 31.90 EU || 127.60 EU ||
+|| MK Propeller Mount 1045 || N/A || 4 || 7.95 EU || 31.80 EU || 
+|| Propeller pair EPP1045 || N/A || 10 || 3.89 EU || 38.90 EU ||
+|| Vibration dampeners M3x15 || N/A || 2 || 5.95 EU || 11.90 EU ||
+|| Vibration dampeners M3x8 || N/A || 1 || 5.89 EU || 5.89 EU ||
+|| MK FlexLander L || N/A || 2 || 37.95 EU || 75.90 EU ||
+|| Postage || N/A || 1 || 33.00 EU || 33.00 EU ||
+||  ||  ||  || *TOTAL:* || *539.74 EU* ||
+
+==Gumstix==
+
+|| *Item Name* || *Cat. Num.* || *Quantity* || *Price* || *Total Price* ||
+|| Overo Fire COM || CUM3503F || 1 || 219.00 US || 219.00 AU || 
+|| Pinto- TH || PKG30011 || 1 || 27.50 US || 27.50 US ||
+|| Summit || PKG30001 || 1 || 49.00 US || 49.00 US ||
+|| Postage || N/A || 1 || 62.82 US || 62.82 US || 
+||  ||  ||  || *TOTAL:* || *358.32 US* ||
+
+==Blackfin==
+
+|| *Item Name* || *Cat. Num.* || *Quantity* || *Price* || *Total Price* ||
+|| SRV-1 Blackfin Camera || srv-1c || 1 || 195.00 US ||195.00 US || 
+|| Postage || N/A || 1 || 60.00 US || 60.00 US ||
+||  ||  ||  || *TOTAL:* || *255.00 US* ||
