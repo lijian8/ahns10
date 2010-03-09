@@ -1,4 +1,3 @@
 #Table of Contents for AHNS10 wiki
 
-You can also provide some descriptive text. For example, the following
-link points to the [http://www.google.com Google home page].
+[http://code.google.com/p/ahns10/wiki/Order_List Order list].
