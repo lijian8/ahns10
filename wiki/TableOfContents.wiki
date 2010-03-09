@@ -1,5 +1,3 @@
-#Table of Contents for AHNS10 wiki
-
 [http://code.google.com/p/ahns10/wiki/Order_List Order list]
 
 [http://code.google.com/p/ahns10/wiki/Official_Document_List Document list]
