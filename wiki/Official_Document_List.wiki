@@ -11,6 +11,6 @@
 || AHNS-2010-SY-SR-001 ||  System Requirements || MH || TM || Yes || Finished. || Yes || Yes ||
 || AHNS-2010-SY-PM-001 || Project Management Plan || MH || MK || Yes ||Finished. || Yes || Yes ||
 || AHNS-2010-SY-MM-001 || Minutes of Meeting 20/12/09 || MH || - || Yes || Finished. || - || Yes ||
-|| AHNS-2010-AP-TS-001 || Flight Computer Trade Study || TM || MH || Yes || Finished. || Yes || Yes ||
+|| AHNS-2010-AP-TS-001 || Flight Computer Trade Study || TM || MK || Yes || Finished. || Yes || Yes ||
 || AHNS-2010-PL-TS-001 || Airframe Trade Study || MK || TM || Yes || Awaiting approval from Checker. || No || No ||
 || AHNS-2010-SY-DD-001 || Preliminary Design Document || LO || MH || No || Not finished.  || No || No ||
