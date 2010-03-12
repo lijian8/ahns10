@@ -9,16 +9,16 @@ This list states the exact item and quantity of overseas parts.
 ==Mikrokopter==
 
 || *Item Name* || *Cat. Num.* || *Quantity* || *Price* || *Total Price* ||
-|| MK40 - Frameset || N/A || 1 || 54.95 EU || 54.95 EU || 
-|| BL-Ctrl V1.2 (SMD preassembled) || N/A || 4 || 39.95 EU || 159.80 EU ||
-|| Robbe ROXXY BL-Outrunner 2824-34 || N/A || 4 || 31.90 EU || 127.60 EU ||
-|| MK Propeller Mount 1045 || N/A || 4 || 7.95 EU || 31.80 EU || 
-|| Propeller pair EPP1045 || N/A || 10 || 3.89 EU || 38.90 EU ||
-|| Vibration dampeners M3x15 || N/A || 2 || 5.95 EU || 11.90 EU ||
-|| Vibration dampeners M3x8 || N/A || 1 || 5.89 EU || 5.89 EU ||
-|| MK FlexLander L || N/A || 2 || 37.95 EU || 75.90 EU ||
-|| Postage || N/A || 1 || 33.00 EU || 33.00 EU ||
-||  ||  ||  || *TOTAL:* || *539.74 EU* ||
+|| MK40 - Frameset || N/A || 1 || 46.18 EU || 46.18 EU || 
+|| BL-Ctrl V1.2 (SMD preassembled) || N/A || 4 || 33.57 EU || 33.57 EU ||
+|| Robbe ROXXY BL-Outrunner 2824-34 || N/A || 4 || 26.81 EU || 107.24 EU ||
+|| MK Propeller Mount 1045 || N/A || 4 || 6.68 EU || 26.72 EU || 
+|| Propeller pair EPP1045 || N/A || 14 || 3.27 EU || 45.78 EU ||
+|| Vibration dampeners M3x15 || N/A || 3 || 5.00 EU || 15.00 EU ||
+|| Vibration dampeners M3x8 || N/A || 2 || 4.95 EU || 9.90 EU ||
+|| MK FlexLander L || N/A || 2 || 31.89 EU || 63.78 EU ||
+|| Postage || N/A || 1 || 28.00 EU || 28.00 EU ||
+||  ||  ||  || *TOTAL:* || *476.88 EU* ||
 
 ==Gumstix==
 
