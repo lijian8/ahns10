@@ -1,41 +1,26 @@
 #summary Overview of the AHNS Ground and Airborne Software
-#labels Phase-Requirements,Phase-Design
-= Ground and Airborne Software Systems =
-== High Level Objectives System Requirements and Acceptance Tests ==
-=== HLO-4 Autonomous Hovering Flight ===
-An autopilot system should be developed to enable sustained indoor autonomous hovering flight. The control system should be designed to enable future ingress and egress manerourvers to longitudinal and hovering flight.
-----
-*Airborne System Requirements*
-|| *System Requirement* || *Definition* || *Acceptance Test* ||
-|| SR-4-01 || The airborne system shall provide control updates at a minimum rate of 50Hz || AT-4-01 ||
-|| SR-4-02 || The autopilot system gain and reference parameters shall be updatable in flight using an 802.11g WLAN uplink from the GCS || AT-4-02 ||
-|| SR-4-03 || The airborne system shall transmit telemetry data including state data to the GCS using 802.11g WLAN || AT-4-03 ||
-|| SR-4-04 || The airborne system shall receive and process measurement data from the state estimation and localisation sensors; supporting IMU, Camera, IR, Ultrasonic and Magnetic compass devices. || AT-4-04 ||
-|| SR-4-05 || The airborne system shall transmit all servo pulse width modulated inputs, including radio control inputs, to the GCS for the purposes of flight analysis. || AT-4-05 ||
-|| SR-4-06 || The airborne system shall collect avionics system health monitoring information in the form of radio control link status, flight mode status and battery level || AT-4-06 ||
-|| SR-4-07 || The autopilot shall maintain an autonomous hover with steady-state and overshoot errors not exceeding 20% in each channel. || AT-4-07 ||
-|| SR-4-08 || The autopilot shall provide station keeping based on pre-defined computer vision ground reference locations. || AT-4-08 ||
-
-----
-=== HLO-5 Ground Control Station ===
-A ground control station that supports appropriate command and system setting input and data display and logging should be developed. The design should be derived from previous AHNS developments and enable future ground station developments.
-----
-*Ground Control Station System Requirements*
-|| *System Requirement* || *Definition* || *Acceptance Test* ||
-|| SR-5-01 || The GCS shall receive telemetry from the airborne system using 802.11g WLAN || AT-5-01 ||
-|| SR-5-02 || The GCS shall provide an airborne uplink capability for autopilot gain and reference parameters using 802.11g WLAN || AT-5-02 ||
-|| SR-5-03 || The GCS shall log all telemetry and uplink data communications || AT-5-03 ||
-|| SR-5-04 || Aircraft State data and control inputs received shall be displayable on the GCS along with appropriate time references. || AT-5-04 ||
-|| SR-5-05 || The GCS shall provide display of avionics system health monitoring including telemetry, uplink, radio control link and battery level status read-outs. || AT-5-05 ||
-|| SR-5-06 || The GCS shall enable autopilot flight mode switching between manual, autonomous hover and autonomous station keeping. || AT-5-06 ||
-
 == Legacy Architecture ==
-
+[http://ahns10.googlecode.com/svn/wiki/AHNS09_SA.png]
+  * QtThreads for m:1 Kernal Threads
+  * All based on ground computer
+  * Split of HMI and AP over UDP linked computers
+  * Instructions of building 2009 code [APandHMI here] 
+----
 
 == Preliminary Design ==
-  * Need to create Interface Control Document for Airborne/GCS packets (AHNS-10-SY-IC-001)
-  * Review need to send PWM lines to MCU (generate instead on the MCU???)
-  * Review method of logging all PWM inputs (Perhaps implement a system dedicated to logging PWM servo signals)
-  * Consider state estimation and localisation internal interface with AP (AHNS-10-SY-IC-002)
+[http://ahns10.googlecode.com/svn/wiki/AHNS10_SA.png]
+  * Interface Control Document for Airborne/GCS packets (AHNS-10-SY-IC-001)
 
-== Details ==
+=== GCS Design Notes ===
+  * Qt Objects
+  * QThreads
+  * Used for data logging
+
+=== Airborne Design Notes ===
+  * Build distro with OpenEmbedded
+  * C –libraries is between GNU C (glibc) and micro C (uclibc) 
+  * Need support for the desired POSIX NTPL thread library
+  * Thread priority
+  * State estimation and localisation internal interface with AP (AHNS-10-SY-IC-002)
+  * recieves PWM information from UART to MCU to enable command logging in all flight modes
+----
