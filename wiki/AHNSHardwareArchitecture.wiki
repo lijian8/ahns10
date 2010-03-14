@@ -3,7 +3,7 @@
 
 = Introduction =
 
-This Wave contains information on the proposed hardware components for the project. Feel free to add, subtract, multiply and divide anything you want. <br /> Or just leave your thoughts. These are all just initial ideas, not final design solutions. Note that the prices are in US dollars, and do not include postage. 
+This page contains information on the proposed hardware components for the project. Feel free to add, subtract, multiply and divide anything you want. <br /> Or just leave your thoughts. These are all just initial ideas, not final design solutions. Note that the prices are in US dollars, and do not include postage. 
 
 
 = Details =
