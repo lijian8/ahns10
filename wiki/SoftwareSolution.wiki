@@ -1,6 +1,5 @@
 #summary Overview of the AHNS Ground and Airborne Software
 == Legacy Architecture ==
-[http://ahns10.googlecode.com/svn/wiki/AHNS09_SA.png]
   * QtThreads for m:1 Kernal Threads
   * All based on ground computer
   * Split of HMI and AP over UDP linked computers
@@ -8,7 +7,6 @@
 ----
 
 == Preliminary Design ==
-[http://ahns10.googlecode.com/svn/wiki/AHNS10_SA.png]
   * Interface Control Document for Airborne/GCS packets (AHNS-10-SY-IC-001)
 
 === GCS Design Notes ===
