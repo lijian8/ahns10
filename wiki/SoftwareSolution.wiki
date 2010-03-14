@@ -4,11 +4,12 @@
   * All based on ground computer
   * Split of HMI and AP over UDP linked computers
   * Instructions of building 2009 code [APandHMI here] 
+  [http://ahns10.googlecode.com/svn/wiki/AHNS09_SA.png]
 ----
 
 == Preliminary Design ==
   * Interface Control Document for Airborne/GCS packets (AHNS-10-SY-IC-001)
-
+  [http://ahns10.googlecode.com/svn/wiki/AHNS10_SA.png]
 === GCS Design Notes ===
   * Qt Objects
   * QThreads
@@ -16,7 +17,7 @@
 
 === Airborne Design Notes ===
   * Build distro with OpenEmbedded
-  * C –libraries is between GNU C (glibc) and micro C (uclibc) 
+  * C libraries is between GNU C (glibc) and micro C (uclibc) 
   * Need support for the desired POSIX NTPL thread library
   * Thread priority
   * State estimation and localisation internal interface with AP (AHNS-10-SY-IC-002)
