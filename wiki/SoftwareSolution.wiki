@@ -12,9 +12,8 @@
 
 == Preliminary Design ==
   [http://ahns10.googlecode.com/svn/wiki/AHNS10_SA.png]
-  * Interface Control Document for Airborne/GCS packets (AHNS-10-SY-IC-001)
-
-  === GCS Design Notes ===
+  
+=== GCS Design Notes ===
   * Qt Objects
   * QThreads
   * Used for data logging
@@ -27,4 +26,5 @@
   * Thread priority, main process -> state estimation -> control-> telemetry
   * State estimation and localisation internal interface with AP (AHNS-10-SY-IC-002)
   * Recieves PWM information from UART to MCU to enable command logging in all flight modes
+  * Interface Control Document for Airborne/GCS packets (AHNS-10-SY-IC-001)
 ----
