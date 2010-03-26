@@ -143,7 +143,8 @@ GroundStationForm::GroundStationForm(QWidget* parent)
 
 	AHNS_DEBUG("GroundStationForm:: connecting signals to slots.");
 	connect(actionAbout, SIGNAL(triggered()), this, SLOT(About()));
-	connect(slider_timer, SIGNAL(timeout()), this, SLOT(slider_send()));
+        connect(actionExit,SIGNAL(triggered()),this,SLOT(close()));
+        connect(slider_timer, SIGNAL(timeout()), this, SLOT(slider_send()));
 	connect(hmi_send_timer, SIGNAL(timeout()), this, SLOT(hmi_send()));
 	connect(altFilLenBox, SIGNAL(valueChanged(int)), emily_ap, SLOT(setAltFiltLength(int)));
 	connect(rateFilLenBox, SIGNAL(valueChanged(int)), emily_ap, SLOT(setPeriodFiltLength(int)));
