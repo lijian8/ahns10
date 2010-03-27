@@ -80,10 +80,10 @@ GUIofficial::GUIofficial(QWidget* parent)
 	
 
 	/* ******** SET UP TIMER INITIALISATION ******** */
-	//AH_Timer->start(40);
+	AH_Timer->start(40);
 	AH_Core->tempSize = AH_Output->size();
 	AH_Core->show();
-	//AH_Output->setWidget(AH_Core);
+	AH_Output->setWidget(AH_Core);
 }
 
 
