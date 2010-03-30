@@ -21,6 +21,9 @@ private slots:
     void setRollRate(int updatedRollRate);
     void setPitchRate(int updatedPitchRate);
     void setAltitude(int updatedAltitude);
+    void zeroRoll();
+    void zeroPitch();
+    void zeroAlt();
 
 private:
     Ui::AHPortExample *ui;
