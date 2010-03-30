@@ -43,7 +43,7 @@
       <x>460</x>
       <y>20</y>
       <width>201</width>
-      <height>140</height>
+      <height>239</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -57,13 +57,20 @@
      <item>
       <widget class="QScrollBar" name="horizontalScrollBar">
        <property name="minimum">
-        <number>-1000</number>
+        <number>-90</number>
        </property>
        <property name="maximum">
-        <number>1000</number>
+        <number>90</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbtnZRoll">
+       <property name="text">
+        <string>Zero Roll</string>
        </property>
       </widget>
      </item>
@@ -77,13 +84,20 @@
      <item>
       <widget class="QScrollBar" name="horizontalScrollBar_2">
        <property name="minimum">
-        <number>-1000</number>
+        <number>-90</number>
        </property>
        <property name="maximum">
-        <number>1000</number>
+        <number>90</number>
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="pbtnZPitch">
+       <property name="text">
+        <string>Zero Pitch</string>
        </property>
       </widget>
      </item>
@@ -101,6 +115,13 @@
        </property>
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ptnZAlt">
+       <property name="text">
+        <string>Zero Altitude</string>
        </property>
       </widget>
      </item>
@@ -153,8 +174,8 @@
    <slot>setPitchRate(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>545</x>
-     <y>142</y>
+     <x>546</x>
+     <y>183</y>
     </hint>
     <hint type="destinationlabel">
      <x>532</x>
@@ -169,12 +190,60 @@
    <slot>setAltitude(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>504</x>
-     <y>181</y>
+     <x>505</x>
+     <y>264</y>
     </hint>
     <hint type="destinationlabel">
      <x>593</x>
      <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pbtnZRoll</sender>
+   <signal>clicked()</signal>
+   <receiver>AHPortExample</receiver>
+   <slot>zeroRoll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>610</x>
+     <y>126</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>675</x>
+     <y>120</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pbtnZPitch</sender>
+   <signal>clicked()</signal>
+   <receiver>AHPortExample</receiver>
+   <slot>zeroPitch()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>592</x>
+     <y>204</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>676</x>
+     <y>203</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ptnZAlt</sender>
+   <signal>clicked()</signal>
+   <receiver>AHPortExample</receiver>
+   <slot>zeroAlt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>608</x>
+     <y>280</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>631</x>
+     <y>337</y>
     </hint>
    </hints>
   </connection>
@@ -183,5 +252,8 @@
   <slot>setRollRate(int)</slot>
   <slot>setPitchRate(int)</slot>
   <slot>setAltitude(int)</slot>
+  <slot>zeroRoll()</slot>
+  <slot>zeroPitch()</slot>
+  <slot>zeroAlt()</slot>
  </slots>
 </ui>

@@ -29,19 +29,40 @@ void AHPortExample::Variable_Init()
 
 void AHPortExample::setRollRate(int updatedRollRate)
 {
-    AH_Core->angRollRate = (float)(((updatedRollRate/50.0f)*30)/50);
+    AH_Core->angRoll = (float) updatedRollRate;
     AH_Core->UpdateRoll();
 
 }
 
 void AHPortExample::setPitchRate(int updatedPitchRate)
 {
-    AH_Core->angPitchRate = (float)(((-updatedPitchRate/50.0f)*10)/50);
+    AH_Core->angPitch = (float) -updatedPitchRate*3.15192/180.0;;
     AH_Core->UpdateRoll();
 }
 
 void AHPortExample::setAltitude(int updatedAltitude)
 {
-    AH_Core->vertAltPos = (float)(updatedAltitude);
+    AH_Core->altState = (float)(updatedAltitude);
     AH_Core->UpdateRoll();
+}
+
+void AHPortExample::zeroRoll()
+{
+    AH_Core->angRoll = 0;
+    AH_Core->UpdateRoll();
+    ui->horizontalScrollBar->setValue(0);
+}
+
+void AHPortExample::zeroPitch()
+{
+    AH_Core->angPitch = 0;
+    AH_Core->UpdateRoll();
+    ui->horizontalScrollBar_2->setValue(0);
+}
+
+void AHPortExample::zeroAlt()
+{
+    AH_Core->altState = 0;
+    AH_Core->UpdateRoll();
+    ui->horizontalScrollBar_3->setValue(0);
 }
