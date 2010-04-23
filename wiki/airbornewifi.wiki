@@ -2,10 +2,11 @@
 #labels Phase-Implementation,Phase-Deploy
 
 = Flight Computer Setup =
-The following information is valid of the Overo Fire COM, with SD card omap3-console-image of 22 April 2010. The setup creates the ad-hoc network essid='heliconnet10' using the wlan0 interface and then enables the DHCP server on the flight computer.
+The following information is valid of the Overo Fire COM, with SD card omap3-console-image of 22 April 2010. The setup creates the ad-hoc network using the wlan0 interface and then enables the DHCP server on the flight computer.
   * Setup script is [http://code.google.com/p/ahns10/source/browse/trunk/airborne/network/overo_wifi_setup.sh overo_wifi_setup.sh] and needs to be run on system start up.
   * DHCP information is in [http://code.google.com/p/ahns10/source/browse/trunk/airborne/network/udhcpd.conf udhcpd.conf]
 
+|| Ad-hoc essid || heliconnect10 ||
 || Interface || wlan0 ||
 || Netmask || 255.255.255.0 ||
 || Flight Computer IP || 192.168.2.2 ||
