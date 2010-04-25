@@ -1,0 +1,41 @@
+/**
+ * \file
+ * \author Tim Molloy
+ *
+ * Last Modified by: $Author$
+ *
+ * $LastChangedDate$
+ * $Rev$
+ *
+ * Queensland University of Technology
+ *
+ * \section DESCRIPTION
+ * Header for the AHNS GCS About Form
+ */
+
+#include "aboutform.h"
+#include "ui_aboutform.h"
+
+aboutForm::aboutForm(QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::aboutForm)
+{
+    ui->setupUi(this);
+}
+
+aboutForm::~aboutForm()
+{
+    delete ui;
+}
+
+void aboutForm::changeEvent(QEvent *e)
+{
+    QWidget::changeEvent(e);
+    switch (e->type()) {
+    case QEvent::LanguageChange:
+        ui->retranslateUi(this);
+        break;
+    default:
+        break;
+    }
+}

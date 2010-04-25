@@ -1,11 +1,9 @@
 #include "AH.h"
 #include "GL/glut.h"
-
 #include <QString>
 #include <QTime>
 #include <QtOpenGL>
-// ==========================
-#include <QByteArray> // Added for UDP
+#include <QByteArray>
 #include <iostream>
 #include <iomanip>
 #include <ctime>

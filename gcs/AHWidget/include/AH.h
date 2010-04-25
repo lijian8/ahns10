@@ -50,7 +50,7 @@ class AHclass : public QGLWidget
 	
 public:
 	AHclass(QWidget* parent = 0);
-	~AHclass();
+        virtual ~AHclass();
 	
 	QSize sizeHint() const;
 	/* ****** DEFINING PUBLIC FUNCTIONS ******/

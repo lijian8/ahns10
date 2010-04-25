@@ -1,0 +1,4 @@
+--------------------------------------------------------------------------------
+21-15-26::DEBUG: Logging Begun
+21-15-26::DEBUG: Create Main Window
+21-15-26::DEBUG: Run application
