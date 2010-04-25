@@ -2,6 +2,7 @@
 #include <cstdlib>
 
 #include "AH.h"
+#include "ahns_logger.h"
 
 #include <GL/glut.h>
 
