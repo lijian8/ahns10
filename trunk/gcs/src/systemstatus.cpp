@@ -39,3 +39,12 @@ void systemStatus::changeEvent(QEvent *e)
         break;
     }
 }
+
+
+/**
+  * \brief Initial sizing hint of the systemStatus widget
+  */
+QSize systemStatus::sizeHint() const
+{
+    return QSize(350, 270);;
+}

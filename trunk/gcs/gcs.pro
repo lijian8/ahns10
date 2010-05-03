@@ -28,14 +28,17 @@ SOURCES += src/main.cpp \
     AHWidget/src/AH_Motion.cpp \
     AHWidget/src/AH.cpp \
     reuse/ahns_logger.cpp \
-    src/aboutform.cpp
+    src/aboutform.cpp \
+    src/wificomms.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
     AHWidget/include/AH.h \
     reuse/ahns_logger.h \
-    include/aboutform.h
+    include/aboutform.h \
+    include/wificomms.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
-    ui/aboutform.ui
+    ui/aboutform.ui \
+    ui/wificomms.ui
 RESOURCES += resources/gcs.qrc
