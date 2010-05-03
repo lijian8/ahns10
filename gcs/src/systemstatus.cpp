@@ -16,19 +16,19 @@
 #include "systemstatus.h"
 #include "ui_systemstatus.h"
 
-SystemStatus::SystemStatus(QWidget *parent) :
+systemStatus::systemStatus(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::SystemStatus)
+    ui(new Ui::systemStatus)
 {
     ui->setupUi(this);
 }
 
-SystemStatus::~SystemStatus()
+systemStatus::~systemStatus()
 {
     delete ui;
 }
 
-void SystemStatus::changeEvent(QEvent *e)
+void systemStatus::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
     switch (e->type()) {

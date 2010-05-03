@@ -19,23 +19,23 @@
 #include <QWidget>
 
 namespace Ui {
-    class SystemStatus;
+    class systemStatus;
 }
 
 /**
-  * \breif Qt SystemStatus Widget
+  * \breif Qt systemStatus Widget
   */
-class SystemStatus : public QWidget {
+class systemStatus : public QWidget {
     Q_OBJECT
 public:
-    SystemStatus(QWidget *parent = 0);
-    ~SystemStatus();
+    systemStatus(QWidget *parent = 0);
+    ~systemStatus();
 
 protected:
     void changeEvent(QEvent *e);
 
 private:
-    Ui::SystemStatus *ui;
+    Ui::systemStatus *ui;
 };
 
 #endif // SYSTEMSTATUS_H
