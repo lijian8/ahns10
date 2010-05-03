@@ -31,6 +31,8 @@ public:
     systemStatus(QWidget *parent = 0);
     ~systemStatus();
 
+    QSize sizeHint() const;
+
 protected:
     void changeEvent(QEvent *e);
 

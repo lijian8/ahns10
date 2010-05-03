@@ -17,8 +17,13 @@
 
 #include "gcsmainwindow.h"
 #include "ui_gcsmainwindow.h"
+
+// Widgets for the Docks
 #include "AH.h"
 #include "systemstatus.h"
+#include "wificomms.h"
+
+//AHNS Reuse
 #include "ahns_logger.h"
 
 gcsMainWindow::gcsMainWindow(QWidget *parent) :
@@ -88,7 +93,7 @@ void gcsMainWindow::createDockWindows()
     AHNS_DEBUG("Connecting System Status Slots");
 
     //wifiComms
-   /* AHNS_DEBUG("Creating wifiComms Widget");
+    AHNS_DEBUG("Creating wifiComms Widget");
     QDockWidget *dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
     wifiComms* owifiComms = new wifiComms(dockWC);
     dockWC->setWidget(owifiComms); 
@@ -98,7 +103,6 @@ void gcsMainWindow::createDockWindows()
 
     //wifi Comms Slots
     AHNS_DEBUG("Connecting wifiComms Slots");
-   */
   return;
 }
 
