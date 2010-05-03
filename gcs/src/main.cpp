@@ -14,29 +14,33 @@
  */
 
 #include <QtGui/QApplication>
+
 #include <stdexcept>
+
 #include "gcsmainwindow.h"
 #include "ahns_logger.h"
 
 
 int main(int argc, char *argv[])
 {
-    try{
+    try
+    {
         ahns_logger_init("gcs_log.txt");
-    }catch(const std::exception &e){
+    }
+    catch(const std::exception &e)
+    {
         std::cerr << e.what();
         exit(-1); // not worth continuing with no logging
     }
-    AHNS_DEBUG("Logging Begun");
-
+    AHNS_DEBUG("main()")
 
     QApplication a(argc, argv);
 
     //Main Window
-    AHNS_DEBUG("Create Main Window");
+    AHNS_DEBUG("main() [ Create Main Window ]");
     gcsMainWindow w;
-    w.show();
 
-    AHNS_DEBUG("Run application");
+    w.show();
+    AHNS_DEBUG("main() [ Run application ]");
     return a.exec();
 }

@@ -39,8 +39,8 @@
 /** 
  * For important events which the operator should be notified of. Goes to file and screen (stderr)
  */
-#define AHNS_ALERT(out) ahns_logger_file << "ALERT: " << out << std::endl;\
-			cerr << "ALERT: " << out << std::endl
+                        #define AHNS_ALERT(out) ahns_logger_file << "ALERT: " << out << std::endl;\
+                        std::cerr << "ALERT: " << out << std::endl
 
 extern std::fstream ahns_logger_file;  		
 extern time_t ahns_logger_time;			

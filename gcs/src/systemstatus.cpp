@@ -16,9 +16,7 @@
 #include "systemstatus.h"
 #include "ui_systemstatus.h"
 
-systemStatus::systemStatus(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::systemStatus)
+systemStatus::systemStatus(QWidget *parent) : QWidget(parent), ui(new Ui::systemStatus)
 {
     ui->setupUi(this);
 }
@@ -31,7 +29,8 @@ systemStatus::~systemStatus()
 void systemStatus::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
-    switch (e->type()) {
+    switch (e->type())
+    {
     case QEvent::LanguageChange:
         ui->retranslateUi(this);
         break;
@@ -40,11 +39,10 @@ void systemStatus::changeEvent(QEvent *e)
     }
 }
 
-
 /**
   * \brief Initial sizing hint of the systemStatus widget
   */
 QSize systemStatus::sizeHint() const
 {
-    return QSize(350, 270);;
+    return QSize(355, 270);
 }
