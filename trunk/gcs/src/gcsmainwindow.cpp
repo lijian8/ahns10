@@ -19,6 +19,7 @@
 #include "ui_gcsmainwindow.h"
 #include "AH.h"
 #include "systemstatus.h"
+#include "ahns_logger.h"
 
 gcsMainWindow::gcsMainWindow(QWidget *parent) :
         QMainWindow(parent),
@@ -60,23 +61,45 @@ void gcsMainWindow::changeEvent(QEvent *e)
   */
 void gcsMainWindow::createDockWindows()
 {
-
     // Artifical Horizon
-    QDockWidget *dock = new QDockWidget(tr("Artificial Horizon"),this);
-    AHclass* AH = new AHclass(dock);
-    dock->setWidget(AH);
-    addDockWidget(Qt::RightDockWidgetArea,dock);
-    ui->menuView->insertAction(0,dock->toggleViewAction());
+    AHNS_DEBUG("Creating AH Widget");
+    QDockWidget *dockAH = new QDockWidget(tr("Artificial Horizon"),this);
+    AHclass* AH = new AHclass(dockAH);
+    dockAH->setWidget(AH);
+    dockList << dockAH; // keep the object in a list
+    addDockWidget(Qt::RightDockWidgetArea,dockAH);
+
+    ui->menuView->insertAction(0,dockAH->toggleViewAction());
+
+    // AH Slots
+    AHNS_DEBUG("Connecting AH Slots");
 
     //System Status
-    dock = new QDockWidget(tr("System Status"),this);
-    SystemStatus* oSystemStatus = new SystemStatus(dock);
-    dock->setWidget(oSystemStatus);
-    addDockWidget(Qt::LeftDockWidgetArea,dock);
-    ui->menuView->insertAction(0,dock->toggleViewAction());
+    AHNS_DEBUG("Creating System Status Widget");
+    QDockWidget *dockSS = new QDockWidget(tr("System Status"),this);
+    systemStatus* oSystemStatus = new systemStatus(dockSS);
+    dockSS->setWidget(oSystemStatus);
+    dockList << dockSS; // keep in the list
+    addDockWidget(Qt::LeftDockWidgetArea,dockSS);
+    ui->menuView->insertAction(0,dockSS->toggleViewAction());
+    // addDockWidget(Qt::LeftDockWidgetArea,dock);
 
+    //System Status Slots
+    AHNS_DEBUG("Connecting System Status Slots");
 
-    return;
+    //wifiComms
+   /* AHNS_DEBUG("Creating wifiComms Widget");
+    QDockWidget *dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
+    wifiComms* owifiComms = new wifiComms(dockWC);
+    dockWC->setWidget(owifiComms); 
+    dockList << dockWC; //keep in the list
+    addDockWidget(Qt::BottomDockWidgetArea,dockWC);
+    ui->menuView->insertAction(0,dockWC->toggleViewAction());
+
+    //wifi Comms Slots
+    AHNS_DEBUG("Connecting wifiComms Slots");
+   */
+  return;
 }
 
 void gcsMainWindow::on_actionAbout_triggered()

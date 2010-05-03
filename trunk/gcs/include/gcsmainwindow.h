@@ -39,7 +39,10 @@ private:
     Ui::gcsMainWindow *ui;
     void createDockWindows();
 
+    //List of Dockable Widgets
+    QList<QDockWidget*> dockList;
 
+    // Form
     aboutForm* m_Aboutfrm;
 
 private slots:
