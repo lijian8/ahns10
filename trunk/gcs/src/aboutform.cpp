@@ -16,10 +16,11 @@
 #include "aboutform.h"
 #include "ui_aboutform.h"
 
-aboutForm::aboutForm(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::aboutForm)
+#include "ahns_logger.h"
+
+aboutForm::aboutForm(QWidget *parent) : QWidget(parent), ui(new Ui::aboutForm)
 {
+    AHNS_DEBUG("aboutForm::aboutForm()");
     ui->setupUi(this);
 }
 

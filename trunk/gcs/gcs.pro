@@ -1,14 +1,17 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-04-25T11:58:01
 # -------------------------------------------------
-QT += opengl
+QT += opengl \
+    network
+CONFIG += debug
 TARGET = gcs
 TEMPLATE = app
 OBJECTS_DIR = obj/
 INCLUDEPATH += . \
     include \
     AHWidget/include \
-    reuse/
+    reuse/ \
+    ../../../heliconnect10/trunk/
 UI_DIR = ui
 UI_HEADERS_DIR = tmp
 UI_SOURCES_DIR = tmp
@@ -29,14 +32,17 @@ SOURCES += src/main.cpp \
     AHWidget/src/AH.cpp \
     reuse/ahns_logger.cpp \
     src/aboutform.cpp \
-    src/wificomms.cpp
+    src/wificomms.cpp \
+    src/telemetrythread.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
     AHWidget/include/AH.h \
     reuse/ahns_logger.h \
     include/aboutform.h \
-    include/wificomms.h
+    include/wificomms.h \
+    include/telemetrythread.h \
+    ../../../heliconnect10/trunk/state.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \
