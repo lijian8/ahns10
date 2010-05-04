@@ -13,3 +13,4 @@ iwconfig wlan0 essid 'dd-wrt'
 ifconfig wlan0 up
 
 dhclient wlan0
+
