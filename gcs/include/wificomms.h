@@ -40,9 +40,9 @@ private slots:
     void lcdUpdate();
 
 signals:
-    void sigConnectionRetry(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
-    void sigConnectionClose();
-    void sigConnectionStart(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
+    void ConnectionRetry(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
+    void ConnectionClose();
+    void ConnectionStart(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
 
 protected:
     void changeEvent(QEvent *e);

@@ -42,7 +42,8 @@ HEADERS += include/gcsmainwindow.h \
     include/aboutform.h \
     include/wificomms.h \
     include/telemetrythread.h \
-    ../../../heliconnect10/trunk/state.h
+    ../../../heliconnect10/trunk/state.h \
+    ../../../heliconnect10/trunk/commands.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \

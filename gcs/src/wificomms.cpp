@@ -43,7 +43,7 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
 
     ui->setupUi(this);
 
-
+    // 2009 HMI code to find the interface and IP in use
     using namespace std;
     int fd;
     struct if_nameindex *curif, *ifs;
@@ -84,21 +84,24 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
     }
     else	sprintf(szHostIP, "%s", "Could not detect network socket");
 
+    // Initialise the Box text
     ui->serverIPlineEdit->setText("192.168.2.2");
     ui->serverPortlineEdit->setText("5000");
 
     ui->clientIPlineEdit->setText(szHostIP);
     ui->clientPortlineEdit->setText("5000");
 
-
+    // internal signals
     connect(&m_oUptimer,SIGNAL(timeout()),this,SLOT(lcdUpdate()));
+
+    //timer variables
     m_oUptimer.setInterval(1000);
     m_secCount = 0;
     m_minCount = 0;
     m_hourCount = 0;
 
     char time[20];
-    sprintf(time,"%02i:%02i . %02i%c",0,0,0,'\0');
+    sprintf(time,"%02i:%02i.%02i%c",0,0,0,'\0');
     ui->uptimelcdNumber->display(time);
 }
 
@@ -136,53 +139,56 @@ QSize wifiComms::sizeHint() const
   */
 void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
 {
+    // Take strings and numbers from the dialogue boxes
     quint16 serverPort = ui->serverPortlineEdit->text().toUInt();
     QString serverIP = ui->serverIPlineEdit->text();
-
     quint16 clientPort = ui->clientPortlineEdit->text().toUInt();
     QString clientIP = ui->clientIPlineEdit->text();
 
     AHNS_DEBUG("wifiComms::buttonBoxChanged()");
+    // Find the signal and emit it, also manage timer
     if (btnAbstract->text() == "&Close")
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Close ]");
-        emit sigConnectionClose();
+        emit ConnectionClose();
         m_oUptimer.stop();
 
         m_secCount = 0;
         m_minCount = 0;
         m_hourCount = 0;
         char time[20];
-        sprintf(time,"%02i:%02i . %02i%c",0,0,0,'\0');
+        sprintf(time,"%02i:%02i.%02i%c",0,0,0,'\0');
         ui->uptimelcdNumber->display(time);
     }
     else if (btnAbstract->text() == "Apply")
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Apply ]");
-        emit sigConnectionStart(serverPort, serverIP, clientPort, clientIP);
+        emit ConnectionStart(serverPort, serverIP, clientPort, clientIP);
         m_oUptimer.start();
     }
     else if (btnAbstract->text() == "Retry")
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Retry ]");
-        emit sigConnectionRetry(serverPort, serverIP, clientPort, clientIP);
+        emit ConnectionRetry(serverPort, serverIP, clientPort, clientIP);
+
         m_oUptimer.start();
         m_secCount = 0;
         m_minCount = 0;
         m_hourCount = 0;
         char time[20];
-        sprintf(time,"%02i:%02i . %02i%c",0,0,0,'\0');
+        sprintf(time,"%02i:%02i.%02i%c",0,0,0,'\0');
         ui->uptimelcdNumber->display(time);
     }
     else if (btnAbstract->text() == "Restore Defaults")
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Restore Defaults ]");
+
         ui->serverIPlineEdit->setText("192.168.2.2");
         ui->serverPortlineEdit->setText("5000");
         ui->clientIPlineEdit->setText(szHostIP);
         ui->clientPortlineEdit->setText("5000");
     }
-    else
+    else // ui is wrong
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ UNDEFINED BUTTON ]");
     }
@@ -204,8 +210,9 @@ void wifiComms::lcdUpdate()
             m_hourCount++;
         }
     }
+    // Output to LCD
     char time[20];
-    sprintf(time,"%02i:%02i . %02i%c",m_hourCount,m_minCount,m_secCount,'\0');
+    sprintf(time,"%02i:%02i.%02i%c",m_hourCount,m_minCount,m_secCount,'\0');
     ui->uptimelcdNumber->display(time);
     return;
 }

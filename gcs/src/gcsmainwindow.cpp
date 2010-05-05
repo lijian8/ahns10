@@ -43,19 +43,19 @@ gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
     m_Aboutfrm = new aboutForm;
 
     // TelemetryThread not started yet
-    m_oTelemetryThread = NULL;
+    m_TelemetryThread = NULL;
 }
 
 gcsMainWindow::~gcsMainWindow()
 {
     AHNS_DEBUG("gcsMainWindow::~gcsMainWindow()")
-    AHNS_DEBUG("gcsMainWindow::~gcsMainWindow() [Thread Pointer = "  << m_oTelemetryThread << " ]");
+    AHNS_DEBUG("gcsMainWindow::~gcsMainWindow() [Thread Pointer = "  << m_TelemetryThread << " ]");
 
-    if (m_oTelemetryThread != NULL)
+    if (m_TelemetryThread != NULL)
     {
-      m_oTelemetryThread->stop();
-      while (m_oTelemetryThread->isRunning());
-      delete m_oTelemetryThread;
+      m_TelemetryThread->stop();
+      m_TelemetryThread->wait();
+      delete m_TelemetryThread;
     }
 
     delete m_Aboutfrm;
@@ -66,7 +66,8 @@ gcsMainWindow::~gcsMainWindow()
 void gcsMainWindow::changeEvent(QEvent *e)
 {
     QMainWindow::changeEvent(e);
-    switch (e->type()) {
+    switch (e->type())
+    {
     case QEvent::LanguageChange:
         ui->retranslateUi(this);
         break;
@@ -80,20 +81,21 @@ void gcsMainWindow::changeEvent(QEvent *e)
   */
 void gcsMainWindow::createDockWindows()
 {
+
     AHNS_DEBUG("gcsMainWindow::createDockWindows()");
 
     AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating AH Widget ]");
     QDockWidget *dockAH = new QDockWidget(tr("Artificial Horizon"),this);
-    AHclass* AH = new AHclass(dockAH);
-    dockAH->setWidget(AH);
+    AHclass* ahWidget = new AHclass(dockAH);
+    dockAH->setWidget(ahWidget);
     m_dockList << dockAH; // keep the object in a list
     addDockWidget(Qt::RightDockWidgetArea,dockAH);
     ui->menuView->insertAction(0,dockAH->toggleViewAction());
 
     AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating System Status Widget ]");
     QDockWidget *dockSS = new QDockWidget(tr("System Status"),this);
-    systemStatus* oSystemStatus = new systemStatus(dockSS);
-    dockSS->setWidget(oSystemStatus);
+    SystemStatus* systemStatusWidget = new SystemStatus(dockSS);
+    dockSS->setWidget(systemStatusWidget);
     m_dockList << dockSS; // keep in the list
     addDockWidget(Qt::LeftDockWidgetArea,dockSS);
     ui->menuView->insertAction(0,dockSS->toggleViewAction());
@@ -101,8 +103,8 @@ void gcsMainWindow::createDockWindows()
 
     AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating wifiComms Widget ]");
     QDockWidget *dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
-    wifiComms* owifiComms = new wifiComms(dockWC);
-    dockWC->setWidget(owifiComms); 
+    wifiComms* wifiCommsWidget = new wifiComms(dockWC);
+    dockWC->setWidget(wifiCommsWidget);
     m_dockList << dockWC; //keep in the list
     addDockWidget(Qt::BottomDockWidgetArea,dockWC);
     ui->menuView->insertAction(0,dockWC->toggleViewAction());
@@ -116,9 +118,9 @@ void gcsMainWindow::createDockWindows()
 //    ui->menuView->insertAction(0,dockTS->toggleViewAction());
 
     AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
-    connect(owifiComms,SIGNAL(sigConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
-    connect(owifiComms,SIGNAL(sigConnectionClose()),this,SLOT(CloseTelemetry()));
-    connect(owifiComms,SIGNAL(sigConnectionRetry(quint16&,QString&,quint16&,QString&)),this,SLOT(RetryTelemetry(quint16&,QString&,quint16&,QString&)));
+    connect(wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
+    connect(wifiCommsWidget,SIGNAL(ConnectionClose()),this,SLOT(CloseTelemetry()));
+    connect(wifiCommsWidget,SIGNAL(ConnectionRetry(quint16&,QString&,quint16&,QString&)),this,SLOT(RetryTelemetry(quint16&,QString&,quint16&,QString&)));
 
     AHNS_DEBUG("gcsMainWindow::createDockWindows() [ COMPLETED ]");
   return;
@@ -141,17 +143,17 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
 {
     AHNS_DEBUG("gcsMainWindow::StartTelemetry()");
 
-    if (m_oTelemetryThread == NULL)
+    if (m_TelemetryThread == NULL)
     {
         try
         {
-          m_oTelemetryThread = new cTelemetryThread(serverPort,serverIP,clientPort,clientIP);
-          m_oTelemetryThread->start();
+          m_TelemetryThread = new TelemetryThread(serverPort,serverIP,clientPort,clientIP);
+          m_TelemetryThread->start();
         }
         catch (const std::exception &e)
         {
             AHNS_ALERT("gcsMainWindow::StartTelemetry() [ THREAD START FAILED " << e.what() << " ]");
-            m_oTelemetryThread = NULL;
+            m_TelemetryThread = NULL;
         }
     }
     else
@@ -167,13 +169,13 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
 void gcsMainWindow::CloseTelemetry()
 {
     AHNS_DEBUG("gcsMainWindow::CloseTelemetry()");
-    if (m_oTelemetryThread != NULL)
+    if (m_TelemetryThread != NULL)
     {
-        m_oTelemetryThread->stop();
-        while(m_oTelemetryThread->isRunning());
+        m_TelemetryThread->stop();
+        m_TelemetryThread->wait();
 
-        delete m_oTelemetryThread;
-        m_oTelemetryThread = NULL;
+        delete m_TelemetryThread;
+        m_TelemetryThread = NULL;
     }
     else
     {
@@ -189,26 +191,26 @@ void gcsMainWindow::RetryTelemetry(quint16& serverPort, QString& serverIP, quint
 {
     AHNS_DEBUG("gcsMainWindow::RetryTelemetry()");
 
-    if (m_oTelemetryThread != NULL)
+    if (m_TelemetryThread != NULL)
     {
       // Stop Thread
-      m_oTelemetryThread->stop();
-      while(m_oTelemetryThread->isRunning());
+      m_TelemetryThread->stop();
+      m_TelemetryThread->wait();
 
       // Delete Thread
-      delete m_oTelemetryThread;
-      m_oTelemetryThread = NULL;
+      delete m_TelemetryThread;
+      m_TelemetryThread = NULL;
 
       // Recreate Thread
       try
       {
-        m_oTelemetryThread = new cTelemetryThread(serverPort,serverIP,clientPort,clientIP);
-        m_oTelemetryThread->start();
+        m_TelemetryThread = new TelemetryThread(serverPort,serverIP,clientPort,clientIP);
+        m_TelemetryThread->start();
       }
       catch (const std::exception &e)
       {
         AHNS_ALERT("gcsMainWindow::ResetTelemetry() [ THREAD RESET FAILED " << e.what() << " ]");
-        m_oTelemetryThread = NULL;
+        m_TelemetryThread = NULL;
       }
     }
     else
@@ -216,13 +218,13 @@ void gcsMainWindow::RetryTelemetry(quint16& serverPort, QString& serverIP, quint
         // Create Thread
         try
         {
-          m_oTelemetryThread = new cTelemetryThread(serverPort,serverIP,clientPort,clientIP);
-          m_oTelemetryThread->start();
+          m_TelemetryThread = new TelemetryThread(serverPort,serverIP,clientPort,clientIP);
+          m_TelemetryThread->start();
         }
         catch (const std::exception &e)
         {
           AHNS_ALERT("gcsMainWindow::RetryTelemetry() [ THREAD RESET FAILED " << e.what() << " ]");
-          m_oTelemetryThread = NULL;
+          m_TelemetryThread = NULL;
         }
     }
 

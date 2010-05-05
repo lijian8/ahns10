@@ -10,49 +10,63 @@
  * Queensland University of Technology
  *
  * \section DESCRIPTION
- * Header file for the cTelemetryThread.
+ * Header file for the TelemetryThread.
  */
 
 #ifndef TELEMETRYTHREAD_H
 #define TELEMETRYTHREAD_H
 
-#include <QtGlobal>
-#include <QThread>
 #include <QObject>
-#include <QHostAddress>
+#include <QtGlobal>
+
+#include <QThread>
 #include <QMutex>
 #include <QTimer>
+
+#include <QHostAddress>
+#include <QUdpSocket>
 
 /**
   * \brief Thead Class Inherided from QThread
   */
-class cTelemetryThread : public QThread
+class TelemetryThread : public QThread
 {
     Q_OBJECT
 public:
-    cTelemetryThread();
-    cTelemetryThread(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
-    cTelemetryThread(quint16& serverPort, QHostAddress& serverIP, quint16& clientPort, QHostAddress& clientIP);
-    ~cTelemetryThread();
+    TelemetryThread();
+    TelemetryThread(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
+    TelemetryThread(quint16& serverPort, QHostAddress& serverIP, quint16& clientPort, QHostAddress& clientIP);
+    ~TelemetryThread();
 
     void run();
     void stop();
 
-    quint16 readClientPort();
+    quint16 readClientPort() const;
     QHostAddress readClientIP() const;
     quint16 readServerPort() const;
     QHostAddress readServerIP() const;
+signals:
 
 protected:
 
+private slots:
+    void DataPending();
+
 private:
+
+    void txInitialise();
+    void rxInitialise();
+
     quint16 m_serverPort;
     quint16 m_clientPort;
     QHostAddress m_serverIP;
     QHostAddress m_clientIP;
 
     QMutex m_mutex;
-    volatile bool bStopped;
+    volatile bool m_stopped;
+
+    QUdpSocket* m_txSocket;
+    QUdpSocket* m_rxSocket;
 
 };
 

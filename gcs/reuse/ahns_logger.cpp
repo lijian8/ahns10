@@ -5,7 +5,7 @@
  * Last Modified by: $Author$
  *
  * $LastChangedDate$
- * $Rev: 118 $
+ * $Rev$
  *
  * Queensland University of Technology
  *

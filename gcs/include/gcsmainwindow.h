@@ -58,7 +58,7 @@ private:
     aboutForm* m_Aboutfrm;
 
     // Threads
-    cTelemetryThread* m_oTelemetryThread;
+    TelemetryThread* m_TelemetryThread;
 
 };
 
