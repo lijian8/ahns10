@@ -1,5 +1,5 @@
 /**
- * \file   systemstatus.cpp
+ * \file   SystemStatus.cpp
  * \author Tim Molloy
  *
  * $Author$
@@ -16,17 +16,23 @@
 #include "systemstatus.h"
 #include "ui_systemstatus.h"
 
-systemStatus::systemStatus(QWidget *parent) : QWidget(parent), ui(new Ui::systemStatus)
+#include <cstdio>
+
+SystemStatus::SystemStatus(QWidget *parent) : QWidget(parent), ui(new Ui::SystemStatus)
 {
     ui->setupUi(this);
+
+    char time[20];
+    sprintf(time,"%02i:%02i.%02i%c",0,0,0,'\0');
+    ui->fcUptimeLcd_2->display(time);
 }
 
-systemStatus::~systemStatus()
+SystemStatus::~SystemStatus()
 {
     delete ui;
 }
 
-void systemStatus::changeEvent(QEvent *e)
+void SystemStatus::changeEvent(QEvent *e)
 {
     QWidget::changeEvent(e);
     switch (e->type())
@@ -40,9 +46,9 @@ void systemStatus::changeEvent(QEvent *e)
 }
 
 /**
-  * \brief Initial sizing hint of the systemStatus widget
+  * \brief Initial sizing hint of the SystemStatus widget
   */
-QSize systemStatus::sizeHint() const
+QSize SystemStatus::sizeHint() const
 {
-    return QSize(355, 270);
+    return QSize(295, 265);
 }

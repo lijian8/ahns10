@@ -1,5 +1,5 @@
 /**
- * \file   systemstatus.h
+ * \file   SystemStatus.h
  * \author Tim Molloy
  *
  * $Author$
@@ -17,19 +17,20 @@
 #define SYSTEMSTATUS_H
 
 #include <QWidget>
+#include "ui_systemstatus.h"
 
 namespace Ui {
-    class systemStatus;
+    class SystemStatus;
 }
 
 /**
-  * \breif Qt systemStatus Widget
+  * \breif Qt SystemStatus Widget
   */
-class systemStatus : public QWidget {
+class SystemStatus : public QWidget {
     Q_OBJECT
 public:
-    systemStatus(QWidget *parent = 0);
-    ~systemStatus();
+    SystemStatus(QWidget *parent = 0);
+    ~SystemStatus();
 
     QSize sizeHint() const;
 
@@ -37,7 +38,7 @@ protected:
     void changeEvent(QEvent *e);
 
 private:
-    Ui::systemStatus *ui;
+    Ui::SystemStatus *ui;
 };
 
 #endif // SYSTEMSTATUS_H
