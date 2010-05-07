@@ -18,12 +18,18 @@
 
 #include "ahns_logger.h"
 
+/**
+  * @brief About form constructor
+  */
 aboutForm::aboutForm(QWidget *parent) : QWidget(parent), ui(new Ui::aboutForm)
 {
     AHNS_DEBUG("aboutForm::aboutForm()");
     ui->setupUi(this);
 }
 
+/**
+  * @brief About form destructor
+  */
 aboutForm::~aboutForm()
 {
     delete ui;

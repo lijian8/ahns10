@@ -32,9 +32,12 @@ int ahns_logger_init(const char* filename)
 {
     ahns_logger_file.open(filename, std::ios::out | std::ios::app);
 
-    if (ahns_logger_file.good()){
+    if (ahns_logger_file.is_open())
+    {
         ahns_logger_file << "--------------------------------------------------------------------------------\n";
-    }else{
+    }
+    else
+    {
         throw std::runtime_error("AHNS LOG FILE OPEN FAILED");
     }
 

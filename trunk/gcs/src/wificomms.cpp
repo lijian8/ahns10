@@ -36,6 +36,12 @@
 #include <sys/ioctl.h>
 
 #include "ahns_logger.h"
+#include "ahns_timeformat.h"
+
+// Default Network Settings
+#define DEFAULT_SERVER_IP "192.168.0.3"
+#define DEFAULT_SERVER_PORT "2002"
+#define DEFAULT_CLIENT_PORT "45455"
 
 
 wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
@@ -85,11 +91,11 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
     else	sprintf(szHostIP, "%s", "Could not detect network socket");
 
     // Initialise the Box text
-    ui->serverIPlineEdit->setText("192.168.2.2");
-    ui->serverPortlineEdit->setText("5000");
+    ui->serverIPlineEdit->setText(DEFAULT_SERVER_IP);
+    ui->serverPortlineEdit->setText(DEFAULT_SERVER_PORT);
 
     ui->clientIPlineEdit->setText(szHostIP);
-    ui->clientPortlineEdit->setText("5000");
+    ui->clientPortlineEdit->setText(DEFAULT_CLIENT_PORT);
 
     // internal signals
     connect(&m_oUptimer,SIGNAL(timeout()),this,SLOT(lcdUpdate()));
@@ -100,9 +106,7 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
     m_minCount = 0;
     m_hourCount = 0;
 
-    char time[20];
-    sprintf(time,"%02i:%02i.%02i%c",0,0,0,'\0');
-    ui->uptimelcdNumber->display(time);
+    ui->uptimelcdNumber->display(AHNS_HMS(m_hourCount,m_minCount,m_secCount));
 }
 
 wifiComms::~wifiComms()
@@ -156,13 +160,12 @@ void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
         m_secCount = 0;
         m_minCount = 0;
         m_hourCount = 0;
-        char time[20];
-        sprintf(time,"%02i:%02i.%02i%c",0,0,0,'\0');
-        ui->uptimelcdNumber->display(time);
+
+        ui->uptimelcdNumber->display(AHNS_HMS(m_hourCount,m_minCount,m_secCount));
     }
-    else if (btnAbstract->text() == "Apply")
+    else if (btnAbstract->text() == "Open")
     {
-        AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Apply ]");
+        AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Open ]");
         emit ConnectionStart(serverPort, serverIP, clientPort, clientIP);
         m_oUptimer.start();
     }
@@ -175,18 +178,16 @@ void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
         m_secCount = 0;
         m_minCount = 0;
         m_hourCount = 0;
-        char time[20];
-        sprintf(time,"%02i:%02i.%02i%c",0,0,0,'\0');
-        ui->uptimelcdNumber->display(time);
+        ui->uptimelcdNumber->display(AHNS_HMS(m_hourCount,m_minCount,m_secCount));
     }
     else if (btnAbstract->text() == "Restore Defaults")
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Restore Defaults ]");
 
-        ui->serverIPlineEdit->setText("192.168.2.2");
-        ui->serverPortlineEdit->setText("5000");
+        ui->serverIPlineEdit->setText(DEFAULT_SERVER_IP);
+        ui->serverPortlineEdit->setText(DEFAULT_SERVER_PORT);
         ui->clientIPlineEdit->setText(szHostIP);
-        ui->clientPortlineEdit->setText("5000");
+        ui->clientPortlineEdit->setText(DEFAULT_CLIENT_PORT);
     }
     else // ui is wrong
     {
@@ -211,8 +212,6 @@ void wifiComms::lcdUpdate()
         }
     }
     // Output to LCD
-    char time[20];
-    sprintf(time,"%02i:%02i.%02i%c",m_hourCount,m_minCount,m_secCount,'\0');
-    ui->uptimelcdNumber->display(time);
+    ui->uptimelcdNumber->display(AHNS_HMS(m_hourCount,m_minCount,m_secCount));
     return;
 }

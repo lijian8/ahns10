@@ -15,16 +15,13 @@
 
 #include "systemstatus.h"
 #include "ui_systemstatus.h"
-
-#include <cstdio>
+#include "ahns_timeformat.h"
 
 SystemStatus::SystemStatus(QWidget *parent) : QWidget(parent), ui(new Ui::SystemStatus)
 {
     ui->setupUi(this);
 
-    char time[20];
-    sprintf(time,"%02i:%02i.%02i%c",0,0,0,'\0');
-    ui->fcUptimeLcd_2->display(time);
+    ui->fcUptimeLcd_2->display(AHNS_HMS(0,0,0));
 }
 
 SystemStatus::~SystemStatus()

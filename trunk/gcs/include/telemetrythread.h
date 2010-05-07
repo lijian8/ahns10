@@ -26,16 +26,20 @@
 #include <QHostAddress>
 #include <QUdpSocket>
 
+#include "inttypes.h"
+#include "state.h"
+
 /**
   * \brief Thead Class Inherided from QThread
   */
 class TelemetryThread : public QThread
 {
     Q_OBJECT
+
 public:
-    TelemetryThread();
-    TelemetryThread(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
-    TelemetryThread(quint16& serverPort, QHostAddress& serverIP, quint16& clientPort, QHostAddress& clientIP);
+    TelemetryThread(QObject * parent = 0);
+    TelemetryThread(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP, QObject * parent = 0);
+    TelemetryThread(quint16& serverPort, QHostAddress& serverIP, quint16& clientPort, QHostAddress& clientIP, QObject * parent = 0);
     ~TelemetryThread();
 
     void run();
@@ -45,17 +49,22 @@ public:
     QHostAddress readClientIP() const;
     quint16 readServerPort() const;
     QHostAddress readServerIP() const;
+
 signals:
+    void NewHeliState(const state_t* receivedState);
 
 protected:
+
+public slots:
 
 private slots:
     void DataPending();
 
 private:
+    bool clientInitialise();
 
-    void txInitialise();
-    void rxInitialise();
+    // Methods for Data Transmission
+    int sendMessage(uint32_t type, const char* txData = NULL, int txDataByteLength = 0);
 
     quint16 m_serverPort;
     quint16 m_clientPort;
@@ -65,8 +74,7 @@ private:
     QMutex m_mutex;
     volatile bool m_stopped;
 
-    QUdpSocket* m_txSocket;
-    QUdpSocket* m_rxSocket;
+    QUdpSocket* m_socket;
 
 };
 

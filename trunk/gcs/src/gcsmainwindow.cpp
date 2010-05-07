@@ -14,6 +14,7 @@
  */
 
 #include <QtGui>
+#include <QMessageBox>
 
 #include "gcsmainwindow.h"
 #include "ui_gcsmainwindow.h"
@@ -28,6 +29,9 @@
 
 //AHNS Reuse
 #include "ahns_logger.h"
+
+// Communications Information
+#include "commands.h"
 
 gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::gcsMainWindow)
 {
@@ -81,7 +85,6 @@ void gcsMainWindow::changeEvent(QEvent *e)
   */
 void gcsMainWindow::createDockWindows()
 {
-
     AHNS_DEBUG("gcsMainWindow::createDockWindows()");
 
     AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating AH Widget ]");
@@ -121,9 +124,10 @@ void gcsMainWindow::createDockWindows()
     connect(wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
     connect(wifiCommsWidget,SIGNAL(ConnectionClose()),this,SLOT(CloseTelemetry()));
     connect(wifiCommsWidget,SIGNAL(ConnectionRetry(quint16&,QString&,quint16&,QString&)),this,SLOT(RetryTelemetry(quint16&,QString&,quint16&,QString&)));
+    connect(this,SIGNAL(NewAHState(const float&,const float&,const float&,const float&, const float&)),ahWidget,SLOT(UpdateState(const float&,const float&,const float&,const float&, const float&)));
 
     AHNS_DEBUG("gcsMainWindow::createDockWindows() [ COMPLETED ]");
-  return;
+    return;
 }
 
 /**
@@ -142,23 +146,33 @@ void gcsMainWindow::on_actionAbout_triggered()
 void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP)
 {
     AHNS_DEBUG("gcsMainWindow::StartTelemetry()");
-
+    AHNS_DEBUG("gcsMainWindow::StartTelemetry() [ MAIN THREAD ID " << (int) QThread::currentThreadId() << " ]");
     if (m_TelemetryThread == NULL)
     {
         try
         {
+          // Allocate the Thread
           m_TelemetryThread = new TelemetryThread(serverPort,serverIP,clientPort,clientIP);
           m_TelemetryThread->start();
+
+          // Connect Outgoing Data Signals and Slots
+          connect(m_TelemetryThread,SIGNAL(NewHeliState(const state_t*)),this,SLOT(UpdateHeliState(const state_t*)));
         }
         catch (const std::exception &e)
         {
             AHNS_ALERT("gcsMainWindow::StartTelemetry() [ THREAD START FAILED " << e.what() << " ]");
             m_TelemetryThread = NULL;
+            QMessageBox messageBox(QMessageBox::Warning,"Failed Telemetry Launch",e.what());
+            messageBox.show();
+            messageBox.exec();
         }
     }
     else
     {
-      AHNS_DEBUG("gcsMainWindow::StartTelemetry() [ FALSE APPLY BUTTON PRESS ]");
+      AHNS_DEBUG("gcsMainWindow::StartTelemetry() [ FALSE OPEN BUTTON PRESS ]");
+      QMessageBox messageBox(QMessageBox::Information,"Telemetry","Telemetry Already Running",QMessageBox::Ok);
+      messageBox.show();
+      messageBox.exec();
     }
     return;
 }
@@ -180,6 +194,9 @@ void gcsMainWindow::CloseTelemetry()
     else
     {
         AHNS_DEBUG("gcsMainWindow::CloseTelemetry() [ FALSE CLOSE BUTTON PRESS ]");
+        QMessageBox messageBox(QMessageBox::Information,"Telemetry","Telemetry Already Stopped",QMessageBox::Ok);
+        messageBox.show();
+        messageBox.exec();
     }
     return;
 }
@@ -211,22 +228,28 @@ void gcsMainWindow::RetryTelemetry(quint16& serverPort, QString& serverIP, quint
       {
         AHNS_ALERT("gcsMainWindow::ResetTelemetry() [ THREAD RESET FAILED " << e.what() << " ]");
         m_TelemetryThread = NULL;
+        QMessageBox messageBox(QMessageBox::Warning,"Failed Telemetry Restart",e.what(),QMessageBox::Ok);
+        messageBox.show();
+        messageBox.exec();
       }
     }
     else
     {
         // Create Thread
-        try
-        {
-          m_TelemetryThread = new TelemetryThread(serverPort,serverIP,clientPort,clientIP);
-          m_TelemetryThread->start();
-        }
-        catch (const std::exception &e)
-        {
-          AHNS_ALERT("gcsMainWindow::RetryTelemetry() [ THREAD RESET FAILED " << e.what() << " ]");
-          m_TelemetryThread = NULL;
-        }
+        StartTelemetry(serverPort, serverIP, clientPort, clientIP);
     }
+
+    return;
+}
+
+void gcsMainWindow::UpdateHeliState(const state_t* heliState)
+{
+    float newRoll = (float) heliState->phi;
+    float newRollRate = (float) heliState->p;
+    float newPitch = (float) -heliState->theta*C_DEG2RAD;
+    float newPitchRate = (float) heliState->q;
+    float newAltState = (float) heliState->z*100.0;
+    emit NewAHState(newRoll, newRollRate, newPitch, newPitchRate, newAltState);
 
     return;
 }
