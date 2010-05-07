@@ -11,7 +11,7 @@ INCLUDEPATH += . \
     include \
     AHWidget/include \
     reuse/ \
-    ../../../heliconnect10/trunk/
+    ../../../heliconnect10/trunk/udp/
 UI_DIR = ui
 UI_HEADERS_DIR = tmp
 UI_SOURCES_DIR = tmp
@@ -33,7 +33,8 @@ SOURCES += src/main.cpp \
     reuse/ahns_logger.cpp \
     src/aboutform.cpp \
     src/wificomms.cpp \
-    src/telemetrythread.cpp
+    src/telemetrythread.cpp \
+    reuse/ahns_timeformat.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -42,8 +43,9 @@ HEADERS += include/gcsmainwindow.h \
     include/aboutform.h \
     include/wificomms.h \
     include/telemetrythread.h \
-    ../../../heliconnect10/trunk/state.h \
-    ../../../heliconnect10/trunk/commands.h
+    reuse/ahns_timeformat.h \
+    ../../../heliconnect10/trunk/udp/commands.h \
+    ../../../heliconnect10/trunk/udp/state.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \

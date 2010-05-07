@@ -37,15 +37,23 @@ public:
     gcsMainWindow(QWidget *parent = NULL);
     ~gcsMainWindow();
 
+signals:
+    void NewAHState(const float& newRoll,const float& newRollRate,const float& newPitch,const float& newPitchRate, const float& newAltState);
+
 protected:
     void changeEvent(QEvent *e);
 
 private slots:
     void on_actionAbout_triggered();
 
+    // Telemetry Buttons
     void StartTelemetry(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
     void CloseTelemetry();
     void RetryTelemetry(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
+
+    // Update Telemetry Slots
+   void UpdateHeliState(const state_t* heliState);
+
 
 private:
     Ui::gcsMainWindow *ui;

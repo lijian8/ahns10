@@ -93,3 +93,17 @@ QSize AHclass::sizeHint() const
 {
 	return QSize(400, 400);
 }
+
+/**
+  * @brief Slot for updating complete widget
+  */
+void AHclass::UpdateState(const float& newRoll,const float& newRollRate,const float& newPitch,const float& newPitchRate, const float& newAltState)
+{
+    angRoll = newRoll;
+    angRollRate = newRollRate;
+    angPitch = newPitch;
+    angPitchRate = newPitchRate;
+    altState = newAltState;
+    UpdateRoll();
+    return;
+}
