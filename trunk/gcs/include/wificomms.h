@@ -19,7 +19,6 @@
 
 #include <QWidget>
 #include <QAbstractButton>
-#include <QTimer>
 
 namespace Ui {
     class wifiComms;
@@ -35,9 +34,10 @@ public:
 
 public slots:
     void buttonBoxChanged(QAbstractButton* btnAbstract);
+    void lcdUpdate(const quint32& hourCounter, const quint8& minCounter, const quint8& secCounter);
 
 private slots:
-    void lcdUpdate();
+
 
 signals:
     void ConnectionRetry(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
@@ -46,17 +46,12 @@ signals:
 
 protected:
     void changeEvent(QEvent *e);
+    void resizeEvent(QResizeEvent* e);
 
 private:
     Ui::wifiComms *ui;
 
     char szHostIP[64];
-
-    // Timer for UPTIME LCD
-    QTimer m_oUptimer;
-    quint8 m_secCount;
-    quint8 m_minCount;
-    quint32 m_hourCount;
 };
 
 #endif // WIFICOMMS_H

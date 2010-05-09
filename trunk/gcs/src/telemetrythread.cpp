@@ -213,6 +213,8 @@ int TelemetryThread::sendMessage(uint32_t type, const char* txData, int txDataBy
 
 /**
   * @brief Slot to be called when new data arrives on m_socket
+  * The main thread is notified of the datagram's arrival through the emission of
+  * a suitable signal.
   */
 void TelemetryThread::DataPending()
 {
@@ -244,10 +246,12 @@ void TelemetryThread::DataPending()
        // Parse Structure
        switch (messageType)
        {
-         case HELI_STATE:
+       case COMMAND_ACK:
+           break;
+       case HELI_STATE:
            emit NewHeliState((const state_t*) buffer);
            break;
-         default:
+       default:
            AHNS_ALERT("TelemetryThread::DataPending() [ MESSAGE TYPE PARSE FAILED ]");
        }
     }

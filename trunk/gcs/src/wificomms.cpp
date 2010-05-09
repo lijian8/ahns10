@@ -19,6 +19,7 @@
 #include "ui_wificomms.h"
 
 #include <QString>
+#include <QResizeEvent>
 
 #include <iostream>
 #include <fstream>
@@ -48,6 +49,7 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
 {
 
     ui->setupUi(this);
+    setMinimumSize(400, 125);
 
     // 2009 HMI code to find the interface and IP in use
     using namespace std;
@@ -97,22 +99,22 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
     ui->clientIPlineEdit->setText(szHostIP);
     ui->clientPortlineEdit->setText(DEFAULT_CLIENT_PORT);
 
-    // internal signals
-    connect(&m_oUptimer,SIGNAL(timeout()),this,SLOT(lcdUpdate()));
-
-    //timer variables
-    m_oUptimer.setInterval(1000);
-    m_secCount = 0;
-    m_minCount = 0;
-    m_hourCount = 0;
-
-    ui->uptimelcdNumber->display(AHNS_HMS(m_hourCount,m_minCount,m_secCount));
+    ui->uptimelcdNumber->display(AHNS_HMS(0,0,0));
 }
 
 wifiComms::~wifiComms()
 {
-    m_oUptimer.stop();
     delete ui;
+}
+
+/**
+  * @brief Handle Resize
+  */
+void wifiComms::resizeEvent(QResizeEvent* e)
+{
+    AHNS_DEBUG("wifiComms::resizeEvent(QResizeEvent* e)");
+    ui->horizontalLayoutWidget->resize(e->size());
+    return;
 }
 
 void wifiComms::changeEvent(QEvent *e)
@@ -133,12 +135,12 @@ void wifiComms::changeEvent(QEvent *e)
   */
 QSize wifiComms::sizeHint() const
 {
-    return QSize(400, 165);
+    return QSize(400, 125);
 }
 
 
 /**
-  * @brief Slot to emit signals used by the mainwindow to start
+  * @brief Slot to emit signals used by the mainwindow to start the telemetry thread
   * @param Pointer to button from the dialogue box
   */
 void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
@@ -150,35 +152,24 @@ void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
     QString clientIP = ui->clientIPlineEdit->text();
 
     AHNS_DEBUG("wifiComms::buttonBoxChanged()");
-    // Find the signal and emit it, also manage timer
+
     if (btnAbstract->text() == "&Close")
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Close ]");
+
         emit ConnectionClose();
-        m_oUptimer.stop();
-
-        m_secCount = 0;
-        m_minCount = 0;
-        m_hourCount = 0;
-
-        ui->uptimelcdNumber->display(AHNS_HMS(m_hourCount,m_minCount,m_secCount));
     }
     else if (btnAbstract->text() == "Open")
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Open ]");
+
         emit ConnectionStart(serverPort, serverIP, clientPort, clientIP);
-        m_oUptimer.start();
     }
     else if (btnAbstract->text() == "Retry")
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Retry ]");
-        emit ConnectionRetry(serverPort, serverIP, clientPort, clientIP);
 
-        m_oUptimer.start();
-        m_secCount = 0;
-        m_minCount = 0;
-        m_hourCount = 0;
-        ui->uptimelcdNumber->display(AHNS_HMS(m_hourCount,m_minCount,m_secCount));
+        emit ConnectionRetry(serverPort, serverIP, clientPort, clientIP);
     }
     else if (btnAbstract->text() == "Restore Defaults")
     {
@@ -196,22 +187,10 @@ void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
 }
 
 /**
-  * Slot for the 1 second Timer to update the Telemetry LCD
+  * \brief Slot for the main window to update the Telemetry LCD
   */
-void wifiComms::lcdUpdate()
+void wifiComms::lcdUpdate(const quint32& hourCounter, const quint8& minCounter, const quint8& secCounter)
 {
-    m_secCount++;
-    if (m_secCount == 60)
-    {
-        m_secCount = 0;
-        m_minCount++;
-        if (m_minCount > 60)
-        {
-            m_minCount = 0;
-            m_hourCount++;
-        }
-    }
-    // Output to LCD
-    ui->uptimelcdNumber->display(AHNS_HMS(m_hourCount,m_minCount,m_secCount));
+    ui->uptimelcdNumber->display(AHNS_HMS(hourCounter,minCounter,secCounter));
     return;
 }

@@ -13,6 +13,7 @@ using namespace std;
 
 AHclass::AHclass(QWidget* parent) : QGLWidget(parent)
 {
+    QWidget::setMinimumSize(400,400);
 	// DEFINE VARIABLES
 	angRoll = 0.0f;
 	angPitch = 0.0f;
