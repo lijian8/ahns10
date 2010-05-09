@@ -1,22 +1,10 @@
 #summary Information on the set up and connection to the flight computer wifi
 #labels Phase-Implementation,Phase-Deploy
 
-= Flight Computer Setup =
-The following information is valid of the Overo Fire COM, with SD card omap3-console-image of 22 April 2010. The setup creates the ad-hoc network using the wlan0 interface and then enables the DHCP server on the flight computer.
-  * Setup script is [http://code.google.com/p/ahns10/source/browse/trunk/airborne/network/overo_wifi_setup.sh overo_wifi_setup.sh] and needs to be run on system start up.
-  * DHCP information is in [http://code.google.com/p/ahns10/source/browse/trunk/airborne/network/udhcpd.conf udhcpd.conf]
-
-|| Ad-hoc essid || heliconnect10 ||
-|| Interface || wlan0 ||
-|| Netmask || 255.255.255.0 ||
-|| Flight Computer IP || 192.168.2.2 ||
-|| IP Range || 192.168.2.3 - 192.168.2.255 ||
-|| Broadcast || 192.168.2.255 ||
-
-
-= IPhone Client Set Up =
-The iPhone can connect to the wireless network 'heliconnect10' with the default firmware. It is tolerant of incorrect broadcast and netmask information.
-
-= Ubuntu/Kubuntu =
-  * Set the wireless mode as ad-hoc
-  * The DHCP server should provide the correct netmask and broadcast information
+= TCP/IP Connection =
+All devices need to connect to the ground station 802.11 modem essid dd-wrt
+Router is preferable to ad-hoc:
+  * due to full 802.11g speeds
+  * ability to connect and disconnect without wifi card reconfigure 
+  * inbuilt dhcp and dns server
+  * provides access to Internet through connection of wired network link
