@@ -24,7 +24,7 @@ namespace Ui {
 }
 
 /**
-  * \breif Qt SystemStatus Widget
+  * @breif Qt SystemStatus Widget
   */
 class SystemStatus : public QWidget {
     Q_OBJECT
@@ -35,7 +35,8 @@ public:
     QSize sizeHint() const;
 
 protected:
-    void changeEvent(QEvent *e);
+    void changeEvent(QEvent* e);
+    void resizeEvent (QResizeEvent* e);
 
 private:
     Ui::SystemStatus *ui;
