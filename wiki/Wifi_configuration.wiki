@@ -1,6 +1,6 @@
 #summary Wifi configuration for AHNS devices.
 
-= TCP/IP Connection =
+== TCP/IP Connection ==
 All devices need to connect to the ground station 802.11 modem (Linksys WRT54GL router).
 Router is preferable to ad-hoc:
   * due to full 802.11g speeds
@@ -27,6 +27,4 @@ Router is preferable to ad-hoc:
 
 == Blackfin Camera == 
 The AHNS Blackfin camera will only connect to a network with a SSID of 'heliconnect10'. Full instructions for reconfiguration can be found [http://www.surveyor.com/blackfin/SRV_setup_bf.html here.]
-
-
 
