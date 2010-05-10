@@ -5,4 +5,5 @@
   * [HighLevelObjectivesSystemRequirementsandRoles HLO/SR/Roles]
   * [SoftwareSolution Software Solution]
   * [APandHMI  2009 HMI/AP Build Instructions]
+  * [Wifi configuration Wifi_configuration]
   * [http://code.google.com/p/ahns10/w/list Full Wiki List]
