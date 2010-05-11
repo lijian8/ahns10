@@ -35,7 +35,8 @@ SOURCES += src/main.cpp \
     src/wificomms.cpp \
     src/telemetrythread.cpp \
     reuse/ahns_timeformat.cpp \
-    src/commsconsole.cpp
+    src/receiveconsole.cpp \
+    src/gcsmessages.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -47,10 +48,11 @@ HEADERS += include/gcsmainwindow.h \
     reuse/ahns_timeformat.h \
     ../../../heliconnect10/trunk/udp/commands.h \
     ../../../heliconnect10/trunk/udp/state.h \
-    include/commsconsole.h
+    include/receiveconsole.h \
+    reuse/ahns_commands.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \
     ui/wificomms.ui \
-    ui/commsconsole.ui
+    ui/receiveconsole.ui
 RESOURCES += resources/gcs.qrc

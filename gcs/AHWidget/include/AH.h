@@ -67,9 +67,10 @@ public:
 	float vertAltPos;
 	float fadeOut;
 	QSize tempSize;
+
+        void setState(const float newRoll,const float newRollRate,const float newPitch,const float newPitchRate, const float newAltState);
 	
 public slots:
-        void UpdateState(const float& newRoll,const float& newRollRate,const float& newPitch,const float& newPitchRate, const float& newAltState);
 
 	
 private slots:

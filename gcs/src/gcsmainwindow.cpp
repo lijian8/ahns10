@@ -15,27 +15,38 @@
 
 #include <QtGui>
 #include <QMessageBox>
+#include <QMetaType>
 
 #include "gcsmainwindow.h"
 #include "ui_gcsmainwindow.h"
+#include "state.h"
+#include "sys/time.h"
 
 // Widgets for the Docks
 #include "AH.h"
 #include "systemstatus.h"
 #include "wificomms.h"
+#include "receiveconsole.h"
 
 // Threads
 #include "telemetrythread.h"
 
-//AHNS Reuse
+// AHNS Reuse
 #include "ahns_logger.h"
-
-// Communications Information
-#include "commands.h"
 
 gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::gcsMainWindow)
 {
     ui->setupUi(this);
+
+    // Register Types
+    qRegisterMetaType<timeval>("timeval");
+    qRegisterMetaType<state_t>("state_t");
+    qRegisterMetaType<fc_state_t>("fc_state_t");
+    qRegisterMetaType<ap_state_t>("ap_state_t");
+    qRegisterMetaType<gains_t>("gains_t");
+    qRegisterMetaType<loop_parameters_t>("loop_parameters_t");
+
+
 
     createDockWindows();
 
@@ -75,7 +86,7 @@ gcsMainWindow::~gcsMainWindow()
     delete m_Aboutfrm;
     delete ui;
     AHNS_DEBUG("gcsMainWindow::~gcsMainWindow() [ COMPLETED ]")
-}
+        }
 
 void gcsMainWindow::changeEvent(QEvent *e)
 {
@@ -96,37 +107,45 @@ void gcsMainWindow::changeEvent(QEvent *e)
 void gcsMainWindow::createDockWindows()
 {
     AHNS_DEBUG("gcsMainWindow::createDockWindows()");
+    try
+    {
+        AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Docks ]");
+        QDockWidget* dockAH = new QDockWidget(tr("Artificial Horizon"),this);
+        QDockWidget* dockSS = new QDockWidget(tr("System Status"),this);
+        QDockWidget* dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
+        QDockWidget* dockRC = new QDockWidget(tr("Received Packets"),this);
 
-    AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating AH Widget ]");
-    QDockWidget *dockAH = new QDockWidget(tr("Artificial Horizon"),this);
-    AHclass* ahWidget = new AHclass(dockAH);
-    dockAH->setWidget(ahWidget);
-    m_dockList << dockAH; // keep the object in a list
-    addDockWidget(Qt::RightDockWidgetArea,dockAH);
-    ui->menuView->insertAction(0,dockAH->toggleViewAction());
+        AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Widgets ]");
+        m_ahWidget = new AHclass(dockAH);
+        m_systemStatusWidget = new SystemStatus(dockSS);
+        m_wifiCommsWidget = new wifiComms(dockWC);
+        m_receiveConsoleWidget = new ReceiveConsole(dockRC);
 
-    AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating System Status Widget ]");
-    QDockWidget *dockSS = new QDockWidget(tr("System Status"),this);
-    SystemStatus* systemStatusWidget = new SystemStatus(dockSS);
-    dockSS->setWidget(systemStatusWidget);
-    m_dockList << dockSS; // keep in the list
-    addDockWidget(Qt::RightDockWidgetArea,dockSS);
-    ui->menuView->insertAction(0,dockSS->toggleViewAction());
+        dockAH->setWidget(m_ahWidget);
+        dockSS->setWidget(m_systemStatusWidget);
+        dockWC->setWidget(m_wifiCommsWidget);
+        dockRC->setWidget(m_receiveConsoleWidget);
 
-    AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating wifiComms Widget ]");
-    QDockWidget *dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
-    wifiComms* wifiCommsWidget = new wifiComms(dockWC);
-    dockWC->setWidget(wifiCommsWidget);
-    m_dockList << dockWC; //keep in the list
-    addDockWidget(Qt::RightDockWidgetArea,dockWC);
-    ui->menuView->insertAction(0,dockWC->toggleViewAction());
+        addDockWidget(Qt::RightDockWidgetArea,dockAH);
+        addDockWidget(Qt::RightDockWidgetArea,dockSS);
+        addDockWidget(Qt::RightDockWidgetArea,dockWC);
+        addDockWidget(Qt::LeftDockWidgetArea,dockRC);
 
-    AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
-    connect(wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
-    connect(wifiCommsWidget,SIGNAL(ConnectionClose()),this,SLOT(CloseTelemetry()));
-    connect(wifiCommsWidget,SIGNAL(ConnectionRetry(quint16&,QString&,quint16&,QString&)),this,SLOT(RetryTelemetry(quint16&,QString&,quint16&,QString&)));
-    connect(this,SIGNAL(NewTelemetryStatus(quint32,quint8,quint8)),wifiCommsWidget,SLOT(lcdUpdate(quint32,quint8,quint8)));
-    connect(this,SIGNAL(NewAHState(const float&,const float&,const float&,const float&, const float&)),ahWidget,SLOT(UpdateState(const float&,const float&,const float&,const float&, const float&)));
+        ui->menuView->insertAction(0,dockAH->toggleViewAction());
+        ui->menuView->insertAction(0,dockSS->toggleViewAction());
+        ui->menuView->insertAction(0,dockWC->toggleViewAction());
+        ui->menuView->insertAction(0,dockRC->toggleViewAction());
+
+        AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
+        connect(m_wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
+        connect(m_wifiCommsWidget,SIGNAL(ConnectionClose()),this,SLOT(CloseTelemetry()));
+        connect(m_wifiCommsWidget,SIGNAL(ConnectionRetry(quint16&,QString&,quint16&,QString&)),this,SLOT(RetryTelemetry(quint16&,QString&,quint16&,QString&)));
+        connect(this,SIGNAL(NewTelemetryStatus(quint32,quint8,quint8)),m_wifiCommsWidget,SLOT(lcdUpdate(quint32,quint8,quint8)));
+    }
+    catch (std::exception& e)
+    {
+        AHNS_ALERT("gcsMainWindow::createDockWindows() [ CREATE DOCKS AND WIDGETS ERROR " << e.what() << " ]");
+    }
 
     AHNS_DEBUG("gcsMainWindow::createDockWindows() [ COMPLETED ]");
     return;
@@ -155,15 +174,15 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
         {
             // Allocate the Thread
             m_TelemetryThread = new TelemetryThread(serverPort,serverIP,clientPort,clientIP);
-            m_TelemetryThread->start();
 
-            // Connect Outgoing Data Signals and Slots
-            connect(m_TelemetryThread,SIGNAL(NewHeliState(const state_t*)),this,SLOT(UpdateHeliState(const state_t*)));
+            // Speed Information
+            connect(m_TelemetryThread,SIGNAL(RxEstimate(double)),m_receiveConsoleWidget,SLOT(RxSpeed(const double&)));
 
-            m_TelSecCount = 0;
-            m_TelMinCount = 0;
-            m_TelHourCount = 0;
-            m_oTelUptimer.start();
+            // Rx Messages
+            connect(m_TelemetryThread,SIGNAL(NewHeliState(timeval*, const state_t*, const int)),this,SLOT(ProcessHeliState(timeval*, const state_t*, const int)));
+            connect(m_TelemetryThread,SIGNAL(NewAckMessage(timeval*, const int)),this,SLOT(ProcessAckMessage(timeval*, const int)));
+
+            m_receiveConsoleWidget->clearConsole();
         }
         catch (const std::exception &e)
         {
@@ -288,22 +307,5 @@ void gcsMainWindow::TelemetryMonitor()
         messageBox.show();
         messageBox.exec();
     }
-    return;
-}
-
-/**
-  * @brief Process the new state_t message by updating the GUI
-  * Widgets Updated:
-  *     - Updates the AH
-  */
-void gcsMainWindow::UpdateHeliState(const state_t* heliState)
-{
-    float newRoll = (float) heliState->phi;
-    float newRollRate = (float) heliState->p;
-    float newPitch = (float) -heliState->theta*C_DEG2RAD;
-    float newPitchRate = (float) heliState->q;
-    float newAltState = (float) heliState->z*100.0;
-    emit NewAHState(newRoll, newRollRate, newPitch, newPitchRate, newAltState);
-
     return;
 }

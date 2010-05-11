@@ -17,7 +17,7 @@ float AHclass::colorConv(int RGB)
 /*float AHclass_ALT::colorConv(int RGB)
 {
 	return (float)RGB/255;
-}
+}*/
 
 /* *************************************************** */
 /* ********** ANTIALIASE ENABLING FUNCTIONS ********** */

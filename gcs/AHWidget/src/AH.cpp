@@ -8,6 +8,9 @@
 #include <iomanip>
 #include <ctime>
 #include <QSize>
+#include <cmath>
+
+#include "ahns_logger.h"
 
 using namespace std;
 
@@ -97,14 +100,24 @@ QSize AHclass::sizeHint() const
 
 /**
   * @brief Slot for updating complete widget
+  * @param newRoll Roll Angle in radians
+  * @param newRollRate Roll Rate in radians per sec
+  * @param newPitch Pitch Angle in radians
+  * @param newPitchRate Pitch Rate in radians per sec
+  * @param newAltState Altitude in meters
   */
-void AHclass::UpdateState(const float& newRoll,const float& newRollRate,const float& newPitch,const float& newPitchRate, const float& newAltState)
+void AHclass::setState(const float newRoll,const float newRollRate,const float newPitch,const float newPitchRate, const float newAltState)
 {
-    angRoll = newRoll;
-    angRollRate = newRollRate;
+    AHNS_DEBUG("AHclass::setState()");
+    // Roll is in degrees, pitch in radians
+    angRoll = newRoll * M_PI / 180.0;
+    angRollRate = newRollRate* M_PI / 180.0;
+
     angPitch = newPitch;
     angPitchRate = newPitchRate;
-    altState = newAltState;
+
+    altState = newAltState*100.0;
+
     UpdateRoll();
     return;
 }
