@@ -112,7 +112,7 @@ wifiComms::~wifiComms()
   */
 void wifiComms::resizeEvent(QResizeEvent* e)
 {
-    AHNS_DEBUG("wifiComms::resizeEvent(QResizeEvent* e)");
+    //AHNS_DEBUG("wifiComms::resizeEvent(QResizeEvent* e)");
     ui->horizontalLayoutWidget->resize(e->size());
     return;
 }

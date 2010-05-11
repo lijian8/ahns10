@@ -40,7 +40,7 @@ SystemStatus::~SystemStatus()
   */
 void SystemStatus::resizeEvent (QResizeEvent* e)
 {
-    AHNS_DEBUG("SystemStatus::resizeEvent (QResizeEvent* e)");
+    //AHNS_DEBUG("SystemStatus::resizeEvent (QResizeEvent* e)");
     ui->gridLayoutWidget->resize(e->size());
     return;
 }
@@ -59,7 +59,7 @@ void SystemStatus::changeEvent(QEvent *e)
 }
 
 /**
-  * \brief Initial sizing hint of the SystemStatus widget
+  * @brief Initial sizing hint of the SystemStatus widget
   */
 QSize SystemStatus::sizeHint() const
 {

@@ -19,9 +19,15 @@
 #include <QMainWindow>
 #include <QPointer>
 #include <QtGlobal>
+#include "sys/time.h"
 
 #include "aboutform.h"
+
+#include "wificomms.h"
 #include "telemetrythread.h"
+#include "systemstatus.h"
+#include "AH.h"
+#include "receiveconsole.h"
 
 
 namespace Ui {
@@ -45,10 +51,6 @@ signals:
     // Timers
     void NewTelemetryStatus(const quint32& hourCount, const quint8& minCount, const quint8& secCount);
 
-    // Messages
-    void NewAHState(const float& newRoll,const float& newRollRate,const float& newPitch,const float& newPitchRate, const float& newAltState);
-
-
 protected:
     void changeEvent(QEvent *e);
 
@@ -62,17 +64,19 @@ private slots:
     void TelemetryMonitor();
 
     // Update Telemetry Slots
-   void UpdateHeliState(const state_t* heliState);
-
-
+   void ProcessHeliState(timeval* timeStamp, const state_t* heliState, const int discarded = 0);
+   void ProcessAckMessage(timeval* timeStamp, const int discarded = 0);
 
 private:
     Ui::gcsMainWindow *ui;
     void createDockWindows();
+    QString timeStamptoString(const struct timeval timeStamp);
 
-    //List of Dockable Widgets
-    QList<QDockWidget*> m_dockList;
-
+    //Docked Widgets Widget
+    AHclass* m_ahWidget;
+    SystemStatus* m_systemStatusWidget;
+    wifiComms* m_wifiCommsWidget;
+    ReceiveConsole* m_receiveConsoleWidget;
 
     // Form
     aboutForm* m_Aboutfrm;
