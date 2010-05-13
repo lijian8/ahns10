@@ -20,6 +20,7 @@
 
 #include "AH.h"
 #include "gcsmainwindow.h"
+#include "ahns_logger.h"
 
 // Declare the Types for signal/slot use
 Q_DECLARE_METATYPE(timeval)
@@ -45,54 +46,55 @@ QString gcsMainWindow::timeStamptoString(const struct timeval timeStamp)
   *     - Updates the AH
   *     - Updates the recevied console
   * @param timeStamp timeval that stores the timestamp of the current message
-  * @param heliState state_t* that has all angular quantities in radians and positions in meters
+  * @param heliState state_t that has all angular quantities in radians and positions in meters
   * @param discarded bool to flag if the message was discarded or not
   */
-void gcsMainWindow::ProcessHeliState(timeval* timeStamp, const state_t* heliState, const int discarded)
+void gcsMainWindow::ProcessHeliState(const timeval timeStamp, const state_t heliState, const int discarded)
 {
+    AHNS_DEBUG("gcsMainWindow::ProcessHeliState(const timeval timeStamp, const state_t heliState, const int discarded) [ Thread = " << QThread::currentThreadId() << " ]");
     QString consoleText;
 
-    QString timeStampStr = timeStamptoString(*timeStamp);
+    QString timeStampStr = timeStamptoString(timeStamp);
 
     QString phi;
-    phi.setNum(heliState->phi,'f',2);
+    phi.setNum(heliState.phi,'f',2);
     QString theta;
-    theta.setNum(heliState->theta,'f',2);
+    theta.setNum(heliState.theta,'f',2);
     QString psi;
-    psi.setNum(heliState->psi,'f',2);
+    psi.setNum(heliState.psi,'f',2);
 
     QString p;
-    p.setNum(heliState->p,'f',2);
+    p.setNum(heliState.p,'f',2);
     QString q;
-    q.setNum(heliState->q,'f',2);
+    q.setNum(heliState.q,'f',2);
     QString r;
-    r.setNum(heliState->r,'f',2);
+    r.setNum(heliState.r,'f',2);
 
     QString x;
-    x.setNum(heliState->x,'f',2);
+    x.setNum(heliState.x,'f',2);
     QString y;
-    y.setNum(heliState->y,'f',2);
+    y.setNum(heliState.y,'f',2);
     QString z;
-    z.setNum(heliState->z,'f',2);
+    z.setNum(heliState.z,'f',2);
 
     QString vx;
-    vx.setNum(heliState->vx,'f',2);
+    vx.setNum(heliState.vx,'f',2);
     QString vy;
-    vy.setNum(heliState->vy,'f',2);
+    vy.setNum(heliState.vy,'f',2);
     QString vz;
-    vz.setNum(heliState->vz,'f',2);
+    vz.setNum(heliState.vz,'f',2);
 
     QString ax;
-    ax.setNum(heliState->ax,'f',2);
+    ax.setNum(heliState.ax,'f',2);
     QString ay;
-    ay.setNum(heliState->ay,'f',2);
+    ay.setNum(heliState.ay,'f',2);
     QString az;
-    az.setNum(heliState->az,'f',2);
+    az.setNum(heliState.az,'f',2);
 
     QString trace;
-    trace.setNum(heliState->trace,'f',2);
+    trace.setNum(heliState.trace,'f',2);
     QString voltage;
-    voltage.setNum(heliState->voltage,'f',2);
+    voltage.setNum(heliState.voltage,'f',2);
 
     consoleText = "[ HELI_STATE ] \n\t" % timeStampStr %"\n\t"
                   % phi %" \t " % theta %" \t "% psi %"\n\t"
@@ -107,23 +109,20 @@ void gcsMainWindow::ProcessHeliState(timeval* timeStamp, const state_t* heliStat
     if (!discarded)
     {
         // Update the GUI
-        m_ahWidget->setState(heliState);
-        m_dataPlotterWidget->setHeliStateData(timeStamp,heliState);
+        m_ahWidget->setState(&heliState);
+        m_dataPlotterWidget->setHeliStateData(&timeStamp,&heliState);
     }
 
-    // the chores
-    delete heliState;
-    delete timeStamp;
     return;
 }
 
 /**
   * @brief Slot to receive an ACK Message
   */
-void gcsMainWindow::ProcessAckMessage(timeval* timeStamp, const int discarded)
+void gcsMainWindow::ProcessAckMessage(const timeval timeStamp, const int discarded)
 {
     QString consoleText;
-    QString timeStampStr = timeStamptoString(*timeStamp);
+    QString timeStampStr = timeStamptoString(timeStamp);
     consoleText = "[ COMMAND_ACK ] \n\t" % timeStampStr ;
     m_receiveConsoleWidget->addItem(consoleText,discarded);
 
@@ -132,6 +131,5 @@ void gcsMainWindow::ProcessAckMessage(timeval* timeStamp, const int discarded)
     m_TelHourCount = 0;
     m_oTelUptimer.start();
 
-    delete timeStamp;
     return;
 }

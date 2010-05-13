@@ -20,7 +20,6 @@
 #include "telemetrythread.h"
 #include "ahns_logger.h"
 #include "ahns_timeformat.h"
-#include "ahns_commands.h"
 
 #include "state.h"
 #include "commands.h"
@@ -254,20 +253,15 @@ int TelemetryThread::sendMessage(uint32_t type, const char* txData, int txDataBy
   */
 void TelemetryThread::DataPending()
 {
-    AHNS_DEBUG("TelemetryThread::DataPending()");
+    AHNS_DEBUG("TelemetryThread::DataPending() [ Thead = " << QThread::currentThreadId() << " ]");
 
     timeval* timeStampPointer = NULL;
-
-
-
     uint32_t messageType = -1;
     char* buffer = NULL;
     int discarded = 0;
 
     while(m_socket->hasPendingDatagrams())
     {
-        // Create new time stamp location
-        timeval* timeStamp = new timeval;
 
         // Create Byte Array
         QByteArray byteBuffer(m_socket->pendingDatagramSize(),0);
@@ -278,8 +272,8 @@ void TelemetryThread::DataPending()
         timeStampPointer = (struct timeval*) buffer;
         buffer += sizeof(struct timeval);
 
-        timeStamp->tv_sec = ntohl(timeStampPointer->tv_sec);
-        timeStamp->tv_usec = ntohl(timeStampPointer->tv_usec);
+        timeStampPointer->tv_sec = ntohl(timeStampPointer->tv_sec);
+        timeStampPointer->tv_usec = ntohl(timeStampPointer->tv_usec);
 
 
         // Estimate Speed
@@ -298,22 +292,22 @@ void TelemetryThread::DataPending()
 
         if ((0 <= messageType) && (messageType <= 256)) // Message Type Valid
         {
-            if (timercmp(&lastPacket[messageType],timeStamp, <)) // timeStamp after lastPacket
+            if (timercmp(&lastPacket[messageType],timeStampPointer, <)) // timeStampPointer after lastPacket
             {
-                AHNS_DEBUG("TelemetryThread::DataPending() [ PACKET IN ORDER ]");
+                //AHNS_DEBUG("TelemetryThread::DataPending() [ PACKET IN ORDER ]");
                 discarded = false;
-                lastPacket[messageType].tv_sec =  timeStamp->tv_sec;
-                lastPacket[messageType].tv_usec =  timeStamp->tv_usec;
+                lastPacket[messageType].tv_sec =  timeStampPointer->tv_sec;
+                lastPacket[messageType].tv_usec =  timeStampPointer->tv_usec;
             }
-            else if (timercmp(&lastPacket[messageType],timeStamp, >))
+            else if (timercmp(&lastPacket[messageType],timeStampPointer, >))
             {
                 discarded = -1;
-                AHNS_DEBUG("TelemetryThread::DataPending() [ LATE PACKET ]");
+                //AHNS_DEBUG("TelemetryThread::DataPending() [ LATE PACKET ]");
             }
             else
             {
                 discarded = -2;
-                AHNS_DEBUG("TelemetryThread::DataPending() [ DUPLICATE PACKET ]");
+                //AHNS_DEBUG("TelemetryThread::DataPending() [ DUPLICATE PACKET ]");
             }
 
             // Parse Structure
@@ -321,58 +315,58 @@ void TelemetryThread::DataPending()
             {
             case COMMAND_ACK:
                 m_ackReceived = true; 
-                emit NewAckMessage(timeStamp,discarded);
+                emit NewAckMessage(*timeStampPointer,discarded);
                 break;
             case HELI_STATE:
-                emit NewHeliState(timeStamp, copyHeliState((const state_t*) buffer), discarded);
+                emit NewHeliState(*timeStampPointer, *(state_t*) buffer, discarded);
                 break;
             case FC_STATE:
-                emit NewFCState(timeStamp, copyFCState((const fc_state_t*) buffer), discarded);
+                emit NewFCState(*timeStampPointer, *(fc_state_t*) buffer, discarded);
                 break;
             case AUTOPILOT_STATE:
-                emit NewAPState(timeStamp, copyAPState((const ap_state_t*) buffer), discarded);
+                emit NewAPState(*timeStampPointer, *(ap_state_t*) buffer, discarded);
                 break;
             case FAILSAFE:
-                emit NewFailSafe(timeStamp,discarded);
+                emit NewFailSafe(*timeStampPointer,discarded);
                 break;
             case ATTITUDE_GAIN_ROLL:
-                emit NewRollGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
+                emit NewRollGain(*timeStampPointer, *(gains_t*) buffer, discarded);
                 break;
             case ATTITUDE_GAIN_PITCH:
-                emit NewPitchGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
+                emit NewPitchGain(*timeStampPointer, *(gains_t*) buffer, discarded);
                 break;
             case ATTITUDE_GAIN_YAW:
-                emit NewYawGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
+                emit NewYawGain(*timeStampPointer, *(gains_t*) buffer, discarded);
                 break;
             case GUIDANCE_GAIN_X:
-                emit NewGuidanceXGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
+                emit NewGuidanceXGain(*timeStampPointer, *(gains_t*) buffer, discarded);
                 break;
             case GUIDANCE_GAIN_Y:
-                emit NewGuidanceYGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
+                emit NewGuidanceYGain(*timeStampPointer, *(gains_t*) buffer, discarded);
                 break;
             case GUIDANCE_GAIN_Z:
-                emit NewGuidanceZGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
+                emit NewGuidanceZGain(*timeStampPointer, *(gains_t*) buffer, discarded);
                 break;
             case ATTITUDE_PARAMETERS_ROLL:
-                emit NewRollParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
+                emit NewRollParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
                 break;
             case ATTITUDE_PARAMETERS_PITCH:
-                emit NewPitchParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
+                emit NewPitchParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
                 break;
             case ATTITUDE_PARAMETERS_YAW:
-                emit NewYawParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
+                emit NewYawParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
                 break;
             case GUIDANCE_PARAMETERS_X:
-                emit NewGuidanceXParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
+                emit NewGuidanceXParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
                 break;
             case GUIDANCE_PARAMETERS_Y:
-                emit NewGuidanceYParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
+                emit NewGuidanceYParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
                 break;
             case GUIDANCE_PARAMETERS_Z:
-                emit NewGuidanceZParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
+                emit NewGuidanceZParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
                 break;
             default:
-                AHNS_DEBUG("TelemetryThread::DataPending() [ MESSAGE TYPE NOT MATCHED]");
+                AHNS_DEBUG("TelemetryThread::DataPending() [ MESSAGE TYPE NOT MATCHED ]");
                 break;
             }
         }

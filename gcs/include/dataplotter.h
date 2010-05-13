@@ -25,6 +25,7 @@
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
 #include <qwt_scale_div.h>
+#include <fstream>
 
 namespace Ui {
     class DataPlotter;
@@ -36,7 +37,7 @@ public:
     DataPlotter(QWidget *parent = 0);
     ~DataPlotter();
     QSize sizeHint() const;
-    void setHeliStateData(const timeval* const timeStamp, const state_t* heliState);
+    void setHeliStateData(const timeval* const timeStamp, const state_t* const heliState);
     void replot();
 
 protected:
@@ -45,8 +46,10 @@ protected:
 
 private slots:
     void SetActive();
+    void ClearAll();
 
 private:
+    void initialiseLogs();
     Ui::DataPlotter *ui;
 
     /** @name Possible Plot Data */
@@ -67,9 +70,15 @@ private:
         F_Z_DOT,
         F_AZ,
         VOLTAGE,
+        ENGINE1,
+        ENGINE2,
+        ENGINE3,
+        ENGINE4,
+        FC_CPU,
         CURVE_COUNT,
-        RAW_TIME,
-        TIME,
+        HELI_STATE_RAW_TIME,
+        HELI_STATE_TIME,
+        FC_STATE_TIME,
         DATA_COUNT
     };
 
@@ -81,6 +90,9 @@ private:
 
     /** @name Curvers*/
     QwtPlotCurve m_plotCurves[CURVE_COUNT];
+
+    /** @name Log Files */
+    std::ofstream stateOutputFile;
 };
 
 #endif // DATAPLOTTER_H
