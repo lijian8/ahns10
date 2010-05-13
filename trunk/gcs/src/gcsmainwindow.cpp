@@ -113,8 +113,8 @@ void gcsMainWindow::createDockWindows()
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Docks ]");
         QDockWidget* dockAH = new QDockWidget(tr("Artificial Horizon"),this);
         QDockWidget* dockSS = new QDockWidget(tr("System Status"),this);
-        QDockWidget* dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
         QDockWidget* dockRC = new QDockWidget(tr("Received Packets"),this);
+        QDockWidget* dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
         QDockWidget* dockDP = new QDockWidget(tr("Data Plotter"),this);
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Widgets ]");
@@ -126,18 +126,18 @@ void gcsMainWindow::createDockWindows()
 
         dockAH->setWidget(m_ahWidget);
         dockSS->setWidget(m_systemStatusWidget);
-        dockWC->setWidget(m_wifiCommsWidget);
         dockRC->setWidget(m_receiveConsoleWidget);
+        dockWC->setWidget(m_wifiCommsWidget);
         dockDP->setWidget(m_dataPlotterWidget);
 
         addDockWidget(Qt::RightDockWidgetArea,dockAH);
         addDockWidget(Qt::RightDockWidgetArea,dockSS);
-        addDockWidget(Qt::RightDockWidgetArea,dockWC);
         addDockWidget(Qt::RightDockWidgetArea,dockRC);
+        addDockWidget(Qt::RightDockWidgetArea,dockWC);
         addDockWidget(Qt::LeftDockWidgetArea,dockDP);
 
         //setTabPosition(Qt::RightDockWidgetArea,QTabWidget::South);
-        tabifyDockWidget(dockRC,dockWC);
+        tabifyDockWidget(dockWC,dockRC);
 
         ui->menuView->insertAction(0,dockAH->toggleViewAction());
         ui->menuView->insertAction(0,dockSS->toggleViewAction());
@@ -188,8 +188,8 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             connect(m_TelemetryThread,SIGNAL(RxEstimate(double)),m_receiveConsoleWidget,SLOT(RxSpeed(const double&)));
 
             // Rx Messages
-            connect(m_TelemetryThread,SIGNAL(NewHeliState(timeval*, const state_t*, const int)),this,SLOT(ProcessHeliState(timeval*, const state_t*, const int)));
-            connect(m_TelemetryThread,SIGNAL(NewAckMessage(timeval*, const int)),this,SLOT(ProcessAckMessage(timeval*, const int)));
+            connect(m_TelemetryThread,SIGNAL(NewHeliState(const timeval, const state_t, const int)),this,SLOT(ProcessHeliState(const timeval, const state_t, const int)));
+            connect(m_TelemetryThread,SIGNAL(NewAckMessage(const timeval, const int)),this,SLOT(ProcessAckMessage(const timeval, const int)));
 
             m_receiveConsoleWidget->clearConsole();
         }

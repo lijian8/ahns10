@@ -12,7 +12,7 @@ INCLUDEPATH += . \
     AHWidget/include \
     reuse/ \
     ../../../heliconnect10/trunk/udp/ \
-    /usr/include/qwt-qt4/ \
+    /usr/include/qwt-qt4/
 UI_DIR = ui
 UI_HEADERS_DIR = tmp
 UI_SOURCES_DIR = tmp
@@ -51,7 +51,6 @@ HEADERS += include/gcsmainwindow.h \
     ../../../heliconnect10/trunk/udp/commands.h \
     ../../../heliconnect10/trunk/udp/state.h \
     include/receiveconsole.h \
-    reuse/ahns_commands.h \
     include/dataplotter.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \

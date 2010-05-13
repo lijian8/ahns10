@@ -100,15 +100,11 @@ QSize AHclass::sizeHint() const
 
 /**
   * @brief Slot for updating complete widget
-  * @param newRoll Roll Angle in radians
-  * @param newRollRate Roll Rate in radians per sec
-  * @param newPitch Pitch Angle in radians
-  * @param newPitchRate Pitch Rate in radians per sec
-  * @param newAltState Altitude in meters
+  * @param heliState Pointer to the helistate from the thread
   */
 void AHclass::setState(const state_t* const heliState)
 {
-    AHNS_DEBUG("AHclass::setState()");
+    AHNS_DEBUG("AHclass::setState() [ Thread = " << QThread::currentThreadId() << " ]");
 
     // AH Roll is in degrees
     angRoll = heliState->phi * 180.0/ M_PI;

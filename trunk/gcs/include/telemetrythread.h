@@ -53,24 +53,23 @@ public:
 
 signals:
     /** @name Signals for Received Messages */
-    void NewHeliState(timeval* timeStamp, const state_t* receivedState, const int discarded = 0);
-    void NewFCState(timeval* timeStamp, const fc_state_t* receivedState, const int discarded = 0);
-    void NewAPState(timeval* timeStamp, const ap_state_t* receivedState, const int discarded = 0);
-    void NewRollGain(timeval* timeStamp, const gains_t* receivedGains, const int discarded = 0);
-    void NewPitchGain(timeval* timeStamp, const gains_t* receivedGains, const int discarded = 0);
-    void NewYawGain(timeval* timeStamp, const gains_t* receivedGains, const int discarded = 0);
-    void NewGuidanceXGain(timeval* timeStamp, const gains_t* receivedGains, const int discarded = 0);
-    void NewGuidanceYGain(timeval* timeStamp, const gains_t* receivedGains, const int discarded = 0);
-    void NewGuidanceZGain(timeval* timeStamp, const gains_t* receivedGains, const int discarded = 0);
-    void NewRollParameters(timeval* timeStamp, const loop_parameters_t* receivedParameters, const int discarded = 0);
-    void NewPitchParameters(timeval* timeStamp, const loop_parameters_t* receivedParameters, const int discarded = 0);
-    void NewYawParameters(timeval* timeStamp, const loop_parameters_t* receivedParameters, const int discarded = 0);
-    void NewGuidanceXParameters(timeval* timeStamp, const loop_parameters_t* receivedParameters, const int discarded = 0);
-    void NewGuidanceYParameters(timeval* timeStamp, const loop_parameters_t* receivedParameters, const int discarded = 0);
-    void NewGuidanceZParameters(timeval* timeStamp, const loop_parameters_t* receivedParameters, const int discarded = 0);
-
-    void NewAckMessage(timeval* timeStamp, const int discarded = 0);
-    void NewFailSafe(timeval* timeStamp, const int discarded = 0);
+    void NewHeliState(const timeval timeStamp, const state_t receivedState, const int discarded = 0);
+    void NewFCState(const timeval timeStamp, const fc_state_t receivedState, const int discarded = 0);
+    void NewAPState(const timeval timeStamp, const ap_state_t receivedState, const int discarded = 0);
+    void NewRollGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
+    void NewPitchGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
+    void NewYawGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
+    void NewGuidanceXGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
+    void NewGuidanceYGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
+    void NewGuidanceZGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
+    void NewRollParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
+    void NewPitchParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
+    void NewYawParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
+    void NewGuidanceXParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
+    void NewGuidanceYParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
+    void NewGuidanceZParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
+    void NewAckMessage(const timeval timeStamp, const int discarded = 0);
+    void NewFailSafe(const timeval timeStamp, const int discarded = 0);
 
 
     void RxEstimate(const double& linkSpeed);
