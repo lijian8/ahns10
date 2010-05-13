@@ -11,7 +11,8 @@ INCLUDEPATH += . \
     include \
     AHWidget/include \
     reuse/ \
-    ../../../heliconnect10/trunk/udp/
+    ../../../heliconnect10/trunk/udp/ \
+    /usr/include/qwt-qt4/ \
 UI_DIR = ui
 UI_HEADERS_DIR = tmp
 UI_SOURCES_DIR = tmp
@@ -36,7 +37,8 @@ SOURCES += src/main.cpp \
     src/telemetrythread.cpp \
     reuse/ahns_timeformat.cpp \
     src/receiveconsole.cpp \
-    src/gcsmessages.cpp
+    src/gcsmessages.cpp \
+    src/dataplotter.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -49,10 +51,12 @@ HEADERS += include/gcsmainwindow.h \
     ../../../heliconnect10/trunk/udp/commands.h \
     ../../../heliconnect10/trunk/udp/state.h \
     include/receiveconsole.h \
-    reuse/ahns_commands.h
+    reuse/ahns_commands.h \
+    include/dataplotter.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \
     ui/wificomms.ui \
-    ui/receiveconsole.ui
+    ui/receiveconsole.ui \
+    ui/dataplotter.ui
 RESOURCES += resources/gcs.qrc

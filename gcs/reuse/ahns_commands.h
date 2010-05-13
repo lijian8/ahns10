@@ -10,7 +10,10 @@
  * Queensland University of Technology
  *
  * \section DESCRIPTION
- * Functions to handle the state structures from heliconnect
+ * Functions to handle the structures from heliconnect10
+ * Handing the QByteStream buffer from the telemetry thread to the main GUI is unwise
+ * so new memory is set aside to copy the structures into the main program.
+ * It is then the main program's responsibility to deallote the structures once they have been used
  */
 
 
@@ -25,34 +28,73 @@
   * @return Pointer to new memory location
   */
 
-state_t* copyHeliState(const state_t* srcState)
+inline state_t* copyHeliState(const state_t* const srcState)
 {
     state_t* heliState = new state_t;
 
-    heliState->phi = srcState->phi;
-    heliState->theta = srcState->theta;
-    heliState->psi = srcState->psi;
-
-    heliState->p = srcState->p;
-    heliState->q = srcState->q;
-    heliState->r = srcState->r;
-
-    heliState->x = srcState->x;
-    heliState->y = srcState->y;
-    heliState->z = srcState->z;
-
-    heliState->vx = srcState->vx;
-    heliState->vy = srcState->vy;
-    heliState->vz = srcState->vz;
-
-    heliState->ax = srcState->ax;
-    heliState->ay = srcState->ay;
-    heliState->az = srcState->az;
-
-    heliState->trace = srcState->trace;
-    heliState->voltage = srcState->voltage;
+    *heliState = *srcState;
 
     return heliState;
+}
+
+/**
+  * @brief Copy the Flight Computer State
+  *
+  * @return Pointer to new memory location
+  */
+
+inline fc_state_t* copyFCState(const fc_state_t* const srcState)
+{
+    fc_state_t* FCState = new fc_state_t;
+
+    *FCState = *srcState;
+
+    return FCState;
+}
+
+/**
+  * @brief Copy the Autopilot Computer State
+  *
+  * @return Pointer to new memory location
+  */
+
+inline ap_state_t* copyAPState(const ap_state_t* const srcState)
+{
+    ap_state_t* APState = new ap_state_t;
+
+    *APState = *srcState;
+
+    return APState;
+}
+
+/**
+  * @brief Copy the Gains Structure to new memory location
+  *
+  * @return Pointer to new memory location
+  */
+
+inline gains_t* copyGains(const gains_t* const srcGains)
+{
+    gains_t* gains = new gains_t;
+
+    *gains = *srcGains;
+
+    return gains;
+}
+
+/**
+  * @brief Copy the Loop Structure to new memory location
+  *
+  * @return Pointer to new memory location
+  */
+
+inline loop_parameters_t* copyLoopParameters(const loop_parameters_t* const srcLoop)
+{
+    loop_parameters_t* loop = new loop_parameters_t;
+
+    *loop = *srcLoop;
+
+    return loop;
 }
 
 #endif // AHNS_COMMANDS_H

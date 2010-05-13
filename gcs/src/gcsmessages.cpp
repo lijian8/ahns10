@@ -35,11 +35,8 @@ Q_DECLARE_METATYPE(loop_parameters_t)
 QString gcsMainWindow::timeStamptoString(const struct timeval timeStamp)
 {
     QString timeSec;
-    timeSec.setNum(timeStamp.tv_sec);
-
-    QString timeuSec;
-    timeuSec.setNum(timeStamp.tv_usec);
-    return timeSec % ":" % timeuSec;
+    timeSec.setNum(timeStamp.tv_sec + timeStamp.tv_usec*1.0e-6,'G',15);
+    return timeSec;
 }
 
 /**
@@ -109,13 +106,9 @@ void gcsMainWindow::ProcessHeliState(timeval* timeStamp, const state_t* heliStat
 
     if (!discarded)
     {
-        float newRoll = (float) heliState->phi;
-        float newRollRate = (float) heliState->p;
-        float newPitch = (float) heliState->theta;
-        float newPitchRate = (float) heliState->q;
-        float newAltState = (float) heliState->z;
-
-        m_ahWidget->setState(newRoll,newRollRate,newPitch,newPitchRate,newAltState);
+        // Update the GUI
+        m_ahWidget->setState(heliState);
+        m_dataPlotterWidget->setHeliStateData(timeStamp,heliState);
     }
 
     // the chores
