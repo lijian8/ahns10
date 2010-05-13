@@ -327,49 +327,49 @@ void TelemetryThread::DataPending()
                 emit NewHeliState(timeStamp, copyHeliState((const state_t*) buffer), discarded);
                 break;
             case FC_STATE:
-                emit NewFCState(timeStamp, (const fc_state_t*) buffer, discarded);
+                emit NewFCState(timeStamp, copyFCState((const fc_state_t*) buffer), discarded);
                 break;
             case AUTOPILOT_STATE:
-                emit NewAPState(timeStamp, (const ap_state_t*) buffer, discarded);
+                emit NewAPState(timeStamp, copyAPState((const ap_state_t*) buffer), discarded);
                 break;
             case FAILSAFE:
                 emit NewFailSafe(timeStamp,discarded);
                 break;
             case ATTITUDE_GAIN_ROLL:
-                emit NewRollGain(timeStamp, (const gains_t*) buffer, discarded);
+                emit NewRollGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
                 break;
             case ATTITUDE_GAIN_PITCH:
-                emit NewPitchGain(timeStamp, (const gains_t*) buffer, discarded);
+                emit NewPitchGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
                 break;
             case ATTITUDE_GAIN_YAW:
-                emit NewYawGain(timeStamp, (const gains_t*) buffer, discarded);
+                emit NewYawGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
                 break;
             case GUIDANCE_GAIN_X:
-                emit NewGuidanceXGain(timeStamp, (const gains_t*) buffer, discarded);
+                emit NewGuidanceXGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
                 break;
             case GUIDANCE_GAIN_Y:
-                emit NewGuidanceYGain(timeStamp, (const gains_t*) buffer, discarded);
+                emit NewGuidanceYGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
                 break;
             case GUIDANCE_GAIN_Z:
-                emit NewGuidanceZGain(timeStamp, (const gains_t*) buffer, discarded);
+                emit NewGuidanceZGain(timeStamp, copyGains((const gains_t*) buffer), discarded);
                 break;
             case ATTITUDE_PARAMETERS_ROLL:
-                emit NewRollParameters(timeStamp, (const loop_parameters_t*) buffer, discarded);
+                emit NewRollParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
                 break;
             case ATTITUDE_PARAMETERS_PITCH:
-                emit NewPitchParameters(timeStamp, (const loop_parameters_t*) buffer, discarded);
+                emit NewPitchParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
                 break;
             case ATTITUDE_PARAMETERS_YAW:
-                emit NewYawParameters(timeStamp, (const loop_parameters_t*) buffer, discarded);
+                emit NewYawParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
                 break;
             case GUIDANCE_PARAMETERS_X:
-                emit NewGuidanceXParameters(timeStamp, (const loop_parameters_t*) buffer, discarded);
+                emit NewGuidanceXParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
                 break;
             case GUIDANCE_PARAMETERS_Y:
-                emit NewGuidanceYParameters(timeStamp, (const loop_parameters_t*) buffer, discarded);
+                emit NewGuidanceYParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
                 break;
             case GUIDANCE_PARAMETERS_Z:
-                emit NewGuidanceZParameters(timeStamp, (const loop_parameters_t*) buffer, discarded);
+                emit NewGuidanceZParameters(timeStamp, copyLoopParameters((const loop_parameters_t*) buffer), discarded);
                 break;
             default:
                 AHNS_DEBUG("TelemetryThread::DataPending() [ MESSAGE TYPE NOT MATCHED]");

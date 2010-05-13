@@ -9,6 +9,7 @@
 #include <QTimer>
 #include <QScrollArea>
 
+#include "state.h"
 
 // DEFINING SCREEN MACROS
 #define SCRN_WIDTH 700
@@ -68,7 +69,7 @@ public:
 	float fadeOut;
 	QSize tempSize;
 
-        void setState(const float newRoll,const float newRollRate,const float newPitch,const float newPitchRate, const float newAltState);
+        void setState(const state_t* const heliState);
 	
 public slots:
 

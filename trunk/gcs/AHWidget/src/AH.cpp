@@ -106,17 +106,19 @@ QSize AHclass::sizeHint() const
   * @param newPitchRate Pitch Rate in radians per sec
   * @param newAltState Altitude in meters
   */
-void AHclass::setState(const float newRoll,const float newRollRate,const float newPitch,const float newPitchRate, const float newAltState)
+void AHclass::setState(const state_t* const heliState)
 {
     AHNS_DEBUG("AHclass::setState()");
-    // Roll is in degrees, pitch in radians
-    angRoll = newRoll * M_PI / 180.0;
-    angRollRate = newRollRate* M_PI / 180.0;
 
-    angPitch = newPitch;
-    angPitchRate = newPitchRate;
+    // AH Roll is in degrees
+    angRoll = heliState->phi * 180.0/ M_PI;
+    angRollRate = heliState->p * 180.0 / M_PI;
 
-    altState = newAltState*100.0;
+    // AH Pitch in radians
+    angPitch = -heliState->theta;
+    angPitchRate = heliState->q;
+
+    altState = -heliState->z*100.0;
 
     UpdateRoll();
     return;

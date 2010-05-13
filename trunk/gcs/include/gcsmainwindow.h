@@ -28,6 +28,7 @@
 #include "systemstatus.h"
 #include "AH.h"
 #include "receiveconsole.h"
+#include "dataplotter.h"
 
 
 namespace Ui {
@@ -72,11 +73,12 @@ private:
     void createDockWindows();
     QString timeStamptoString(const struct timeval timeStamp);
 
-    //Docked Widgets Widget
+    // Docked Widgets Widget
     AHclass* m_ahWidget;
     SystemStatus* m_systemStatusWidget;
     wifiComms* m_wifiCommsWidget;
     ReceiveConsole* m_receiveConsoleWidget;
+    DataPlotter* m_dataPlotterWidget;
 
     // Form
     aboutForm* m_Aboutfrm;

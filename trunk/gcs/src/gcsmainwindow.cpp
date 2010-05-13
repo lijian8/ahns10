@@ -27,6 +27,7 @@
 #include "systemstatus.h"
 #include "wificomms.h"
 #include "receiveconsole.h"
+#include "dataplotter.h"
 
 // Threads
 #include "telemetrythread.h"
@@ -114,27 +115,35 @@ void gcsMainWindow::createDockWindows()
         QDockWidget* dockSS = new QDockWidget(tr("System Status"),this);
         QDockWidget* dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
         QDockWidget* dockRC = new QDockWidget(tr("Received Packets"),this);
+        QDockWidget* dockDP = new QDockWidget(tr("Data Plotter"),this);
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Widgets ]");
         m_ahWidget = new AHclass(dockAH);
         m_systemStatusWidget = new SystemStatus(dockSS);
         m_wifiCommsWidget = new wifiComms(dockWC);
         m_receiveConsoleWidget = new ReceiveConsole(dockRC);
+        m_dataPlotterWidget = new DataPlotter(dockDP);
 
         dockAH->setWidget(m_ahWidget);
         dockSS->setWidget(m_systemStatusWidget);
         dockWC->setWidget(m_wifiCommsWidget);
         dockRC->setWidget(m_receiveConsoleWidget);
+        dockDP->setWidget(m_dataPlotterWidget);
 
         addDockWidget(Qt::RightDockWidgetArea,dockAH);
         addDockWidget(Qt::RightDockWidgetArea,dockSS);
         addDockWidget(Qt::RightDockWidgetArea,dockWC);
-        addDockWidget(Qt::LeftDockWidgetArea,dockRC);
+        addDockWidget(Qt::RightDockWidgetArea,dockRC);
+        addDockWidget(Qt::LeftDockWidgetArea,dockDP);
+
+        //setTabPosition(Qt::RightDockWidgetArea,QTabWidget::South);
+        tabifyDockWidget(dockRC,dockWC);
 
         ui->menuView->insertAction(0,dockAH->toggleViewAction());
         ui->menuView->insertAction(0,dockSS->toggleViewAction());
         ui->menuView->insertAction(0,dockWC->toggleViewAction());
         ui->menuView->insertAction(0,dockRC->toggleViewAction());
+        ui->menuView->insertAction(0,dockDP->toggleViewAction());
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
         connect(m_wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
