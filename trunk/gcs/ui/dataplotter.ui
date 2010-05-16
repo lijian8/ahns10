@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>640</width>
-    <height>636</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -95,8 +95,8 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>0</width>
-        <height>0</height>
+        <width>639</width>
+        <height>212</height>
        </size>
       </property>
       <property name="lineWidth">
@@ -126,8 +126,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>639</width>
+         <height>82</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -680,8 +680,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>639</width>
+         <height>82</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -699,8 +699,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>639</width>
+         <height>82</height>
         </rect>
        </property>
        <property name="sizePolicy">
@@ -718,8 +718,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>98</width>
-         <height>28</height>
+         <width>639</width>
+         <height>82</height>
         </rect>
        </property>
        <property name="sizePolicy">

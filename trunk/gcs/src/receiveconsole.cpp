@@ -23,7 +23,7 @@
 ReceiveConsole::ReceiveConsole(QWidget *parent) : QWidget(parent), ui(new Ui::ReceiveConsole)
 {
     ui->setupUi(this);
-    setMinimumSize(540,255);
+    setMinimumSize(440,190);
     m_packetCount = 0;
     m_discardedCount = 0;
 
@@ -54,7 +54,7 @@ void ReceiveConsole::changeEvent(QEvent *e)
   */
 QSize ReceiveConsole::sizeHint() const
 {
-    return QSize(540,255);
+    return QSize(440,190);
 }
 
 /**
@@ -95,12 +95,8 @@ bool ReceiveConsole::detailShow() const
 /**
   * @brief Function to add new item text to the ui list
   */
-void ReceiveConsole::addItem(QString item, const bool discarded)
+void ReceiveConsole::addItem(QString& item, const int& discarded)
 {
-    if (!detailShow()) // only keep first line
-    {
-        item = item.section("\n",0,0);
-    }
 
     if (discarded != 0)
     {
@@ -158,7 +154,7 @@ void ReceiveConsole::RxSpeed(const double& linkSpeed)
 {
     QString linkSpeedstr;
     linkSpeedstr.setNum(linkSpeed,'f',2);
-    linkSpeedstr.push_back(" kBs");
+    linkSpeedstr.push_back(" Bs");
     ui->Speedlbl->setText(linkSpeedstr);
     return;
 }

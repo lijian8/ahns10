@@ -55,7 +55,7 @@ public:
 	
 	QSize sizeHint() const;
 	/* ****** DEFINING PUBLIC FUNCTIONS ******/
-	void UpdateRoll();
+
 	int get_AltitudeState();
 	
 	/* ****** DEFINING PUBLIC VARIABLES ******/
@@ -72,7 +72,7 @@ public:
         void setState(const state_t* const heliState);
 	
 public slots:
-
+        void UpdateRoll();
 	
 private slots:
 
@@ -107,6 +107,10 @@ protected:
 	void paintGL();
 	void resizeGL(int width, int height);
 	void keyPressEvent(QKeyEvent *keyPressed);
+
+private:
+        volatile bool updating;
+        QTimer updateTimer;
 };
 
 

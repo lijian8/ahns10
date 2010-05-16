@@ -28,7 +28,7 @@ public:
     ReceiveConsole(QWidget *parent = 0);
     ~ReceiveConsole();
 
-    void addItem(QString item, const bool discarded);
+    void addItem(QString& item, const int& discarded);
     bool receivedShow() const;
     bool discardedShow() const;
     bool detailShow() const;

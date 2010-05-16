@@ -19,6 +19,7 @@
 #include <QMainWindow>
 #include <QPointer>
 #include <QtGlobal>
+#include <QLinkedList>
 #include "sys/time.h"
 
 #include "aboutform.h"
@@ -56,6 +57,9 @@ protected:
     void changeEvent(QEvent *e);
 
 private slots:
+    void on_actionRemove_Last_Plotting_Widget_triggered();
+    void on_actionRemove_All_Plotting_Widgets_triggered();
+    void on_actionNew_Plotting_Widget_triggered();
     void on_actionAbout_triggered();
 
     // Telemetry Buttons
@@ -71,7 +75,7 @@ private slots:
 private:
     Ui::gcsMainWindow *ui;
     void createDockWindows();
-    QString timeStamptoString(const struct timeval timeStamp);
+    QString timeStamptoString(const timeval& timeStamp);
 
     // Docked Widgets Widget
     AHclass* m_ahWidget;
@@ -79,6 +83,10 @@ private:
     wifiComms* m_wifiCommsWidget;
     ReceiveConsole* m_receiveConsoleWidget;
     DataPlotter* m_dataPlotterWidget;
+
+    // Additional Plotting Widgets
+    QLinkedList<DataPlotter *> m_plottingWidgets;
+    QLinkedList<QDockWidget *> m_plottingDock;
 
     // Form
     aboutForm* m_Aboutfrm;

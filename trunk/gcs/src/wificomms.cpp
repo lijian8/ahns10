@@ -49,7 +49,7 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
 {
 
     ui->setupUi(this);
-    setMinimumSize(400, 125);
+    setMinimumSize(345, 100);
 
     // 2009 HMI code to find the interface and IP in use
     using namespace std;
@@ -135,7 +135,7 @@ void wifiComms::changeEvent(QEvent *e)
   */
 QSize wifiComms::sizeHint() const
 {
-    return QSize(400, 125);
+    return QSize(345, 100);
 }
 
 

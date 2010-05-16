@@ -27,6 +27,7 @@ void AHclass::keyPressEvent(QKeyEvent *keyPressed)
 
 void AHclass::UpdateRoll()
 {
+        updating = true;
 	angRoll += angRollRate;
 	if ((angPitch <= 90.0f*DEG2RAD) && (angPitch >= -90.0f*DEG2RAD))	angPitch += angPitchRate*DEG2RAD;
 	else if ((angPitch <= 90.0f*DEG2RAD) && (angPitchRate > 0))		angPitch += angPitchRate*DEG2RAD;
@@ -37,4 +38,5 @@ void AHclass::UpdateRoll()
 	else if (altState > vertAltPos)						altState -= 1.0f;
 	
 	updateGL();
+        updating = false;
 }

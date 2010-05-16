@@ -18,39 +18,27 @@
 
 #include <QWidget>
 #include <QVector>
+#include <QTimer>
 
 #include "sys/time.h"
 #include "state.h"
 
 #include <qwt_plot.h>
 #include <qwt_plot_curve.h>
-#include <qwt_scale_div.h>
+#include <qwt_plot_grid.h>
+#include <qwt_legend.h>
+#include <qwt_legend_item.h>
+
 #include <fstream>
 
 namespace Ui {
     class DataPlotter;
 }
 
-class DataPlotter : public QWidget {
+class DataPlotter : public QWidget {    
+
     Q_OBJECT
 public:
-    DataPlotter(QWidget *parent = 0);
-    ~DataPlotter();
-    QSize sizeHint() const;
-    void setHeliStateData(const timeval* const timeStamp, const state_t* const heliState);
-    void replot();
-
-protected:
-    void changeEvent(QEvent *e);
-    void resizeEvent (QResizeEvent* e);
-
-private slots:
-    void SetActive();
-    void ClearAll();
-
-private:
-    void initialiseLogs();
-    Ui::DataPlotter *ui;
 
     /** @name Possible Plot Data */
     enum PlotData {
@@ -82,6 +70,35 @@ private:
         DATA_COUNT
     };
 
+    DataPlotter(QWidget *parent = 0);
+    ~DataPlotter();
+    QSize sizeHint() const;
+    void setHeliStateData(const timeval* const timeStamp, const state_t* const heliState);
+    void initialiseLogs();
+    DataPlotter& operator=(const DataPlotter& srcDataPlotter);
+
+signals:
+    void newPlottingData(const QVector<double>* const srcData);
+
+public slots:
+    void replot();
+    void copyNewData(const QVector<double>* const srcData);
+
+protected:
+    void changeEvent(QEvent *e);
+    void resizeEvent (QResizeEvent* e);
+
+private slots:
+    void SetActive();
+    void ClearAll();
+
+private:
+
+    Ui::DataPlotter *ui;
+
+    /** Timer for Plot Updating at 50Hz*/
+    QTimer updatePlotTimer;
+
     /** Vector of Data Vectors */
     QVector<double> dataVector[DATA_COUNT];
 
@@ -91,7 +108,14 @@ private:
     /** @name Curvers*/
     QwtPlotCurve m_plotCurves[CURVE_COUNT];
 
+    /** @name Plot Grid */
+    QwtPlotGrid m_coordinateGrid;
+
+    /** @name Plot Legend */
+    QwtLegend m_legend;
+
     /** @name Log Files */
+    volatile bool m_loggingOn;
     std::ofstream stateOutputFile;
 };
 
