@@ -27,7 +27,7 @@ SystemStatus::SystemStatus(QWidget *parent) : QWidget(parent), ui(new Ui::System
 
     ui->fcUptimeLcd->display(AHNS_HMS(0,0,0));
 
-    setMinimumSize(342, 180);
+    setMinimumSize(290, 130);
 }
 
 SystemStatus::~SystemStatus()
@@ -63,5 +63,5 @@ void SystemStatus::changeEvent(QEvent *e)
   */
 QSize SystemStatus::sizeHint() const
 {
-    return QSize(342, 180);
+    return QSize(290, 130);
 }

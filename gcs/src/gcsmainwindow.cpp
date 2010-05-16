@@ -123,6 +123,7 @@ void gcsMainWindow::createDockWindows()
         m_wifiCommsWidget = new wifiComms(dockWC);
         m_receiveConsoleWidget = new ReceiveConsole(dockRC);
         m_dataPlotterWidget = new DataPlotter(dockDP);
+        m_dataPlotterWidget->initialiseLogs();
 
         dockAH->setWidget(m_ahWidget);
         dockSS->setWidget(m_systemStatusWidget);
@@ -161,6 +162,34 @@ void gcsMainWindow::createDockWindows()
 }
 
 /**
+  * @brief Create new data plotting widget docks
+  */
+
+void gcsMainWindow::on_actionNew_Plotting_Widget_triggered()
+{
+    AHNS_DEBUG("gcsMainWindow::on_actionNew_Plotting_Widget_triggered()");
+
+    QString tempStr;
+    tempStr.setNum(m_plottingWidgets.size() + 1);
+    // Dock
+    m_plottingDock.push_back(new QDockWidget(QString(tr("Data Plotter") % "(" % tempStr % ")"),this));
+    // Widget
+    m_plottingWidgets.push_back(new DataPlotter(m_plottingDock.last()));
+    *m_plottingWidgets.last() = *m_dataPlotterWidget;
+    // Dock widget
+    m_plottingDock.last()->setWidget(m_plottingWidgets.last());
+
+
+    addDockWidget(Qt::RightDockWidgetArea,m_plottingDock.last());
+   // m_plottingDock.last()->setFloating(true);
+   // m_plottingDock.last()->show();
+
+    ui->menuView->insertAction(0,m_plottingDock.last()->toggleViewAction());
+    connect(m_dataPlotterWidget,SIGNAL(newPlottingData(const QVector<double>* const)),m_plottingWidgets.last(),SLOT(copyNewData(const QVector<double>* const)));
+    return;
+}
+
+/**
   * @brief Action to accompany the menu bar's Help->About
   */
 void gcsMainWindow::on_actionAbout_triggered()
@@ -169,6 +198,40 @@ void gcsMainWindow::on_actionAbout_triggered()
     m_Aboutfrm->show();
     return;
 }
+
+/**
+  * @brief Remove all Plotting Widgets
+  */
+void gcsMainWindow::on_actionRemove_All_Plotting_Widgets_triggered()
+{
+    AHNS_DEBUG("gcsMainWindow::on_actionRemove_All_Plotting_Widgets_triggered()");
+
+    QLinkedList<QDockWidget*>::iterator iter = m_plottingDock.begin();
+    for (iter = m_plottingDock.begin(); iter != m_plottingDock.end(); ++iter)
+    {
+        (*iter)->setAttribute(Qt::WA_DeleteOnClose);
+        (*iter)->close();
+    }
+    m_plottingDock.clear();
+    m_plottingWidgets.clear();
+
+    return;
+}
+
+/**
+  * @brief Remove last Plotting Widgets
+  */
+void gcsMainWindow::on_actionRemove_Last_Plotting_Widget_triggered()
+{
+    AHNS_DEBUG("gcsMainWindow::on_actionRemove_Last_Plotting_Widget_triggered()");
+
+    m_plottingDock.last()->setAttribute(Qt::WA_DeleteOnClose);
+    m_plottingDock.last()->close();
+    m_plottingDock.removeLast();
+    m_plottingWidgets.removeLast();
+    return;
+}
+
 
 /**
   * @brief Slot to Connect to the wifiComms widget signal to start the telemetry thread

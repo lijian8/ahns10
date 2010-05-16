@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>540</width>
-    <height>255</height>
+    <width>440</width>
+    <height>190</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>541</width>
-     <height>265</height>
+     <width>441</width>
+     <height>191</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -35,7 +35,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>9</pointsize>
+          <pointsize>8</pointsize>
          </font>
         </property>
         <property name="text">
@@ -58,6 +58,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Details</string>
         </property>
@@ -78,6 +83,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Received:</string>
         </property>
@@ -93,7 +103,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>6</pointsize>
+          <pointsize>8</pointsize>
          </font>
         </property>
         <property name="frameShape">
@@ -125,6 +135,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>Discarded:</string>
         </property>
@@ -149,7 +164,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>6</pointsize>
+          <pointsize>8</pointsize>
          </font>
         </property>
         <property name="frameShape">

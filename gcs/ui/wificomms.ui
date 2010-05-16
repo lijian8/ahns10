@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>125</height>
+    <width>345</width>
+    <height>100</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,8 +18,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>407</width>
-     <height>159</height>
+     <width>341</width>
+     <height>101</height>
     </rect>
    </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
@@ -29,7 +29,7 @@
        <widget class="QLabel" name="label_2">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>8</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -47,6 +47,11 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>192.168.1.122</string>
         </property>
@@ -59,7 +64,7 @@
        <widget class="QLabel" name="label">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>8</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -76,6 +81,11 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
         </property>
         <property name="frameShape">
          <enum>QFrame::NoFrame</enum>
@@ -95,7 +105,7 @@
        <widget class="QLabel" name="label_5">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>8</pointsize>
           <weight>50</weight>
           <bold>false</bold>
          </font>
@@ -109,7 +119,7 @@
        <widget class="QLabel" name="label_3">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>8</pointsize>
          </font>
         </property>
         <property name="text">
@@ -124,6 +134,11 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
         </property>
         <property name="text">
          <string/>
@@ -140,7 +155,7 @@
        <widget class="QLabel" name="label_4">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>8</pointsize>
          </font>
         </property>
         <property name="text">
@@ -155,6 +170,11 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>45545</string>
@@ -171,6 +191,11 @@
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>8</pointsize>
+         </font>
         </property>
         <property name="text">
          <string>2002</string>
@@ -189,6 +214,11 @@
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>8</pointsize>
+       </font>
       </property>
       <property name="orientation">
        <enum>Qt::Vertical</enum>
