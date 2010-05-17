@@ -158,6 +158,9 @@ QTabBar::tab:selected {
     <addaction name="actionRemove_Last_Plotting_Widget"/>
     <addaction name="actionRemove_All_Plotting_Widgets"/>
     <addaction name="separator"/>
+    <addaction name="actionSave_Config"/>
+    <addaction name="actionLoad_Config"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -196,6 +199,16 @@ QTabBar::tab:selected {
   <action name="actionRemove_All_Plotting_Widgets">
    <property name="text">
     <string>Remove All Plotting Widgets</string>
+   </property>
+  </action>
+  <action name="actionSave_Config">
+   <property name="text">
+    <string>Save Config</string>
+   </property>
+  </action>
+  <action name="actionLoad_Config">
+   <property name="text">
+    <string>Load Config</string>
    </property>
   </action>
  </widget>

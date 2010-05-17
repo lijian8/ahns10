@@ -57,6 +57,8 @@ protected:
     void changeEvent(QEvent *e);
 
 private slots:
+    void on_actionLoad_Config_triggered();
+    void on_actionSave_Config_triggered();
     void on_actionRemove_Last_Plotting_Widget_triggered();
     void on_actionRemove_All_Plotting_Widgets_triggered();
     void on_actionNew_Plotting_Widget_triggered();

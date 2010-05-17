@@ -86,8 +86,8 @@ gcsMainWindow::~gcsMainWindow()
 
     delete m_Aboutfrm;
     delete ui;
-    AHNS_DEBUG("gcsMainWindow::~gcsMainWindow() [ COMPLETED ]")
-        }
+    AHNS_DEBUG("gcsMainWindow::~gcsMainWindow() [ COMPLETED ]");
+}
 
 void gcsMainWindow::changeEvent(QEvent *e)
 {
@@ -112,10 +112,15 @@ void gcsMainWindow::createDockWindows()
     {
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Docks ]");
         QDockWidget* dockAH = new QDockWidget(tr("Artificial Horizon"),this);
+        dockAH->setObjectName("Artificial Horizon");
         QDockWidget* dockSS = new QDockWidget(tr("System Status"),this);
+        dockSS->setObjectName("System Status");
         QDockWidget* dockRC = new QDockWidget(tr("Received Packets"),this);
+        dockRC->setObjectName("Received Packets");
         QDockWidget* dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
+        dockWC->setObjectName("Wi-Fi Communications");
         QDockWidget* dockDP = new QDockWidget(tr("Data Plotter"),this);
+        dockDP->setObjectName("Data Plotter");
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Widgets ]");
         m_ahWidget = new AHclass(dockAH);
@@ -173,6 +178,7 @@ void gcsMainWindow::on_actionNew_Plotting_Widget_triggered()
     tempStr.setNum(m_plottingWidgets.size() + 1);
     // Dock
     m_plottingDock.push_back(new QDockWidget(QString(tr("Data Plotter") % "(" % tempStr % ")"),this));
+    m_plottingDock.last()->setObjectName(QString(tr("Data Plotter") % "(" % tempStr % ")"));
     // Widget
     m_plottingWidgets.push_back(new DataPlotter(m_plottingDock.last()));
     *m_plottingWidgets.last() = *m_dataPlotterWidget;
@@ -181,8 +187,8 @@ void gcsMainWindow::on_actionNew_Plotting_Widget_triggered()
 
 
     addDockWidget(Qt::RightDockWidgetArea,m_plottingDock.last());
-   // m_plottingDock.last()->setFloating(true);
-   // m_plottingDock.last()->show();
+    // m_plottingDock.last()->setFloating(true);
+    // m_plottingDock.last()->show();
 
     ui->menuView->insertAction(0,m_plottingDock.last()->toggleViewAction());
     connect(m_dataPlotterWidget,SIGNAL(newPlottingData(const QVector<double>* const)),m_plottingWidgets.last(),SLOT(copyNewData(const QVector<double>* const)));
@@ -378,6 +384,113 @@ void gcsMainWindow::TelemetryMonitor()
         messageBox.setStyleSheet(this->styleSheet());
         messageBox.show();
         messageBox.exec();
+    }
+    return;
+}
+
+/**
+  * @brief Menu slot to save config
+  */
+void gcsMainWindow::on_actionSave_Config_triggered()
+{
+    AHNS_DEBUG("void gcsMainWindow::on_actionSave_Config_triggered()");
+    QString fileName;
+    QFile file;
+    QString msg;
+    bool writeSuccess = false;
+
+    fileName = QFileDialog::getSaveFileName(this, tr("Save layout"));
+    if (!fileName.isEmpty())
+    {
+        file.setFileName(fileName);
+
+        if (!file.open(QFile::WriteOnly))
+        {
+            msg = tr("Failed to open %1\n%2").arg(fileName).arg(file.errorString());
+            QMessageBox::warning(this, tr("Save Error"), msg);
+            AHNS_DEBUG("void gcsMainWindow::on_actionSave_Config_triggered() [ OPEN FAILED ]");
+        }
+        else
+        {
+            QByteArray geo_data = saveGeometry();
+            QByteArray layout_data = saveState();
+
+            writeSuccess = file.putChar((uchar)geo_data.size());
+            if (writeSuccess)
+            {
+                writeSuccess = file.write(geo_data) == geo_data.size();
+            }
+
+            if (writeSuccess)
+            {
+                writeSuccess = file.write(layout_data) == layout_data.size();
+            }
+
+            if (!writeSuccess)
+            {
+                msg = tr("Error writing to %1\n%2") .arg(fileName).arg(file.errorString());
+                QMessageBox::warning(this, tr("Save Error"), msg);
+                AHNS_DEBUG("void gcsMainWindow::on_actionSave_Config_triggered() [ SAVE FAILED ]");
+            }
+            file.close();
+        }
+    }
+    return;
+}
+
+void gcsMainWindow::on_actionLoad_Config_triggered()
+{
+    AHNS_DEBUG("void gcsMainWindow::on_actionLoad_Config_triggered()");
+
+    QString fileName;
+    bool readSuccess = false;
+    fileName = QFileDialog::getOpenFileName(this, tr("Load layout"));
+
+    if (!fileName.isEmpty())
+    {
+
+        QFile file(fileName);
+        if (!file.open(QFile::ReadOnly))
+        {
+            QString msg = tr("Failed to open %1\n%2").arg(fileName).arg(file.errorString());
+            QMessageBox::warning(this, tr("Load Error"), msg);
+            AHNS_DEBUG("void gcsMainWindow::on_actionLoad_Config_triggered() [ LOAD ERROR ]");
+        }
+        else
+        {
+
+            uchar geo_size;
+            QByteArray geo_data;
+            QByteArray layout_data;
+
+            readSuccess = file.getChar((char*)&geo_size);
+            if (readSuccess)
+            {
+                geo_data = file.read(geo_size);
+                readSuccess  = geo_data.size() == geo_size;
+            }
+            if (readSuccess)
+            {
+                layout_data = file.readAll();
+                readSuccess  = layout_data.size() > 0;
+            }
+
+            if (readSuccess )
+            {
+                readSuccess  = restoreGeometry(geo_data);
+            }
+            if (readSuccess )
+            {
+                readSuccess  = restoreState(layout_data);
+            }
+
+            if (!readSuccess)
+            {
+                QString msg = tr("Error reading %1").arg(fileName);
+                QMessageBox::warning(this, tr("Load Error"), msg);
+                AHNS_DEBUG("void gcsMainWindow::on_actionLoad_Config_triggered() [ READ ERROR ]");
+            }
+        }
     }
     return;
 }
