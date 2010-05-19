@@ -28,9 +28,12 @@
 #include "wificomms.h"
 #include "receiveconsole.h"
 #include "dataplotter.h"
+#include "bfimagefeed.h"
 
 // Threads
 #include "telemetrythread.h"
+
+
 
 // AHNS Reuse
 #include "ahns_logger.h"
@@ -110,6 +113,7 @@ void gcsMainWindow::createDockWindows()
     AHNS_DEBUG("gcsMainWindow::createDockWindows()");
     try
     {
+
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Docks ]");
         QDockWidget* dockAH = new QDockWidget(tr("Artificial Horizon"),this);
         dockAH->setObjectName("Artificial Horizon");
@@ -121,6 +125,11 @@ void gcsMainWindow::createDockWindows()
         dockWC->setObjectName("Wi-Fi Communications");
         QDockWidget* dockDP = new QDockWidget(tr("Data Plotter"),this);
         dockDP->setObjectName("Data Plotter");
+        QDockWidget* dockBF = new QDockWidget(tr("Blackfin"),this);
+        dockBF->setObjectName("Blackfin Camera feed");
+
+        m_bfImageFeedWidget = new bfImageFeed(dockBF);
+
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Widgets ]");
         m_ahWidget = new AHclass(dockAH);
@@ -135,21 +144,27 @@ void gcsMainWindow::createDockWindows()
         dockRC->setWidget(m_receiveConsoleWidget);
         dockWC->setWidget(m_wifiCommsWidget);
         dockDP->setWidget(m_dataPlotterWidget);
+        dockBF->setWidget(m_bfImageFeedWidget);
 
         addDockWidget(Qt::RightDockWidgetArea,dockAH);
         addDockWidget(Qt::RightDockWidgetArea,dockSS);
         addDockWidget(Qt::RightDockWidgetArea,dockRC);
         addDockWidget(Qt::RightDockWidgetArea,dockWC);
         addDockWidget(Qt::LeftDockWidgetArea,dockDP);
+        addDockWidget(Qt::RightDockWidgetArea,dockBF);
+
 
         //setTabPosition(Qt::RightDockWidgetArea,QTabWidget::South);
         tabifyDockWidget(dockWC,dockRC);
+        tabifyDockWidget(dockAH,dockBF);
 
         ui->menuView->insertAction(0,dockAH->toggleViewAction());
         ui->menuView->insertAction(0,dockSS->toggleViewAction());
         ui->menuView->insertAction(0,dockWC->toggleViewAction());
         ui->menuView->insertAction(0,dockRC->toggleViewAction());
         ui->menuView->insertAction(0,dockDP->toggleViewAction());
+
+        ui->menuView->insertAction(0,dockBF->toggleViewAction());
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
         connect(m_wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
