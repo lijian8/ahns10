@@ -12,7 +12,8 @@ INCLUDEPATH += . \
     AHWidget/include \
     reuse/ \
     ../../../heliconnect10/trunk/udp/ \
-    /usr/include/qwt-qt4/
+    /usr/include/qwt-qt4/ \
+    ../../../heliconnect10/udp/
 UI_DIR = ui
 UI_HEADERS_DIR = tmp
 UI_SOURCES_DIR = tmp
@@ -38,7 +39,10 @@ SOURCES += src/main.cpp \
     reuse/ahns_timeformat.cpp \
     src/receiveconsole.cpp \
     src/gcsmessages.cpp \
-    src/dataplotter.cpp
+    src/dataplotter.cpp \
+    src/bfglrenderer.cpp \
+    src/bfcameracomms.cpp \
+    src/bfimagefeed.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -51,7 +55,16 @@ HEADERS += include/gcsmainwindow.h \
     ../../../heliconnect10/trunk/udp/commands.h \
     ../../../heliconnect10/trunk/udp/state.h \
     include/receiveconsole.h \
-    include/dataplotter.h
+    include/dataplotter.h \
+    include/state.h \
+    include/commands.h \
+    include/ioimagehandler.h \
+    include/bfimagefeed.h \
+    include/bfglrenderer.h \
+    src/bfimagefeed.h \
+    include/bfcameracomms.h \
+    src/bfimagefeed.h \
+    src/bfimagefeed.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \
