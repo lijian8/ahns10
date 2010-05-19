@@ -58,7 +58,7 @@ bfImageFeed::bfImageFeed(QWidget *parent) : QWidget(parent)
 }
 
 /**
-  * @brief Destructor
+  * @brief set the button text by the state
   */
 void bfImageFeed::setconnectButtonState()
 {
