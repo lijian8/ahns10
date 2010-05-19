@@ -30,6 +30,7 @@
 #include "AH.h"
 #include "receiveconsole.h"
 #include "dataplotter.h"
+#include "bfimagefeed.h"
 
 
 namespace Ui {
@@ -85,6 +86,7 @@ private:
     wifiComms* m_wifiCommsWidget;
     ReceiveConsole* m_receiveConsoleWidget;
     DataPlotter* m_dataPlotterWidget;
+    bfImageFeed* m_bfImageFeedWidget;
 
     // Additional Plotting Widgets
     QLinkedList<DataPlotter *> m_plottingWidgets;
