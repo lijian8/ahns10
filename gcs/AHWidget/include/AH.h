@@ -1,5 +1,5 @@
-#ifndef ARTIFICIAL_HORIZON_H
-#define ARTIFICIAL_HORIZON_H
+#ifndef AH_H
+#define AH_H
 
 /**************************************************/
 /* ********** START OF THE HEADER FILE ********** */
@@ -118,4 +118,4 @@ private:
 /* ********** END OF THE HEADER FILE ********** */
 /************************************************/
 
-#endif
+#endif // AH_H
