@@ -147,10 +147,11 @@ int PackUInt16(unsigned char *buf, uint16_t i)
 
 int UnpackUInt16(const unsigned char *buf, uint16_t *i)
 {
-	// Rebuild the 16 bit unsigned integer
-	*i = (buf[0])<<8 | buf[1];
+        // Rebuild the 16 bit unsigned integer
+        // these were reveresed
+        *i = (buf[1])<<8 | buf[0];
 	
-	// Return the number of octets read from the buffer
+        // Return the number of octets read from the buffer
 	return 2;
 }
 

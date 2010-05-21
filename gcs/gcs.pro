@@ -11,9 +11,8 @@ INCLUDEPATH += . \
     include \
     AHWidget/include \
     reuse/ \
-    ../../../heliconnect10/trunk/udp/ \
     /usr/include/qwt-qt4/ \
-    ../../../heliconnect10/udp/
+    ../airborne/network/udp/
 UI_DIR = ui
 UI_HEADERS_DIR = tmp
 UI_SOURCES_DIR = tmp
@@ -32,6 +31,8 @@ SOURCES += src/main.cpp \
     AHWidget/src/AH_Utility.cpp \
     AHWidget/src/AH_Motion.cpp \
     AHWidget/src/AH.cpp \
+    ../airborne/network/udp/state.cpp \
+    ../airborne/network/udp/primitive_serialisation.cpp \
     reuse/ahns_logger.cpp \
     src/aboutform.cpp \
     src/wificomms.cpp \
@@ -42,24 +43,20 @@ SOURCES += src/main.cpp \
     src/dataplotter.cpp \
     src/bfglrenderer.cpp \
     src/bfcameracomms.cpp \
-    src/bfimagefeed.cpp \
-    ../../../heliconnect10/trunk/udp/state.c \
-    ../../../heliconnect10/trunk/udp/primitive_serialisation.c
+    src/bfimagefeed.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
     AHWidget/include/AH.h \
     reuse/ahns_logger.h \
+    ../airborne/network/udp/commands.h \
+    ../airborne/network/udp/state_cpp.h \
     include/aboutform.h \
     include/wificomms.h \
     include/telemetrythread.h \
     reuse/ahns_timeformat.h \
-    ../../../heliconnect10/trunk/udp/commands.h \
-    ../../../heliconnect10/trunk/udp/state.h \
     include/receiveconsole.h \
     include/dataplotter.h \
-    include/state.h \
-    include/commands.h \
     include/ioimagehandler.h \
     include/bfimagefeed.h \
     include/bfglrenderer.h \
@@ -67,7 +64,7 @@ HEADERS += include/gcsmainwindow.h \
     include/bfcameracomms.h \
     src/bfimagefeed.h \
     src/bfimagefeed.h \
-    ../../../heliconnect10/trunk/udp/primitive_serialisation.h
+    ../airborne/network/udp/primitive_serialisation.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \
