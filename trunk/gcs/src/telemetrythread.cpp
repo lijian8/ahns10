@@ -21,9 +21,6 @@
 #include "ahns_logger.h"
 #include "ahns_timeformat.h"
 
-#include "state.h"
-#include "commands.h"
-
 #include <sys/time.h>
 #include <sys/socket.h>
 #include "inttypes.h"
@@ -31,6 +28,8 @@
 #include <stdexcept>
 #include <ctime>
 
+#include "state.h"
+#include "commands.h"
 
 /**
   * @brief Minimal constructor
@@ -277,15 +276,13 @@ int TelemetryThread::sendMessage(uint32_t type, const char* txData, int txDataBy
 void TelemetryThread::DataPending()
 {
     AHNS_DEBUG("TelemetryThread::DataPending() [ Thead = " << QThread::currentThreadId() << " ]");
-
     timeval* timeStampPointer = NULL;
     uint32_t messageType = -1;
     char* buffer = NULL;
     int discarded = 0;
 
     while(m_socket->hasPendingDatagrams())
-    {
-
+    {        
         // Create Byte Array
         QByteArray byteBuffer(m_socket->pendingDatagramSize(),0);
         m_socket->readDatagram(byteBuffer.data(),byteBuffer.size());
@@ -347,7 +344,9 @@ void TelemetryThread::DataPending()
                 emit NewHeliState(*timeStampPointer, *(state_t*) buffer, discarded);
                 break;
             case FC_STATE:
-                emit NewFCState(*timeStampPointer, *(fc_state_t*) buffer, discarded);
+                fc_state_t receivedState;
+                UnpackFCState((unsigned char*) buffer, &receivedState);
+                emit NewFCState(*timeStampPointer, receivedState, discarded);
                 break;
             case AUTOPILOT_STATE:
                 emit NewAPState(*timeStampPointer, *(ap_state_t*) buffer, discarded);

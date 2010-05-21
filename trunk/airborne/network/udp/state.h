@@ -183,7 +183,6 @@ int PackIphonePrimaryInputSample(unsigned char *packingBuffer, iphone_primary_in
  *
  *   To be sent periodically to the GCS
  */
-
 typedef struct {
     /** @name Commanded Engine Inputs */
     uint16_t            commandedEngine1;  /**< Engine 1 PWM*/
@@ -200,11 +199,36 @@ typedef struct {
 } fc_state_t;
 
 /**
+ *   \brief Packs Flight Computer state structure
+ *
+ *   Packs the struct fc_state_t to network byte order and places it in the buffer .
+ *   Uses the primitive_serialisation.h/c,
+ *   Thanks to Joel.
+ *
+ *   @param   packingBuffer  unsigned char* buffer to which the serialised representation of the object will be stored
+ *   @param   fc_state_t  srcState  state to be serialised
+ *   @return  int  number of bytes written from packedData (the length of the serialised object)
+ */
+int PackFCState(unsigned char *packedData, fc_state_t *srcState);
+
+/**
+ *   \brief Unpacks Flight Computer state structure
+ *
+ *   Unpacks the serialisaed buffer to the struct fc_state_t.
+ *   Uses the primitive_serialisation.h/c,
+ *   Thanks to Joel.
+ *
+ *   @param   packingBuffer  unsigned char* buffer to which the serialised representation of the object will be stored
+ *   @param   fc_state_t  stateDestination  state to be unserialised
+ *   @return  int  number of bytes written from packedData (the length of the serialised object)
+ */
+int UnpackFCState(unsigned char *packedData, fc_state_t *stateDestination);
+
+/**
  *   \brief State data of the autopilot
  *
  *   To be sent periodically to the GCS to monitor autopilot operation
  */
-
 typedef struct {
     /** @name Attitude Control Loop References */
     double		referencePhi;   /**< reference roll angle */
@@ -227,6 +251,31 @@ typedef struct {
     uint8_t		zActive;     /**< z loop */
 } ap_state_t;
 
+/**
+ *   \brief Packs Autopilot state structure
+ *
+ *   Packs the struct ap_state_t to network byte order and places it in the buffer .
+ *   Uses the primitive_serialisation.h/c,
+ *   Thanks to Joel.
+ *
+ *   @param   packingBuffer  unsigned char* buffer to which the serialised representation of the object will be stored
+ *   @param   ap_state_t  srcState  state to be serialised
+ *   @return  int  number of bytes written from packedData (the length of the serialised object)
+ */
+int PackAPState(unsigned char *packedData, ap_state_t *srcState);
+
+/**
+ *   \brief Unpacks Autopilot state structure
+ *
+ *   Unpacks the serialisaed buffer to the struct fc_state_t.
+ *   Uses the primitive_serialisation.h/c,
+ *   Thanks to Joel.
+ *
+ *   @param   packingBuffer  unsigned char* buffer to which the serialised representation of the object will be stored
+ *   @param   fc_state_t  stateDestination  state to be unserialised
+ *   @return  int  number of bytes written from packedData (the length of the serialised object)
+ */
+int UnpackAPState(const unsigned char *packedData, ap_state_t *stateDestination);
 
 /**
  *   \brief Gain Structure for Autopilot
@@ -241,6 +290,31 @@ typedef struct {
     double		kd;   /**< rate gain */
 } gains_t;
 
+/**
+ *   \brief Packs Gains structure
+ *
+ *   Packs the struct gains_t to network byte order and places it in the buffer .
+ *   Uses the primitive_serialisation.h/c,
+ *   Thanks to Joel.
+ *
+ *   @param   packingBuffer  unsigned char* buffer to which the serialised representation of the object will be stored
+ *   @param   gains_t  srcGains Gains to be serialised
+ *   @return  int  number of bytes written from packedData (the length of the serialised object)
+ */
+int PackGains(unsigned char *packedData, gains_t *srcGains);
+
+/**
+ *   \brief Unpacks Gains structure
+ *
+ *   Unpacks the serialisaed buffer to the struct gains_t.
+ *   Uses the primitive_serialisation.h/c,
+ *   Thanks to Joel.
+ *
+ *   @param   packingBuffer  unsigned char* buffer to which the serialised representation of the object will be stored
+ *   @param   gains_t  gainsDestination  Gains to be unserialised
+ *   @return  int  number of bytes written from packedData (the length of the serialised object)
+ */
+int UnpackGains(const unsigned char *packedData, gains_t *gainsDestination);
 
 /**
  *   \brief Control Loop Parameters
@@ -255,6 +329,31 @@ typedef struct {
     double              neutralOutput;   /**< neutral commanded output*/
 } loop_parameters_t;
 
+/**
+ *   \brief Packs Loop Parameter structure
+ *
+ *   Packs the struct gains_t to network byte order and places it in the buffer .
+ *   Uses the primitive_serialisation.h/c,
+ *   Thanks to Joel.
+ *
+ *   @param   packingBuffer  unsigned char* buffer to which the serialised representation of the object will be stored
+ *   @param   loop_parameters_t  srcParam  parameters to be serialised
+ *   @return  int  number of bytes written from packedData (the length of the serialised object)
+ */
+int PackParametersState(unsigned char *packedData, loop_parameters_t *srcParam);
+
+/**
+ *   \brief Unpacks Loop Parameter structure
+ *
+ *   Unpacks the serialisaed buffer to the struct gains_t.
+ *   Uses the primitive_serialisation.h/c,
+ *   Thanks to Joel.
+ *
+ *   @param   packingBuffer  unsigned char* buffer to which the serialised representation of the object will be stored
+ *   @param   loop_parameters_t  paramDestination  parameters to be unserialised
+ *   @return  int  number of bytes written from packedData (the length of the serialised object)
+ */
+int UnpackParametersState(const unsigned char *packedData, loop_parameters_t *paramDestination);
 
 
 /******************** END - GCS related definitons - END *******************/

@@ -92,7 +92,7 @@ main (int argc, char *argv[])
 
   msg_camera_t cam_msg;
   state_t state;
-
+  fc_state_t fc_state;
 
   int count = 0;
   int type;
@@ -101,6 +101,7 @@ main (int argc, char *argv[])
   server_handle (&server, CAM_STATE, server_cam_state, (void *) &cam_msg);
   memset ((void *) (&cam_msg), 0, sizeof (msg_camera_t));
   memset ((void *) (&state), 0, sizeof (state_t));
+  memset ((void *) (&fc_state), 0, sizeof (fc_state_t));
 
   while (1)
     {
@@ -129,6 +130,7 @@ main (int argc, char *argv[])
       if (init)
 	{
 	  memset ((void *) (&state), 0, sizeof (state_t));
+  	  memset ((void *) (&fc_state), 0, sizeof (fc_state_t));
 
 	  state.phi = fmod (count / 180.0 * 5.0 / 4.0, M_PI / 2.0);
 	  state.theta = fmod (count / 180.0 * 10 / 7.0, M_PI / 2.0);
@@ -138,8 +140,21 @@ main (int argc, char *argv[])
 	  printf ("\n\nSending state \n"),
           fprintf (stderr, "state : %f  %f %f \n", state.phi, state.theta, state.psi);
 	  gettimeofday (&local_time, 0);
-	  fprintf (stderr, "time: %.4f", local_time.tv_sec + local_time.tv_usec/1e6);
+	  fprintf (stderr, "time: %.4f\n", local_time.tv_sec + local_time.tv_usec/1e6);
+	  fprintf (stderr, "count: %d", count);
 	  server_send_packet (&server, HELI_STATE, &state, sizeof (state_t));
+
+	  fc_state.commandedEngine1 = 50;
+	  fc_state.commandedEngine2 = count;
+	  fc_state.commandedEngine3 = 70;
+	  fc_state.commandedEngine4 = 1;
+	  fc_state.rclinkActive = 64;
+	  fc_state.fcUptime = 0;
+          fc_state.fcCPUusage = 0;
+	  unsigned char buffer[150];
+	  int dataLength = PackFCState(buffer,&fc_state);
+	  server_send_packet (&server, FC_STATE, &fc_state, dataLength);
+
 
 
 	  init = 0;
