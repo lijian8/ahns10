@@ -74,6 +74,8 @@ private slots:
     // Update Telemetry Slots
    void ProcessHeliState(const timeval timeStamp, const state_t heliState, const int discarded = 0);
    void ProcessAckMessage(const timeval timeStamp, const int discarded = 0);
+   void ProcessCloseMessage(const timeval timeStamp, const int discarded = 0);
+   void ProcessFCState(const timeval timeStamp, const fc_state_t fcState, const int discarded = 0);
 
 private:
     Ui::gcsMainWindow *ui;

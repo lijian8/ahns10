@@ -63,9 +63,11 @@ public:
         ENGINE3,
         ENGINE4,
         FC_CPU,
+        RC_LINK,
         CURVE_COUNT,
         HELI_STATE_RAW_TIME,
         HELI_STATE_TIME,
+        FC_STATE_RAW_TIME,
         FC_STATE_TIME,
         DATA_COUNT
     };
@@ -74,6 +76,7 @@ public:
     ~DataPlotter();
     QSize sizeHint() const;
     void setHeliStateData(const timeval* const timeStamp, const state_t* const heliState);
+    void setFCStateData(const timeval* const timeStamp, const fc_state_t* const fcState);
     void initialiseLogs();
     DataPlotter& operator=(const DataPlotter& srcDataPlotter);
 
@@ -117,6 +120,7 @@ private:
     /** @name Log Files */
     volatile bool m_loggingOn;
     std::ofstream stateOutputFile;
+    std::ofstream fcStateOutputFile;
 };
 
 #endif // DATAPLOTTER_H

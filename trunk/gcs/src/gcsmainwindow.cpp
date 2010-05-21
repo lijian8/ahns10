@@ -201,8 +201,8 @@ void gcsMainWindow::on_actionNew_Plotting_Widget_triggered()
     m_plottingDock.last()->setWidget(m_plottingWidgets.last());
 
 
-    addDockWidget(Qt::RightDockWidgetArea,m_plottingDock.last());
-    // m_plottingDock.last()->setFloating(true);
+    addDockWidget(Qt::LeftDockWidgetArea,m_plottingDock.last());
+    //m_plottingDock.last()->setFloating(true);
     // m_plottingDock.last()->show();
 
     ui->menuView->insertAction(0,m_plottingDock.last()->toggleViewAction());
@@ -264,7 +264,7 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
     if (m_TelemetryThread == NULL)
     {
         try
-        {
+        {   
             // Allocate the Thread
             m_TelemetryThread = new TelemetryThread(serverPort,serverIP,clientPort,clientIP);
 
@@ -274,8 +274,15 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             // Rx Messages
             connect(m_TelemetryThread,SIGNAL(NewHeliState(const timeval, const state_t, const int)),this,SLOT(ProcessHeliState(const timeval, const state_t, const int)));
             connect(m_TelemetryThread,SIGNAL(NewAckMessage(const timeval, const int)),this,SLOT(ProcessAckMessage(const timeval, const int)));
-
+            connect(m_TelemetryThread,SIGNAL(NewCloseMessage(const timeval, const int)),this,SLOT(ProcessCloseMessage(const timeval, const int)));
+            connect(m_TelemetryThread,SIGNAL(NewFCState(const timeval, const fc_state_t, const int)),this,SLOT(ProcessFCState(const timeval, const fc_state_t, const int)));
             m_receiveConsoleWidget->clearConsole();
+
+            // Start the timer
+            m_TelSecCount = 0;
+            m_TelMinCount = 0;
+            m_TelHourCount = 0;
+            m_oTelUptimer.start();
         }
         catch (const std::exception &e)
         {
@@ -368,7 +375,7 @@ void gcsMainWindow::TelemetryMonitor()
 {
     if (m_TelemetryThread != NULL)
     {
-        if (m_TelemetryThread->isRunning())
+        if ((m_TelemetryThread->isRunning()) && (m_TelemetryThread->isConnected()))
         {
             m_TelSecCount++;
             if (m_TelSecCount == 60)
@@ -390,6 +397,7 @@ void gcsMainWindow::TelemetryMonitor()
             messageBox.setParent(this);
             messageBox.show();
             messageBox.exec();
+            m_oTelUptimer.stop();
         }
     }
     else
@@ -399,6 +407,7 @@ void gcsMainWindow::TelemetryMonitor()
         messageBox.setStyleSheet(this->styleSheet());
         messageBox.show();
         messageBox.exec();
+        m_oTelUptimer.stop();
     }
     return;
 }

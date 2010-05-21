@@ -42,7 +42,9 @@ SOURCES += src/main.cpp \
     src/dataplotter.cpp \
     src/bfglrenderer.cpp \
     src/bfcameracomms.cpp \
-    src/bfimagefeed.cpp
+    src/bfimagefeed.cpp \
+    ../../../heliconnect10/trunk/udp/state.c \
+    ../../../heliconnect10/trunk/udp/primitive_serialisation.c
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -64,7 +66,8 @@ HEADERS += include/gcsmainwindow.h \
     src/bfimagefeed.h \
     include/bfcameracomms.h \
     src/bfimagefeed.h \
-    src/bfimagefeed.h
+    src/bfimagefeed.h \
+    ../../../heliconnect10/trunk/udp/primitive_serialisation.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \
