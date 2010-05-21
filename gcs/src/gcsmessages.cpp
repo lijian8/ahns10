@@ -135,10 +135,62 @@ void gcsMainWindow::ProcessAckMessage(const timeval timeStamp, const int discard
     consoleText = timeStampStr % "[ COMMAND_ACK ]";
     m_receiveConsoleWidget->addItem(consoleText,discarded);
 
-    m_TelSecCount = 0;
-    m_TelMinCount = 0;
-    m_TelHourCount = 0;
-    m_oTelUptimer.start();
+    return;
+}
+
+/**
+  * @brief Slot to receive a CLOSE Message
+  */
+void gcsMainWindow::ProcessCloseMessage(const timeval timeStamp, const int discarded)
+{
+    QString consoleText;
+    QString timeStampStr = timeStamptoString(timeStamp);
+    consoleText = timeStampStr % "[ COMMAND_CLOSE ]";
+    m_receiveConsoleWidget->addItem(consoleText,discarded);
+
+    return;
+}
+
+/**
+  * @brief Slot to receive a FC_STATE Message
+  */
+void gcsMainWindow::ProcessFCState(const timeval timeStamp, const fc_state_t fcState, const int discarded)
+{
+    AHNS_DEBUG("gcsMainWindow::ProcessFCState(const timeval timeStamp, const fc_state_t fcState, const int discarded)");
+    QString consoleText;
+    QString timeStampStr = timeStamptoString(timeStamp);
+
+    if (m_receiveConsoleWidget->receivedShow() || m_receiveConsoleWidget->discardedShow()) // form string if either shown
+    {
+        if (!m_receiveConsoleWidget->detailShow()) // only keep first line
+        {
+            consoleText = timeStampStr % " [ FC_STATE ]";
+        }
+        else
+        {
+            QString e1, e2, e3, e4, rcLinkStatus, fcUptime, fcCPUusage;
+            e1.setNum(fcState.commandedEngine1);
+            e2.setNum(fcState.commandedEngine2);
+            e3.setNum(fcState.commandedEngine3);
+            e4.setNum(fcState.commandedEngine4);
+            rcLinkStatus.setNum(fcState.rclinkActive);
+            fcUptime.setNum(fcState.fcUptime);
+            fcCPUusage.setNum(fcState.fcCPUusage);
+
+            consoleText = "[ FC_STATE ] \n\t" % timeStampStr %"\n\t"
+                          % e1 %" \t " % e2 %" \t "% e3 %"\n\t"
+                          % e4 %" \t " % rcLinkStatus %" \t "% fcUptime %"\n\t"
+                          % fcCPUusage;
+        }
+    }
+
+    m_receiveConsoleWidget->addItem(consoleText,discarded);
+
+    if (!discarded)
+    {
+        // Update the GUI
+        m_dataPlotterWidget->setFCStateData(&timeStamp,&fcState);
+    }
 
     return;
 }

@@ -51,7 +51,8 @@ ui->filteredRollchkbox, \
         ui->engine2chkbox, \
         ui->engine3chkbox, \
         ui->engine4chkbox, \
-        ui->fcCPUchkbox \
+        ui->fcCPUchkbox, \
+        ui->fcRCchkbox\
     };
 
 /**
@@ -145,6 +146,11 @@ DataPlotter::DataPlotter(QWidget *parent) :
         case FC_CPU:
             m_plotCurves[i].setTitle(QwtText("CPU Usage [%]"));
             break;
+        case RC_LINK:
+            m_plotCurves[i].setTitle(QwtText("RC Link [1/0]"));
+            break;
+        default:
+            AHNS_ALERT("DataPlotter::DataPlotter() [ UNHANDLED CURVE ]");
         }
         m_plotCurves[i].setSymbol(QwtSymbol());
     }
@@ -211,6 +217,11 @@ DataPlotter::~DataPlotter()
         stateOutputFile.close();
     }
 
+    if (fcStateOutputFile.is_open())
+    {
+        fcStateOutputFile.close();
+    }
+
     delete ui;
 }
 
@@ -251,6 +262,11 @@ void DataPlotter::resizeEvent (QResizeEvent* e)
 void DataPlotter::initialiseLogs()
 {
 
+    if(m_loggingOn)
+    {
+        stateOutputFile.close();
+        fcStateOutputFile.close();
+    }
     // Logging is Set
     m_loggingOn = true;
 
@@ -279,6 +295,22 @@ void DataPlotter::initialiseLogs()
         stateOutputFile << "TIME, F_PHI, F_PHI_DOT, F_THETA, F_THETA_DOT, F_PSI, F_PSI_DOT, F_X, F_X_DOT,";
         stateOutputFile << "F_AX, F_Y, F_Y_DOT, F_AY, F_Z, F_Z_DOT, F_AZ, VOLTAGE" << std::endl;
     }
+
+    // FC State File
+    strftime(logFileName, 80, "logs/FC_States_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
+    fcStateOutputFile.open(logFileName);
+    if (fcStateOutputFile.fail())
+    {
+        AHNS_DEBUG("DataPlotter::DataPlotter(QWidget *parent) [ FAILED FILE OPEN ]");
+        throw std::runtime_error("DataPlotter::DataPlotter(QWidget *parent) [ FAILED FILE OPEN ]");
+    }
+    else
+    {
+        fcStateOutputFile << "AHNS FC STATE MESSAGES LOG FOR " << logFileName << std::endl;
+        fcStateOutputFile << "TIME, COMMANDED_ENGINE1, COMMANDED_ENGINE2, COMMANDED_ENGINE3, COMMANDED_ENGINE4, ";
+        fcStateOutputFile << "RC_LINK, FC_UPTIME, FC_CPU" << std::endl;
+    }
+
     return;
 }
 
@@ -341,6 +373,46 @@ void DataPlotter::setHeliStateData(const timeval* const timeStamp, const state_t
     return;
 }
 
+/**
+  * @brief Ensure new FCState is available for plotting and plot if needed
+  */
+
+void DataPlotter::setFCStateData(const timeval* const timeStamp, const fc_state_t* fcState)
+{
+    AHNS_DEBUG("DataPlotter::setHeliStateData(const timeval* timeStamp, const state_t* heliState)");
+
+    // Time
+    dataVector[FC_STATE_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
+    dataVector[FC_STATE_TIME].push_back(dataVector[FC_STATE_RAW_TIME].last()-dataVector[FC_STATE_RAW_TIME].front());
+
+    // Commanded Engine PWM
+    dataVector[ENGINE1].push_back(fcState->commandedEngine1);
+    dataVector[ENGINE2].push_back(fcState->commandedEngine2);
+    dataVector[ENGINE3].push_back(fcState->commandedEngine3);
+    dataVector[ENGINE4].push_back(fcState->commandedEngine4);
+
+    // RC Link
+    dataVector[RC_LINK].push_back(fcState->rclinkActive);
+
+    // CPU Usage Rates
+    dataVector[FC_CPU].push_back(fcState->fcCPUusage);
+
+    // Log the FC State Data
+    if (m_loggingOn)
+    {
+        fcStateOutputFile << dataVector[FC_STATE_RAW_TIME].last()-dataVector[FC_STATE_RAW_TIME].front() << "," << fcState->commandedEngine1 << ",";
+        fcStateOutputFile << fcState->commandedEngine2 << "," << fcState->commandedEngine3 << "," << fcState->commandedEngine4 << ",";
+        fcStateOutputFile << fcState->rclinkActive << "," << fcState->fcUptime << "," << fcState->fcCPUusage << std::endl;
+    }
+    if (!updatePlotTimer.isActive())
+    {
+        updatePlotTimer.start();
+    }
+
+    emit newPlottingData(dataVector);
+    return;
+}
+
 
 /**
   * @brief Replot all active curve data
@@ -393,6 +465,7 @@ void DataPlotter::replot()
             case ENGINE3:
             case ENGINE4:
             case FC_CPU:
+            case RC_LINK:
                 j = 0;
                 while ( (j < pointLimit) && (j < dataVector[i].size()))
                 {

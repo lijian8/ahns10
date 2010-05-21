@@ -51,6 +51,8 @@ public:
     quint16 readServerPort() const;
     QHostAddress readServerIP() const;
 
+    bool isConnected() const;
+
 signals:
     /** @name Signals for Received Messages */
     void NewHeliState(const timeval timeStamp, const state_t receivedState, const int discarded = 0);
@@ -69,9 +71,11 @@ signals:
     void NewGuidanceYParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
     void NewGuidanceZParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
     void NewAckMessage(const timeval timeStamp, const int discarded = 0);
+    void NewCloseMessage(const timeval timeStamp, const int discarded = 0);
     void NewFailSafe(const timeval timeStamp, const int discarded = 0);
 
 
+    /** @name Signals for Connection Status */
     void RxEstimate(const double& linkSpeed);
 
 protected:
@@ -82,7 +86,7 @@ public slots:
 
 private slots:
     void DataPending();
-    bool clientInitialise();
+    void clientInitialise();
 
 private:
     bool packetInitialise();
@@ -105,9 +109,10 @@ private:
 
     // Thread Management
     QMutex m_mutex;
+    volatile bool m_connected;
     volatile bool m_stopped;
-
     volatile bool m_ackReceived; /**< Flag used to check for COMMAND_ACK received */
+    volatile bool m_closeReceived; /**< Flag used to check for COMMAND_CLOSE received */
 };
 
 #endif // TELEMETRYTHREAD_H

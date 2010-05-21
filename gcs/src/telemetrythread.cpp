@@ -40,6 +40,7 @@ TelemetryThread::TelemetryThread(QObject * parent) : QThread(parent)
 {
     AHNS_DEBUG("TelemetryThread::TelemetryThread(QObject)");
     m_stopped = false;
+    m_connected = true;
     packetInitialise();
 
     moveToThread(this);
@@ -59,6 +60,7 @@ TelemetryThread::TelemetryThread(quint16& serverPort, QString& serverIP, quint16
     AHNS_DEBUG("TelemetryThread::TelemetryThread(server,client)");
     QMutexLocker lock(&m_mutex);
     m_stopped = false;
+    m_connected = true;
 
     // Assign members
     m_serverIP.setAddress(serverIP);
@@ -84,6 +86,7 @@ TelemetryThread::TelemetryThread(quint16& serverPort, QHostAddress& serverIP, qu
     AHNS_DEBUG("TelemetryThread::TelemetryThread(server,client QHostAddress)");
     QMutexLocker lock(&m_mutex);
     m_stopped = false;
+    m_connected = true;
 
     // Assign members
     m_serverIP = serverIP;
@@ -104,13 +107,30 @@ TelemetryThread::~TelemetryThread()
 {
     AHNS_DEBUG("TelemetryThread::~TelemetryThread()");
     QMutexLocker locker(&m_mutex);
-    m_stopped = true;
+    quint8 tryCounter = 0;
 
     if (m_socket != NULL)
     {
-        if(sendMessage(COMMAND_CLOSE) < 0) // Tell server the socket is closing
+        if (isConnected())
         {
-            AHNS_ALERT("TelemetryThread::~TelemetryThread() [ SERVER NOTIFICATION FAILED ]");
+            // Send Close Notification to Server
+            m_closeReceived = false;
+            while ((!m_closeReceived) && (tryCounter < 5))
+            {
+                tryCounter++;
+                sendMessage(COMMAND_CLOSE);
+                msleep(1000); // wait for reply
+                DataPending();
+            }
+            if(!m_closeReceived)
+            {
+                AHNS_ALERT("TelemetryThread::~TelemetryThread() [ SERVER NOTIFICATION FAILED ]");
+            }
+            else
+            {
+                m_connected = false;
+            }
+            m_closeReceived = false; // reset flag
         }
         m_socket->close();
     }
@@ -144,10 +164,9 @@ void TelemetryThread::run()
   * the socket is therefore best created as a child of the TelemetryThread
   * @return True for a successful server pairing, false otherwise
   */
-bool TelemetryThread::clientInitialise()
+void TelemetryThread::clientInitialise()
 {
     AHNS_DEBUG("TelemetryThread::clientInitialise()");
-    bool bReturn = true;
 
     try
     {
@@ -161,21 +180,25 @@ bool TelemetryThread::clientInitialise()
         // Send Connect Request to Server
         quint8 tryCounter = 0;
         m_ackReceived = false;
-        while ((!m_ackReceived) && (tryCounter < 50) && (!m_stopped))
+        while ((!m_ackReceived) && (tryCounter < 10) && (!m_stopped))
         {
             tryCounter++;
             sendMessage(COMMAND_OPEN);
-            msleep(250); // wait for reply
+            msleep(1000); // wait for reply
             DataPending();
+        }
+        if (!m_ackReceived)
+        {
+            throw std::runtime_error("Connection Timed Out");
         }
         m_ackReceived = false; // reset flag
     }
     catch(const std::exception& e)
     {
+        m_connected = false;
         AHNS_ALERT("TelemetryThread::clientInitialise() [ CLIENT INITIALISATION FAILED ] " << e.what() );
-        bReturn = false;
     }
-    return bReturn;
+    return;
 }
 
 /**
@@ -187,7 +210,7 @@ bool TelemetryThread::packetInitialise()
     bool bReturn = true;
     int i = 0;
 
-    for(i = 0; i <= COMMAND_MAX; ++i)
+    for(i = 0; i < COMMAND_MAX; ++i)
     {
         lastPacket[i].tv_sec = 0;
         lastPacket[i].tv_usec = 0;
@@ -290,7 +313,7 @@ void TelemetryThread::DataPending()
         buffer += sizeof(uint32_t);
 
 
-        if ((0 <= messageType) && (messageType <= 256)) // Message Type Valid
+        if (messageType < COMMAND_MAX) // Message Type Valid
         {
             if (timercmp(&lastPacket[messageType],timeStampPointer, <)) // timeStampPointer after lastPacket
             {
@@ -317,6 +340,9 @@ void TelemetryThread::DataPending()
                 m_ackReceived = true; 
                 emit NewAckMessage(*timeStampPointer,discarded);
                 break;
+            case COMMAND_CLOSE:
+                m_closeReceived = true;
+                emit NewCloseMessage(*timeStampPointer,discarded);
             case HELI_STATE:
                 emit NewHeliState(*timeStampPointer, *(state_t*) buffer, discarded);
                 break;
@@ -426,3 +452,12 @@ QHostAddress TelemetryThread::readServerIP() const
 {
     return m_serverIP;
 }
+
+/**
+  * @brief Accessor function for m_connect
+  */
+bool TelemetryThread::isConnected() const
+{
+    return m_connected;
+}
+
