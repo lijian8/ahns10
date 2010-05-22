@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
     }
   }
   // connect to the IMU
-  if (openSerial(imu_serial_port, BAUD_RATE_DEFAULT))
+  if (!openSerial(imu_serial_port, BAUD_RATE_DEFAULT))
   {
     fprintf(stderr,"Cannot connect to IMU\n");
     return -1;
