@@ -2,10 +2,10 @@
  * @file   imuserial.h
  * @author Liam O'Sullivan
  *
- * $Author: liamosullivan $
- * $Date: 2010-05-20 01:32:15 +1000 (Thu, 20 May 2010) $
- * $Rev: 151 $
- * $Id: bfcameracomms.cpp 151 2010-05-19 15:32:15Z liamosullivan $
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
  *
  * Queensland University of Technology
  *
