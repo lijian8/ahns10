@@ -28,6 +28,10 @@
   <property name="windowTitle">
    <string>AHNS Ground Station</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/gcs.qrc">
+    <normaloff>:/about/AHNS_Logo.png</normaloff>:/about/AHNS_Logo.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">QDockWidget{
 	background-color: rgb(0, 0, 0);
@@ -141,13 +145,15 @@ QTabBar::tab:selected {
      <x>0</x>
      <y>0</y>
      <width>1280</width>
-     <height>23</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>File</string>
     </property>
+    <addaction name="actionRestart_Logging"/>
+    <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -211,8 +217,15 @@ QTabBar::tab:selected {
     <string>Load Config</string>
    </property>
   </action>
+  <action name="actionRestart_Logging">
+   <property name="text">
+    <string>Restart Logging</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <resources/>
+ <resources>
+  <include location="../resources/gcs.qrc"/>
+ </resources>
  <connections/>
 </ui>

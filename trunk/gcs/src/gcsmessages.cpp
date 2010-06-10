@@ -16,7 +16,7 @@
 #include <QString>
 #include <QStringBuilder>
 #include "sys/time.h"
-#include "state.h"
+#include "state_cpp.h"
 
 #include "AH.h"
 #include "gcsmainwindow.h"
@@ -119,7 +119,8 @@ void gcsMainWindow::ProcessHeliState(const timeval timeStamp, const state_t heli
     {
         // Update the GUI
         m_ahWidget->setState(&heliState);
-        m_dataPlotterWidget->setHeliStateData(&timeStamp,&heliState);
+        m_Data.setHeliStateData(&timeStamp,&heliState);
+        m_systemStatusWidget->loadHeliState(heliState);
     }
 
     return;
@@ -189,7 +190,8 @@ void gcsMainWindow::ProcessFCState(const timeval timeStamp, const fc_state_t fcS
     if (!discarded)
     {
         // Update the GUI
-        m_dataPlotterWidget->setFCStateData(&timeStamp,&fcState);
+        m_Data.setFCStateData(&timeStamp,&fcState);
+        m_systemStatusWidget->loadFCState(fcState);
     }
 
     return;

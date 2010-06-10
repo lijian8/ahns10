@@ -1,7 +1,7 @@
-/* $Author: tlmolloy $
- * $Rev: 154 $
- * $LastChangedDate: 2010-05-21 20:11:44 +1000 (Fri, 21 May 2010) $
- * $Id: state.h 154 2010-05-21 10:11:44Z tlmolloy $
+/* $Author$
+ * $Rev$
+ * $LastChangedDate$
+ * $Id$
  *
  * 
  */

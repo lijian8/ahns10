@@ -31,6 +31,8 @@
 #include "receiveconsole.h"
 #include "dataplotter.h"
 #include "bfimagefeed.h"
+#include "dataplotter.h"
+#include "datalogger.h"
 
 
 namespace Ui {
@@ -58,6 +60,7 @@ protected:
     void changeEvent(QEvent *e);
 
 private slots:
+    void on_actionRestart_Logging_triggered();
     void on_actionLoad_Config_triggered();
     void on_actionSave_Config_triggered();
     void on_actionRemove_Last_Plotting_Widget_triggered();
@@ -105,6 +108,9 @@ private:
     quint8 m_TelSecCount;
     quint8 m_TelMinCount;
     quint32 m_TelHourCount;
+
+    // Data Logger Object
+    DataLogger m_Data;
 };
 
 #endif // GCSMAINWINDOW_H

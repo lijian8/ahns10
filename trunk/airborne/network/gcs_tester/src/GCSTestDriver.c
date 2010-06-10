@@ -120,7 +120,7 @@ main (int argc, char *argv[])
 
 
       count++;
-      usleep (20e3);		/*50hz*/
+      usleep (50e3);		/*50hz*/
 
 
       /* send data to the socket */
@@ -135,23 +135,33 @@ main (int argc, char *argv[])
 	  state.phi = fmod (count / 180.0 * 5.0 / 4.0, M_PI / 2.0);
 	  state.theta = fmod (count / 180.0 * 10 / 7.0, M_PI / 2.0);
 	  state.psi = fmod (count / 180.0 * 10.0 / 3.0, 2 * M_PI);
+          state.p = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
+          state.q = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
+          state.r = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
+          state.x = fmod((count - 300.0) * count/M_PI, 300);
+          state.y = fmod((count - 200.0) * count/M_PI, 200);
+          state.z = fmod((count - 100.0) * count,100);
+	  state.voltage = (count/100 % 4) + 9;
 
 
 	  printf ("\n\nSending state \n"),
           fprintf (stderr, "state : %f  %f %f \n", state.phi, state.theta, state.psi);
 	  gettimeofday (&local_time, 0);
 	  fprintf (stderr, "time: %.4f\n", local_time.tv_sec + local_time.tv_usec/1e6);
-	  fprintf (stderr, "count: %d", count);
+	  fprintf (stderr, "count: %d\n", count);
 	  server_send_packet (&server, HELI_STATE, &state, sizeof (state_t));
 
-	  fc_state.commandedEngine1 = 50;
-	  fc_state.commandedEngine2 = count;
-	  fc_state.commandedEngine3 = 70;
-	  fc_state.commandedEngine4 = 1;
-	  fc_state.rclinkActive = 64;
-	  fc_state.fcUptime = 0;
-          fc_state.fcCPUusage = 0;
-	  unsigned char buffer[150];
+	  fc_state.commandedEngine1 = 1000 + fmod(0 + count*2*M_PI, 1000);
+	  fc_state.commandedEngine2 = 1000 + fmod(100 + count*3*M_PI, 1000);
+	  fc_state.commandedEngine3 = 1000 + fmod(200 + count*4*M_PI, 1000);
+	  fc_state.commandedEngine4 = 1000 + fmod(300 + count*5*M_PI, 1000);
+
+	  fc_state.rclinkActive = ((count % 200) < 100 ) ? 1 : 0;
+	  fc_state.fcUptime = count % 6000;
+          fc_state.fcCPUusage = 2*count;
+
+	  fprintf(stderr,"fc_size: %d\tUpTime: %d\tUsage: %d\tRC Link: %d",sizeof(fc_state_t),fc_state.fcUptime,fc_state.fcCPUusage,fc_state.rclinkActive);
+	  unsigned char buffer[200];
 	  int dataLength = PackFCState(buffer,&fc_state);
 	  server_send_packet (&server, FC_STATE, &fc_state, dataLength);
 

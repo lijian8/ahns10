@@ -43,7 +43,8 @@ SOURCES += src/main.cpp \
     src/dataplotter.cpp \
     src/bfglrenderer.cpp \
     src/bfcameracomms.cpp \
-    src/bfimagefeed.cpp
+    src/bfimagefeed.cpp \
+    src/datalogger.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -64,7 +65,8 @@ HEADERS += include/gcsmainwindow.h \
     include/bfcameracomms.h \
     src/bfimagefeed.h \
     src/bfimagefeed.h \
-    ../airborne/network/udp/primitive_serialisation.h
+    ../airborne/network/udp/primitive_serialisation.h \
+    include/datalogger.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \

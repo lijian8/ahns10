@@ -136,8 +136,7 @@ void gcsMainWindow::createDockWindows()
         m_systemStatusWidget = new SystemStatus(dockSS);
         m_wifiCommsWidget = new wifiComms(dockWC);
         m_receiveConsoleWidget = new ReceiveConsole(dockRC);
-        m_dataPlotterWidget = new DataPlotter(dockDP);
-        m_dataPlotterWidget->initialiseLogs();
+        m_dataPlotterWidget = new DataPlotter(m_Data.getData(),dockDP);
 
         dockAH->setWidget(m_ahWidget);
         dockSS->setWidget(m_systemStatusWidget);
@@ -195,8 +194,8 @@ void gcsMainWindow::on_actionNew_Plotting_Widget_triggered()
     m_plottingDock.push_back(new QDockWidget(QString(tr("Data Plotter") % "(" % tempStr % ")"),this));
     m_plottingDock.last()->setObjectName(QString(tr("Data Plotter") % "(" % tempStr % ")"));
     // Widget
-    m_plottingWidgets.push_back(new DataPlotter(m_plottingDock.last()));
-    *m_plottingWidgets.last() = *m_dataPlotterWidget;
+    m_plottingWidgets.push_back(new DataPlotter(m_Data.getData(),m_plottingDock.last()));
+    //*m_plottingWidgets.last() = *m_dataPlotterWidget;
     // Dock widget
     m_plottingDock.last()->setWidget(m_plottingWidgets.last());
 
@@ -206,7 +205,6 @@ void gcsMainWindow::on_actionNew_Plotting_Widget_triggered()
     // m_plottingDock.last()->show();
 
     ui->menuView->insertAction(0,m_plottingDock.last()->toggleViewAction());
-    connect(m_dataPlotterWidget,SIGNAL(newPlottingData(const QVector<double>* const)),m_plottingWidgets.last(),SLOT(copyNewData(const QVector<double>* const)));
     return;
 }
 
@@ -393,11 +391,20 @@ void gcsMainWindow::TelemetryMonitor()
         else
         {
             AHNS_ALERT("gcsMainWindow::TelemetryMonitor() [ TELEMETRY THREAD DROPPED ]");
-            QMessageBox messageBox(QMessageBox::Critical,"Failed Telemetry Thread","Thread Stopped",QMessageBox::Ok);
-            messageBox.setParent(this);
+            QMessageBox messageBox(QMessageBox::Critical,"Telemetry Thread Dropped","Thread Timed Out or Stopped",QMessageBox::Ok);
+            messageBox.setStyleSheet(this->styleSheet());
             messageBox.show();
             messageBox.exec();
+
             m_oTelUptimer.stop();
+            // Not Connected so don't run
+            if (m_TelemetryThread != NULL)
+            {
+                m_TelemetryThread->stop();
+                m_TelemetryThread->wait();
+                delete m_TelemetryThread;
+                m_TelemetryThread = NULL;
+            }
         }
     }
     else
@@ -517,4 +524,13 @@ void gcsMainWindow::on_actionLoad_Config_triggered()
         }
     }
     return;
+}
+
+/**
+  * @brief Restart the Data Logging
+  */
+void gcsMainWindow::on_actionRestart_Logging_triggered()
+{
+    m_Data.clearData();
+    m_Data.initialiseLogs();
 }
