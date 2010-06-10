@@ -16,12 +16,14 @@
 
 #include <QResizeEvent>
 #include <QCheckBox>
+#include <QVector>
+
 #include <ctime>
 #include <stdexcept>
 #include <fstream>
 
 #include "sys/time.h"
-#include "state.h"
+#include "state_cpp.h"
 
 #include <qwt_symbol.h>
 
@@ -58,9 +60,7 @@ ui->filteredRollchkbox, \
 /**
   * @brief Constructor
   */
-DataPlotter::DataPlotter(QWidget *parent) :
-        QWidget(parent),
-        ui(new Ui::DataPlotter)
+DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(parent), ui(new Ui::DataPlotter)
 {
     AHNS_DEBUG("DataPlotter::DataPlotter(QWidget *parent)");
     ui->setupUi(this);
@@ -68,10 +68,6 @@ DataPlotter::DataPlotter(QWidget *parent) :
 
     // Array of all Check boxes
     CHECK_BOX_ARRAY;
-
-    // Keep At 25Hz
-    updatePlotTimer.setInterval(40);
-    connect(&updatePlotTimer,SIGNAL(timeout()),this,SLOT(replot()));
 
     setMinimumSize(640,480);
 
@@ -155,7 +151,7 @@ DataPlotter::DataPlotter(QWidget *parent) :
         m_plotCurves[i].setSymbol(QwtSymbol());
     }
 
-    connect(ui->Clearbtn,SIGNAL(clicked()),this,SLOT(ClearAll()));
+    connect(ui->Clearbtn,SIGNAL(clicked()),this,SLOT(ClearPlots()));
 
     // Possible Curve Pens
     srand(time(NULL));
@@ -203,24 +199,19 @@ DataPlotter::DataPlotter(QWidget *parent) :
     m_coordinateGrid.setMinPen(gridPen);
     m_coordinateGrid.attach(ui->dataPlotqwtPlot);
 
-    // By Default no Logging
-    m_loggingOn = false;
-    //initialiseLogs();
+    // Address of Data
+    m_DataVector = srcData;
+
+    // Update Plots at 25Hz
+    updatePlotTimer.setInterval(40);
+    connect(&updatePlotTimer,SIGNAL(timeout()),this,SLOT(replot()));
+    updatePlotTimer.start();
 }
 
 DataPlotter::~DataPlotter()
 {
 
     AHNS_DEBUG("DataPlotter::~DataPlotter");
-    if (stateOutputFile.is_open())
-    {
-        stateOutputFile.close();
-    }
-
-    if (fcStateOutputFile.is_open())
-    {
-        fcStateOutputFile.close();
-    }
 
     delete ui;
 }
@@ -253,163 +244,6 @@ void DataPlotter::resizeEvent (QResizeEvent* e)
 {
     //AHNS_DEBUG("DataPlotter::resizeEvent (QResizeEvent* e)");
     ui->verticalLayoutWidget->resize(e->size());
-    return;
-}
-
-/**
-  * @brief Slot for initialising the logging files
-  */
-void DataPlotter::initialiseLogs()
-{
-
-    if(m_loggingOn)
-    {
-        stateOutputFile.close();
-        fcStateOutputFile.close();
-    }
-    // Logging is Set
-    m_loggingOn = true;
-
-    // Close Files if open
-    if (stateOutputFile.is_open())
-    {
-        stateOutputFile.close();
-    }
-
-    // Open Log Files
-    time_t logFileTime;
-    std::time(&logFileTime);
-    char logFileName[80];
-
-    // State File
-    strftime(logFileName, 80, "logs/Filtered_States_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
-    stateOutputFile.open(logFileName);
-    if (stateOutputFile.fail())
-    {
-        AHNS_DEBUG("DataPlotter::DataPlotter(QWidget *parent) [ FAILED FILE OPEN ]");
-        throw std::runtime_error("DataPlotter::DataPlotter(QWidget *parent) [ FAILED FILE OPEN ]");
-    }
-    else
-    {
-        stateOutputFile << "AHNS STATE MESSAGES LOG FOR " << logFileName << std::endl;
-        stateOutputFile << "TIME, F_PHI, F_PHI_DOT, F_THETA, F_THETA_DOT, F_PSI, F_PSI_DOT, F_X, F_X_DOT,";
-        stateOutputFile << "F_AX, F_Y, F_Y_DOT, F_AY, F_Z, F_Z_DOT, F_AZ, VOLTAGE" << std::endl;
-    }
-
-    // FC State File
-    strftime(logFileName, 80, "logs/FC_States_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
-    fcStateOutputFile.open(logFileName);
-    if (fcStateOutputFile.fail())
-    {
-        AHNS_DEBUG("DataPlotter::DataPlotter(QWidget *parent) [ FAILED FILE OPEN ]");
-        throw std::runtime_error("DataPlotter::DataPlotter(QWidget *parent) [ FAILED FILE OPEN ]");
-    }
-    else
-    {
-        fcStateOutputFile << "AHNS FC STATE MESSAGES LOG FOR " << logFileName << std::endl;
-        fcStateOutputFile << "TIME, COMMANDED_ENGINE1, COMMANDED_ENGINE2, COMMANDED_ENGINE3, COMMANDED_ENGINE4, ";
-        fcStateOutputFile << "RC_LINK, FC_UPTIME, FC_CPU" << std::endl;
-    }
-
-    return;
-}
-
-/**
-  * @brief Ensure new HeliState is available for plotting and plot if needed
-  */
-
-void DataPlotter::setHeliStateData(const timeval* const timeStamp, const state_t* heliState)
-{
-    AHNS_DEBUG("DataPlotter::setHeliStateData(const timeval* timeStamp, const state_t* heliState)");
-
-    // Time
-    dataVector[HELI_STATE_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
-    dataVector[HELI_STATE_TIME].push_back(dataVector[HELI_STATE_RAW_TIME].last()-dataVector[HELI_STATE_RAW_TIME].front());
-
-    // Angular Position
-    dataVector[F_PHI].push_back(heliState->phi);
-    dataVector[F_THETA].push_back(heliState->theta);
-    dataVector[F_PSI].push_back(heliState->psi);
-
-    // Angular Rates
-    dataVector[F_PHI_DOT].push_back(heliState->p);
-    dataVector[F_THETA_DOT].push_back(heliState->q);
-    dataVector[F_PSI_DOT].push_back(heliState->r);
-
-    // Linear Positions
-    dataVector[F_X].push_back(heliState->x);
-    dataVector[F_Y].push_back(heliState->y);
-    dataVector[F_Z].push_back(heliState->z);
-
-    // Linear Velocities
-    dataVector[F_X_DOT].push_back(heliState->vx);
-    dataVector[F_Y_DOT].push_back(heliState->vy);
-    dataVector[F_Z_DOT].push_back(heliState->vz);
-
-    // Linear Accelerations
-    dataVector[F_AX].push_back(heliState->ax);
-    dataVector[F_AY].push_back(heliState->ay);
-    dataVector[F_AZ].push_back(heliState->az);
-
-    // Voltage Accelerations
-    dataVector[VOLTAGE].push_back(heliState->voltage);
-
-
-    // Log the State Data
-    if (m_loggingOn)
-    {
-        stateOutputFile << dataVector[HELI_STATE_RAW_TIME].last()-dataVector[HELI_STATE_RAW_TIME].front() << "," << heliState->phi << ",";
-        stateOutputFile << heliState->p << "," << heliState->theta << "," << heliState->q << ",";
-        stateOutputFile << heliState->psi << "," << heliState->r << "," << heliState->x << "," << heliState->vx << ",";
-        stateOutputFile << heliState->ax << "," << heliState->y << "," << heliState->vy << "," << heliState->ay << ",";
-        stateOutputFile << heliState->z << "," << heliState->vz << "," << heliState->az << "," << heliState->voltage << std::endl;
-    }
-    if (!updatePlotTimer.isActive())
-    {
-        updatePlotTimer.start();
-    }
-
-    emit newPlottingData(dataVector);
-    return;
-}
-
-/**
-  * @brief Ensure new FCState is available for plotting and plot if needed
-  */
-
-void DataPlotter::setFCStateData(const timeval* const timeStamp, const fc_state_t* fcState)
-{
-    AHNS_DEBUG("DataPlotter::setHeliStateData(const timeval* timeStamp, const state_t* heliState)");
-
-    // Time
-    dataVector[FC_STATE_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
-    dataVector[FC_STATE_TIME].push_back(dataVector[FC_STATE_RAW_TIME].last()-dataVector[FC_STATE_RAW_TIME].front());
-
-    // Commanded Engine PWM
-    dataVector[ENGINE1].push_back(fcState->commandedEngine1);
-    dataVector[ENGINE2].push_back(fcState->commandedEngine2);
-    dataVector[ENGINE3].push_back(fcState->commandedEngine3);
-    dataVector[ENGINE4].push_back(fcState->commandedEngine4);
-
-    // RC Link
-    dataVector[RC_LINK].push_back(fcState->rclinkActive);
-
-    // CPU Usage Rates
-    dataVector[FC_CPU].push_back(fcState->fcCPUusage);
-
-    // Log the FC State Data
-    if (m_loggingOn)
-    {
-        fcStateOutputFile << dataVector[FC_STATE_RAW_TIME].last()-dataVector[FC_STATE_RAW_TIME].front() << "," << fcState->commandedEngine1 << ",";
-        fcStateOutputFile << fcState->commandedEngine2 << "," << fcState->commandedEngine3 << "," << fcState->commandedEngine4 << ",";
-        fcStateOutputFile << fcState->rclinkActive << "," << fcState->fcUptime << "," << fcState->fcCPUusage << std::endl;
-    }
-    if (!updatePlotTimer.isActive())
-    {
-        updatePlotTimer.start();
-    }
-
-    emit newPlottingData(dataVector);
     return;
 }
 
@@ -452,10 +286,10 @@ void DataPlotter::replot()
             case F_AZ:
             case VOLTAGE:
                 j = 0;
-                while ((j < pointLimit) && (j < dataVector[i].size()))
+                while ((j < pointLimit) && (j < m_DataVector[i].size()))
                 {
-                    timePoints[j] = dataVector[HELI_STATE_TIME][dataVector[HELI_STATE_TIME].size()-j-1];
-                    dataPoints[j] = dataVector[i][dataVector[i].size()-j-1];
+                    timePoints[j] = m_DataVector[HELI_STATE_TIME][m_DataVector[HELI_STATE_TIME].size()-j-1];
+                    dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
                     j++;
                 }
                 m_plotCurves[i].setData(timePoints, dataPoints, j);
@@ -467,10 +301,10 @@ void DataPlotter::replot()
             case FC_CPU:
             case RC_LINK:
                 j = 0;
-                while ( (j < pointLimit) && (j < dataVector[i].size()))
+                while ( (j < pointLimit) && (j < m_DataVector[i].size()))
                 {
-                    timePoints[j] = dataVector[FC_STATE_TIME][dataVector[FC_STATE_TIME].size()-j-1];
-                    dataPoints[j] = dataVector[i][dataVector[i].size()-j-1];
+                    timePoints[j] = m_DataVector[FC_STATE_TIME][m_DataVector[FC_STATE_TIME].size()-j-1];
+                    dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
                     j++;
                 }
                 m_plotCurves[i].setData(timePoints, dataPoints, j);
@@ -520,11 +354,11 @@ void DataPlotter::SetActive()
 
 
 /**
-  * @brief Slot clear all Graphing and Data After button click
+  * @brief Slot to clear plots after button click
   */
-void DataPlotter::ClearAll()
+void DataPlotter::ClearPlots()
 {
-    AHNS_DEBUG("DataPlotter::ClearAll()");
+    AHNS_DEBUG("DataPlotter::ClearPlots()");
 
     int i = 0;
 
@@ -541,55 +375,8 @@ void DataPlotter::ClearAll()
 
         // Deactive the plot
         m_activePlot[i] = false;
-
-        // Clear the Data
-        dataVector[i].clear();
-    }
-
-    // Restart Logging
-    if (m_loggingOn)
-    {
-        initialiseLogs();
     }
 
     replot();
     return;
-}
-
-/**
-  * @brief Copy the last data points
-  */
-void DataPlotter::copyNewData(const QVector<double>* const srcData)
-{
-    AHNS_DEBUG("DataPlotter::copyNewData(const QVector<double>* const srcData)");
-    int i = 0;
-    for ( i = 0; i < DATA_COUNT; ++i)
-    {
-        if (!srcData[i].isEmpty())
-        {
-            dataVector[i].push_back(srcData[i].last());
-        }
-    }
-
-    if (!updatePlotTimer.isActive())
-    {
-        updatePlotTimer.start();
-    }
-
-    return;
-}
-
-/**
-  * @brief Assignment Operator to copy the dataVector between objects
-  */
-DataPlotter& DataPlotter::operator=(const DataPlotter& srcDataPlotter)
-                                   {
-    AHNS_DEBUG("DataPlotter::operator=(const DataPlotter& srcDataPlotter)");
-    int i = 0;
-    for ( i = 0; i < DATA_COUNT; ++i)
-    {
-        dataVector[i] = srcDataPlotter.dataVector[i];
-    }
-
-    return *this;
 }

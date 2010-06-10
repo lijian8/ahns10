@@ -1,6 +1,6 @@
-/* $Author: tlmolloy $
+/* $Author$
  * $Name:  $
- * $Id: state.c 155 2010-05-21 10:15:47Z tlmolloy $
+ * $Id$
  * $Source: /home/luis/cvsroot/net-api/state.c,v $
  * $Log: state.c,v $
  * Revision 1.1.1.1  2008-05-05 07:07:57  luis
