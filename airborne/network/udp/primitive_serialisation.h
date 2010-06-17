@@ -23,10 +23,6 @@
  *	@author Joel Dawkins
  */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef PRIMITIVE_SERIALISATION_H
 #define PRIMITIVE_SERIALISATION_H
 
@@ -93,8 +89,4 @@ int UnpackString(const unsigned char *buf, char *str, uint32_t maxLength);
 int UnpackTimevalStruct(const unsigned char *buf, struct timeval *t);
 
 
-#endif
-
-#ifdef __cplusplus
-}
 #endif

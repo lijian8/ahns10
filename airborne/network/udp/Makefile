@@ -34,16 +34,16 @@ LD = $(CC)
 
 CFLAGS = 
 LDFLAGS =  -L./ -lstate -lm
+HELICON = ~/heliconnect10/trunk/udp
 
-
-SRCS = client.c server.c state.c udp.c primitive_serialisation.c
+SRCS = client.c server.c $(HELICON)state.c udp.c primitive_serialisation.c
 INCLUDES = server.h state.h udp.h commands.h 
 OBJS = server.o udp.o state.o client.o primitive_serialisation.o
 LIBSTATE= libstate.a 
 all:  $(LIBSTATE) example
 
 %.o: %.c
-	$(CC) -O2 -c $< $(CFLAGS) -o $@
+	$(CC) -O2 -c $< $(CFLAGS) -o $@ -I $(HELICON)
 
 example: query_state1.o query_state2.o
 	$(CC) query_state1.o $(LDFLAGS) -o client 

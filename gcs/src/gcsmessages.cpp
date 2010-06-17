@@ -16,7 +16,7 @@
 #include <QString>
 #include <QStringBuilder>
 #include "sys/time.h"
-#include "state_cpp.h"
+#include "state.h"
 
 #include "AH.h"
 #include "gcsmainwindow.h"
