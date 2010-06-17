@@ -23,7 +23,7 @@
 #include <fstream>
 
 #include "sys/time.h"
-#include "state_cpp.h"
+#include "state.h"
 
 #include <qwt_symbol.h>
 

@@ -20,7 +20,7 @@
 #include <QTimer>
 #include "ui_systemstatus.h"
 
-#include "state_cpp.h"
+#include "state.h"
 
 /** @name Hardware Constants
   * @todo CONFIRM THE LOCATION AND VALUES OF THESE

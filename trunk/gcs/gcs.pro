@@ -12,7 +12,8 @@ INCLUDEPATH += . \
     AHWidget/include \
     reuse/ \
     /usr/include/qwt-qt4/ \
-    ../airborne/network/udp/
+    ../../../heliconnect10/trunk/udp/ \
+    udp/
 UI_DIR = ui
 UI_HEADERS_DIR = tmp
 UI_SOURCES_DIR = tmp
@@ -31,8 +32,8 @@ SOURCES += src/main.cpp \
     AHWidget/src/AH_Utility.cpp \
     AHWidget/src/AH_Motion.cpp \
     AHWidget/src/AH.cpp \
-    ../airborne/network/udp/state.cpp \
-    ../airborne/network/udp/primitive_serialisation.cpp \
+    udp/primitive_serialisation.c \
+    ../../../heliconnect10/trunk/udp/state.c \
     reuse/ahns_logger.cpp \
     src/aboutform.cpp \
     src/wificomms.cpp \
@@ -50,8 +51,8 @@ HEADERS += include/gcsmainwindow.h \
     AHWidget/include/AH.h \
     AHWidget/include/AH.h \
     reuse/ahns_logger.h \
-    ../airborne/network/udp/commands.h \
-    ../airborne/network/udp/state_cpp.h \
+    ../../../heliconnect10/trunk/udp/commands.h \
+    ../../../heliconnect10/trunk/udp/state.h \
     include/aboutform.h \
     include/wificomms.h \
     include/telemetrythread.h \
@@ -65,7 +66,7 @@ HEADERS += include/gcsmainwindow.h \
     include/bfcameracomms.h \
     src/bfimagefeed.h \
     src/bfimagefeed.h \
-    ../airborne/network/udp/primitive_serialisation.h \
+    udp/primitive_serialisation.h \
     include/datalogger.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \

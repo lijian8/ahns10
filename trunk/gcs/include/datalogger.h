@@ -20,7 +20,7 @@
 #include <fstream>
 
 #include "sys/time.h"
-#include "state_cpp.h"
+#include "state.h"
 
 /** @name Possible Plot Data */
 enum PlotData {
