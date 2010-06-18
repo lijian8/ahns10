@@ -1,5 +1,0 @@
-Checking hardware rendering command: glxinfo ~ in the line where it says direct rendering: Yes = All working
-
-Check OpenGL file in graphics card is working properly: open text file "/var/log/Xorg.0.log"
-Search for lines that starts with (EE)
-Or could try command "LIBGL_DEBUG=verbose glxinfo"
