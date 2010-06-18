@@ -32,7 +32,7 @@ SOURCES += src/main.cpp \
     AHWidget/src/AH_Utility.cpp \
     AHWidget/src/AH_Motion.cpp \
     AHWidget/src/AH.cpp \
-    udp/primitive_serialisation.c \
+    ../udp/src/little_host_serialisation.c \
     ../../../heliconnect10/trunk/udp/state.c \
     reuse/ahns_logger.cpp \
     src/aboutform.cpp \
@@ -66,7 +66,7 @@ HEADERS += include/gcsmainwindow.h \
     include/bfcameracomms.h \
     src/bfimagefeed.h \
     src/bfimagefeed.h \
-    udp/primitive_serialisation.h \
+    ../udp/include/primitive_serialisation.h \
     include/datalogger.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \

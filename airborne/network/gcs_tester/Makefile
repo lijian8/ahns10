@@ -40,7 +40,7 @@ LIB = libstate.a
 
 SRCS = src/GCSTestDriver.c
 OBJS = obj/GCSTestDriver.o
-INC = -I $(LIBDIR) -I include
+INC = -I ~/heliconnect10/trunk/udp/ -I include
 
 SERVER = GCSServerTestDriver
 

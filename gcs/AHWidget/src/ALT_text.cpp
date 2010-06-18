@@ -19,7 +19,8 @@ void AHclass::displayAltitudeText(float posX, float posY)
 	LWIDTH_DEFAULT;
 	COL_GREEN;
 	glTranslatef(0.0f, 0.0f, ONTOP*2);
-	sprintf(insChar, "%dcm", (int)altState);
+        /** @bug Crashes When Alt display is > 1000*/
+        //sprintf(insChar, "%dcm", (int)altState);
 	if (altState >= 100)				posX += 0.9f;
 	else if ((altState < 100) && (altState >= 10))	posX += 2*0.9f;
 	else if ((altState < 10) && (altState >= 0))	posX += 3*0.9f;
