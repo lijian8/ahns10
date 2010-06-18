@@ -20,7 +20,7 @@
  *	has been tested extensively.
  *
  *  @creation 6/05/2010
- *	@author Joel Dawkins
+ *  @author Joel Dawkins - Converted to Little Endian by Tim Molloy
  */
 
 #include "primitive_serialisation.h"
@@ -118,9 +118,8 @@ long double ConvertFromFloat754(long long i, unsigned bits, unsigned expbits)
 
 int PackInt16(unsigned char *buf, int16_t i)
 {
-	// Record each octet in descending order of significance
-	buf[0] = (unsigned char)(i>>8);
-	buf[1] = (unsigned char)i;
+	buf[1] = (unsigned char)(i>>8); // HOST LSB
+	buf[0] = (unsigned char)i;
 	
 	// Return the number of octets written to the buffer
 	return 2;
@@ -129,7 +128,7 @@ int PackInt16(unsigned char *buf, int16_t i)
 int UnpackInt16(const unsigned char *buf, int16_t *i)
 {
 	// Rebuild the 16 bit integer
-	*i = (buf[0])<<8 | buf[1];
+	*i = (buf[1])<<8 | buf[0];
 	
 	// Return the number of octets read from the buffer
 	return 2;
@@ -138,8 +137,8 @@ int UnpackInt16(const unsigned char *buf, int16_t *i)
 int PackUInt16(unsigned char *buf, uint16_t i)
 {
 	// Record each octet in descending order of significance
-	buf[0] = (unsigned char)(i>>8);
-	buf[1] = (unsigned char)i;
+	buf[1] = (unsigned char)(i>>8); //lowest in LE host sent last
+	buf[0] = (unsigned char)i;
 	
 	// Return the number of octets written to the buffer
 	return 2;
@@ -148,7 +147,7 @@ int PackUInt16(unsigned char *buf, uint16_t i)
 int UnpackUInt16(const unsigned char *buf, uint16_t *i)
 {
 	// Rebuild the 16 bit unsigned integer
-	*i = (buf[0])<<8 | buf[1];
+	*i = (buf[1])<<8 | buf[0]; // recieved HSB first in 0
 	
 	// Return the number of octets read from the buffer
 	return 2;
@@ -156,11 +155,10 @@ int UnpackUInt16(const unsigned char *buf, uint16_t *i)
 
 int PackInt32(unsigned char *buf, int32_t i)
 {
-	// Record each octet in descending order of significance
-	buf[0] = (unsigned char)(i>>24);
-	buf[1] = (unsigned char)(i>>16);
-	buf[2] = (unsigned char)(i>>8);
-	buf[3] = (unsigned char)(i);
+	buf[3] = (unsigned char)(i>>24); //Host LSB
+	buf[2] = (unsigned char)(i>>16);
+	buf[1] = (unsigned char)(i>>8);
+	buf[0] = (unsigned char)(i);     //Host HSB
 	
 	// Return the number of octets written to the buffer
 	return 4;
@@ -168,8 +166,8 @@ int PackInt32(unsigned char *buf, int32_t i)
 
 int UnpackInt32(const unsigned char *buf, int32_t *i)
 {
-	// Rebuild the 32 bit integer
-	*i = (buf[0])<<24 | (buf[1])<<16 | (buf[2])<<8 | buf[3];
+	// Rebuild the 32 bit integer - HSB in Buffer0
+	*i = (buf[3])<<24 | (buf[2])<<16 | (buf[1])<<8 | buf[0];
 	
 	// Return the number of octets read from the buffer
 	return 4;
@@ -177,11 +175,10 @@ int UnpackInt32(const unsigned char *buf, int32_t *i)
 
 int PackUInt32(unsigned char *buf, uint32_t i)
 {
-	// Record each octet in descending order of significance
-	buf[0] = (unsigned char)(i>>24);
-	buf[1] = (unsigned char)(i>>16);
-	buf[2] = (unsigned char)(i>>8);
-	buf[3] = (unsigned char)(i);
+	buf[3] = (unsigned char)(i>>24);
+	buf[2] = (unsigned char)(i>>16);
+	buf[1] = (unsigned char)(i>>8);
+	buf[0] = (unsigned char)(i);
 	
 	// Return the number of octets written to the buffer
 	return 4;
@@ -190,7 +187,7 @@ int PackUInt32(unsigned char *buf, uint32_t i)
 int UnpackUInt32(const unsigned char *buf, uint32_t *i)
 {
 	// Rebuild the 32 bit unsigned integer
-	*i = (buf[0])<<24 | (buf[1])<<16 | (buf[2])<<8 | buf[3];
+	*i = (buf[3])<<24 | (buf[2])<<16 | (buf[1])<<8 | buf[0];
 	
 	// Return the number of octets read from the buffer
 	return 4;
@@ -199,14 +196,14 @@ int UnpackUInt32(const unsigned char *buf, uint32_t *i)
 int PackInt64(unsigned char *buf, int64_t i)
 {
 	// Record each octet in descending order of significance
-	buf[0] = (unsigned char)(i>>56);
-	buf[1] = (unsigned char)(i>>48);
-	buf[2] = (unsigned char)(i>>40);
-	buf[3] = (unsigned char)(i>>32);
-	buf[4] = (unsigned char)(i>>24);
-	buf[5] = (unsigned char)(i>>16);
-	buf[6] = (unsigned char)(i>>8);
-	buf[7] = (unsigned char)(i);
+	buf[7] = (unsigned char)(i>>56);
+	buf[6] = (unsigned char)(i>>48);
+	buf[5] = (unsigned char)(i>>40);
+	buf[4] = (unsigned char)(i>>32);
+	buf[3] = (unsigned char)(i>>24);
+	buf[2] = (unsigned char)(i>>16);
+	buf[1] = (unsigned char)(i>>8);
+	buf[0] = (unsigned char)(i);
 	
 	// Return the number of octets written to the buffer
 	return 8;
@@ -215,10 +212,10 @@ int PackInt64(unsigned char *buf, int64_t i)
 int UnpackInt64(const unsigned char *buf, int64_t *i)
 {
 	// Rebuild the 64 bit integer
-	*i =	(int64_t)(buf[0])<<56 | (int64_t)(buf[1])<<48 | 
-			(int64_t)(buf[2])<<40 | (int64_t)(buf[3])<<32 | 
-			(int64_t)(buf[4])<<24 | (int64_t)(buf[5])<<16 | 
-			(int64_t)(buf[6])<<8 | (int64_t)buf[7];
+	*i =	(int64_t)(buf[7])<<56 | (int64_t)(buf[6])<<48 | 
+		(int64_t)(buf[5])<<40 | (int64_t)(buf[4])<<32 | 
+		(int64_t)(buf[3])<<24 | (int64_t)(buf[2])<<16 | 
+		(int64_t)(buf[1])<<8 | (int64_t)buf[0];
 	
 	// Return the number of octets read from the buffer
 	return 8;
@@ -226,15 +223,15 @@ int UnpackInt64(const unsigned char *buf, int64_t *i)
 
 int PackUInt64(unsigned char *buf, uint64_t i)
 {
-	// Record each octet in descending order of significance
-	buf[0] = (unsigned char)(i>>56);
-	buf[1] = (unsigned char)(i>>48);
-	buf[2] = (unsigned char)(i>>40);
-	buf[3] = (unsigned char)(i>>32);
-	buf[4] = (unsigned char)(i>>24);
-	buf[5] = (unsigned char)(i>>16);
-	buf[6] = (unsigned char)(i>>8);
-	buf[7] = (unsigned char)(i);
+	// LSB is 7th element to HSB
+	buf[7] = (unsigned char)(i>>56); // LSB
+	buf[6] = (unsigned char)(i>>48);
+	buf[5] = (unsigned char)(i>>40);
+	buf[4] = (unsigned char)(i>>32);
+	buf[3] = (unsigned char)(i>>24);
+	buf[2] = (unsigned char)(i>>16);
+	buf[1] = (unsigned char)(i>>8);
+	buf[0] = (unsigned char)(i);     // HSB
 	
 	// Return the number of octets written to the buffer
 	return 8;
@@ -243,10 +240,10 @@ int PackUInt64(unsigned char *buf, uint64_t i)
 int UnpackUInt64(const unsigned char *buf, uint64_t *i)
 {
 	// Rebuild the 64 bit integer
-	*i =	(int64_t)(buf[0])<<56 | (int64_t)(buf[1])<<48 | 
-			(int64_t)(buf[2])<<40 | (int64_t)(buf[3])<<32 | 
-			(int64_t)(buf[4])<<24 | (int64_t)(buf[5])<<16 | 
-			(int64_t)(buf[6])<<8 | (int64_t)buf[7];
+	*i =	(int64_t)(buf[7])<<56 | (int64_t)(buf[6])<<48 | // LSB 
+		(int64_t)(buf[5])<<40 | (int64_t)(buf[4])<<32 | 
+		(int64_t)(buf[3])<<24 | (int64_t)(buf[2])<<16 | 
+		(int64_t)(buf[1])<<8 | (int64_t)buf[0];         // HSB
 	
 	// Return the number of octets read from the buffer
 	return 8;

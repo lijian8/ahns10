@@ -120,8 +120,7 @@ main (int argc, char *argv[])
 
 
       count++;
-      usleep (50e3);		/*50hz*/
-
+      usleep (250e3);
 
       /* send data to the socket */
       if (count % 1 == 0)
@@ -144,7 +143,7 @@ main (int argc, char *argv[])
 	  state.voltage = (count/100 % 4) + 9;
 
 
-	  printf ("\n\nSending state \n"),
+	  printf ("\n\nSending state: Size %d \n",sizeof(state_t)),
           fprintf (stderr, "state : %f  %f %f \n", state.phi, state.theta, state.psi);
 	  gettimeofday (&local_time, 0);
 	  fprintf (stderr, "time: %.4f\n", local_time.tv_sec + local_time.tv_usec/1e6);
@@ -157,11 +156,11 @@ main (int argc, char *argv[])
 	  fc_state.commandedEngine4 = 1000 + fmod(300 + count*5*M_PI, 1000);
 
 	  fc_state.rclinkActive = ((count % 200) < 100 ) ? 1 : 0;
-	  fc_state.fcUptime = count % 6000;
-          fc_state.fcCPUusage = 2*count;
+	  fc_state.fcUptime = count*(count+1);
+          fc_state.fcCPUusage = 2*count % 100;
 
-	  fprintf(stderr,"fc_size: %d\tUpTime: %d\tUsage: %d\tRC Link: %d",sizeof(fc_state_t),fc_state.fcUptime,fc_state.fcCPUusage,fc_state.rclinkActive);
-	  unsigned char buffer[200];
+	  fprintf(stderr,"fc_size: %d\tUpTime: %llu\tUsage: %d\tRC Link: %d",sizeof(fc_state_t),fc_state.fcUptime,fc_state.fcCPUusage,fc_state.rclinkActive);
+	  unsigned char buffer[2000];
 	  int dataLength = PackFCState(buffer,&fc_state);
 	  server_send_packet (&server, FC_STATE, &fc_state, dataLength);
 
