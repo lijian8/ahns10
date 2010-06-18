@@ -14,3 +14,8 @@ obj/%.o : src/%.c
 
 LittleTestDriver: $(OBJS)
 	$(LD) $(LDFLAGS) $(OBJS) -o LittleTestDriver
+
+.phony: clean
+
+clean :
+	rm $(OBJS) LittleTestDriver
