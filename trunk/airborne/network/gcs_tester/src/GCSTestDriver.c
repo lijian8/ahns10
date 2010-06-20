@@ -120,7 +120,7 @@ main (int argc, char *argv[])
 
 
       count++;
-      usleep (250e3);
+      usleep (20e3);
 
       /* send data to the socket */
       if (count % 1 == 0)

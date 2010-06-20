@@ -34,22 +34,25 @@ LD = $(CC)
 
 CFLAGS = 
 LDFLAGS =  -L./ -lstate -lm
-#HELICON = ~/heliconnect10/trunk/udp
+INCDIR = -I ~/heliconnect10/trunk/udp/ -I ~/ahns10/trunk/udp/include/
 
-SRCS = client.c server.c ~/heliconnect10/trunk/udp/state.c udp.c ../../../udp/src/little_host_serialisation.c
-INCLUDES = server.h ~/heliconnect10/trunk/udp/state.h udp.h commands.h ../../../udp/include/primitive_serialisation.h
-OBJS = server.o ~/heliconnect10/trunk/udp/state.o udp.o client.o ../../../udp/obj/little_host_serialisation.o
+SRCS = client.c server.c ~/heliconnect10/trunk/udp/state.c udp.c ~/ahns10/trunk/udp/src/little_host_serialisation.c
+INCLUDES = server.h ~/heliconnect10/trunk/udp/state.h udp.h commands.h ~/ahns10/trunk/udp/include/primitive_serialisation.h
+OBJS = client.o server.o ~/heliconnect10/trunk/udp/state.o udp.o ~/ahns10/trunk/udp/obj/little_host_serialisation.o
 LIBSTATE= libstate.a 
 all:  $(LIBSTATE) example
 
 %.o: %.c
-	$(CC) -O2 -c $< $(CFLAGS) -o $@ -I ../../../udp/include -I ~/heliconnect10/trunk/udp/
+	$(CC) -O2 -c $< $(CFLAGS) -o $@ $(INCDIR)
+
+~/ahns10/trunk/udp/obj/little_host_serialisation.o :
+	cd ~/ahns10/trunk/udp/; make
 
 example: query_state1.o query_state2.o
 	$(CC) query_state1.o $(LDFLAGS) -o client
 	$(CC) query_state2.o $(LDFLAGS) -o server
 
-$(LIBSTATE): $(OBJS)	
+$(LIBSTATE): $(OBJS)
 	ar -cr $(LIBSTATE) $(OBJS)
 	ranlib $(LIBSTATE)
 
