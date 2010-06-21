@@ -176,7 +176,7 @@ int setCRBData(unsigned char reg, unsigned char value1, unsigned char value2)
 {
   unsigned char sCmd[8] = {'W','C','R','B',reg,value1,value2,0x0D};
   // send the request to read the CRB reg value
-  if (!!write(fd,sCmd,8))
+  if (!write(fd,sCmd,8))
   {
     printf("Write failed\n");
     closeSerial();
@@ -204,7 +204,7 @@ int getImuSensorData(double *rateXd, double *rateYd, double *rateZd, double *acc
 {
   unsigned char sCmd[7] = {'S','T','A','O','S','M',0x0D};
 
-  if(!!write(fd,sCmd,7))
+  if(!write(fd,sCmd,7))
   {
     printf("Write failed\n");
     closeSerial();
@@ -267,7 +267,7 @@ int startFreeRunningMode()
 {
   unsigned char sCmd[7] = {'S','T','A','F','R','M',0x0D};
 
-  if(!!write(fd,sCmd,7))
+  if(!write(fd,sCmd,7))
   {
     printf("Write failed\n");
     closeSerial();
@@ -283,7 +283,7 @@ int stopFreeRunningMode()
 {
   unsigned char sCmd[7] = {'S','T','P','F','R','M',0x0D};
 
-  if(!!write(fd,sCmd,7))
+  if(!write(fd,sCmd,7))
   {
     printf("Write failed\n");
     closeSerial();

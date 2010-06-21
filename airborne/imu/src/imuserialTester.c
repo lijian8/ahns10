@@ -53,13 +53,12 @@ int main(int argc, char* argv[])
   // Test 2: read CBR register value
   if (!readCRBData(reg))
   {
-    fprintf(stderr,"Test 2: Error - Cannot read CBR %u value\n", reg);
+    fprintf(stderr,"Test 2: Error - Cannot read CBR %c value\n", reg);
     return -1;
   } else
     {
-      printf("Test 2: Success - Read CBR %u value\n", reg);
+      printf("Test 2: Success - Read CBR %c value\n", reg);
     }
-
   // Test 3: get IMU one shot mode data
   if(!getImuSensorData(&state.p, &state.q, &state.r, &state.ax, &state.ay, &state.az))
   {
@@ -70,9 +69,8 @@ int main(int argc, char* argv[])
       printf("Test 3: Success - One shot mode data:\n");
       printf("%f,%f,%f,%f,%f,%f\n", state.p, state.q, state.r, state.ax, state.ay, state.az);
     }
-
   // Close the IMU serial port
   closeSerial();
-  printf("Disconnected from IMU");
+  printf("Disconnected from IMU\n");
   return 0;
 }
