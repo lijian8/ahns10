@@ -37,11 +37,13 @@ private slots:
     void setconnectButtonState();
     void connectServer();
     void updateLabel();
+    void sendBFCommand();
 private:
     bfglrenderer *glWidget;
     bfcameracomms *bfCam;
-    QLineEdit *serverLineEdit;
+    QLineEdit *commandLineEdit;
     QPushButton *connectButton;
+    QPushButton *sendButton;
     int state;
     QLabel *fpsText;
 

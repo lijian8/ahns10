@@ -34,9 +34,10 @@ void AHclass::UpdateRoll()
 	else if ((angPitch >= 90.0f*DEG2RAD) && (angPitchRate < 0))		angPitch += angPitchRate*DEG2RAD;
 	
 	/* ***** WORKING OUT ALTITUDE POSITION ******/
-	if (altState < vertAltPos)						altState += 1.0f;
+        if (altState < vertAltPos)						altState += 1.0f;
 	else if (altState > vertAltPos)						altState -= 1.0f;
 	
-	updateGL();
+        //updateGL();
+        update();
         updating = false;
 }

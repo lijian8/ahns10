@@ -31,7 +31,7 @@
 #include "commands.h"
 
 /**
-  * @brief Thead Class Inherided from QThread
+  * @brief Thread Class Inherided from QThread
   */
 class TelemetryThread : public QThread
 {
