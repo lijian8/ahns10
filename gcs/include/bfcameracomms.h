@@ -35,6 +35,7 @@ public:
     ~bfcameracomms();
     void server_connect(QString server);
     qreal fps;
+    void send_command(QString cmd);
 
 signals:
     void SIG_imageReceived();
@@ -43,6 +44,7 @@ signals:
 protected:
 
 private slots:
+    void initCamera();
     void sendImageRequest();
     void getImage();
     void updateImage();

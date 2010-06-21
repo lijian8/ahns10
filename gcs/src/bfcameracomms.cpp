@@ -25,6 +25,7 @@ int frame_byte_size = 0;
 quint8 frame_pixel_size = 0;
 int image_marker = 0;
 int mark = 0;
+int command = 0;
 
 /**
   * @brief Constructor
@@ -37,6 +38,10 @@ bfcameracomms::bfcameracomms()
     framesReceived = 0;
     fps = 0;
     t.start();
+    // signals and slots
+    connect(&tcpSocket, SIGNAL(connected()), this, SLOT(initCamera()));
+    connect(&tcpSocket, SIGNAL(readyRead()), this, SLOT(getImage()));
+    connect(this, SIGNAL(SIG_imageReceived()), this, SLOT(updateImage()));
 }
 
 /**
@@ -60,13 +65,10 @@ void bfcameracomms::server_connect(QString server)
     frame_pixel_size = 0;
     image_marker = 0;
     mark = 0;
+    framesReceived = 0;
     tcpSocket.connectToHost(server,DEFAULT_CAM_PORT);
     tcpSocket.reset();
     image_buffer = new QDataStream(&tcpSocket);
-    // signals and slots
-    connect(&tcpSocket, SIGNAL(connected()), this, SLOT(sendImageRequest()));
-    connect(&tcpSocket, SIGNAL(readyRead()), this, SLOT(getImage()));
-    connect(this, SIGNAL(SIG_imageReceived()), this, SLOT(updateImage()));
     tcpSocket.waitForConnected();
     tcpSocket.open(QIODevice::ReadWrite);
     tcpSocket.reset();
@@ -88,6 +90,12 @@ void bfcameracomms::server_disconnect()
 
 }
 
+void bfcameracomms::initCamera()
+{
+    sendImageRequest();
+    command = 0;
+}
+
 /**
   * @brief Send an image request to the blackfin camera
   */
@@ -95,6 +103,13 @@ void bfcameracomms::sendImageRequest()
 {
     tcpSocket.write("I");
     tcpSocket.reset();
+}
+
+void bfcameracomms::send_command(QString cmd)
+{
+        tcpSocket.flush();
+        tcpSocket.write(cmd.toAscii());
+        tcpSocket.reset();
 }
 
 /**
@@ -107,7 +122,7 @@ void bfcameracomms::getImage()
     int i = 0;
     int j = 0;
     // Wait until the image header, frame size, and frame byte size have been received (10 bytes)
-    if (!header_received && (tcpSocket.bytesAvailable()>=10))
+    if (!header_received && (tcpSocket.bytesAvailable()>=10) && !command)
     {
         // read the first 10 bytes
         image_buffer->readRawData(image_header_received,10);
@@ -142,6 +157,11 @@ void bfcameracomms::getImage()
         }
         delete image_header_received;
 
+    }
+    if(command)
+    {
+      command = 0;
+      sendImageRequest();
     }
 
     // image header has been received, wait until the entire image has been sent
