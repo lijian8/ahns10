@@ -1,0 +1,15 @@
+#summary Install the Airborne System on the Flight Computer
+#labels Phase-Deploy,Phase-Implementation
+
+= Required Environmental Variables =
+These need to be added the .profile or .dashrc profile.
+Logout to apply or use {{{ source .profile }}}
+
+* Heliconnect Path *
+  {{{
+    export HELICONNECT="${HOME}/heliconnect10/trunk/udp/"
+  }}}
+* Shared Network Library for Serialisation *
+  {{{
+    export UDP_SERIALISATION="${HOME}/ahns10/trunk/udp/"
+  }}}
