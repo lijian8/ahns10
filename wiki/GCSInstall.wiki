@@ -1,0 +1,24 @@
+#summary Installation of the GCS
+#labels Phase-Deploy,Phase-Implementation
+
+= Required Packages =
+  # libglut3-dev
+  # libqwt5-qt4-dev
+  # libqwt4c2
+  # libqwtplot3d-qt4-dev
+
+== Installation ==
+{{{
+  sudo apt-get install libglut3-dev libqwt5-qt4-dev libqwt4c2 libqwtplot3d-qt4-dev
+}}}
+
+== Required Fix ==
+Create symbolic link libqwt.so in /usr/lib/
+{{{
+  sudo ln -s /usr/lib/libqwt-qt4.so /usr/lib/libqwt.so
+}}}
+Info: https://bugs.launchpad.net/ubuntu/+source/libqwt/+bug/141587 
+
+= Required Environmental Variables =
+
+= Other Dependencies =
