@@ -2,10 +2,10 @@
 #labels Phase-Deploy,Phase-Implementation
 
 = Required Packages =
-  # libglut3-dev
-  # libqwt5-qt4-dev
-  # libqwt4c2
-  # libqwtplot3d-qt4-dev
+  * libglut3-dev
+  * libqwt5-qt4-dev
+  * libqwt4c2
+  * libqwtplot3d-qt4-dev
 
 == Installation ==
 {{{
@@ -19,6 +19,22 @@ Create symbolic link libqwt.so in /usr/lib/
 }}}
 Info: https://bugs.launchpad.net/ubuntu/+source/libqwt/+bug/141587 
 
-= Required Environmental Variables =
-
 = Other Dependencies =
+[http://code.google.com/p/heliconnect10/ Heliconnect10]
+Required for udp interface files:
+  * state.h
+  * state.c
+  * commands.h
+
+= Required Environmental Variables =
+These need to be added the .profile or .bashrc profile.
+Logout to apply or use {{{ source .profile }}}
+
+* Heliconnect Path *
+  {{{
+    export HELICONNECT="${HOME}/heliconnect10/trunk/udp/"
+  }}}
+* Shared Network Library for Serialisation *
+  {{{
+    export UDP_SERIALISATION="${HOME}/ahns10/trunk/udp/"
+  }}}
