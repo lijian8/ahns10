@@ -1,0 +1,55 @@
+# AHWidget Library Makefile
+#
+# 
+# 
+
+# Paths
+SRC = src/
+OBJ = obj/
+INC = include/
+
+# Headers
+HEADERS = $(INC)AH.h
+
+# Output File
+LIB = libAHWidget.a
+
+# Compiler Flags
+CCFLAGS = -ansi -Wall -I $(INC)
+
+# Compiler
+CC = g++
+
+all: clean lib
+
+lib: $(OBJ)AH.o $(OBJ)AH_draw.o $(OBJ)AH_Motion.o $(OBJ)AH_Utility.o $(OBJ)AH_setup.o $(OBJ)AH_text.o $(OBJ)AH_Element.o $(OBJ)ATT_text.o $(HEADERS)
+	ar rcs $(LIB) $(OBJ)AH.o $(OBJ)AH_draw.o $(OBJ)AH_Motion.o $(OBJ)AH_Utility.o $(OBJ)AH_setup.o $(OBJ)AH_text.o $(OBJ)AH_Element.o $(OBJ)ATT_text.o
+	
+$(OBJ)AH.o: $(SRC)AH.cpp $(HEADERS)
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+$(OBJ)AH_draw.o: $(SRC)AH_draw.cpp $(HEADERS)
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+$(OBJ)AH_Motion.o: $(SRC)AH_Motion.cpp $(HEADERS)
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+$(OBJ)AH_Utility.o: $(SRC)AH_Utility.cpp $(HEADERS)
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+$(OBJ)AH_setup.o: $(SRC)AH_setup.cpp $(HEADERS)
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+$(OBJ)AH_text.o: $(SRC)AH_text.cpp $(HEADERS)
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+$(OBJ)AH_Element.o: $(SRC)AH_Element.cpp $(HEADERS)
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+$(OBJ)ATT_text.o: $(SRC)ATT_text.cpp $(HEADERS)
+	$(CC) $(CCFLAGS) -c -o $@ $<
+
+.PHONY: clean all
+
+clean: 
+	rm -f obj/* $(LIB)

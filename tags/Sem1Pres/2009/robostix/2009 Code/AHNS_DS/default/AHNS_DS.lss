@@ -1,0 +1,3346 @@
+
+AHNS_DS.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .data         00000106  00800100  0000113e  000011d2  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  1 .text         0000113e  00000000  00000000  00000094  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  2 .bss          00000050  00800206  00800206  000012d8  2**0
+                  ALLOC
+  3 .debug_aranges 00000020  00000000  00000000  000012d8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  4 .debug_pubnames 000002e7  00000000  00000000  000012f8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000011d7  00000000  00000000  000015df  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 000002c1  00000000  00000000  000027b6  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   00000dd1  00000000  00000000  00002a77  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000170  00000000  00000000  00003848  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    000002d9  00000000  00000000  000039b8  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_loc    0000014d  00000000  00000000  00003c91  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+       0:	0c 94 46 00 	jmp	0x8c	; 0x8c <__ctors_end>
+       4:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+       8:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+       c:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      10:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      14:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      18:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      1c:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      20:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      24:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      28:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      2c:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      30:	0c 94 8a 00 	jmp	0x114	; 0x114 <__vector_12>
+      34:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      38:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      3c:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      40:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      44:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      48:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      4c:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      50:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      54:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      58:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      5c:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      60:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      64:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      68:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      6c:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      70:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      74:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      78:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      7c:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      80:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      84:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+      88:	0c 94 65 00 	jmp	0xca	; 0xca <__bad_interrupt>
+
+0000008c <__ctors_end>:
+      8c:	11 24       	eor	r1, r1
+      8e:	1f be       	out	0x3f, r1	; 63
+      90:	cf ef       	ldi	r28, 0xFF	; 255
+      92:	d0 e1       	ldi	r29, 0x10	; 16
+      94:	de bf       	out	0x3e, r29	; 62
+      96:	cd bf       	out	0x3d, r28	; 61
+
+00000098 <__do_copy_data>:
+      98:	12 e0       	ldi	r17, 0x02	; 2
+      9a:	a0 e0       	ldi	r26, 0x00	; 0
+      9c:	b1 e0       	ldi	r27, 0x01	; 1
+      9e:	ee e3       	ldi	r30, 0x3E	; 62
+      a0:	f1 e1       	ldi	r31, 0x11	; 17
+      a2:	00 e0       	ldi	r16, 0x00	; 0
+      a4:	0b bf       	out	0x3b, r16	; 59
+      a6:	02 c0       	rjmp	.+4      	; 0xac <__do_copy_data+0x14>
+      a8:	07 90       	elpm	r0, Z+
+      aa:	0d 92       	st	X+, r0
+      ac:	a6 30       	cpi	r26, 0x06	; 6
+      ae:	b1 07       	cpc	r27, r17
+      b0:	d9 f7       	brne	.-10     	; 0xa8 <__do_copy_data+0x10>
+
+000000b2 <__do_clear_bss>:
+      b2:	12 e0       	ldi	r17, 0x02	; 2
+      b4:	a6 e0       	ldi	r26, 0x06	; 6
+      b6:	b2 e0       	ldi	r27, 0x02	; 2
+      b8:	01 c0       	rjmp	.+2      	; 0xbc <.do_clear_bss_start>
+
+000000ba <.do_clear_bss_loop>:
+      ba:	1d 92       	st	X+, r1
+
+000000bc <.do_clear_bss_start>:
+      bc:	a6 35       	cpi	r26, 0x56	; 86
+      be:	b1 07       	cpc	r27, r17
+      c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
+      c2:	0e 94 39 04 	call	0x872	; 0x872 <main>
+      c6:	0c 94 9d 08 	jmp	0x113a	; 0x113a <_exit>
+
+000000ca <__bad_interrupt>:
+      ca:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+000000ce <timer1init>:
+
+void UART1_Send16bits(uint16_t Data);
+
+void timer1init()
+{
+    cli(); //Disable all interupts
+      ce:	f8 94       	cli
+    TCNT1 = 0x0000;    //initialise timer to zero
+      d0:	1d bc       	out	0x2d, r1	; 45
+      d2:	1c bc       	out	0x2c, r1	; 44
+    sei();
+      d4:	78 94       	sei
+   	TCCR1A = 0b00000000; //initialise to zero
+      d6:	1f bc       	out	0x2f, r1	; 47
+	TCCR1B = 0b00000000;
+      d8:	1e bc       	out	0x2e, r1	; 46
+    TCCR1A |= 0b01000000; //set OC1A to toggle on compare match
+      da:	8f b5       	in	r24, 0x2f	; 47
+      dc:	80 64       	ori	r24, 0x40	; 64
+      de:	8f bd       	out	0x2f, r24	; 47
+    TCCR1A &= 0b11111100; //set the mode to 'normal' i.e. not PWM etc.
+      e0:	8f b5       	in	r24, 0x2f	; 47
+      e2:	8c 7f       	andi	r24, 0xFC	; 252
+      e4:	8f bd       	out	0x2f, r24	; 47
+	
+    //TCCR1B &= 0b00001000;
+	TCCR1B |= (1<<WGM12); //set CTC mode
+      e6:	8e b5       	in	r24, 0x2e	; 46
+      e8:	88 60       	ori	r24, 0x08	; 8
+      ea:	8e bd       	out	0x2e, r24	; 46
+	TCCR1B |= (1<<CS0); // Set clk no prescale
+      ec:	8e b5       	in	r24, 0x2e	; 46
+      ee:	81 60       	ori	r24, 0x01	; 1
+      f0:	8e bd       	out	0x2e, r24	; 46
+	TIMSK = (1<<OCIE1A); //enable output compare match
+      f2:	80 e1       	ldi	r24, 0x10	; 16
+      f4:	87 bf       	out	0x37, r24	; 55
+   	cli();
+      f6:	f8 94       	cli
+    OCR1A = ((FOSC/80000)/PRESCALER); // 12.5usec //Check this and adjust offset depending on program time
+      f8:	88 ec       	ldi	r24, 0xC8	; 200
+      fa:	90 e0       	ldi	r25, 0x00	; 0
+      fc:	9b bd       	out	0x2b, r25	; 43
+      fe:	8a bd       	out	0x2a, r24	; 42
+    timer = 0x0000; //initialise
+     100:	10 92 2e 02 	sts	0x022E, r1
+     104:	10 92 2d 02 	sts	0x022D, r1
+    timer_overflow = 0x0000;
+     108:	10 92 30 02 	sts	0x0230, r1
+     10c:	10 92 2f 02 	sts	0x022F, r1
+  	sei(); //reenable interupts
+     110:	78 94       	sei
+}
+     112:	08 95       	ret
+
+00000114 <__vector_12>:
+
+
+ISR(TIMER1_COMPA_vect)
+{
+     114:	1f 92       	push	r1
+     116:	0f 92       	push	r0
+     118:	0f b6       	in	r0, 0x3f	; 63
+     11a:	0f 92       	push	r0
+     11c:	11 24       	eor	r1, r1
+     11e:	2f 93       	push	r18
+     120:	8f 93       	push	r24
+     122:	9f 93       	push	r25
+cli();
+     124:	f8 94       	cli
+LED_ON( YELLOW );
+     126:	c4 98       	cbi	0x18, 4	; 24
+
+    if (timer > 0xFFFE)
+     128:	80 91 2d 02 	lds	r24, 0x022D
+     12c:	90 91 2e 02 	lds	r25, 0x022E
+     130:	8f 5f       	subi	r24, 0xFF	; 255
+     132:	9f 4f       	sbci	r25, 0xFF	; 255
+     134:	71 f4       	brne	.+28     	; 0x152 <__vector_12+0x3e>
+    {
+        timer = 0;
+     136:	10 92 2e 02 	sts	0x022E, r1
+     13a:	10 92 2d 02 	sts	0x022D, r1
+        timer_overflow++;
+     13e:	80 91 2f 02 	lds	r24, 0x022F
+     142:	90 91 30 02 	lds	r25, 0x0230
+     146:	01 96       	adiw	r24, 0x01	; 1
+     148:	90 93 30 02 	sts	0x0230, r25
+     14c:	80 93 2f 02 	sts	0x022F, r24
+     150:	09 c0       	rjmp	.+18     	; 0x164 <__vector_12+0x50>
+    }
+    else
+    {
+        timer++;
+     152:	80 91 2d 02 	lds	r24, 0x022D
+     156:	90 91 2e 02 	lds	r25, 0x022E
+     15a:	01 96       	adiw	r24, 0x01	; 1
+     15c:	90 93 2e 02 	sts	0x022E, r25
+     160:	80 93 2d 02 	sts	0x022D, r24
+    }
+
+	sei();
+     164:	78 94       	sei
+	LED_OFF( YELLOW );
+     166:	c4 9a       	sbi	0x18, 4	; 24
+}
+     168:	9f 91       	pop	r25
+     16a:	8f 91       	pop	r24
+     16c:	2f 91       	pop	r18
+     16e:	0f 90       	pop	r0
+     170:	0f be       	out	0x3f, r0	; 63
+     172:	0f 90       	pop	r0
+     174:	1f 90       	pop	r1
+     176:	18 95       	reti
+
+00000178 <TimeOut_us>:
+{
+
+int time_res = ((FOSC/80000)/PRESCALER)/16;
+
+// Function to wait number of microseconds
+int start = (timer_overflow <<16) + timer;
+     178:	20 91 2f 02 	lds	r18, 0x022F
+     17c:	30 91 30 02 	lds	r19, 0x0230
+     180:	20 91 2d 02 	lds	r18, 0x022D
+     184:	30 91 2e 02 	lds	r19, 0x022E
+int thetime;
+do{
+	thetime = (timer_overflow <<16) + timer;	//wait
+}while( (thetime - start) < (usecs/time_res)); //350 min for 9600
+     188:	6c e0       	ldi	r22, 0x0C	; 12
+     18a:	70 e0       	ldi	r23, 0x00	; 0
+     18c:	0e 94 3f 08 	call	0x107e	; 0x107e <__divmodhi4>
+     190:	ab 01       	movw	r20, r22
+
+// Function to wait number of microseconds
+int start = (timer_overflow <<16) + timer;
+int thetime;
+do{
+	thetime = (timer_overflow <<16) + timer;	//wait
+     192:	80 91 2f 02 	lds	r24, 0x022F
+     196:	90 91 30 02 	lds	r25, 0x0230
+     19a:	80 91 2d 02 	lds	r24, 0x022D
+     19e:	90 91 2e 02 	lds	r25, 0x022E
+}while( (thetime - start) < (usecs/time_res)); //350 min for 9600
+     1a2:	82 1b       	sub	r24, r18
+     1a4:	93 0b       	sbc	r25, r19
+     1a6:	84 17       	cp	r24, r20
+     1a8:	95 07       	cpc	r25, r21
+     1aa:	9c f3       	brlt	.-26     	; 0x192 <TimeOut_us+0x1a>
+
+}
+     1ac:	08 95       	ret
+
+000001ae <UART0_vInit>:
+
+void UART0_vInit(void) //IMU UART
+{
+
+// Set baud rate
+UBRR0H = (uint8_t)(IMUUBRR>>8);
+     1ae:	10 92 90 00 	sts	0x0090, r1
+UBRR0L = (uint8_t)IMUUBRR;
+     1b2:	8a e1       	ldi	r24, 0x1A	; 26
+     1b4:	89 b9       	out	0x09, r24	; 9
+UCSR0C = (2<<UCSZ0);
+     1b6:	84 e0       	ldi	r24, 0x04	; 4
+     1b8:	80 93 95 00 	sts	0x0095, r24
+//UCSR0C |= (1<<USBS0);
+// Enable receiver and transmitter
+UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+     1bc:	88 e1       	ldi	r24, 0x18	; 24
+     1be:	8a b9       	out	0x0a, r24	; 10
+
+}
+     1c0:	08 95       	ret
+
+000001c2 <UART1_vInit>:
+
+void UART1_vInit(void) //Radio Link
+{
+
+// Set baud rate
+UBRR1H = (uint8_t)(MYUBRR>>8);
+     1c2:	10 92 98 00 	sts	0x0098, r1
+UBRR1L = (uint8_t)MYUBRR;
+     1c6:	88 e0       	ldi	r24, 0x08	; 8
+     1c8:	80 93 99 00 	sts	0x0099, r24
+// Enable receiver and transmitter
+UCSR1B = (1<<RXEN1)|(1<<TXEN1);
+     1cc:	88 e1       	ldi	r24, 0x18	; 24
+     1ce:	80 93 9a 00 	sts	0x009A, r24
+
+}
+     1d2:	08 95       	ret
+
+000001d4 <UART1_SendByte>:
+
+
+
+void UART1_SendByte(uint8_t Data)
+{
+     1d4:	98 2f       	mov	r25, r24
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     1d6:	80 91 9b 00 	lds	r24, 0x009B
+     1da:	85 ff       	sbrs	r24, 5
+     1dc:	fc cf       	rjmp	.-8      	; 0x1d6 <UART1_SendByte+0x2>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     1de:	90 93 9c 00 	sts	0x009C, r25
+}
+     1e2:	08 95       	ret
+
+000001e4 <UART0_SendByte>:
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     1e4:	5d 9b       	sbis	0x0b, 5	; 11
+     1e6:	fe cf       	rjmp	.-4      	; 0x1e4 <UART0_SendByte>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     1e8:	8c b9       	out	0x0c, r24	; 12
+}
+     1ea:	08 95       	ret
+
+000001ec <UART1_Send16bits>:
+
+
+void UART1_Send16bits(uint16_t Data)
+{
+     1ec:	28 2f       	mov	r18, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     1ee:	80 91 9b 00 	lds	r24, 0x009B
+     1f2:	85 ff       	sbrs	r24, 5
+     1f4:	fc cf       	rjmp	.-8      	; 0x1ee <UART1_Send16bits+0x2>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     1f6:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     1fa:	80 91 9b 00 	lds	r24, 0x009B
+     1fe:	85 ff       	sbrs	r24, 5
+     200:	fc cf       	rjmp	.-8      	; 0x1fa <UART1_Send16bits+0xe>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     202:	20 93 9c 00 	sts	0x009C, r18
+lowerB = Data & 0x00FF;
+upperB = (Data>>8);
+UART1_SendByte(upperB);
+UART1_SendByte(lowerB);
+
+}
+     206:	08 95       	ret
+
+00000208 <SPI_Master_Init>:
+
+
+//SPI Init
+void SPI_Master_Init() {
+/* Set MOSI, SS and SCK output, all others input */
+DDRB = (1<<DDB2)|(1<<DDB1)|(1<<DDB0);
+     208:	87 e0       	ldi	r24, 0x07	; 7
+     20a:	87 bb       	out	0x17, r24	; 23
+/* Enable SPI, Master, set clock rate fck/128 */
+SPCR = (1<<SPE)|(1<<MSTR)|(2<<SPR0)|(1<<CPOL)|(1<<CPHA);
+     20c:	8e e5       	ldi	r24, 0x5E	; 94
+     20e:	8d b9       	out	0x0d, r24	; 13
+//DDRB = (0<<DDB0);
+}
+     210:	08 95       	ret
+
+00000212 <SPI_MasterTransmit>:
+
+void SPI_MasterTransmit(char cData)
+{
+/* Start transmission */
+SPDR = cData;
+     212:	8f b9       	out	0x0f, r24	; 15
+/* Wait for transmission complete */
+while(!(SPSR & (1<<SPIF)));
+     214:	77 9b       	sbis	0x0e, 7	; 14
+     216:	fe cf       	rjmp	.-4      	; 0x214 <SPI_MasterTransmit+0x2>
+}
+     218:	08 95       	ret
+
+0000021a <SPI_Transmit>:
+
+uint8_t SPI_Transmit(uint8_t data) {
+	// set SS low
+	PORTB = (0<<PB0);
+     21a:	18 ba       	out	0x18, r1	; 24
+	//SPDR = (data|0x80);
+	SPDR = (data);
+     21c:	8f b9       	out	0x0f, r24	; 15
+	while(!(SPSR & (1<<SPIF)));
+     21e:	77 9b       	sbis	0x0e, 7	; 14
+     220:	fe cf       	rjmp	.-4      	; 0x21e <SPI_Transmit+0x4>
+	// SS high may be causing the SPI to stop sending
+	// set SS high
+	PORTB = (1<<PB0);
+     222:	81 e0       	ldi	r24, 0x01	; 1
+     224:	88 bb       	out	0x18, r24	; 24
+	return SPDR;
+     226:	8f b1       	in	r24, 0x0f	; 15
+}
+     228:	08 95       	ret
+
+0000022a <SPI_Transmit16>:
+uint16_t SPI_Transmit16(uint8_t address)
+{
+	uint8_t lower, upper;
+
+	//set CS low
+	PORTB = (0<<PB0);
+     22a:	18 ba       	out	0x18, r1	; 24
+	// send 0,0,6 bit address
+	address &= 0b00111111;
+     22c:	8f 73       	andi	r24, 0x3F	; 63
+	SPDR = address;
+     22e:	8f b9       	out	0x0f, r24	; 15
+	while(!(SPSR & (1<<SPIF)));
+     230:	77 9b       	sbis	0x0e, 7	; 14
+     232:	fe cf       	rjmp	.-4      	; 0x230 <SPI_Transmit16+0x6>
+	//send 8 bits of junk
+	SPDR = 0x00;
+     234:	1f b8       	out	0x0f, r1	; 15
+	while(!(SPSR & (1<<SPIF)));
+     236:	77 9b       	sbis	0x0e, 7	; 14
+     238:	fe cf       	rjmp	.-4      	; 0x236 <SPI_Transmit16+0xc>
+     23a:	80 e0       	ldi	r24, 0x00	; 0
+     23c:	90 e0       	ldi	r25, 0x00	; 0
+     23e:	01 c0       	rjmp	.+2      	; 0x242 <SPI_Transmit16+0x18>
+	//Waste time for TSFS
+
+	for (i = 0; i < 25; i++ )
+     240:	01 96       	adiw	r24, 0x01	; 1
+     242:	89 31       	cpi	r24, 0x19	; 25
+     244:	91 05       	cpc	r25, r1
+     246:	e4 f3       	brlt	.-8      	; 0x240 <SPI_Transmit16+0x16>
+     248:	90 93 07 02 	sts	0x0207, r25
+     24c:	80 93 06 02 	sts	0x0206, r24
+	{
+	}
+	
+	//send 8 junk bits
+	SPDR = 0x00;
+     250:	1f b8       	out	0x0f, r1	; 15
+	while(!(SPSR & (1<<SPIF)));
+     252:	77 9b       	sbis	0x0e, 7	; 14
+     254:	fe cf       	rjmp	.-4      	; 0x252 <SPI_Transmit16+0x28>
+	//read high
+	upper = SPDR;
+     256:	3f b1       	in	r19, 0x0f	; 15
+	//send 8 junk bits
+	SPDR = 0x00;
+     258:	1f b8       	out	0x0f, r1	; 15
+	while(!(SPSR & (1<<SPIF)));
+     25a:	77 9b       	sbis	0x0e, 7	; 14
+     25c:	fe cf       	rjmp	.-4      	; 0x25a <SPI_Transmit16+0x30>
+	//read low
+	lower = SPDR;
+     25e:	2f b1       	in	r18, 0x0f	; 15
+	SPDR = 0x00;
+	while(!(SPSR & (1<<SPIF)));
+	//read high
+	upper = SPDR;
+	// */
+	PORTB = (1<<PB0);
+     260:	81 e0       	ldi	r24, 0x01	; 1
+     262:	88 bb       	out	0x18, r24	; 24
+     264:	93 2f       	mov	r25, r19
+     266:	80 e0       	ldi	r24, 0x00	; 0
+     268:	30 e0       	ldi	r19, 0x00	; 0
+     26a:	28 2b       	or	r18, r24
+     26c:	39 2b       	or	r19, r25
+     26e:	22 0f       	add	r18, r18
+     270:	33 1f       	adc	r19, r19
+     272:	22 0f       	add	r18, r18
+     274:	33 1f       	adc	r19, r19
+	//return the low+high
+	return (lower | upper<<8)*4;
+	
+}
+     276:	c9 01       	movw	r24, r18
+     278:	08 95       	ret
+
+0000027a <UpdateTimeStamp>:
+
+//Update timestamp function
+
+void UpdateTimeStamp()
+{
+TSTAMP4 = timer;
+     27a:	80 91 2d 02 	lds	r24, 0x022D
+     27e:	90 91 2e 02 	lds	r25, 0x022E
+     282:	80 93 0d 02 	sts	0x020D, r24
+TSTAMP3 = timer>>8;
+     286:	80 91 2d 02 	lds	r24, 0x022D
+     28a:	90 91 2e 02 	lds	r25, 0x022E
+     28e:	90 93 0c 02 	sts	0x020C, r25
+TSTAMP2 = timer_overflow;
+     292:	80 91 2f 02 	lds	r24, 0x022F
+     296:	90 91 30 02 	lds	r25, 0x0230
+     29a:	80 93 0b 02 	sts	0x020B, r24
+TSTAMP1 = timer_overflow>>8;
+     29e:	80 91 2f 02 	lds	r24, 0x022F
+     2a2:	90 91 30 02 	lds	r25, 0x0230
+     2a6:	90 93 0a 02 	sts	0x020A, r25
+}
+     2aa:	08 95       	ret
+
+000002ac <IMU_DataRxChar>:
+
+
+
+char IMU_DataRxChar()
+{
+while ( !(UCSR0A & (1<<RXC0)) );
+     2ac:	5f 9b       	sbis	0x0b, 7	; 11
+     2ae:	fe cf       	rjmp	.-4      	; 0x2ac <IMU_DataRxChar>
+return UDR0;
+     2b0:	8c b1       	in	r24, 0x0c	; 12
+}
+     2b2:	08 95       	ret
+
+000002b4 <BuffIMU_DataRx>:
+
+
+uint16_t BuffIMU_DataRx(int index) 
+//Gets 4ASCII char converts to a 16bit Binary value and takes comma from the buffer
+//char array must be tempc[n]. the value index provides the start of each 4 characters.
+{
+     2b4:	cf 93       	push	r28
+     2b6:	df 93       	push	r29
+     2b8:	20 91 34 02 	lds	r18, 0x0234
+     2bc:	dc 01       	movw	r26, r24
+     2be:	ab 5c       	subi	r26, 0xCB	; 203
+     2c0:	bd 4f       	sbci	r27, 0xFD	; 253
+     2c2:	c0 e0       	ldi	r28, 0x00	; 0
+     2c4:	d0 e0       	ldi	r29, 0x00	; 0
+     2c6:	40 e0       	ldi	r20, 0x00	; 0
+     2c8:	50 e0       	ldi	r21, 0x00	; 0
+     2ca:	60 e0       	ldi	r22, 0x00	; 0
+     2cc:	70 e0       	ldi	r23, 0x00	; 0
+     2ce:	ec e0       	ldi	r30, 0x0C	; 12
+     2d0:	f0 e0       	ldi	r31, 0x00	; 0
+     2d2:	1f c0       	rjmp	.+62     	; 0x312 <BuffIMU_DataRx+0x5e>
+uint16_t IMU_Data = 0;
+GoodChar = 0; //assume char is good
+//IMU_Data = 0; //ensure it is reinitialised
+for (i=0; i<4; i++)
+	{
+			tempChar = tempc[index + i];
+     2d4:	2c 91       	ld	r18, X
+			//perform ASCII HEX to Binary
+			if ((tempChar >= 0x41) && (tempChar <= 0x46)) //Char is A-F
+     2d6:	82 2f       	mov	r24, r18
+     2d8:	81 54       	subi	r24, 0x41	; 65
+     2da:	86 30       	cpi	r24, 0x06	; 6
+     2dc:	10 f4       	brcc	.+4      	; 0x2e2 <BuffIMU_DataRx+0x2e>
+				{
+					tempChar = tempChar - 0x37;
+     2de:	27 53       	subi	r18, 0x37	; 55
+     2e0:	05 c0       	rjmp	.+10     	; 0x2ec <BuffIMU_DataRx+0x38>
+					GoodChar = 1;
+				}
+			else if ((tempChar >= 0x30) && (tempChar <= 0x39)) //Char is 0-9
+     2e2:	82 2f       	mov	r24, r18
+     2e4:	80 53       	subi	r24, 0x30	; 48
+     2e6:	8a 30       	cpi	r24, 0x0A	; 10
+     2e8:	20 f4       	brcc	.+8      	; 0x2f2 <BuffIMU_DataRx+0x3e>
+     2ea:	28 2f       	mov	r18, r24
+     2ec:	41 e0       	ldi	r20, 0x01	; 1
+     2ee:	50 e0       	ldi	r21, 0x00	; 0
+     2f0:	02 c0       	rjmp	.+4      	; 0x2f6 <BuffIMU_DataRx+0x42>
+     2f2:	40 e0       	ldi	r20, 0x00	; 0
+     2f4:	50 e0       	ldi	r21, 0x00	; 0
+				}
+			else
+				{	
+			GoodChar = 0; // bad character
+				}
+			IMU_Data |= tempChar<<(((4-i)*4)-4);	
+     2f6:	82 2f       	mov	r24, r18
+     2f8:	90 e0       	ldi	r25, 0x00	; 0
+     2fa:	0e 2e       	mov	r0, r30
+     2fc:	02 c0       	rjmp	.+4      	; 0x302 <BuffIMU_DataRx+0x4e>
+     2fe:	88 0f       	add	r24, r24
+     300:	99 1f       	adc	r25, r25
+     302:	0a 94       	dec	r0
+     304:	e2 f7       	brpl	.-8      	; 0x2fe <BuffIMU_DataRx+0x4a>
+     306:	c8 2b       	or	r28, r24
+     308:	d9 2b       	or	r29, r25
+     30a:	6f 5f       	subi	r22, 0xFF	; 255
+     30c:	7f 4f       	sbci	r23, 0xFF	; 255
+     30e:	34 97       	sbiw	r30, 0x04	; 4
+     310:	11 96       	adiw	r26, 0x01	; 1
+//char array must be tempc[n]. the value index provides the start of each 4 characters.
+{
+uint16_t IMU_Data = 0;
+GoodChar = 0; //assume char is good
+//IMU_Data = 0; //ensure it is reinitialised
+for (i=0; i<4; i++)
+     312:	64 30       	cpi	r22, 0x04	; 4
+     314:	71 05       	cpc	r23, r1
+     316:	f4 f2       	brlt	.-68     	; 0x2d4 <BuffIMU_DataRx+0x20>
+     318:	40 93 27 02 	sts	0x0227, r20
+     31c:	50 93 28 02 	sts	0x0228, r21
+     320:	20 93 34 02 	sts	0x0234, r18
+     324:	70 93 07 02 	sts	0x0207, r23
+     328:	60 93 06 02 	sts	0x0206, r22
+     32c:	c4 9f       	mul	r28, r20
+     32e:	90 01       	movw	r18, r0
+     330:	c5 9f       	mul	r28, r21
+     332:	30 0d       	add	r19, r0
+     334:	d4 9f       	mul	r29, r20
+     336:	30 0d       	add	r19, r0
+     338:	11 24       	eor	r1, r1
+			IMU_Data |= tempChar<<(((4-i)*4)-4);	
+	}
+
+return (IMU_Data * GoodChar);
+
+}
+     33a:	c9 01       	movw	r24, r18
+     33c:	df 91       	pop	r29
+     33e:	cf 91       	pop	r28
+     340:	08 95       	ret
+
+00000342 <CharBuffTestRun>:
+
+
+void CharBuffTestRun()
+{
+     342:	cf 93       	push	r28
+     344:	df 93       	push	r29
+
+LED_ON( RED );
+     346:	80 91 65 00 	lds	r24, 0x0065
+     34a:	8f 7e       	andi	r24, 0xEF	; 239
+     34c:	80 93 65 00 	sts	0x0065, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     350:	80 91 9b 00 	lds	r24, 0x009B
+     354:	85 ff       	sbrs	r24, 5
+     356:	fc cf       	rjmp	.-8      	; 0x350 <CharBuffTestRun+0xe>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     358:	83 e5       	ldi	r24, 0x53	; 83
+     35a:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     35e:	80 91 9b 00 	lds	r24, 0x009B
+     362:	85 ff       	sbrs	r24, 5
+     364:	fc cf       	rjmp	.-8      	; 0x35e <CharBuffTestRun+0x1c>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     366:	84 e5       	ldi	r24, 0x54	; 84
+     368:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     36c:	80 91 9b 00 	lds	r24, 0x009B
+     370:	85 ff       	sbrs	r24, 5
+     372:	fc cf       	rjmp	.-8      	; 0x36c <CharBuffTestRun+0x2a>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     374:	81 e4       	ldi	r24, 0x41	; 65
+     376:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     37a:	80 91 9b 00 	lds	r24, 0x009B
+     37e:	85 ff       	sbrs	r24, 5
+     380:	fc cf       	rjmp	.-8      	; 0x37a <CharBuffTestRun+0x38>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     382:	8f e4       	ldi	r24, 0x4F	; 79
+     384:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     388:	80 91 9b 00 	lds	r24, 0x009B
+     38c:	85 ff       	sbrs	r24, 5
+     38e:	fc cf       	rjmp	.-8      	; 0x388 <CharBuffTestRun+0x46>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     390:	83 e5       	ldi	r24, 0x53	; 83
+     392:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     396:	80 91 9b 00 	lds	r24, 0x009B
+     39a:	85 ff       	sbrs	r24, 5
+     39c:	fc cf       	rjmp	.-8      	; 0x396 <CharBuffTestRun+0x54>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     39e:	8d e4       	ldi	r24, 0x4D	; 77
+     3a0:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     3a4:	80 91 9b 00 	lds	r24, 0x009B
+     3a8:	85 ff       	sbrs	r24, 5
+     3aa:	fc cf       	rjmp	.-8      	; 0x3a4 <CharBuffTestRun+0x62>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     3ac:	8d e0       	ldi	r24, 0x0D	; 13
+     3ae:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     3b2:	5d 9b       	sbis	0x0b, 5	; 11
+     3b4:	fe cf       	rjmp	.-4      	; 0x3b2 <CharBuffTestRun+0x70>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     3b6:	83 e5       	ldi	r24, 0x53	; 83
+     3b8:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     3ba:	5d 9b       	sbis	0x0b, 5	; 11
+     3bc:	fe cf       	rjmp	.-4      	; 0x3ba <CharBuffTestRun+0x78>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     3be:	84 e5       	ldi	r24, 0x54	; 84
+     3c0:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     3c2:	5d 9b       	sbis	0x0b, 5	; 11
+     3c4:	fe cf       	rjmp	.-4      	; 0x3c2 <CharBuffTestRun+0x80>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     3c6:	81 e4       	ldi	r24, 0x41	; 65
+     3c8:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     3ca:	5d 9b       	sbis	0x0b, 5	; 11
+     3cc:	fe cf       	rjmp	.-4      	; 0x3ca <CharBuffTestRun+0x88>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     3ce:	8f e4       	ldi	r24, 0x4F	; 79
+     3d0:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     3d2:	5d 9b       	sbis	0x0b, 5	; 11
+     3d4:	fe cf       	rjmp	.-4      	; 0x3d2 <CharBuffTestRun+0x90>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     3d6:	83 e5       	ldi	r24, 0x53	; 83
+     3d8:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     3da:	5d 9b       	sbis	0x0b, 5	; 11
+     3dc:	fe cf       	rjmp	.-4      	; 0x3da <CharBuffTestRun+0x98>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     3de:	8d e4       	ldi	r24, 0x4D	; 77
+     3e0:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     3e2:	5d 9b       	sbis	0x0b, 5	; 11
+     3e4:	fe cf       	rjmp	.-4      	; 0x3e2 <CharBuffTestRun+0xa0>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     3e6:	8d e0       	ldi	r24, 0x0D	; 13
+     3e8:	8c b9       	out	0x0c, r24	; 12
+UART0_SendByte('A');
+UART0_SendByte('O');
+UART0_SendByte('S');
+UART0_SendByte('M');
+UART0_SendByte(0x0D);
+LED_OFF( RED );
+     3ea:	80 91 65 00 	lds	r24, 0x0065
+     3ee:	80 61       	ori	r24, 0x10	; 16
+     3f0:	80 93 65 00 	sts	0x0065, r24
+
+LED_ON( BLUE );
+     3f4:	80 91 65 00 	lds	r24, 0x0065
+     3f8:	87 7f       	andi	r24, 0xF7	; 247
+     3fa:	80 93 65 00 	sts	0x0065, r24
+     3fe:	e5 e3       	ldi	r30, 0x35	; 53
+     400:	f2 e0       	ldi	r31, 0x02	; 2
+     402:	20 e0       	ldi	r18, 0x00	; 0
+     404:	30 e0       	ldi	r19, 0x00	; 0
+     406:	0d c0       	rjmp	.+26     	; 0x422 <CharBuffTestRun+0xe0>
+
+
+
+char IMU_DataRxChar()
+{
+while ( !(UCSR0A & (1<<RXC0)) );
+     408:	5f 9b       	sbis	0x0b, 7	; 11
+     40a:	fe cf       	rjmp	.-4      	; 0x408 <CharBuffTestRun+0xc6>
+return UDR0;
+     40c:	9c b1       	in	r25, 0x0c	; 12
+LED_OFF( RED );
+
+LED_ON( BLUE );
+for (i=0; i<33; i++)
+	{
+	tempc[i] = IMU_DataRxChar();
+     40e:	90 83       	st	Z, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     410:	80 91 9b 00 	lds	r24, 0x009B
+     414:	85 ff       	sbrs	r24, 5
+     416:	fc cf       	rjmp	.-8      	; 0x410 <CharBuffTestRun+0xce>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     418:	90 93 9c 00 	sts	0x009C, r25
+     41c:	2f 5f       	subi	r18, 0xFF	; 255
+     41e:	3f 4f       	sbci	r19, 0xFF	; 255
+     420:	31 96       	adiw	r30, 0x01	; 1
+UART0_SendByte('M');
+UART0_SendByte(0x0D);
+LED_OFF( RED );
+
+LED_ON( BLUE );
+for (i=0; i<33; i++)
+     422:	21 32       	cpi	r18, 0x21	; 33
+     424:	31 05       	cpc	r19, r1
+     426:	84 f3       	brlt	.-32     	; 0x408 <CharBuffTestRun+0xc6>
+	{
+	tempc[i] = IMU_DataRxChar();
+	UART1_SendByte(tempc[i]);
+	}
+LED_OFF( BLUE );
+     428:	80 91 65 00 	lds	r24, 0x0065
+     42c:	88 60       	ori	r24, 0x08	; 8
+     42e:	80 93 65 00 	sts	0x0065, r24
+     432:	80 e0       	ldi	r24, 0x00	; 0
+     434:	90 e0       	ldi	r25, 0x00	; 0
+     436:	01 c0       	rjmp	.+2      	; 0x43a <CharBuffTestRun+0xf8>
+
+for (i=0; i<5; i++)
+     438:	01 96       	adiw	r24, 0x01	; 1
+     43a:	85 30       	cpi	r24, 0x05	; 5
+     43c:	91 05       	cpc	r25, r1
+     43e:	e4 f3       	brlt	.-8      	; 0x438 <CharBuffTestRun+0xf6>
+     440:	90 93 07 02 	sts	0x0207, r25
+     444:	80 93 06 02 	sts	0x0206, r24
+	//UART1_SendByte('.');
+	}
+
+	//convert temppc[0-3] to Hex
+	//update xacc IMU_DataRx()
+	Xacc = BuffIMU_DataRx(0);
+     448:	80 e0       	ldi	r24, 0x00	; 0
+     44a:	90 e0       	ldi	r25, 0x00	; 0
+     44c:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     450:	28 2f       	mov	r18, r24
+     452:	80 93 11 02 	sts	0x0211, r24
+     456:	90 93 12 02 	sts	0x0212, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     45a:	80 91 9b 00 	lds	r24, 0x009B
+     45e:	85 ff       	sbrs	r24, 5
+     460:	fc cf       	rjmp	.-8      	; 0x45a <CharBuffTestRun+0x118>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     462:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     466:	80 91 9b 00 	lds	r24, 0x009B
+     46a:	85 ff       	sbrs	r24, 5
+     46c:	fc cf       	rjmp	.-8      	; 0x466 <CharBuffTestRun+0x124>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     46e:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(Xacc);
+	//test temppc[4] for comma separator
+
+	//convert temppc[5-8] to Hex
+	//update yacc
+	Yacc = BuffIMU_DataRx(5);
+     472:	85 e0       	ldi	r24, 0x05	; 5
+     474:	90 e0       	ldi	r25, 0x00	; 0
+     476:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     47a:	28 2f       	mov	r18, r24
+     47c:	80 93 13 02 	sts	0x0213, r24
+     480:	90 93 14 02 	sts	0x0214, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     484:	80 91 9b 00 	lds	r24, 0x009B
+     488:	85 ff       	sbrs	r24, 5
+     48a:	fc cf       	rjmp	.-8      	; 0x484 <CharBuffTestRun+0x142>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     48c:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     490:	80 91 9b 00 	lds	r24, 0x009B
+     494:	85 ff       	sbrs	r24, 5
+     496:	fc cf       	rjmp	.-8      	; 0x490 <CharBuffTestRun+0x14e>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     498:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(Yacc);
+	//test temppc[9] for comma separator
+
+	//convert temppc[10-13] to Hex
+	//update zacc
+	Zacc = BuffIMU_DataRx(10);
+     49c:	8a e0       	ldi	r24, 0x0A	; 10
+     49e:	90 e0       	ldi	r25, 0x00	; 0
+     4a0:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     4a4:	28 2f       	mov	r18, r24
+     4a6:	80 93 15 02 	sts	0x0215, r24
+     4aa:	90 93 16 02 	sts	0x0216, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     4ae:	80 91 9b 00 	lds	r24, 0x009B
+     4b2:	85 ff       	sbrs	r24, 5
+     4b4:	fc cf       	rjmp	.-8      	; 0x4ae <CharBuffTestRun+0x16c>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     4b6:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     4ba:	80 91 9b 00 	lds	r24, 0x009B
+     4be:	85 ff       	sbrs	r24, 5
+     4c0:	fc cf       	rjmp	.-8      	; 0x4ba <CharBuffTestRun+0x178>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     4c2:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(Zacc);
+	//test temppc[14] for comma separator
+
+	//convert temppc[15-18] to Hex
+	//update xgry
+	Xgyr = BuffIMU_DataRx(15);
+     4c6:	8f e0       	ldi	r24, 0x0F	; 15
+     4c8:	90 e0       	ldi	r25, 0x00	; 0
+     4ca:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     4ce:	28 2f       	mov	r18, r24
+     4d0:	80 93 17 02 	sts	0x0217, r24
+     4d4:	90 93 18 02 	sts	0x0218, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     4d8:	80 91 9b 00 	lds	r24, 0x009B
+     4dc:	85 ff       	sbrs	r24, 5
+     4de:	fc cf       	rjmp	.-8      	; 0x4d8 <CharBuffTestRun+0x196>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     4e0:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     4e4:	80 91 9b 00 	lds	r24, 0x009B
+     4e8:	85 ff       	sbrs	r24, 5
+     4ea:	fc cf       	rjmp	.-8      	; 0x4e4 <CharBuffTestRun+0x1a2>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     4ec:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(Xgyr);
+	//test temppc[19] for comma separator
+
+	//convert temppc[20-23] to Hex
+	//update ygyr
+	Ygyr = BuffIMU_DataRx(20);
+     4f0:	84 e1       	ldi	r24, 0x14	; 20
+     4f2:	90 e0       	ldi	r25, 0x00	; 0
+     4f4:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     4f8:	28 2f       	mov	r18, r24
+     4fa:	80 93 19 02 	sts	0x0219, r24
+     4fe:	90 93 1a 02 	sts	0x021A, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     502:	80 91 9b 00 	lds	r24, 0x009B
+     506:	85 ff       	sbrs	r24, 5
+     508:	fc cf       	rjmp	.-8      	; 0x502 <CharBuffTestRun+0x1c0>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     50a:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     50e:	80 91 9b 00 	lds	r24, 0x009B
+     512:	85 ff       	sbrs	r24, 5
+     514:	fc cf       	rjmp	.-8      	; 0x50e <CharBuffTestRun+0x1cc>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     516:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(Ygyr);
+	//test temppc[24] for comma separator
+
+	//convert temppc[25-28] to Hex
+	//update zgyr
+	Zgyr = BuffIMU_DataRx(25);
+     51a:	89 e1       	ldi	r24, 0x19	; 25
+     51c:	90 e0       	ldi	r25, 0x00	; 0
+     51e:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     522:	28 2f       	mov	r18, r24
+     524:	80 93 1b 02 	sts	0x021B, r24
+     528:	90 93 1c 02 	sts	0x021C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     52c:	80 91 9b 00 	lds	r24, 0x009B
+     530:	85 ff       	sbrs	r24, 5
+     532:	fc cf       	rjmp	.-8      	; 0x52c <CharBuffTestRun+0x1ea>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     534:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     538:	80 91 9b 00 	lds	r24, 0x009B
+     53c:	85 ff       	sbrs	r24, 5
+     53e:	fc cf       	rjmp	.-8      	; 0x538 <CharBuffTestRun+0x1f6>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     540:	20 93 9c 00 	sts	0x009C, r18
+	//convert temppc[30-31] to Hex
+	//update IMUCRC
+	//test temppc[32] for CR
+	//test temppc[33] for LF
+
+	int start = (timer_overflow <<16) + timer;
+     544:	80 91 2f 02 	lds	r24, 0x022F
+     548:	90 91 30 02 	lds	r25, 0x0230
+     54c:	80 91 2d 02 	lds	r24, 0x022D
+     550:	90 91 2e 02 	lds	r25, 0x022E
+     554:	ec 01       	movw	r28, r24
+int thetime;
+do{
+	thetime = (timer_overflow <<16) + timer;	//wait
+     556:	80 91 2f 02 	lds	r24, 0x022F
+     55a:	90 91 30 02 	lds	r25, 0x0230
+     55e:	60 91 2d 02 	lds	r22, 0x022D
+     562:	70 91 2e 02 	lds	r23, 0x022E
+}while( (thetime - start) < (100000/TIMER_RES)); //350 min for 9600
+     566:	6c 1b       	sub	r22, r28
+     568:	7d 0b       	sbc	r23, r29
+     56a:	88 27       	eor	r24, r24
+     56c:	77 fd       	sbrc	r23, 7
+     56e:	80 95       	com	r24
+     570:	98 2f       	mov	r25, r24
+     572:	0e 94 ec 05 	call	0xbd8	; 0xbd8 <__floatsisf>
+     576:	20 e0       	ldi	r18, 0x00	; 0
+     578:	30 e0       	ldi	r19, 0x00	; 0
+     57a:	4a ef       	ldi	r20, 0xFA	; 250
+     57c:	55 e4       	ldi	r21, 0x45	; 69
+     57e:	0e 94 bc 05 	call	0xb78	; 0xb78 <__ltsf2>
+     582:	87 fd       	sbrc	r24, 7
+     584:	e8 cf       	rjmp	.-48     	; 0x556 <CharBuffTestRun+0x214>
+}
+     586:	df 91       	pop	r29
+     588:	cf 91       	pop	r28
+     58a:	08 95       	ret
+
+0000058c <IMUFreeRun>:
+
+
+void IMUFreeRun()
+{
+
+LED_ON( RED );
+     58c:	80 91 65 00 	lds	r24, 0x0065
+     590:	8f 7e       	andi	r24, 0xEF	; 239
+     592:	80 93 65 00 	sts	0x0065, r24
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     596:	5d 9b       	sbis	0x0b, 5	; 11
+     598:	fe cf       	rjmp	.-4      	; 0x596 <IMUFreeRun+0xa>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     59a:	83 e5       	ldi	r24, 0x53	; 83
+     59c:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     59e:	5d 9b       	sbis	0x0b, 5	; 11
+     5a0:	fe cf       	rjmp	.-4      	; 0x59e <IMUFreeRun+0x12>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     5a2:	84 e5       	ldi	r24, 0x54	; 84
+     5a4:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     5a6:	5d 9b       	sbis	0x0b, 5	; 11
+     5a8:	fe cf       	rjmp	.-4      	; 0x5a6 <IMUFreeRun+0x1a>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     5aa:	81 e4       	ldi	r24, 0x41	; 65
+     5ac:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     5ae:	5d 9b       	sbis	0x0b, 5	; 11
+     5b0:	fe cf       	rjmp	.-4      	; 0x5ae <IMUFreeRun+0x22>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     5b2:	86 e4       	ldi	r24, 0x46	; 70
+     5b4:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     5b6:	5d 9b       	sbis	0x0b, 5	; 11
+     5b8:	fe cf       	rjmp	.-4      	; 0x5b6 <IMUFreeRun+0x2a>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     5ba:	82 e5       	ldi	r24, 0x52	; 82
+     5bc:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     5be:	5d 9b       	sbis	0x0b, 5	; 11
+     5c0:	fe cf       	rjmp	.-4      	; 0x5be <IMUFreeRun+0x32>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     5c2:	8d e4       	ldi	r24, 0x4D	; 77
+     5c4:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     5c6:	5d 9b       	sbis	0x0b, 5	; 11
+     5c8:	fe cf       	rjmp	.-4      	; 0x5c6 <IMUFreeRun+0x3a>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     5ca:	8d e0       	ldi	r24, 0x0D	; 13
+     5cc:	8c b9       	out	0x0c, r24	; 12
+
+
+
+char IMU_DataRxChar()
+{
+while ( !(UCSR0A & (1<<RXC0)) );
+     5ce:	5f 9b       	sbis	0x0b, 7	; 11
+     5d0:	fe cf       	rjmp	.-4      	; 0x5ce <IMUFreeRun+0x42>
+return UDR0;
+     5d2:	8c b1       	in	r24, 0x0c	; 12
+UART0_SendByte('R');
+UART0_SendByte('M');
+UART0_SendByte(0x0D);
+
+
+while(IMU_DataRxChar() != 0x0D); //get carriage return
+     5d4:	8d 30       	cpi	r24, 0x0D	; 13
+     5d6:	d9 f7       	brne	.-10     	; 0x5ce <IMUFreeRun+0x42>
+
+
+
+char IMU_DataRxChar()
+{
+while ( !(UCSR0A & (1<<RXC0)) );
+     5d8:	5f 9b       	sbis	0x0b, 7	; 11
+     5da:	fe cf       	rjmp	.-4      	; 0x5d8 <IMUFreeRun+0x4c>
+return UDR0;
+     5dc:	8c b1       	in	r24, 0x0c	; 12
+UART0_SendByte('M');
+UART0_SendByte(0x0D);
+
+
+while(IMU_DataRxChar() != 0x0D); //get carriage return
+while(IMU_DataRxChar() != 0x0A); //get line feed
+     5de:	8a 30       	cpi	r24, 0x0A	; 10
+     5e0:	d9 f7       	brne	.-10     	; 0x5d8 <IMUFreeRun+0x4c>
+
+LED_ON( BLUE );
+     5e2:	80 91 65 00 	lds	r24, 0x0065
+     5e6:	87 7f       	andi	r24, 0xF7	; 247
+     5e8:	80 93 65 00 	sts	0x0065, r24
+     5ec:	e5 e3       	ldi	r30, 0x35	; 53
+     5ee:	f2 e0       	ldi	r31, 0x02	; 2
+     5f0:	20 e0       	ldi	r18, 0x00	; 0
+     5f2:	30 e0       	ldi	r19, 0x00	; 0
+     5f4:	06 c0       	rjmp	.+12     	; 0x602 <IMUFreeRun+0x76>
+
+
+
+char IMU_DataRxChar()
+{
+while ( !(UCSR0A & (1<<RXC0)) );
+     5f6:	5f 9b       	sbis	0x0b, 7	; 11
+     5f8:	fe cf       	rjmp	.-4      	; 0x5f6 <IMUFreeRun+0x6a>
+return UDR0;
+     5fa:	8c b1       	in	r24, 0x0c	; 12
+while(IMU_DataRxChar() != 0x0A); //get line feed
+
+LED_ON( BLUE );
+for (i=0; i<34; i++)
+	{
+	tempc[i] = IMU_DataRxChar();
+     5fc:	81 93       	st	Z+, r24
+     5fe:	2f 5f       	subi	r18, 0xFF	; 255
+     600:	3f 4f       	sbci	r19, 0xFF	; 255
+
+while(IMU_DataRxChar() != 0x0D); //get carriage return
+while(IMU_DataRxChar() != 0x0A); //get line feed
+
+LED_ON( BLUE );
+for (i=0; i<34; i++)
+     602:	22 32       	cpi	r18, 0x22	; 34
+     604:	31 05       	cpc	r19, r1
+     606:	bc f3       	brlt	.-18     	; 0x5f6 <IMUFreeRun+0x6a>
+     608:	30 93 07 02 	sts	0x0207, r19
+     60c:	20 93 06 02 	sts	0x0206, r18
+	{
+	tempc[i] = IMU_DataRxChar();
+	//UART1_SendByte(tempc[i]);
+	}
+LED_OFF( BLUE );
+     610:	80 91 65 00 	lds	r24, 0x0065
+     614:	88 60       	ori	r24, 0x08	; 8
+     616:	80 93 65 00 	sts	0x0065, r24
+
+	//convert temppc[0-3] to Hex
+	//update xacc IMU_DataRx()
+	Xgyr = BuffIMU_DataRx(0);
+     61a:	80 e0       	ldi	r24, 0x00	; 0
+     61c:	90 e0       	ldi	r25, 0x00	; 0
+     61e:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     622:	90 93 18 02 	sts	0x0218, r25
+     626:	80 93 17 02 	sts	0x0217, r24
+	//test temppc[4] for comma separator
+
+	//convert temppc[5-8] to Hex
+	//update yacc
+	Ygyr = BuffIMU_DataRx(5);
+     62a:	85 e0       	ldi	r24, 0x05	; 5
+     62c:	90 e0       	ldi	r25, 0x00	; 0
+     62e:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     632:	90 93 1a 02 	sts	0x021A, r25
+     636:	80 93 19 02 	sts	0x0219, r24
+	//test temppc[9] for comma separator
+
+	//convert temppc[10-13] to Hex
+	//update zacc
+	Zgyr = BuffIMU_DataRx(10);
+     63a:	8a e0       	ldi	r24, 0x0A	; 10
+     63c:	90 e0       	ldi	r25, 0x00	; 0
+     63e:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     642:	90 93 1c 02 	sts	0x021C, r25
+     646:	80 93 1b 02 	sts	0x021B, r24
+	//test temppc[14] for comma separator
+
+	//convert temppc[15-18] to Hex
+	//update xgry
+	Xacc = BuffIMU_DataRx(15);
+     64a:	8f e0       	ldi	r24, 0x0F	; 15
+     64c:	90 e0       	ldi	r25, 0x00	; 0
+     64e:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     652:	90 93 12 02 	sts	0x0212, r25
+     656:	80 93 11 02 	sts	0x0211, r24
+	//test temppc[19] for comma separator
+
+	//convert temppc[20-23] to Hex
+	//update ygyr
+	Yacc = BuffIMU_DataRx(20);
+     65a:	84 e1       	ldi	r24, 0x14	; 20
+     65c:	90 e0       	ldi	r25, 0x00	; 0
+     65e:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     662:	90 93 14 02 	sts	0x0214, r25
+     666:	80 93 13 02 	sts	0x0213, r24
+	//test temppc[24] for comma separator
+
+	//convert temppc[25-28] to Hex
+	//update zgyr
+	Zacc = BuffIMU_DataRx(25);
+     66a:	89 e1       	ldi	r24, 0x19	; 25
+     66c:	90 e0       	ldi	r25, 0x00	; 0
+     66e:	0e 94 5a 01 	call	0x2b4	; 0x2b4 <BuffIMU_DataRx>
+     672:	90 93 16 02 	sts	0x0216, r25
+     676:	80 93 15 02 	sts	0x0215, r24
+	//convert temppc[30-31] to Hex
+	//update IMUCRC
+	//test temppc[32] for CR
+	//test temppc[33] for LF
+
+LED_OFF( RED );
+     67a:	80 91 65 00 	lds	r24, 0x0065
+     67e:	80 61       	ori	r24, 0x10	; 16
+     680:	80 93 65 00 	sts	0x0065, r24
+
+}
+     684:	08 95       	ret
+
+00000686 <IMU_DataRx>:
+
+
+
+uint16_t IMU_DataRx() 
+//Gets 4ASCII char converts to a 16bit Binary value and takes comma from UART0
+{
+     686:	e0 e0       	ldi	r30, 0x00	; 0
+     688:	f0 e0       	ldi	r31, 0x00	; 0
+     68a:	20 e0       	ldi	r18, 0x00	; 0
+     68c:	30 e0       	ldi	r19, 0x00	; 0
+     68e:	40 e0       	ldi	r20, 0x00	; 0
+     690:	50 e0       	ldi	r21, 0x00	; 0
+     692:	6c e0       	ldi	r22, 0x0C	; 12
+     694:	70 e0       	ldi	r23, 0x00	; 0
+     696:	21 c0       	rjmp	.+66     	; 0x6da <IMU_DataRx+0x54>
+uint16_t IMU_Data =0;
+GoodChar = 0;
+//IMU_Data = 0; //ensure it is reinitialised
+for (i=0; i<4; i++)
+	{
+	while ( !(UCSR0A & (1<<RXC0)) );
+     698:	5f 9b       	sbis	0x0b, 7	; 11
+     69a:	fe cf       	rjmp	.-4      	; 0x698 <IMU_DataRx+0x12>
+		//while ( UDR0 != 0x0D ); //Test for end of string
+			tempChar = UDR0;
+     69c:	9c b1       	in	r25, 0x0c	; 12
+			//perform ASCII HEX to Binary
+			if ((tempChar >= 0x41) && (tempChar <= 0x46)) //Char is A-F
+     69e:	89 2f       	mov	r24, r25
+     6a0:	81 54       	subi	r24, 0x41	; 65
+     6a2:	86 30       	cpi	r24, 0x06	; 6
+     6a4:	10 f4       	brcc	.+4      	; 0x6aa <IMU_DataRx+0x24>
+				{
+					tempChar = tempChar - 0x37;
+     6a6:	97 53       	subi	r25, 0x37	; 55
+     6a8:	05 c0       	rjmp	.+10     	; 0x6b4 <IMU_DataRx+0x2e>
+					GoodChar = 1;
+				}
+			else if ((tempChar >= 0x30) && (tempChar <= 0x39)) //Char is 0-9
+     6aa:	89 2f       	mov	r24, r25
+     6ac:	80 53       	subi	r24, 0x30	; 48
+     6ae:	8a 30       	cpi	r24, 0x0A	; 10
+     6b0:	20 f4       	brcc	.+8      	; 0x6ba <IMU_DataRx+0x34>
+     6b2:	98 2f       	mov	r25, r24
+     6b4:	21 e0       	ldi	r18, 0x01	; 1
+     6b6:	30 e0       	ldi	r19, 0x00	; 0
+     6b8:	02 c0       	rjmp	.+4      	; 0x6be <IMU_DataRx+0x38>
+     6ba:	20 e0       	ldi	r18, 0x00	; 0
+     6bc:	30 e0       	ldi	r19, 0x00	; 0
+				}
+			else
+				{	
+			GoodChar = 0; // bad character
+				}
+			IMU_Data |= tempChar<<(((4-i)*4)-4);	
+     6be:	89 2f       	mov	r24, r25
+     6c0:	90 e0       	ldi	r25, 0x00	; 0
+     6c2:	06 2e       	mov	r0, r22
+     6c4:	02 c0       	rjmp	.+4      	; 0x6ca <IMU_DataRx+0x44>
+     6c6:	88 0f       	add	r24, r24
+     6c8:	99 1f       	adc	r25, r25
+     6ca:	0a 94       	dec	r0
+     6cc:	e2 f7       	brpl	.-8      	; 0x6c6 <IMU_DataRx+0x40>
+     6ce:	e8 2b       	or	r30, r24
+     6d0:	f9 2b       	or	r31, r25
+     6d2:	4f 5f       	subi	r20, 0xFF	; 255
+     6d4:	5f 4f       	sbci	r21, 0xFF	; 255
+     6d6:	64 50       	subi	r22, 0x04	; 4
+     6d8:	70 40       	sbci	r23, 0x00	; 0
+//Gets 4ASCII char converts to a 16bit Binary value and takes comma from UART0
+{
+uint16_t IMU_Data =0;
+GoodChar = 0;
+//IMU_Data = 0; //ensure it is reinitialised
+for (i=0; i<4; i++)
+     6da:	44 30       	cpi	r20, 0x04	; 4
+     6dc:	51 05       	cpc	r21, r1
+     6de:	e4 f2       	brlt	.-72     	; 0x698 <IMU_DataRx+0x12>
+     6e0:	30 93 28 02 	sts	0x0228, r19
+     6e4:	20 93 27 02 	sts	0x0227, r18
+     6e8:	50 93 07 02 	sts	0x0207, r21
+     6ec:	40 93 06 02 	sts	0x0206, r20
+			GoodChar = 0; // bad character
+				}
+			IMU_Data |= tempChar<<(((4-i)*4)-4);	
+	}
+	
+while ( !(UCSR0A & (1<<RXC0)) );
+     6f0:	5f 9b       	sbis	0x0b, 7	; 11
+     6f2:	fe cf       	rjmp	.-4      	; 0x6f0 <IMU_DataRx+0x6a>
+tempChar = UDR0; //This takes the comma separator from the buffer
+     6f4:	8c b1       	in	r24, 0x0c	; 12
+     6f6:	80 93 34 02 	sts	0x0234, r24
+
+return IMU_Data;
+
+}
+     6fa:	cf 01       	movw	r24, r30
+     6fc:	08 95       	ret
+
+000006fe <IMUGetData>:
+
+
+int IMUGetData()
+{
+GoodChar = 0;
+     6fe:	10 92 28 02 	sts	0x0228, r1
+     702:	10 92 27 02 	sts	0x0227, r1
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     706:	5d 9b       	sbis	0x0b, 5	; 11
+     708:	fe cf       	rjmp	.-4      	; 0x706 <IMUGetData+0x8>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     70a:	83 e5       	ldi	r24, 0x53	; 83
+     70c:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     70e:	5d 9b       	sbis	0x0b, 5	; 11
+     710:	fe cf       	rjmp	.-4      	; 0x70e <IMUGetData+0x10>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     712:	84 e5       	ldi	r24, 0x54	; 84
+     714:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     716:	5d 9b       	sbis	0x0b, 5	; 11
+     718:	fe cf       	rjmp	.-4      	; 0x716 <IMUGetData+0x18>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     71a:	81 e4       	ldi	r24, 0x41	; 65
+     71c:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     71e:	5d 9b       	sbis	0x0b, 5	; 11
+     720:	fe cf       	rjmp	.-4      	; 0x71e <IMUGetData+0x20>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     722:	8f e4       	ldi	r24, 0x4F	; 79
+     724:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     726:	5d 9b       	sbis	0x0b, 5	; 11
+     728:	fe cf       	rjmp	.-4      	; 0x726 <IMUGetData+0x28>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     72a:	83 e5       	ldi	r24, 0x53	; 83
+     72c:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     72e:	5d 9b       	sbis	0x0b, 5	; 11
+     730:	fe cf       	rjmp	.-4      	; 0x72e <IMUGetData+0x30>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     732:	8d e4       	ldi	r24, 0x4D	; 77
+     734:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     736:	5d 9b       	sbis	0x0b, 5	; 11
+     738:	fe cf       	rjmp	.-4      	; 0x736 <IMUGetData+0x38>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     73a:	8d e0       	ldi	r24, 0x0D	; 13
+     73c:	8c b9       	out	0x0c, r24	; 12
+		while ( UDR0 != 0x0D ); //Test for end of string
+	 	Xacc |= UDR0<<((((4-i)*8)-8)); //Ensure characters are in the correct order
+}*/
+
+
+Xacc = IMU_DataRx();
+     73e:	0e 94 43 03 	call	0x686	; 0x686 <IMU_DataRx>
+Xacc = GoodChar * Xacc;
+     742:	20 91 27 02 	lds	r18, 0x0227
+     746:	30 91 28 02 	lds	r19, 0x0228
+     74a:	ac 01       	movw	r20, r24
+     74c:	42 9f       	mul	r20, r18
+     74e:	c0 01       	movw	r24, r0
+     750:	43 9f       	mul	r20, r19
+     752:	90 0d       	add	r25, r0
+     754:	52 9f       	mul	r21, r18
+     756:	90 0d       	add	r25, r0
+     758:	11 24       	eor	r1, r1
+     75a:	90 93 12 02 	sts	0x0212, r25
+     75e:	80 93 11 02 	sts	0x0211, r24
+//if (BadChar != 0) return BadChar;
+Yacc = IMU_DataRx();
+     762:	0e 94 43 03 	call	0x686	; 0x686 <IMU_DataRx>
+Yacc = GoodChar * Yacc;
+     766:	20 91 27 02 	lds	r18, 0x0227
+     76a:	30 91 28 02 	lds	r19, 0x0228
+     76e:	ac 01       	movw	r20, r24
+     770:	42 9f       	mul	r20, r18
+     772:	c0 01       	movw	r24, r0
+     774:	43 9f       	mul	r20, r19
+     776:	90 0d       	add	r25, r0
+     778:	52 9f       	mul	r21, r18
+     77a:	90 0d       	add	r25, r0
+     77c:	11 24       	eor	r1, r1
+     77e:	90 93 14 02 	sts	0x0214, r25
+     782:	80 93 13 02 	sts	0x0213, r24
+//if (BadChar != 0) return BadChar;
+Zacc = IMU_DataRx();
+     786:	0e 94 43 03 	call	0x686	; 0x686 <IMU_DataRx>
+Zacc = GoodChar * Zacc;
+     78a:	20 91 27 02 	lds	r18, 0x0227
+     78e:	30 91 28 02 	lds	r19, 0x0228
+     792:	ac 01       	movw	r20, r24
+     794:	42 9f       	mul	r20, r18
+     796:	c0 01       	movw	r24, r0
+     798:	43 9f       	mul	r20, r19
+     79a:	90 0d       	add	r25, r0
+     79c:	52 9f       	mul	r21, r18
+     79e:	90 0d       	add	r25, r0
+     7a0:	11 24       	eor	r1, r1
+     7a2:	90 93 16 02 	sts	0x0216, r25
+     7a6:	80 93 15 02 	sts	0x0215, r24
+//if (BadChar != 0) return BadChar;
+Xgyr = IMU_DataRx();
+     7aa:	0e 94 43 03 	call	0x686	; 0x686 <IMU_DataRx>
+Xgyr = GoodChar * Xgyr;
+     7ae:	20 91 27 02 	lds	r18, 0x0227
+     7b2:	30 91 28 02 	lds	r19, 0x0228
+     7b6:	ac 01       	movw	r20, r24
+     7b8:	42 9f       	mul	r20, r18
+     7ba:	c0 01       	movw	r24, r0
+     7bc:	43 9f       	mul	r20, r19
+     7be:	90 0d       	add	r25, r0
+     7c0:	52 9f       	mul	r21, r18
+     7c2:	90 0d       	add	r25, r0
+     7c4:	11 24       	eor	r1, r1
+     7c6:	90 93 18 02 	sts	0x0218, r25
+     7ca:	80 93 17 02 	sts	0x0217, r24
+//if (BadChar != 0) return BadChar;
+Ygyr = IMU_DataRx();
+     7ce:	0e 94 43 03 	call	0x686	; 0x686 <IMU_DataRx>
+Ygyr = GoodChar * Ygyr;
+     7d2:	20 91 27 02 	lds	r18, 0x0227
+     7d6:	30 91 28 02 	lds	r19, 0x0228
+     7da:	ac 01       	movw	r20, r24
+     7dc:	42 9f       	mul	r20, r18
+     7de:	c0 01       	movw	r24, r0
+     7e0:	43 9f       	mul	r20, r19
+     7e2:	90 0d       	add	r25, r0
+     7e4:	52 9f       	mul	r21, r18
+     7e6:	90 0d       	add	r25, r0
+     7e8:	11 24       	eor	r1, r1
+     7ea:	90 93 1a 02 	sts	0x021A, r25
+     7ee:	80 93 19 02 	sts	0x0219, r24
+//if (BadChar != 0) return BadChar;
+Zgyr = IMU_DataRx();
+     7f2:	0e 94 43 03 	call	0x686	; 0x686 <IMU_DataRx>
+Zgyr = GoodChar * Zgyr;
+     7f6:	20 91 27 02 	lds	r18, 0x0227
+     7fa:	30 91 28 02 	lds	r19, 0x0228
+     7fe:	ac 01       	movw	r20, r24
+     800:	42 9f       	mul	r20, r18
+     802:	c0 01       	movw	r24, r0
+     804:	43 9f       	mul	r20, r19
+     806:	90 0d       	add	r25, r0
+     808:	52 9f       	mul	r21, r18
+     80a:	90 0d       	add	r25, r0
+     80c:	11 24       	eor	r1, r1
+     80e:	90 93 1c 02 	sts	0x021C, r25
+     812:	80 93 1b 02 	sts	0x021B, r24
+//if (BadChar != 0) return BadChar;
+
+//2char Checksum and 0x0D termiator
+while ( !(UCSR0A & (1<<RXC0)) );
+     816:	5f 9b       	sbis	0x0b, 7	; 11
+     818:	fe cf       	rjmp	.-4      	; 0x816 <IMUGetData+0x118>
+tempChar = UDR0; //This takes the comma separator from the buffer
+     81a:	8c b1       	in	r24, 0x0c	; 12
+while ( !(UCSR0A & (1<<RXC0)) );
+     81c:	5f 9b       	sbis	0x0b, 7	; 11
+     81e:	fe cf       	rjmp	.-4      	; 0x81c <IMUGetData+0x11e>
+ChkChar0 = UDR0; //This takes the first Checksum Char from the buffer
+     820:	8c b1       	in	r24, 0x0c	; 12
+     822:	80 93 32 02 	sts	0x0232, r24
+while ( !(UCSR0A & (1<<RXC0)) );
+     826:	5f 9b       	sbis	0x0b, 7	; 11
+     828:	fe cf       	rjmp	.-4      	; 0x826 <IMUGetData+0x128>
+ChkChar1 = UDR0; //This takes the next Checksum char from the buffer
+     82a:	8c b1       	in	r24, 0x0c	; 12
+     82c:	80 93 31 02 	sts	0x0231, r24
+while ( !(UCSR0A & (1<<RXC0)) );
+     830:	5f 9b       	sbis	0x0b, 7	; 11
+     832:	fe cf       	rjmp	.-4      	; 0x830 <IMUGetData+0x132>
+tempChar = UDR0; //This takes the 0x0D char from the buffer
+     834:	8c b1       	in	r24, 0x0c	; 12
+while ( !(UCSR0A & (1<<RXC0)) );
+     836:	5f 9b       	sbis	0x0b, 7	; 11
+     838:	fe cf       	rjmp	.-4      	; 0x836 <IMUGetData+0x138>
+tempChar = UDR0; //This takes the 0x0A char from the buffer
+     83a:	8c b1       	in	r24, 0x0c	; 12
+     83c:	80 93 34 02 	sts	0x0234, r24
+	while ( !(UCSR0A & (1<<RXC0)) );
+		while ( UDR0 != 0x0D ); //Test for end of string
+	 	Zacc |= UDR0<<((((4-i)*8)-8));
+}*/
+
+}
+     840:	80 e0       	ldi	r24, 0x00	; 0
+     842:	90 e0       	ldi	r25, 0x00	; 0
+     844:	08 95       	ret
+
+00000846 <InitADC>:
+}
+*/
+
+void InitADC()
+{
+ADMUX=(1<<REFS0)|(1<<REFS1);                         // For Aref=Internal 2.56V;
+     846:	80 ec       	ldi	r24, 0xC0	; 192
+     848:	87 b9       	out	0x07, r24	; 7
+ADCSRA=(1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(0<<ADPS0); //Prescalar div factor =
+     84a:	86 e8       	ldi	r24, 0x86	; 134
+     84c:	86 b9       	out	0x06, r24	; 6
+}
+     84e:	08 95       	ret
+
+00000850 <ADCVal>:
+
+
+uint16_t ADCVal(uint8_t ch)
+{
+
+  ADCSRA|=(0<<ADSC); //Dont start conversion yet
+     850:	96 b1       	in	r25, 0x06	; 6
+     852:	96 b9       	out	0x06, r25	; 6
+//Select ADC Channel ch must be 0-7
+	ADMUX=ADMUX&0b11100000; //clear ADMUX channel selection
+     854:	97 b1       	in	r25, 0x07	; 7
+     856:	90 7e       	andi	r25, 0xE0	; 224
+     858:	97 b9       	out	0x07, r25	; 7
+  	ch=ch&0b00000111;
+  	ADMUX|=ch;
+     85a:	97 b1       	in	r25, 0x07	; 7
+     85c:	87 70       	andi	r24, 0x07	; 7
+     85e:	89 2b       	or	r24, r25
+     860:	87 b9       	out	0x07, r24	; 7
+
+
+   //Start Single conversion
+   ADCSRA|=(1<<ADSC);
+     862:	36 9a       	sbi	0x06, 6	; 6
+
+   //Wait for conversion to complete
+   while(!(ADCSRA & (1<<ADIF)));
+     864:	34 9b       	sbis	0x06, 4	; 6
+     866:	fe cf       	rjmp	.-4      	; 0x864 <ADCVal+0x14>
+
+   //Clear ADIF by writing one to it
+   ADCSRA|=(1<<ADIF);
+     868:	34 9a       	sbi	0x06, 4	; 6
+
+   return(ADC);
+     86a:	24 b1       	in	r18, 0x04	; 4
+     86c:	35 b1       	in	r19, 0x05	; 5
+
+
+}
+     86e:	c9 01       	movw	r24, r18
+     870:	08 95       	ret
+
+00000872 <main>:
+}*/
+
+
+
+int main(void)
+{
+     872:	cf 93       	push	r28
+     874:	df 93       	push	r29
+
+
+//initial setup
+timer1init();
+     876:	0e 94 67 00 	call	0xce	; 0xce <timer1init>
+
+void UART1_vInit(void) //Radio Link
+{
+
+// Set baud rate
+UBRR1H = (uint8_t)(MYUBRR>>8);
+     87a:	10 92 98 00 	sts	0x0098, r1
+UBRR1L = (uint8_t)MYUBRR;
+     87e:	88 e0       	ldi	r24, 0x08	; 8
+     880:	80 93 99 00 	sts	0x0099, r24
+// Enable receiver and transmitter
+UCSR1B = (1<<RXEN1)|(1<<TXEN1);
+     884:	98 e1       	ldi	r25, 0x18	; 24
+     886:	90 93 9a 00 	sts	0x009A, r25
+
+void UART0_vInit(void) //IMU UART
+{
+
+// Set baud rate
+UBRR0H = (uint8_t)(IMUUBRR>>8);
+     88a:	10 92 90 00 	sts	0x0090, r1
+UBRR0L = (uint8_t)IMUUBRR;
+     88e:	8a e1       	ldi	r24, 0x1A	; 26
+     890:	89 b9       	out	0x09, r24	; 9
+UCSR0C = (2<<UCSZ0);
+     892:	84 e0       	ldi	r24, 0x04	; 4
+     894:	80 93 95 00 	sts	0x0095, r24
+//UCSR0C |= (1<<USBS0);
+// Enable receiver and transmitter
+UCSR0B = (1<<RXEN0)|(1<<TXEN0);
+     898:	9a b9       	out	0x0a, r25	; 10
+//SPI_Master_Init();
+//InitTimer;
+
+
+
+ASSR &= ~( 1 << AS0 );  // Make sure Port G LED pins are setup for I/O
+     89a:	80 b7       	in	r24, 0x30	; 48
+     89c:	87 7f       	andi	r24, 0xF7	; 247
+     89e:	80 bf       	out	0x30, r24	; 48
+
+RED_LED_DDR     |= RED_LED_MASK;
+     8a0:	80 91 64 00 	lds	r24, 0x0064
+     8a4:	80 61       	ori	r24, 0x10	; 16
+     8a6:	80 93 64 00 	sts	0x0064, r24
+YELLOW_LED_DDR  |= YELLOW_LED_MASK;
+     8aa:	bc 9a       	sbi	0x17, 4	; 23
+BLUE_LED_DDR    |= BLUE_LED_MASK;
+     8ac:	80 91 64 00 	lds	r24, 0x0064
+     8b0:	88 60       	ori	r24, 0x08	; 8
+     8b2:	80 93 64 00 	sts	0x0064, r24
+}
+*/
+
+void InitADC()
+{
+ADMUX=(1<<REFS0)|(1<<REFS1);                         // For Aref=Internal 2.56V;
+     8b6:	80 ec       	ldi	r24, 0xC0	; 192
+     8b8:	87 b9       	out	0x07, r24	; 7
+ADCSRA=(1<<ADEN)|(1<<ADPS2)|(1<<ADPS1)|(0<<ADPS0); //Prescalar div factor =
+     8ba:	86 e8       	ldi	r24, 0x86	; 134
+     8bc:	86 b9       	out	0x06, r24	; 6
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     8be:	80 91 9b 00 	lds	r24, 0x009B
+     8c2:	85 ff       	sbrs	r24, 5
+     8c4:	fc cf       	rjmp	.-8      	; 0x8be <main+0x4c>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     8c6:	83 e5       	ldi	r24, 0x53	; 83
+     8c8:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     8cc:	80 91 9b 00 	lds	r24, 0x009B
+     8d0:	85 ff       	sbrs	r24, 5
+     8d2:	fc cf       	rjmp	.-8      	; 0x8cc <main+0x5a>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     8d4:	84 e5       	ldi	r24, 0x54	; 84
+     8d6:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     8da:	80 91 9b 00 	lds	r24, 0x009B
+     8de:	85 ff       	sbrs	r24, 5
+     8e0:	fc cf       	rjmp	.-8      	; 0x8da <main+0x68>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     8e2:	81 e4       	ldi	r24, 0x41	; 65
+     8e4:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     8e8:	80 91 9b 00 	lds	r24, 0x009B
+     8ec:	85 ff       	sbrs	r24, 5
+     8ee:	fc cf       	rjmp	.-8      	; 0x8e8 <main+0x76>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     8f0:	86 e4       	ldi	r24, 0x46	; 70
+     8f2:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     8f6:	80 91 9b 00 	lds	r24, 0x009B
+     8fa:	85 ff       	sbrs	r24, 5
+     8fc:	fc cf       	rjmp	.-8      	; 0x8f6 <main+0x84>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     8fe:	82 e5       	ldi	r24, 0x52	; 82
+     900:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     904:	80 91 9b 00 	lds	r24, 0x009B
+     908:	85 ff       	sbrs	r24, 5
+     90a:	fc cf       	rjmp	.-8      	; 0x904 <main+0x92>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     90c:	8d e4       	ldi	r24, 0x4D	; 77
+     90e:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     912:	80 91 9b 00 	lds	r24, 0x009B
+     916:	85 ff       	sbrs	r24, 5
+     918:	fc cf       	rjmp	.-8      	; 0x912 <main+0xa0>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     91a:	8d e0       	ldi	r24, 0x0D	; 13
+     91c:	80 93 9c 00 	sts	0x009C, r24
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     920:	5d 9b       	sbis	0x0b, 5	; 11
+     922:	fe cf       	rjmp	.-4      	; 0x920 <main+0xae>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     924:	83 e5       	ldi	r24, 0x53	; 83
+     926:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     928:	5d 9b       	sbis	0x0b, 5	; 11
+     92a:	fe cf       	rjmp	.-4      	; 0x928 <main+0xb6>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     92c:	84 e5       	ldi	r24, 0x54	; 84
+     92e:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     930:	5d 9b       	sbis	0x0b, 5	; 11
+     932:	fe cf       	rjmp	.-4      	; 0x930 <main+0xbe>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     934:	81 e4       	ldi	r24, 0x41	; 65
+     936:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     938:	5d 9b       	sbis	0x0b, 5	; 11
+     93a:	fe cf       	rjmp	.-4      	; 0x938 <main+0xc6>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     93c:	86 e4       	ldi	r24, 0x46	; 70
+     93e:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     940:	5d 9b       	sbis	0x0b, 5	; 11
+     942:	fe cf       	rjmp	.-4      	; 0x940 <main+0xce>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     944:	82 e5       	ldi	r24, 0x52	; 82
+     946:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     948:	5d 9b       	sbis	0x0b, 5	; 11
+     94a:	fe cf       	rjmp	.-4      	; 0x948 <main+0xd6>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     94c:	8d e4       	ldi	r24, 0x4D	; 77
+     94e:	8c b9       	out	0x0c, r24	; 12
+
+
+void UART0_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR0A&(1<<UDRE0)) == 0);
+     950:	5d 9b       	sbis	0x0b, 5	; 11
+     952:	fe cf       	rjmp	.-4      	; 0x950 <main+0xde>
+//Put data into buffer, sends the data
+UDR0 = Data;
+     954:	8d e0       	ldi	r24, 0x0D	; 13
+     956:	8c b9       	out	0x0c, r24	; 12
+
+
+// 2/7/09 swapover
+
+
+LED_ON( BLUE );
+     958:	80 91 65 00 	lds	r24, 0x0065
+     95c:	87 7f       	andi	r24, 0xF7	; 247
+     95e:	80 93 65 00 	sts	0x0065, r24
+LED_OFF( RED );
+     962:	80 91 65 00 	lds	r24, 0x0065
+     966:	80 61       	ori	r24, 0x10	; 16
+     968:	80 93 65 00 	sts	0x0065, r24
+//Alt = GetADCVal(NearSensor); // Get Short Distance Alt
+//FarAlt = GetADCVal(FarSensor); // Get Long Distance Alt
+//UpdateTimeStamp(); //Update the time stamp
+
+
+IMUFreeRun();
+     96c:	0e 94 c6 02 	call	0x58c	; 0x58c <IMUFreeRun>
+
+
+uint16_t ADCVal(uint8_t ch)
+{
+
+  ADCSRA|=(0<<ADSC); //Dont start conversion yet
+     970:	86 b1       	in	r24, 0x06	; 6
+     972:	86 b9       	out	0x06, r24	; 6
+//Select ADC Channel ch must be 0-7
+	ADMUX=ADMUX&0b11100000; //clear ADMUX channel selection
+     974:	87 b1       	in	r24, 0x07	; 7
+     976:	80 7e       	andi	r24, 0xE0	; 224
+     978:	87 b9       	out	0x07, r24	; 7
+  	ch=ch&0b00000111;
+  	ADMUX|=ch;
+     97a:	87 b1       	in	r24, 0x07	; 7
+     97c:	87 b9       	out	0x07, r24	; 7
+
+
+   //Start Single conversion
+   ADCSRA|=(1<<ADSC);
+     97e:	36 9a       	sbi	0x06, 6	; 6
+
+   //Wait for conversion to complete
+   while(!(ADCSRA & (1<<ADIF)));
+     980:	34 9b       	sbis	0x06, 4	; 6
+     982:	fe cf       	rjmp	.-4      	; 0x980 <main+0x10e>
+
+   //Clear ADIF by writing one to it
+   ADCSRA|=(1<<ADIF);
+     984:	34 9a       	sbi	0x06, 4	; 6
+
+   return(ADC);
+     986:	44 b1       	in	r20, 0x04	; 4
+     988:	55 b1       	in	r21, 0x05	; 5
+LED_OFF( BLUE );*/
+
+
+//Alt = GetADCVal(NearSensor);
+
+Alt = ADCVal(0x00); //This is good
+     98a:	50 93 24 02 	sts	0x0224, r21
+     98e:	40 93 23 02 	sts	0x0223, r20
+
+//UpdateTimeStamp(); //Update the time stamp
+
+
+//22 IMU testrun
+LED_OFF( BLUE );
+     992:	80 91 65 00 	lds	r24, 0x0065
+     996:	88 60       	ori	r24, 0x08	; 8
+     998:	80 93 65 00 	sts	0x0065, r24
+LED_ON( RED );
+     99c:	80 91 65 00 	lds	r24, 0x0065
+     9a0:	8f 7e       	andi	r24, 0xEF	; 239
+     9a2:	80 93 65 00 	sts	0x0065, r24
+
+	UART1_SendByte(SYNC1);
+     9a6:	90 91 00 01 	lds	r25, 0x0100
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     9aa:	80 91 9b 00 	lds	r24, 0x009B
+     9ae:	85 ff       	sbrs	r24, 5
+     9b0:	fc cf       	rjmp	.-8      	; 0x9aa <main+0x138>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     9b2:	90 93 9c 00 	sts	0x009C, r25
+//22 IMU testrun
+LED_OFF( BLUE );
+LED_ON( RED );
+
+	UART1_SendByte(SYNC1);
+	UART1_SendByte(SYNC2);
+     9b6:	90 91 01 01 	lds	r25, 0x0101
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     9ba:	80 91 9b 00 	lds	r24, 0x009B
+     9be:	85 ff       	sbrs	r24, 5
+     9c0:	fc cf       	rjmp	.-8      	; 0x9ba <main+0x148>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     9c2:	90 93 9c 00 	sts	0x009C, r25
+LED_OFF( BLUE );
+LED_ON( RED );
+
+	UART1_SendByte(SYNC1);
+	UART1_SendByte(SYNC2);
+	UART1_SendByte(SYNC3);
+     9c6:	90 91 02 01 	lds	r25, 0x0102
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     9ca:	80 91 9b 00 	lds	r24, 0x009B
+     9ce:	85 ff       	sbrs	r24, 5
+     9d0:	fc cf       	rjmp	.-8      	; 0x9ca <main+0x158>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     9d2:	90 93 9c 00 	sts	0x009C, r25
+LED_ON( RED );
+
+	UART1_SendByte(SYNC1);
+	UART1_SendByte(SYNC2);
+	UART1_SendByte(SYNC3);
+	UART1_SendByte(SYNC4);
+     9d6:	90 91 03 01 	lds	r25, 0x0103
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     9da:	80 91 9b 00 	lds	r24, 0x009B
+     9de:	85 ff       	sbrs	r24, 5
+     9e0:	fc cf       	rjmp	.-8      	; 0x9da <main+0x168>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     9e2:	90 93 9c 00 	sts	0x009C, r25
+	//UART1_SendByte(TSTAMP1);
+//	UART1_SendByte(TSTAMP2);
+//	UART1_SendByte(TSTAMP3);
+//	UART1_SendByte(TSTAMP4);
+
+	UART1_Send16bits(timer_overflow & 0x7FF); //Remove MSB for ICD conformance);
+     9e6:	20 91 2f 02 	lds	r18, 0x022F
+     9ea:	30 91 30 02 	lds	r19, 0x0230
+     9ee:	37 70       	andi	r19, 0x07	; 7
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     9f0:	80 91 9b 00 	lds	r24, 0x009B
+     9f4:	85 ff       	sbrs	r24, 5
+     9f6:	fc cf       	rjmp	.-8      	; 0x9f0 <main+0x17e>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     9f8:	30 93 9c 00 	sts	0x009C, r19
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     9fc:	80 91 9b 00 	lds	r24, 0x009B
+     a00:	85 ff       	sbrs	r24, 5
+     a02:	fc cf       	rjmp	.-8      	; 0x9fc <main+0x18a>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a04:	20 93 9c 00 	sts	0x009C, r18
+//	UART1_SendByte(TSTAMP2);
+//	UART1_SendByte(TSTAMP3);
+//	UART1_SendByte(TSTAMP4);
+
+	UART1_Send16bits(timer_overflow & 0x7FF); //Remove MSB for ICD conformance);
+	UART1_Send16bits(timer);
+     a08:	20 91 2d 02 	lds	r18, 0x022D
+     a0c:	30 91 2e 02 	lds	r19, 0x022E
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a10:	80 91 9b 00 	lds	r24, 0x009B
+     a14:	85 ff       	sbrs	r24, 5
+     a16:	fc cf       	rjmp	.-8      	; 0xa10 <main+0x19e>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a18:	30 93 9c 00 	sts	0x009C, r19
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a1c:	80 91 9b 00 	lds	r24, 0x009B
+     a20:	85 ff       	sbrs	r24, 5
+     a22:	fc cf       	rjmp	.-8      	; 0xa1c <main+0x1aa>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a24:	20 93 9c 00 	sts	0x009C, r18
+//	UART1_SendByte(TSTAMP4);
+
+	UART1_Send16bits(timer_overflow & 0x7FF); //Remove MSB for ICD conformance);
+	UART1_Send16bits(timer);
+	//  - Removed for Altitude hold testing
+	UART1_Send16bits(Xacc); //& 0x7FF);
+     a28:	20 91 11 02 	lds	r18, 0x0211
+     a2c:	90 91 12 02 	lds	r25, 0x0212
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a30:	80 91 9b 00 	lds	r24, 0x009B
+     a34:	85 ff       	sbrs	r24, 5
+     a36:	fc cf       	rjmp	.-8      	; 0xa30 <main+0x1be>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a38:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a3c:	80 91 9b 00 	lds	r24, 0x009B
+     a40:	85 ff       	sbrs	r24, 5
+     a42:	fc cf       	rjmp	.-8      	; 0xa3c <main+0x1ca>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a44:	20 93 9c 00 	sts	0x009C, r18
+
+	UART1_Send16bits(timer_overflow & 0x7FF); //Remove MSB for ICD conformance);
+	UART1_Send16bits(timer);
+	//  - Removed for Altitude hold testing
+	UART1_Send16bits(Xacc); //& 0x7FF);
+	UART1_Send16bits(Yacc); //& 0x7FF);
+     a48:	20 91 13 02 	lds	r18, 0x0213
+     a4c:	90 91 14 02 	lds	r25, 0x0214
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a50:	80 91 9b 00 	lds	r24, 0x009B
+     a54:	85 ff       	sbrs	r24, 5
+     a56:	fc cf       	rjmp	.-8      	; 0xa50 <main+0x1de>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a58:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a5c:	80 91 9b 00 	lds	r24, 0x009B
+     a60:	85 ff       	sbrs	r24, 5
+     a62:	fc cf       	rjmp	.-8      	; 0xa5c <main+0x1ea>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a64:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(timer_overflow & 0x7FF); //Remove MSB for ICD conformance);
+	UART1_Send16bits(timer);
+	//  - Removed for Altitude hold testing
+	UART1_Send16bits(Xacc); //& 0x7FF);
+	UART1_Send16bits(Yacc); //& 0x7FF);
+	UART1_Send16bits(Zacc); //& 0x7FF);
+     a68:	20 91 15 02 	lds	r18, 0x0215
+     a6c:	90 91 16 02 	lds	r25, 0x0216
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a70:	80 91 9b 00 	lds	r24, 0x009B
+     a74:	85 ff       	sbrs	r24, 5
+     a76:	fc cf       	rjmp	.-8      	; 0xa70 <main+0x1fe>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a78:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a7c:	80 91 9b 00 	lds	r24, 0x009B
+     a80:	85 ff       	sbrs	r24, 5
+     a82:	fc cf       	rjmp	.-8      	; 0xa7c <main+0x20a>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a84:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(timer);
+	//  - Removed for Altitude hold testing
+	UART1_Send16bits(Xacc); //& 0x7FF);
+	UART1_Send16bits(Yacc); //& 0x7FF);
+	UART1_Send16bits(Zacc); //& 0x7FF);
+	UART1_Send16bits(Xgyr); //& 0x7FF);
+     a88:	20 91 17 02 	lds	r18, 0x0217
+     a8c:	90 91 18 02 	lds	r25, 0x0218
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a90:	80 91 9b 00 	lds	r24, 0x009B
+     a94:	85 ff       	sbrs	r24, 5
+     a96:	fc cf       	rjmp	.-8      	; 0xa90 <main+0x21e>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     a98:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     a9c:	80 91 9b 00 	lds	r24, 0x009B
+     aa0:	85 ff       	sbrs	r24, 5
+     aa2:	fc cf       	rjmp	.-8      	; 0xa9c <main+0x22a>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     aa4:	20 93 9c 00 	sts	0x009C, r18
+	//  - Removed for Altitude hold testing
+	UART1_Send16bits(Xacc); //& 0x7FF);
+	UART1_Send16bits(Yacc); //& 0x7FF);
+	UART1_Send16bits(Zacc); //& 0x7FF);
+	UART1_Send16bits(Xgyr); //& 0x7FF);
+	UART1_Send16bits(Ygyr); //& 0x7FF);
+     aa8:	20 91 19 02 	lds	r18, 0x0219
+     aac:	90 91 1a 02 	lds	r25, 0x021A
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     ab0:	80 91 9b 00 	lds	r24, 0x009B
+     ab4:	85 ff       	sbrs	r24, 5
+     ab6:	fc cf       	rjmp	.-8      	; 0xab0 <main+0x23e>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     ab8:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     abc:	80 91 9b 00 	lds	r24, 0x009B
+     ac0:	85 ff       	sbrs	r24, 5
+     ac2:	fc cf       	rjmp	.-8      	; 0xabc <main+0x24a>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     ac4:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(Xacc); //& 0x7FF);
+	UART1_Send16bits(Yacc); //& 0x7FF);
+	UART1_Send16bits(Zacc); //& 0x7FF);
+	UART1_Send16bits(Xgyr); //& 0x7FF);
+	UART1_Send16bits(Ygyr); //& 0x7FF);
+	UART1_Send16bits(Zgyr); //& 0x7FF);
+     ac8:	20 91 1b 02 	lds	r18, 0x021B
+     acc:	90 91 1c 02 	lds	r25, 0x021C
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     ad0:	80 91 9b 00 	lds	r24, 0x009B
+     ad4:	85 ff       	sbrs	r24, 5
+     ad6:	fc cf       	rjmp	.-8      	; 0xad0 <main+0x25e>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     ad8:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     adc:	80 91 9b 00 	lds	r24, 0x009B
+     ae0:	85 ff       	sbrs	r24, 5
+     ae2:	fc cf       	rjmp	.-8      	; 0xadc <main+0x26a>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     ae4:	20 93 9c 00 	sts	0x009C, r18
+	UART1_Send16bits(Ygyr); //& 0x7FF);
+	UART1_Send16bits(Zgyr); //& 0x7FF);
+	//UART1_Send16bits(Xtem); 
+	//UART1_Send16bits(Ytem);
+	//UART1_Send16bits(Ztem);*/
+	UART1_Send16bits(Alt & 0x7FF);
+     ae8:	9a 01       	movw	r18, r20
+     aea:	37 70       	andi	r19, 0x07	; 7
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     aec:	80 91 9b 00 	lds	r24, 0x009B
+     af0:	85 ff       	sbrs	r24, 5
+     af2:	fc cf       	rjmp	.-8      	; 0xaec <main+0x27a>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     af4:	30 93 9c 00 	sts	0x009C, r19
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     af8:	80 91 9b 00 	lds	r24, 0x009B
+     afc:	85 ff       	sbrs	r24, 5
+     afe:	fc cf       	rjmp	.-8      	; 0xaf8 <main+0x286>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     b00:	20 93 9c 00 	sts	0x009C, r18
+	//UART1_Send16bits(Xtem); 
+	//UART1_Send16bits(Ytem);
+	//UART1_Send16bits(Ztem);*/
+	UART1_Send16bits(Alt & 0x7FF);
+	//UART1_Send16bits(BATL & 0x7FF);
+	UART1_SendByte(CRC);
+     b04:	90 91 04 01 	lds	r25, 0x0104
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     b08:	80 91 9b 00 	lds	r24, 0x009B
+     b0c:	85 ff       	sbrs	r24, 5
+     b0e:	fc cf       	rjmp	.-8      	; 0xb08 <main+0x296>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     b10:	90 93 9c 00 	sts	0x009C, r25
+
+
+void UART1_SendByte(uint8_t Data)
+{
+// Wait if a byte is being transmitted
+while((UCSR1A&(1<<UDRE1)) == 0);
+     b14:	80 91 9b 00 	lds	r24, 0x009B
+     b18:	85 ff       	sbrs	r24, 5
+     b1a:	fc cf       	rjmp	.-8      	; 0xb14 <main+0x2a2>
+//Put data into buffer, sends the data
+UDR1 = Data;
+     b1c:	90 93 9c 00 	sts	0x009C, r25
+	UART1_Send16bits(Alt & 0x7FF);
+	//UART1_Send16bits(BATL & 0x7FF);
+	UART1_SendByte(CRC);
+	UART1_SendByte(CRC);
+
+	LED_ON( BLUE ); //22 IMU testrun
+     b20:	80 91 65 00 	lds	r24, 0x0065
+     b24:	87 7f       	andi	r24, 0xF7	; 247
+     b26:	80 93 65 00 	sts	0x0065, r24
+	/*PacketCount++;
+}*/
+
+
+// Wait to send data
+int start = (timer_overflow <<16) + timer;
+     b2a:	80 91 2f 02 	lds	r24, 0x022F
+     b2e:	90 91 30 02 	lds	r25, 0x0230
+     b32:	80 91 2d 02 	lds	r24, 0x022D
+     b36:	90 91 2e 02 	lds	r25, 0x022E
+     b3a:	ec 01       	movw	r28, r24
+int thetime;
+do{
+	thetime = (timer_overflow <<16) + timer;	//wait
+     b3c:	80 91 2f 02 	lds	r24, 0x022F
+     b40:	90 91 30 02 	lds	r25, 0x0230
+     b44:	60 91 2d 02 	lds	r22, 0x022D
+     b48:	70 91 2e 02 	lds	r23, 0x022E
+}while( (thetime - start) < (2000/TIMER_RES)); //1000
+     b4c:	6c 1b       	sub	r22, r28
+     b4e:	7d 0b       	sbc	r23, r29
+     b50:	88 27       	eor	r24, r24
+     b52:	77 fd       	sbrc	r23, 7
+     b54:	80 95       	com	r24
+     b56:	98 2f       	mov	r25, r24
+     b58:	0e 94 ec 05 	call	0xbd8	; 0xbd8 <__floatsisf>
+     b5c:	20 e0       	ldi	r18, 0x00	; 0
+     b5e:	30 e0       	ldi	r19, 0x00	; 0
+     b60:	40 e2       	ldi	r20, 0x20	; 32
+     b62:	53 e4       	ldi	r21, 0x43	; 67
+     b64:	0e 94 bc 05 	call	0xb78	; 0xb78 <__ltsf2>
+     b68:	87 fd       	sbrc	r24, 7
+     b6a:	e8 cf       	rjmp	.-48     	; 0xb3c <main+0x2ca>
+
+LED_OFF( RED );
+     b6c:	80 91 65 00 	lds	r24, 0x0065
+     b70:	80 61       	ori	r24, 0x10	; 16
+     b72:	80 93 65 00 	sts	0x0065, r24
+     b76:	f0 ce       	rjmp	.-544    	; 0x958 <main+0xe6>
+
+00000b78 <__ltsf2>:
+     b78:	a8 e1       	ldi	r26, 0x18	; 24
+     b7a:	b0 e0       	ldi	r27, 0x00	; 0
+     b7c:	e2 ec       	ldi	r30, 0xC2	; 194
+     b7e:	f5 e0       	ldi	r31, 0x05	; 5
+     b80:	0c 94 72 08 	jmp	0x10e4	; 0x10e4 <__prologue_saves__+0x18>
+     b84:	69 83       	std	Y+1, r22	; 0x01
+     b86:	7a 83       	std	Y+2, r23	; 0x02
+     b88:	8b 83       	std	Y+3, r24	; 0x03
+     b8a:	9c 83       	std	Y+4, r25	; 0x04
+     b8c:	2d 83       	std	Y+5, r18	; 0x05
+     b8e:	3e 83       	std	Y+6, r19	; 0x06
+     b90:	4f 83       	std	Y+7, r20	; 0x07
+     b92:	58 87       	std	Y+8, r21	; 0x08
+     b94:	89 e0       	ldi	r24, 0x09	; 9
+     b96:	e8 2e       	mov	r14, r24
+     b98:	f1 2c       	mov	r15, r1
+     b9a:	ec 0e       	add	r14, r28
+     b9c:	fd 1e       	adc	r15, r29
+     b9e:	ce 01       	movw	r24, r28
+     ba0:	01 96       	adiw	r24, 0x01	; 1
+     ba2:	b7 01       	movw	r22, r14
+     ba4:	0e 94 6e 07 	call	0xedc	; 0xedc <__unpack_f>
+     ba8:	8e 01       	movw	r16, r28
+     baa:	0f 5e       	subi	r16, 0xEF	; 239
+     bac:	1f 4f       	sbci	r17, 0xFF	; 255
+     bae:	ce 01       	movw	r24, r28
+     bb0:	05 96       	adiw	r24, 0x05	; 5
+     bb2:	b8 01       	movw	r22, r16
+     bb4:	0e 94 6e 07 	call	0xedc	; 0xedc <__unpack_f>
+     bb8:	89 85       	ldd	r24, Y+9	; 0x09
+     bba:	82 30       	cpi	r24, 0x02	; 2
+     bbc:	40 f0       	brcs	.+16     	; 0xbce <__ltsf2+0x56>
+     bbe:	89 89       	ldd	r24, Y+17	; 0x11
+     bc0:	82 30       	cpi	r24, 0x02	; 2
+     bc2:	28 f0       	brcs	.+10     	; 0xbce <__ltsf2+0x56>
+     bc4:	c7 01       	movw	r24, r14
+     bc6:	b8 01       	movw	r22, r16
+     bc8:	0e 94 e6 07 	call	0xfcc	; 0xfcc <__fpcmp_parts_f>
+     bcc:	01 c0       	rjmp	.+2      	; 0xbd0 <__ltsf2+0x58>
+     bce:	81 e0       	ldi	r24, 0x01	; 1
+     bd0:	68 96       	adiw	r28, 0x18	; 24
+     bd2:	e6 e0       	ldi	r30, 0x06	; 6
+     bd4:	0c 94 8e 08 	jmp	0x111c	; 0x111c <__epilogue_restores__+0x18>
+
+00000bd8 <__floatsisf>:
+     bd8:	a8 e0       	ldi	r26, 0x08	; 8
+     bda:	b0 e0       	ldi	r27, 0x00	; 0
+     bdc:	e2 ef       	ldi	r30, 0xF2	; 242
+     bde:	f5 e0       	ldi	r31, 0x05	; 5
+     be0:	0c 94 6f 08 	jmp	0x10de	; 0x10de <__prologue_saves__+0x12>
+     be4:	9b 01       	movw	r18, r22
+     be6:	ac 01       	movw	r20, r24
+     be8:	83 e0       	ldi	r24, 0x03	; 3
+     bea:	89 83       	std	Y+1, r24	; 0x01
+     bec:	da 01       	movw	r26, r20
+     bee:	c9 01       	movw	r24, r18
+     bf0:	88 27       	eor	r24, r24
+     bf2:	b7 fd       	sbrc	r27, 7
+     bf4:	83 95       	inc	r24
+     bf6:	99 27       	eor	r25, r25
+     bf8:	aa 27       	eor	r26, r26
+     bfa:	bb 27       	eor	r27, r27
+     bfc:	b8 2e       	mov	r11, r24
+     bfe:	21 15       	cp	r18, r1
+     c00:	31 05       	cpc	r19, r1
+     c02:	41 05       	cpc	r20, r1
+     c04:	51 05       	cpc	r21, r1
+     c06:	19 f4       	brne	.+6      	; 0xc0e <__floatsisf+0x36>
+     c08:	82 e0       	ldi	r24, 0x02	; 2
+     c0a:	89 83       	std	Y+1, r24	; 0x01
+     c0c:	3a c0       	rjmp	.+116    	; 0xc82 <__floatsisf+0xaa>
+     c0e:	88 23       	and	r24, r24
+     c10:	a9 f0       	breq	.+42     	; 0xc3c <__floatsisf+0x64>
+     c12:	20 30       	cpi	r18, 0x00	; 0
+     c14:	80 e0       	ldi	r24, 0x00	; 0
+     c16:	38 07       	cpc	r19, r24
+     c18:	80 e0       	ldi	r24, 0x00	; 0
+     c1a:	48 07       	cpc	r20, r24
+     c1c:	80 e8       	ldi	r24, 0x80	; 128
+     c1e:	58 07       	cpc	r21, r24
+     c20:	29 f4       	brne	.+10     	; 0xc2c <__floatsisf+0x54>
+     c22:	60 e0       	ldi	r22, 0x00	; 0
+     c24:	70 e0       	ldi	r23, 0x00	; 0
+     c26:	80 e0       	ldi	r24, 0x00	; 0
+     c28:	9f ec       	ldi	r25, 0xCF	; 207
+     c2a:	30 c0       	rjmp	.+96     	; 0xc8c <__floatsisf+0xb4>
+     c2c:	ee 24       	eor	r14, r14
+     c2e:	ff 24       	eor	r15, r15
+     c30:	87 01       	movw	r16, r14
+     c32:	e2 1a       	sub	r14, r18
+     c34:	f3 0a       	sbc	r15, r19
+     c36:	04 0b       	sbc	r16, r20
+     c38:	15 0b       	sbc	r17, r21
+     c3a:	02 c0       	rjmp	.+4      	; 0xc40 <__floatsisf+0x68>
+     c3c:	79 01       	movw	r14, r18
+     c3e:	8a 01       	movw	r16, r20
+     c40:	8e e1       	ldi	r24, 0x1E	; 30
+     c42:	c8 2e       	mov	r12, r24
+     c44:	d1 2c       	mov	r13, r1
+     c46:	dc 82       	std	Y+4, r13	; 0x04
+     c48:	cb 82       	std	Y+3, r12	; 0x03
+     c4a:	ed 82       	std	Y+5, r14	; 0x05
+     c4c:	fe 82       	std	Y+6, r15	; 0x06
+     c4e:	0f 83       	std	Y+7, r16	; 0x07
+     c50:	18 87       	std	Y+8, r17	; 0x08
+     c52:	c8 01       	movw	r24, r16
+     c54:	b7 01       	movw	r22, r14
+     c56:	0e 94 4a 06 	call	0xc94	; 0xc94 <__clzsi2>
+     c5a:	01 97       	sbiw	r24, 0x01	; 1
+     c5c:	18 16       	cp	r1, r24
+     c5e:	19 06       	cpc	r1, r25
+     c60:	84 f4       	brge	.+32     	; 0xc82 <__floatsisf+0xaa>
+     c62:	08 2e       	mov	r0, r24
+     c64:	04 c0       	rjmp	.+8      	; 0xc6e <__floatsisf+0x96>
+     c66:	ee 0c       	add	r14, r14
+     c68:	ff 1c       	adc	r15, r15
+     c6a:	00 1f       	adc	r16, r16
+     c6c:	11 1f       	adc	r17, r17
+     c6e:	0a 94       	dec	r0
+     c70:	d2 f7       	brpl	.-12     	; 0xc66 <__floatsisf+0x8e>
+     c72:	ed 82       	std	Y+5, r14	; 0x05
+     c74:	fe 82       	std	Y+6, r15	; 0x06
+     c76:	0f 83       	std	Y+7, r16	; 0x07
+     c78:	18 87       	std	Y+8, r17	; 0x08
+     c7a:	c8 1a       	sub	r12, r24
+     c7c:	d9 0a       	sbc	r13, r25
+     c7e:	dc 82       	std	Y+4, r13	; 0x04
+     c80:	cb 82       	std	Y+3, r12	; 0x03
+     c82:	ba 82       	std	Y+2, r11	; 0x02
+     c84:	ce 01       	movw	r24, r28
+     c86:	01 96       	adiw	r24, 0x01	; 1
+     c88:	0e 94 99 06 	call	0xd32	; 0xd32 <__pack_f>
+     c8c:	28 96       	adiw	r28, 0x08	; 8
+     c8e:	e9 e0       	ldi	r30, 0x09	; 9
+     c90:	0c 94 8b 08 	jmp	0x1116	; 0x1116 <__epilogue_restores__+0x12>
+
+00000c94 <__clzsi2>:
+     c94:	ef 92       	push	r14
+     c96:	ff 92       	push	r15
+     c98:	0f 93       	push	r16
+     c9a:	1f 93       	push	r17
+     c9c:	7b 01       	movw	r14, r22
+     c9e:	8c 01       	movw	r16, r24
+     ca0:	80 e0       	ldi	r24, 0x00	; 0
+     ca2:	e8 16       	cp	r14, r24
+     ca4:	80 e0       	ldi	r24, 0x00	; 0
+     ca6:	f8 06       	cpc	r15, r24
+     ca8:	81 e0       	ldi	r24, 0x01	; 1
+     caa:	08 07       	cpc	r16, r24
+     cac:	80 e0       	ldi	r24, 0x00	; 0
+     cae:	18 07       	cpc	r17, r24
+     cb0:	88 f4       	brcc	.+34     	; 0xcd4 <__clzsi2+0x40>
+     cb2:	8f ef       	ldi	r24, 0xFF	; 255
+     cb4:	e8 16       	cp	r14, r24
+     cb6:	f1 04       	cpc	r15, r1
+     cb8:	01 05       	cpc	r16, r1
+     cba:	11 05       	cpc	r17, r1
+     cbc:	31 f0       	breq	.+12     	; 0xcca <__clzsi2+0x36>
+     cbe:	28 f0       	brcs	.+10     	; 0xcca <__clzsi2+0x36>
+     cc0:	88 e0       	ldi	r24, 0x08	; 8
+     cc2:	90 e0       	ldi	r25, 0x00	; 0
+     cc4:	a0 e0       	ldi	r26, 0x00	; 0
+     cc6:	b0 e0       	ldi	r27, 0x00	; 0
+     cc8:	17 c0       	rjmp	.+46     	; 0xcf8 <__clzsi2+0x64>
+     cca:	80 e0       	ldi	r24, 0x00	; 0
+     ccc:	90 e0       	ldi	r25, 0x00	; 0
+     cce:	a0 e0       	ldi	r26, 0x00	; 0
+     cd0:	b0 e0       	ldi	r27, 0x00	; 0
+     cd2:	12 c0       	rjmp	.+36     	; 0xcf8 <__clzsi2+0x64>
+     cd4:	80 e0       	ldi	r24, 0x00	; 0
+     cd6:	e8 16       	cp	r14, r24
+     cd8:	80 e0       	ldi	r24, 0x00	; 0
+     cda:	f8 06       	cpc	r15, r24
+     cdc:	80 e0       	ldi	r24, 0x00	; 0
+     cde:	08 07       	cpc	r16, r24
+     ce0:	81 e0       	ldi	r24, 0x01	; 1
+     ce2:	18 07       	cpc	r17, r24
+     ce4:	28 f0       	brcs	.+10     	; 0xcf0 <__clzsi2+0x5c>
+     ce6:	88 e1       	ldi	r24, 0x18	; 24
+     ce8:	90 e0       	ldi	r25, 0x00	; 0
+     cea:	a0 e0       	ldi	r26, 0x00	; 0
+     cec:	b0 e0       	ldi	r27, 0x00	; 0
+     cee:	04 c0       	rjmp	.+8      	; 0xcf8 <__clzsi2+0x64>
+     cf0:	80 e1       	ldi	r24, 0x10	; 16
+     cf2:	90 e0       	ldi	r25, 0x00	; 0
+     cf4:	a0 e0       	ldi	r26, 0x00	; 0
+     cf6:	b0 e0       	ldi	r27, 0x00	; 0
+     cf8:	20 e2       	ldi	r18, 0x20	; 32
+     cfa:	30 e0       	ldi	r19, 0x00	; 0
+     cfc:	40 e0       	ldi	r20, 0x00	; 0
+     cfe:	50 e0       	ldi	r21, 0x00	; 0
+     d00:	28 1b       	sub	r18, r24
+     d02:	39 0b       	sbc	r19, r25
+     d04:	4a 0b       	sbc	r20, r26
+     d06:	5b 0b       	sbc	r21, r27
+     d08:	04 c0       	rjmp	.+8      	; 0xd12 <__clzsi2+0x7e>
+     d0a:	16 95       	lsr	r17
+     d0c:	07 95       	ror	r16
+     d0e:	f7 94       	ror	r15
+     d10:	e7 94       	ror	r14
+     d12:	8a 95       	dec	r24
+     d14:	d2 f7       	brpl	.-12     	; 0xd0a <__clzsi2+0x76>
+     d16:	f7 01       	movw	r30, r14
+     d18:	eb 5f       	subi	r30, 0xFB	; 251
+     d1a:	fe 4f       	sbci	r31, 0xFE	; 254
+     d1c:	80 81       	ld	r24, Z
+     d1e:	28 1b       	sub	r18, r24
+     d20:	31 09       	sbc	r19, r1
+     d22:	41 09       	sbc	r20, r1
+     d24:	51 09       	sbc	r21, r1
+     d26:	c9 01       	movw	r24, r18
+     d28:	1f 91       	pop	r17
+     d2a:	0f 91       	pop	r16
+     d2c:	ff 90       	pop	r15
+     d2e:	ef 90       	pop	r14
+     d30:	08 95       	ret
+
+00000d32 <__pack_f>:
+     d32:	df 92       	push	r13
+     d34:	ef 92       	push	r14
+     d36:	ff 92       	push	r15
+     d38:	0f 93       	push	r16
+     d3a:	1f 93       	push	r17
+     d3c:	fc 01       	movw	r30, r24
+     d3e:	e4 80       	ldd	r14, Z+4	; 0x04
+     d40:	f5 80       	ldd	r15, Z+5	; 0x05
+     d42:	06 81       	ldd	r16, Z+6	; 0x06
+     d44:	17 81       	ldd	r17, Z+7	; 0x07
+     d46:	d1 80       	ldd	r13, Z+1	; 0x01
+     d48:	80 81       	ld	r24, Z
+     d4a:	82 30       	cpi	r24, 0x02	; 2
+     d4c:	48 f4       	brcc	.+18     	; 0xd60 <__pack_f+0x2e>
+     d4e:	80 e0       	ldi	r24, 0x00	; 0
+     d50:	90 e0       	ldi	r25, 0x00	; 0
+     d52:	a0 e1       	ldi	r26, 0x10	; 16
+     d54:	b0 e0       	ldi	r27, 0x00	; 0
+     d56:	e8 2a       	or	r14, r24
+     d58:	f9 2a       	or	r15, r25
+     d5a:	0a 2b       	or	r16, r26
+     d5c:	1b 2b       	or	r17, r27
+     d5e:	a5 c0       	rjmp	.+330    	; 0xeaa <__pack_f+0x178>
+     d60:	84 30       	cpi	r24, 0x04	; 4
+     d62:	09 f4       	brne	.+2      	; 0xd66 <__pack_f+0x34>
+     d64:	9f c0       	rjmp	.+318    	; 0xea4 <__pack_f+0x172>
+     d66:	82 30       	cpi	r24, 0x02	; 2
+     d68:	21 f4       	brne	.+8      	; 0xd72 <__pack_f+0x40>
+     d6a:	ee 24       	eor	r14, r14
+     d6c:	ff 24       	eor	r15, r15
+     d6e:	87 01       	movw	r16, r14
+     d70:	05 c0       	rjmp	.+10     	; 0xd7c <__pack_f+0x4a>
+     d72:	e1 14       	cp	r14, r1
+     d74:	f1 04       	cpc	r15, r1
+     d76:	01 05       	cpc	r16, r1
+     d78:	11 05       	cpc	r17, r1
+     d7a:	19 f4       	brne	.+6      	; 0xd82 <__pack_f+0x50>
+     d7c:	e0 e0       	ldi	r30, 0x00	; 0
+     d7e:	f0 e0       	ldi	r31, 0x00	; 0
+     d80:	96 c0       	rjmp	.+300    	; 0xeae <__pack_f+0x17c>
+     d82:	62 81       	ldd	r22, Z+2	; 0x02
+     d84:	73 81       	ldd	r23, Z+3	; 0x03
+     d86:	9f ef       	ldi	r25, 0xFF	; 255
+     d88:	62 38       	cpi	r22, 0x82	; 130
+     d8a:	79 07       	cpc	r23, r25
+     d8c:	0c f0       	brlt	.+2      	; 0xd90 <__pack_f+0x5e>
+     d8e:	5b c0       	rjmp	.+182    	; 0xe46 <__pack_f+0x114>
+     d90:	22 e8       	ldi	r18, 0x82	; 130
+     d92:	3f ef       	ldi	r19, 0xFF	; 255
+     d94:	26 1b       	sub	r18, r22
+     d96:	37 0b       	sbc	r19, r23
+     d98:	2a 31       	cpi	r18, 0x1A	; 26
+     d9a:	31 05       	cpc	r19, r1
+     d9c:	2c f0       	brlt	.+10     	; 0xda8 <__pack_f+0x76>
+     d9e:	20 e0       	ldi	r18, 0x00	; 0
+     da0:	30 e0       	ldi	r19, 0x00	; 0
+     da2:	40 e0       	ldi	r20, 0x00	; 0
+     da4:	50 e0       	ldi	r21, 0x00	; 0
+     da6:	2a c0       	rjmp	.+84     	; 0xdfc <__pack_f+0xca>
+     da8:	b8 01       	movw	r22, r16
+     daa:	a7 01       	movw	r20, r14
+     dac:	02 2e       	mov	r0, r18
+     dae:	04 c0       	rjmp	.+8      	; 0xdb8 <__pack_f+0x86>
+     db0:	76 95       	lsr	r23
+     db2:	67 95       	ror	r22
+     db4:	57 95       	ror	r21
+     db6:	47 95       	ror	r20
+     db8:	0a 94       	dec	r0
+     dba:	d2 f7       	brpl	.-12     	; 0xdb0 <__pack_f+0x7e>
+     dbc:	81 e0       	ldi	r24, 0x01	; 1
+     dbe:	90 e0       	ldi	r25, 0x00	; 0
+     dc0:	a0 e0       	ldi	r26, 0x00	; 0
+     dc2:	b0 e0       	ldi	r27, 0x00	; 0
+     dc4:	04 c0       	rjmp	.+8      	; 0xdce <__pack_f+0x9c>
+     dc6:	88 0f       	add	r24, r24
+     dc8:	99 1f       	adc	r25, r25
+     dca:	aa 1f       	adc	r26, r26
+     dcc:	bb 1f       	adc	r27, r27
+     dce:	2a 95       	dec	r18
+     dd0:	d2 f7       	brpl	.-12     	; 0xdc6 <__pack_f+0x94>
+     dd2:	01 97       	sbiw	r24, 0x01	; 1
+     dd4:	a1 09       	sbc	r26, r1
+     dd6:	b1 09       	sbc	r27, r1
+     dd8:	8e 21       	and	r24, r14
+     dda:	9f 21       	and	r25, r15
+     ddc:	a0 23       	and	r26, r16
+     dde:	b1 23       	and	r27, r17
+     de0:	00 97       	sbiw	r24, 0x00	; 0
+     de2:	a1 05       	cpc	r26, r1
+     de4:	b1 05       	cpc	r27, r1
+     de6:	21 f0       	breq	.+8      	; 0xdf0 <__pack_f+0xbe>
+     de8:	81 e0       	ldi	r24, 0x01	; 1
+     dea:	90 e0       	ldi	r25, 0x00	; 0
+     dec:	a0 e0       	ldi	r26, 0x00	; 0
+     dee:	b0 e0       	ldi	r27, 0x00	; 0
+     df0:	9a 01       	movw	r18, r20
+     df2:	ab 01       	movw	r20, r22
+     df4:	28 2b       	or	r18, r24
+     df6:	39 2b       	or	r19, r25
+     df8:	4a 2b       	or	r20, r26
+     dfa:	5b 2b       	or	r21, r27
+     dfc:	da 01       	movw	r26, r20
+     dfe:	c9 01       	movw	r24, r18
+     e00:	8f 77       	andi	r24, 0x7F	; 127
+     e02:	90 70       	andi	r25, 0x00	; 0
+     e04:	a0 70       	andi	r26, 0x00	; 0
+     e06:	b0 70       	andi	r27, 0x00	; 0
+     e08:	80 34       	cpi	r24, 0x40	; 64
+     e0a:	91 05       	cpc	r25, r1
+     e0c:	a1 05       	cpc	r26, r1
+     e0e:	b1 05       	cpc	r27, r1
+     e10:	39 f4       	brne	.+14     	; 0xe20 <__pack_f+0xee>
+     e12:	27 ff       	sbrs	r18, 7
+     e14:	09 c0       	rjmp	.+18     	; 0xe28 <__pack_f+0xf6>
+     e16:	20 5c       	subi	r18, 0xC0	; 192
+     e18:	3f 4f       	sbci	r19, 0xFF	; 255
+     e1a:	4f 4f       	sbci	r20, 0xFF	; 255
+     e1c:	5f 4f       	sbci	r21, 0xFF	; 255
+     e1e:	04 c0       	rjmp	.+8      	; 0xe28 <__pack_f+0xf6>
+     e20:	21 5c       	subi	r18, 0xC1	; 193
+     e22:	3f 4f       	sbci	r19, 0xFF	; 255
+     e24:	4f 4f       	sbci	r20, 0xFF	; 255
+     e26:	5f 4f       	sbci	r21, 0xFF	; 255
+     e28:	e0 e0       	ldi	r30, 0x00	; 0
+     e2a:	f0 e0       	ldi	r31, 0x00	; 0
+     e2c:	20 30       	cpi	r18, 0x00	; 0
+     e2e:	a0 e0       	ldi	r26, 0x00	; 0
+     e30:	3a 07       	cpc	r19, r26
+     e32:	a0 e0       	ldi	r26, 0x00	; 0
+     e34:	4a 07       	cpc	r20, r26
+     e36:	a0 e4       	ldi	r26, 0x40	; 64
+     e38:	5a 07       	cpc	r21, r26
+     e3a:	10 f0       	brcs	.+4      	; 0xe40 <__pack_f+0x10e>
+     e3c:	e1 e0       	ldi	r30, 0x01	; 1
+     e3e:	f0 e0       	ldi	r31, 0x00	; 0
+     e40:	79 01       	movw	r14, r18
+     e42:	8a 01       	movw	r16, r20
+     e44:	27 c0       	rjmp	.+78     	; 0xe94 <__pack_f+0x162>
+     e46:	60 38       	cpi	r22, 0x80	; 128
+     e48:	71 05       	cpc	r23, r1
+     e4a:	64 f5       	brge	.+88     	; 0xea4 <__pack_f+0x172>
+     e4c:	fb 01       	movw	r30, r22
+     e4e:	e1 58       	subi	r30, 0x81	; 129
+     e50:	ff 4f       	sbci	r31, 0xFF	; 255
+     e52:	d8 01       	movw	r26, r16
+     e54:	c7 01       	movw	r24, r14
+     e56:	8f 77       	andi	r24, 0x7F	; 127
+     e58:	90 70       	andi	r25, 0x00	; 0
+     e5a:	a0 70       	andi	r26, 0x00	; 0
+     e5c:	b0 70       	andi	r27, 0x00	; 0
+     e5e:	80 34       	cpi	r24, 0x40	; 64
+     e60:	91 05       	cpc	r25, r1
+     e62:	a1 05       	cpc	r26, r1
+     e64:	b1 05       	cpc	r27, r1
+     e66:	39 f4       	brne	.+14     	; 0xe76 <__pack_f+0x144>
+     e68:	e7 fe       	sbrs	r14, 7
+     e6a:	0d c0       	rjmp	.+26     	; 0xe86 <__pack_f+0x154>
+     e6c:	80 e4       	ldi	r24, 0x40	; 64
+     e6e:	90 e0       	ldi	r25, 0x00	; 0
+     e70:	a0 e0       	ldi	r26, 0x00	; 0
+     e72:	b0 e0       	ldi	r27, 0x00	; 0
+     e74:	04 c0       	rjmp	.+8      	; 0xe7e <__pack_f+0x14c>
+     e76:	8f e3       	ldi	r24, 0x3F	; 63
+     e78:	90 e0       	ldi	r25, 0x00	; 0
+     e7a:	a0 e0       	ldi	r26, 0x00	; 0
+     e7c:	b0 e0       	ldi	r27, 0x00	; 0
+     e7e:	e8 0e       	add	r14, r24
+     e80:	f9 1e       	adc	r15, r25
+     e82:	0a 1f       	adc	r16, r26
+     e84:	1b 1f       	adc	r17, r27
+     e86:	17 ff       	sbrs	r17, 7
+     e88:	05 c0       	rjmp	.+10     	; 0xe94 <__pack_f+0x162>
+     e8a:	16 95       	lsr	r17
+     e8c:	07 95       	ror	r16
+     e8e:	f7 94       	ror	r15
+     e90:	e7 94       	ror	r14
+     e92:	31 96       	adiw	r30, 0x01	; 1
+     e94:	87 e0       	ldi	r24, 0x07	; 7
+     e96:	16 95       	lsr	r17
+     e98:	07 95       	ror	r16
+     e9a:	f7 94       	ror	r15
+     e9c:	e7 94       	ror	r14
+     e9e:	8a 95       	dec	r24
+     ea0:	d1 f7       	brne	.-12     	; 0xe96 <__pack_f+0x164>
+     ea2:	05 c0       	rjmp	.+10     	; 0xeae <__pack_f+0x17c>
+     ea4:	ee 24       	eor	r14, r14
+     ea6:	ff 24       	eor	r15, r15
+     ea8:	87 01       	movw	r16, r14
+     eaa:	ef ef       	ldi	r30, 0xFF	; 255
+     eac:	f0 e0       	ldi	r31, 0x00	; 0
+     eae:	6e 2f       	mov	r22, r30
+     eb0:	67 95       	ror	r22
+     eb2:	66 27       	eor	r22, r22
+     eb4:	67 95       	ror	r22
+     eb6:	90 2f       	mov	r25, r16
+     eb8:	9f 77       	andi	r25, 0x7F	; 127
+     eba:	d7 94       	ror	r13
+     ebc:	dd 24       	eor	r13, r13
+     ebe:	d7 94       	ror	r13
+     ec0:	8e 2f       	mov	r24, r30
+     ec2:	86 95       	lsr	r24
+     ec4:	49 2f       	mov	r20, r25
+     ec6:	46 2b       	or	r20, r22
+     ec8:	58 2f       	mov	r21, r24
+     eca:	5d 29       	or	r21, r13
+     ecc:	b7 01       	movw	r22, r14
+     ece:	ca 01       	movw	r24, r20
+     ed0:	1f 91       	pop	r17
+     ed2:	0f 91       	pop	r16
+     ed4:	ff 90       	pop	r15
+     ed6:	ef 90       	pop	r14
+     ed8:	df 90       	pop	r13
+     eda:	08 95       	ret
+
+00000edc <__unpack_f>:
+     edc:	fc 01       	movw	r30, r24
+     ede:	db 01       	movw	r26, r22
+     ee0:	40 81       	ld	r20, Z
+     ee2:	51 81       	ldd	r21, Z+1	; 0x01
+     ee4:	22 81       	ldd	r18, Z+2	; 0x02
+     ee6:	62 2f       	mov	r22, r18
+     ee8:	6f 77       	andi	r22, 0x7F	; 127
+     eea:	70 e0       	ldi	r23, 0x00	; 0
+     eec:	22 1f       	adc	r18, r18
+     eee:	22 27       	eor	r18, r18
+     ef0:	22 1f       	adc	r18, r18
+     ef2:	93 81       	ldd	r25, Z+3	; 0x03
+     ef4:	89 2f       	mov	r24, r25
+     ef6:	88 0f       	add	r24, r24
+     ef8:	82 2b       	or	r24, r18
+     efa:	28 2f       	mov	r18, r24
+     efc:	30 e0       	ldi	r19, 0x00	; 0
+     efe:	99 1f       	adc	r25, r25
+     f00:	99 27       	eor	r25, r25
+     f02:	99 1f       	adc	r25, r25
+     f04:	11 96       	adiw	r26, 0x01	; 1
+     f06:	9c 93       	st	X, r25
+     f08:	11 97       	sbiw	r26, 0x01	; 1
+     f0a:	21 15       	cp	r18, r1
+     f0c:	31 05       	cpc	r19, r1
+     f0e:	a9 f5       	brne	.+106    	; 0xf7a <__unpack_f+0x9e>
+     f10:	41 15       	cp	r20, r1
+     f12:	51 05       	cpc	r21, r1
+     f14:	61 05       	cpc	r22, r1
+     f16:	71 05       	cpc	r23, r1
+     f18:	11 f4       	brne	.+4      	; 0xf1e <__unpack_f+0x42>
+     f1a:	82 e0       	ldi	r24, 0x02	; 2
+     f1c:	37 c0       	rjmp	.+110    	; 0xf8c <__unpack_f+0xb0>
+     f1e:	82 e8       	ldi	r24, 0x82	; 130
+     f20:	9f ef       	ldi	r25, 0xFF	; 255
+     f22:	13 96       	adiw	r26, 0x03	; 3
+     f24:	9c 93       	st	X, r25
+     f26:	8e 93       	st	-X, r24
+     f28:	12 97       	sbiw	r26, 0x02	; 2
+     f2a:	9a 01       	movw	r18, r20
+     f2c:	ab 01       	movw	r20, r22
+     f2e:	67 e0       	ldi	r22, 0x07	; 7
+     f30:	22 0f       	add	r18, r18
+     f32:	33 1f       	adc	r19, r19
+     f34:	44 1f       	adc	r20, r20
+     f36:	55 1f       	adc	r21, r21
+     f38:	6a 95       	dec	r22
+     f3a:	d1 f7       	brne	.-12     	; 0xf30 <__unpack_f+0x54>
+     f3c:	83 e0       	ldi	r24, 0x03	; 3
+     f3e:	8c 93       	st	X, r24
+     f40:	0d c0       	rjmp	.+26     	; 0xf5c <__unpack_f+0x80>
+     f42:	22 0f       	add	r18, r18
+     f44:	33 1f       	adc	r19, r19
+     f46:	44 1f       	adc	r20, r20
+     f48:	55 1f       	adc	r21, r21
+     f4a:	12 96       	adiw	r26, 0x02	; 2
+     f4c:	8d 91       	ld	r24, X+
+     f4e:	9c 91       	ld	r25, X
+     f50:	13 97       	sbiw	r26, 0x03	; 3
+     f52:	01 97       	sbiw	r24, 0x01	; 1
+     f54:	13 96       	adiw	r26, 0x03	; 3
+     f56:	9c 93       	st	X, r25
+     f58:	8e 93       	st	-X, r24
+     f5a:	12 97       	sbiw	r26, 0x02	; 2
+     f5c:	20 30       	cpi	r18, 0x00	; 0
+     f5e:	80 e0       	ldi	r24, 0x00	; 0
+     f60:	38 07       	cpc	r19, r24
+     f62:	80 e0       	ldi	r24, 0x00	; 0
+     f64:	48 07       	cpc	r20, r24
+     f66:	80 e4       	ldi	r24, 0x40	; 64
+     f68:	58 07       	cpc	r21, r24
+     f6a:	58 f3       	brcs	.-42     	; 0xf42 <__unpack_f+0x66>
+     f6c:	14 96       	adiw	r26, 0x04	; 4
+     f6e:	2d 93       	st	X+, r18
+     f70:	3d 93       	st	X+, r19
+     f72:	4d 93       	st	X+, r20
+     f74:	5c 93       	st	X, r21
+     f76:	17 97       	sbiw	r26, 0x07	; 7
+     f78:	08 95       	ret
+     f7a:	2f 3f       	cpi	r18, 0xFF	; 255
+     f7c:	31 05       	cpc	r19, r1
+     f7e:	79 f4       	brne	.+30     	; 0xf9e <__unpack_f+0xc2>
+     f80:	41 15       	cp	r20, r1
+     f82:	51 05       	cpc	r21, r1
+     f84:	61 05       	cpc	r22, r1
+     f86:	71 05       	cpc	r23, r1
+     f88:	19 f4       	brne	.+6      	; 0xf90 <__unpack_f+0xb4>
+     f8a:	84 e0       	ldi	r24, 0x04	; 4
+     f8c:	8c 93       	st	X, r24
+     f8e:	08 95       	ret
+     f90:	64 ff       	sbrs	r22, 4
+     f92:	03 c0       	rjmp	.+6      	; 0xf9a <__unpack_f+0xbe>
+     f94:	81 e0       	ldi	r24, 0x01	; 1
+     f96:	8c 93       	st	X, r24
+     f98:	12 c0       	rjmp	.+36     	; 0xfbe <__unpack_f+0xe2>
+     f9a:	1c 92       	st	X, r1
+     f9c:	10 c0       	rjmp	.+32     	; 0xfbe <__unpack_f+0xe2>
+     f9e:	2f 57       	subi	r18, 0x7F	; 127
+     fa0:	30 40       	sbci	r19, 0x00	; 0
+     fa2:	13 96       	adiw	r26, 0x03	; 3
+     fa4:	3c 93       	st	X, r19
+     fa6:	2e 93       	st	-X, r18
+     fa8:	12 97       	sbiw	r26, 0x02	; 2
+     faa:	83 e0       	ldi	r24, 0x03	; 3
+     fac:	8c 93       	st	X, r24
+     fae:	87 e0       	ldi	r24, 0x07	; 7
+     fb0:	44 0f       	add	r20, r20
+     fb2:	55 1f       	adc	r21, r21
+     fb4:	66 1f       	adc	r22, r22
+     fb6:	77 1f       	adc	r23, r23
+     fb8:	8a 95       	dec	r24
+     fba:	d1 f7       	brne	.-12     	; 0xfb0 <__unpack_f+0xd4>
+     fbc:	70 64       	ori	r23, 0x40	; 64
+     fbe:	14 96       	adiw	r26, 0x04	; 4
+     fc0:	4d 93       	st	X+, r20
+     fc2:	5d 93       	st	X+, r21
+     fc4:	6d 93       	st	X+, r22
+     fc6:	7c 93       	st	X, r23
+     fc8:	17 97       	sbiw	r26, 0x07	; 7
+     fca:	08 95       	ret
+
+00000fcc <__fpcmp_parts_f>:
+     fcc:	1f 93       	push	r17
+     fce:	dc 01       	movw	r26, r24
+     fd0:	fb 01       	movw	r30, r22
+     fd2:	9c 91       	ld	r25, X
+     fd4:	92 30       	cpi	r25, 0x02	; 2
+     fd6:	08 f4       	brcc	.+2      	; 0xfda <__fpcmp_parts_f+0xe>
+     fd8:	47 c0       	rjmp	.+142    	; 0x1068 <__fpcmp_parts_f+0x9c>
+     fda:	80 81       	ld	r24, Z
+     fdc:	82 30       	cpi	r24, 0x02	; 2
+     fde:	08 f4       	brcc	.+2      	; 0xfe2 <__fpcmp_parts_f+0x16>
+     fe0:	43 c0       	rjmp	.+134    	; 0x1068 <__fpcmp_parts_f+0x9c>
+     fe2:	94 30       	cpi	r25, 0x04	; 4
+     fe4:	51 f4       	brne	.+20     	; 0xffa <__fpcmp_parts_f+0x2e>
+     fe6:	11 96       	adiw	r26, 0x01	; 1
+     fe8:	1c 91       	ld	r17, X
+     fea:	84 30       	cpi	r24, 0x04	; 4
+     fec:	99 f5       	brne	.+102    	; 0x1054 <__fpcmp_parts_f+0x88>
+     fee:	81 81       	ldd	r24, Z+1	; 0x01
+     ff0:	68 2f       	mov	r22, r24
+     ff2:	70 e0       	ldi	r23, 0x00	; 0
+     ff4:	61 1b       	sub	r22, r17
+     ff6:	71 09       	sbc	r23, r1
+     ff8:	3f c0       	rjmp	.+126    	; 0x1078 <__fpcmp_parts_f+0xac>
+     ffa:	84 30       	cpi	r24, 0x04	; 4
+     ffc:	21 f0       	breq	.+8      	; 0x1006 <__fpcmp_parts_f+0x3a>
+     ffe:	92 30       	cpi	r25, 0x02	; 2
+    1000:	31 f4       	brne	.+12     	; 0x100e <__fpcmp_parts_f+0x42>
+    1002:	82 30       	cpi	r24, 0x02	; 2
+    1004:	b9 f1       	breq	.+110    	; 0x1074 <__fpcmp_parts_f+0xa8>
+    1006:	81 81       	ldd	r24, Z+1	; 0x01
+    1008:	88 23       	and	r24, r24
+    100a:	89 f1       	breq	.+98     	; 0x106e <__fpcmp_parts_f+0xa2>
+    100c:	2d c0       	rjmp	.+90     	; 0x1068 <__fpcmp_parts_f+0x9c>
+    100e:	11 96       	adiw	r26, 0x01	; 1
+    1010:	1c 91       	ld	r17, X
+    1012:	11 97       	sbiw	r26, 0x01	; 1
+    1014:	82 30       	cpi	r24, 0x02	; 2
+    1016:	f1 f0       	breq	.+60     	; 0x1054 <__fpcmp_parts_f+0x88>
+    1018:	81 81       	ldd	r24, Z+1	; 0x01
+    101a:	18 17       	cp	r17, r24
+    101c:	d9 f4       	brne	.+54     	; 0x1054 <__fpcmp_parts_f+0x88>
+    101e:	12 96       	adiw	r26, 0x02	; 2
+    1020:	2d 91       	ld	r18, X+
+    1022:	3c 91       	ld	r19, X
+    1024:	13 97       	sbiw	r26, 0x03	; 3
+    1026:	82 81       	ldd	r24, Z+2	; 0x02
+    1028:	93 81       	ldd	r25, Z+3	; 0x03
+    102a:	82 17       	cp	r24, r18
+    102c:	93 07       	cpc	r25, r19
+    102e:	94 f0       	brlt	.+36     	; 0x1054 <__fpcmp_parts_f+0x88>
+    1030:	28 17       	cp	r18, r24
+    1032:	39 07       	cpc	r19, r25
+    1034:	bc f0       	brlt	.+46     	; 0x1064 <__fpcmp_parts_f+0x98>
+    1036:	14 96       	adiw	r26, 0x04	; 4
+    1038:	8d 91       	ld	r24, X+
+    103a:	9d 91       	ld	r25, X+
+    103c:	0d 90       	ld	r0, X+
+    103e:	bc 91       	ld	r27, X
+    1040:	a0 2d       	mov	r26, r0
+    1042:	24 81       	ldd	r18, Z+4	; 0x04
+    1044:	35 81       	ldd	r19, Z+5	; 0x05
+    1046:	46 81       	ldd	r20, Z+6	; 0x06
+    1048:	57 81       	ldd	r21, Z+7	; 0x07
+    104a:	28 17       	cp	r18, r24
+    104c:	39 07       	cpc	r19, r25
+    104e:	4a 07       	cpc	r20, r26
+    1050:	5b 07       	cpc	r21, r27
+    1052:	18 f4       	brcc	.+6      	; 0x105a <__fpcmp_parts_f+0x8e>
+    1054:	11 23       	and	r17, r17
+    1056:	41 f0       	breq	.+16     	; 0x1068 <__fpcmp_parts_f+0x9c>
+    1058:	0a c0       	rjmp	.+20     	; 0x106e <__fpcmp_parts_f+0xa2>
+    105a:	82 17       	cp	r24, r18
+    105c:	93 07       	cpc	r25, r19
+    105e:	a4 07       	cpc	r26, r20
+    1060:	b5 07       	cpc	r27, r21
+    1062:	40 f4       	brcc	.+16     	; 0x1074 <__fpcmp_parts_f+0xa8>
+    1064:	11 23       	and	r17, r17
+    1066:	19 f0       	breq	.+6      	; 0x106e <__fpcmp_parts_f+0xa2>
+    1068:	61 e0       	ldi	r22, 0x01	; 1
+    106a:	70 e0       	ldi	r23, 0x00	; 0
+    106c:	05 c0       	rjmp	.+10     	; 0x1078 <__fpcmp_parts_f+0xac>
+    106e:	6f ef       	ldi	r22, 0xFF	; 255
+    1070:	7f ef       	ldi	r23, 0xFF	; 255
+    1072:	02 c0       	rjmp	.+4      	; 0x1078 <__fpcmp_parts_f+0xac>
+    1074:	60 e0       	ldi	r22, 0x00	; 0
+    1076:	70 e0       	ldi	r23, 0x00	; 0
+    1078:	cb 01       	movw	r24, r22
+    107a:	1f 91       	pop	r17
+    107c:	08 95       	ret
+
+0000107e <__divmodhi4>:
+    107e:	97 fb       	bst	r25, 7
+    1080:	09 2e       	mov	r0, r25
+    1082:	07 26       	eor	r0, r23
+    1084:	0a d0       	rcall	.+20     	; 0x109a <__divmodhi4_neg1>
+    1086:	77 fd       	sbrc	r23, 7
+    1088:	04 d0       	rcall	.+8      	; 0x1092 <__divmodhi4_neg2>
+    108a:	0c d0       	rcall	.+24     	; 0x10a4 <__udivmodhi4>
+    108c:	06 d0       	rcall	.+12     	; 0x109a <__divmodhi4_neg1>
+    108e:	00 20       	and	r0, r0
+    1090:	1a f4       	brpl	.+6      	; 0x1098 <__divmodhi4_exit>
+
+00001092 <__divmodhi4_neg2>:
+    1092:	70 95       	com	r23
+    1094:	61 95       	neg	r22
+    1096:	7f 4f       	sbci	r23, 0xFF	; 255
+
+00001098 <__divmodhi4_exit>:
+    1098:	08 95       	ret
+
+0000109a <__divmodhi4_neg1>:
+    109a:	f6 f7       	brtc	.-4      	; 0x1098 <__divmodhi4_exit>
+    109c:	90 95       	com	r25
+    109e:	81 95       	neg	r24
+    10a0:	9f 4f       	sbci	r25, 0xFF	; 255
+    10a2:	08 95       	ret
+
+000010a4 <__udivmodhi4>:
+    10a4:	aa 1b       	sub	r26, r26
+    10a6:	bb 1b       	sub	r27, r27
+    10a8:	51 e1       	ldi	r21, 0x11	; 17
+    10aa:	07 c0       	rjmp	.+14     	; 0x10ba <__udivmodhi4_ep>
+
+000010ac <__udivmodhi4_loop>:
+    10ac:	aa 1f       	adc	r26, r26
+    10ae:	bb 1f       	adc	r27, r27
+    10b0:	a6 17       	cp	r26, r22
+    10b2:	b7 07       	cpc	r27, r23
+    10b4:	10 f0       	brcs	.+4      	; 0x10ba <__udivmodhi4_ep>
+    10b6:	a6 1b       	sub	r26, r22
+    10b8:	b7 0b       	sbc	r27, r23
+
+000010ba <__udivmodhi4_ep>:
+    10ba:	88 1f       	adc	r24, r24
+    10bc:	99 1f       	adc	r25, r25
+    10be:	5a 95       	dec	r21
+    10c0:	a9 f7       	brne	.-22     	; 0x10ac <__udivmodhi4_loop>
+    10c2:	80 95       	com	r24
+    10c4:	90 95       	com	r25
+    10c6:	bc 01       	movw	r22, r24
+    10c8:	cd 01       	movw	r24, r26
+    10ca:	08 95       	ret
+
+000010cc <__prologue_saves__>:
+    10cc:	2f 92       	push	r2
+    10ce:	3f 92       	push	r3
+    10d0:	4f 92       	push	r4
+    10d2:	5f 92       	push	r5
+    10d4:	6f 92       	push	r6
+    10d6:	7f 92       	push	r7
+    10d8:	8f 92       	push	r8
+    10da:	9f 92       	push	r9
+    10dc:	af 92       	push	r10
+    10de:	bf 92       	push	r11
+    10e0:	cf 92       	push	r12
+    10e2:	df 92       	push	r13
+    10e4:	ef 92       	push	r14
+    10e6:	ff 92       	push	r15
+    10e8:	0f 93       	push	r16
+    10ea:	1f 93       	push	r17
+    10ec:	cf 93       	push	r28
+    10ee:	df 93       	push	r29
+    10f0:	cd b7       	in	r28, 0x3d	; 61
+    10f2:	de b7       	in	r29, 0x3e	; 62
+    10f4:	ca 1b       	sub	r28, r26
+    10f6:	db 0b       	sbc	r29, r27
+    10f8:	0f b6       	in	r0, 0x3f	; 63
+    10fa:	f8 94       	cli
+    10fc:	de bf       	out	0x3e, r29	; 62
+    10fe:	0f be       	out	0x3f, r0	; 63
+    1100:	cd bf       	out	0x3d, r28	; 61
+    1102:	09 94       	ijmp
+
+00001104 <__epilogue_restores__>:
+    1104:	2a 88       	ldd	r2, Y+18	; 0x12
+    1106:	39 88       	ldd	r3, Y+17	; 0x11
+    1108:	48 88       	ldd	r4, Y+16	; 0x10
+    110a:	5f 84       	ldd	r5, Y+15	; 0x0f
+    110c:	6e 84       	ldd	r6, Y+14	; 0x0e
+    110e:	7d 84       	ldd	r7, Y+13	; 0x0d
+    1110:	8c 84       	ldd	r8, Y+12	; 0x0c
+    1112:	9b 84       	ldd	r9, Y+11	; 0x0b
+    1114:	aa 84       	ldd	r10, Y+10	; 0x0a
+    1116:	b9 84       	ldd	r11, Y+9	; 0x09
+    1118:	c8 84       	ldd	r12, Y+8	; 0x08
+    111a:	df 80       	ldd	r13, Y+7	; 0x07
+    111c:	ee 80       	ldd	r14, Y+6	; 0x06
+    111e:	fd 80       	ldd	r15, Y+5	; 0x05
+    1120:	0c 81       	ldd	r16, Y+4	; 0x04
+    1122:	1b 81       	ldd	r17, Y+3	; 0x03
+    1124:	aa 81       	ldd	r26, Y+2	; 0x02
+    1126:	b9 81       	ldd	r27, Y+1	; 0x01
+    1128:	ce 0f       	add	r28, r30
+    112a:	d1 1d       	adc	r29, r1
+    112c:	0f b6       	in	r0, 0x3f	; 63
+    112e:	f8 94       	cli
+    1130:	de bf       	out	0x3e, r29	; 62
+    1132:	0f be       	out	0x3f, r0	; 63
+    1134:	cd bf       	out	0x3d, r28	; 61
+    1136:	ed 01       	movw	r28, r26
+    1138:	08 95       	ret
+
+0000113a <_exit>:
+    113a:	f8 94       	cli
+
+0000113c <__stop_program>:
+    113c:	ff cf       	rjmp	.-2      	; 0x113c <__stop_program>

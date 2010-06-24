@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="hmi" >
+    <file>AHNS_Logo_R000G060B090.png</file>
+    <file>AHNS_Logo_R103G200B255.png</file>
+    <file>testPic.jpg</file>
+    <file>ap_cursor.png</file>
+  </qresource>
+</RCC>
