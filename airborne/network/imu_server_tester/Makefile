@@ -41,7 +41,7 @@ LIB = libstate.a
 
 SRCS = src/imuServerTester.c
 OBJS = obj/imuServerTester.o $(IMUDIR)/obj/imuserial.o
-INC = -I $(HELICONNECT) -I include -I $(IMUDIR)/include
+INC = -I ~/heliconnect10/trunk/udp/ -I include -I $(IMUDIR)/include
 
 SERVER = server
 

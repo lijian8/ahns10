@@ -1,8 +1,6 @@
 # -------------------------------------------------
 # Project created by QtCreator 2010-04-25T11:58:01
 # -------------------------------------------------
-HELI = $(HELICONNECT)
-SERIAL = $(UDP_SERIALISATION)
 QT += opengl \
     network
 CONFIG += debug
@@ -14,7 +12,7 @@ INCLUDEPATH += . \
     AHWidget/include \
     reuse/ \
     /usr/include/qwt-qt4/ \
-    $$HELI \
+    ../../../heliconnect10/trunk/udp/ \
     udp/
 UI_DIR = ui
 UI_HEADERS_DIR = tmp
@@ -34,8 +32,8 @@ SOURCES += src/main.cpp \
     AHWidget/src/AH_Utility.cpp \
     AHWidget/src/AH_Motion.cpp \
     AHWidget/src/AH.cpp \
-    $$SERIAL/src/little_host_serialisation.c \
-    $$HELI/state.c \
+    ../udp/src/little_host_serialisation.c \
+    ../../../heliconnect10/trunk/udp/state.c \
     reuse/ahns_logger.cpp \
     src/aboutform.cpp \
     src/wificomms.cpp \
@@ -53,8 +51,8 @@ HEADERS += include/gcsmainwindow.h \
     AHWidget/include/AH.h \
     AHWidget/include/AH.h \
     reuse/ahns_logger.h \
-    $$HELI/commands.h \
-    $$HELI/state.h \
+    ../../../heliconnect10/trunk/udp/commands.h \
+    ../../../heliconnect10/trunk/udp/state.h \
     include/aboutform.h \
     include/wificomms.h \
     include/telemetrythread.h \
@@ -68,7 +66,7 @@ HEADERS += include/gcsmainwindow.h \
     include/bfcameracomms.h \
     src/bfimagefeed.h \
     src/bfimagefeed.h \
-    $$HELI/primitive_serialisation.h \
+    ../udp/include/primitive_serialisation.h \
     include/datalogger.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \

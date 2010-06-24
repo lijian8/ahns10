@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Script to install and call qmake and Make without the 
+# Script to call qmake and Make without the 
 # need for qtcreator.
 #
 # $Author$
