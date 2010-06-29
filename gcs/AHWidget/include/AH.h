@@ -110,7 +110,6 @@ protected:
 
 private:
         volatile bool updating;
-        QTimer updateTimer;
 };
 
 

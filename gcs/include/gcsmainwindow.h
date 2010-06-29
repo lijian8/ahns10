@@ -33,6 +33,7 @@
 #include "bfimagefeed.h"
 #include "dataplotter.h"
 #include "datalogger.h"
+#include "flightcontrol.h"
 
 
 namespace Ui {
@@ -79,7 +80,9 @@ private slots:
    void ProcessAckMessage(const timeval timeStamp, const int discarded = 0);
    void ProcessCloseMessage(const timeval timeStamp, const int discarded = 0);
    void ProcessFCState(const timeval timeStamp, const fc_state_t fcState, const int discarded = 0);
+   void ProcessAPState(const timeval timeStamp, const ap_state_t apState, const int discarded = 0);
 
+   void UpdateWidgets();
 private:
     Ui::gcsMainWindow *ui;
     void createDockWindows();
@@ -92,13 +95,14 @@ private:
     ReceiveConsole* m_receiveConsoleWidget;
     DataPlotter* m_dataPlotterWidget;
     bfImageFeed* m_bfImageFeedWidget;
+    FlightControl* m_flightControlWidget;
 
     // Additional Plotting Widgets
     QLinkedList<DataPlotter *> m_plottingWidgets;
     QLinkedList<QDockWidget *> m_plottingDock;
 
     // Form
-    aboutForm* m_Aboutfrm;
+    aboutForm m_Aboutfrm;
 
     // Threads
     TelemetryThread* m_TelemetryThread;
@@ -108,6 +112,9 @@ private:
     quint8 m_TelSecCount;
     quint8 m_TelMinCount;
     quint32 m_TelHourCount;
+
+    // GUI Update Timer
+    QTimer m_updateTimer;
 
     // Data Logger Object
     DataLogger m_Data;

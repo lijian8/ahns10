@@ -47,7 +47,8 @@ SOURCES += src/main.cpp \
     src/bfglrenderer.cpp \
     src/bfcameracomms.cpp \
     src/bfimagefeed.cpp \
-    src/datalogger.cpp
+    src/datalogger.cpp \
+    src/flightcontrol.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -69,11 +70,13 @@ HEADERS += include/gcsmainwindow.h \
     src/bfimagefeed.h \
     src/bfimagefeed.h \
     $$HELI/primitive_serialisation.h \
-    include/datalogger.h
+    include/datalogger.h \
+    include/flightcontrol.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \
     ui/wificomms.ui \
     ui/receiveconsole.ui \
-    ui/dataplotter.ui
+    ui/dataplotter.ui \
+    ui/flightcontrol.ui
 RESOURCES += resources/gcs.qrc

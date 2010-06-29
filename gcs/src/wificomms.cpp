@@ -40,7 +40,8 @@
 #include "ahns_timeformat.h"
 
 // Default Network Settings
-#define DEFAULT_SERVER_IP "192.168.0.3"
+#define DEFAULT_SERVER_IP "127.0.0.1"
+#define DEFAULT_CLIENT_IP "127.0.0.1"
 #define DEFAULT_SERVER_PORT "2002"
 #define DEFAULT_CLIENT_PORT "45455"
 
@@ -51,52 +52,52 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
     ui->setupUi(this);
     setMinimumSize(345, 100);
 
-    // 2009 HMI code to find the interface and IP in use
-    using namespace std;
-    int fd;
-    struct if_nameindex *curif, *ifs;
-    struct ifreq req;
-
-    if((fd = socket(PF_INET, SOCK_DGRAM, 0)) != -1)
-    {
-            ifs = if_nameindex();
-            if(ifs)
-            {
-                    for(curif = ifs; curif && curif->if_name; curif++)
-                    {
-                            strncpy(req.ifr_name, curif->if_name, IFNAMSIZ);
-                            req.ifr_name[IFNAMSIZ] = 0;
-
-                            if (ioctl(fd, SIOCGIFADDR, &req) >= 0)
-                            {
-                                    //printf("%s: [%s]\n", curif->if_name, inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
-                                    if (string(curif->if_name) == "eth0")
-                                    {
-                                            sprintf(szHostIP, "%s", inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
-                                    }
-                                    else if (string(curif->if_name) == "wlan0")
-                                    {
-                                            sprintf(szHostIP, "%s", inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
-                                            //cout << string(szHostIP) << endl;
-                                    }
-                                    else if (string(curif->if_name) == "eth1") //MBP interface
-                                    {
-                                            sprintf(szHostIP, "%s", inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
-                                    }
-                            }
-                    }
-                    if_freenameindex(ifs);
-                    if(::close(fd) != 0)	sprintf(szHostIP, "%s", "Unable to close 'fd' <internal>");
-            }
-            else	sprintf(szHostIP, "%s", "Could not retrieve IP name index");
-    }
-    else	sprintf(szHostIP, "%s", "Could not detect network socket");
+//    // 2009 HMI code to find the interface and IP in use
+//    using namespace std;
+//    int fd;
+//    struct if_nameindex *curif, *ifs;
+//    struct ifreq req;
+//
+//    if((fd = socket(PF_INET, SOCK_DGRAM, 0)) != -1)
+//    {
+//            ifs = if_nameindex();
+//            if(ifs)
+//            {
+//                    for(curif = ifs; curif && curif->if_name; curif++)
+//                    {
+//                            strncpy(req.ifr_name, curif->if_name, IFNAMSIZ);
+//                            req.ifr_name[IFNAMSIZ] = 0;
+//
+//                            if (ioctl(fd, SIOCGIFADDR, &req) >= 0)
+//                            {
+//                                    //printf("%s: [%s]\n", curif->if_name, inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
+//                                    if (string(curif->if_name) == "eth0")
+//                                    {
+//                                            sprintf(szHostIP, "%s", inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
+//                                    }
+//                                    else if (string(curif->if_name) == "wlan0")
+//                                    {
+//                                            sprintf(szHostIP, "%s", inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
+//                                            //cout << string(szHostIP) << endl;
+//                                    }
+//                                    else if (string(curif->if_name) == "eth1") //MBP interface
+//                                    {
+//                                            sprintf(szHostIP, "%s", inet_ntoa(((struct sockaddr_in*) &req.ifr_addr)->sin_addr));
+//                                    }
+//                            }
+//                    }
+//                    if_freenameindex(ifs);
+//                    if(::close(fd) != 0)	sprintf(szHostIP, "%s", "Unable to close 'fd' <internal>");
+//            }
+//            else	sprintf(szHostIP, "%s", "Could not retrieve IP name index");
+//    }
+//    else	sprintf(szHostIP, "%s", "Could not detect network socket");
 
     // Initialise the Box text
     ui->serverIPlineEdit->setText(DEFAULT_SERVER_IP);
     ui->serverPortlineEdit->setText(DEFAULT_SERVER_PORT);
 
-    ui->clientIPlineEdit->setText(szHostIP);
+    ui->clientIPlineEdit->setText(DEFAULT_CLIENT_IP);
     ui->clientPortlineEdit->setText(DEFAULT_CLIENT_PORT);
 
     ui->uptimelcdNumber->display(AHNS_HMS(0,0,0));

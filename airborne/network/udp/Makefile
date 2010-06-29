@@ -1,6 +1,6 @@
-# $Author: tlmolloy $
+# $Author$
 # $Name:  $
-# $Id: Makefile 167 2010-06-17 00:34:36Z tlmolloy $
+# $Id$
 # $Source: /home/luis/cvsroot/net-api/Makefile,v $
 # $Log: Makefile,v $
 # Revision 1.1.1.1  2008-05-05 07:07:57  luis
@@ -40,17 +40,13 @@ SRCS = client.c server.c $(HELICONNECT)/state.c udp.c $(UDP_SERIALISATION)src/li
 INCLUDES = server.h $(HELICONNECT)/state.h udp.h commands.h $(UDP_SERIALISATION)/include/primitive_serialisation.h
 OBJS = client.o server.o $(HELICONNECT)/state.o udp.o $(UDP_SERIALISATION)/obj/little_host_serialisation.o
 LIBSTATE= libstate.a 
-all:  $(LIBSTATE) example
+all:  $(LIBSTATE)
 
 %.o: %.c
 	$(CC) -O2 -c $< $(CFLAGS) -o $@ $(INCDIR)
 
 $(UDP_SERIALISATION)/obj/little_host_serialisation.o :
 	cd ~/ahns10/trunk/udp/; make
-
-example: query_state1.o query_state2.o
-	$(CC) query_state1.o $(LDFLAGS) -o client
-	$(CC) query_state2.o $(LDFLAGS) -o server
 
 $(LIBSTATE): $(OBJS)
 	ar -cr $(LIBSTATE) $(OBJS)

@@ -22,6 +22,10 @@
 #include "ahns_logger.h"
 #include "ahns_timeformat.h"
 
+#define PROGRESS_OK ""
+#define PROGRESS_WARNING "QProgressBar { color: orange }"
+#define PROGRESS_CRITICAL "QProgressBar { color: red }"
+
 SystemStatus::SystemStatus(QWidget *parent) : QWidget(parent), ui(new Ui::SystemStatus)
 {
     ui->setupUi(this);
@@ -29,10 +33,6 @@ SystemStatus::SystemStatus(QWidget *parent) : QWidget(parent), ui(new Ui::System
     ui->fcUptimeLcd->display(AHNS_HMS(0,0,0));
 
     setMinimumSize(290, 130);
-
-    // Force Update at 25Hz
-    updateTimer.setInterval(40);
-    connect(&updateTimer,SIGNAL(timeout()),this,SLOT(UpdateStatus()));
 }
 
 SystemStatus::~SystemStatus()
@@ -85,11 +85,6 @@ void SystemStatus::loadFCState(const fc_state_t& srcState)
     m_fcUptime = srcState.fcUptime;
     m_fcCPUusage = srcState.fcCPUusage;
 
-    if(!updateTimer.isActive())
-    {
-     updateTimer.start();
-    }
-
     return;
 }
 
@@ -100,12 +95,7 @@ void SystemStatus::loadHeliState(const state_t& srcState)
 {
     AHNS_DEBUG("SystemStatus::loadHeliState(const state_t& srcState)");
     m_voltage = srcState.voltage;
-    m_batteryPercentage = (srcState.voltage - FC_MIN_VOLTAGE) / (FC_MAX_VOLTAGE - FC_MIN_VOLTAGE) * 100.0;
-
-    if(!updateTimer.isActive())
-    {
-     updateTimer.start();
-    }
+    //m_batteryPercentage = (srcState.voltage - FC_MIN_VOLTAGE) / (FC_MAX_VOLTAGE - FC_MIN_VOLTAGE) * 100.0;
 
     return;
 }
@@ -113,47 +103,81 @@ void SystemStatus::loadHeliState(const state_t& srcState)
 void SystemStatus::UpdateStatus()
 {
     AHNS_DEBUG("SystemStatus::UpdateStatus()");
-    QString labelText;
 
-    if ( m_rcLinkActive == 1)
+    if (this->isVisible())
     {
-        ui->rclbl->setText("ON");
-        ui->rclinkprgbar->setValue(1);
+        if (m_rcLinkActive == 1)
+        {
+            ui->rclbl->setStyleSheet("QLabel { background-color: green }");
+        }
+        else
+        {
+            ui->rclbl->setStyleSheet("QLabel { background-color: red }");
+        }
+
+        ui->eng1prgbar->setValue((m_commandedEngine1-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
+        if ( ui->eng1prgbar->value() > 90 )
+        {
+            ui->eng1prgbar->setStyleSheet(PROGRESS_CRITICAL);
+        }
+        else if ( ui->eng1prgbar->value() > 75)
+        {
+            ui->eng1prgbar->setStyleSheet(PROGRESS_WARNING);
+        }
+        else
+        {
+            ui->eng1prgbar->setStyleSheet(PROGRESS_OK);
+        }
+
+        ui->eng2prgbar->setValue((m_commandedEngine2-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
+        if ( ui->eng2prgbar->value() > 90 )
+        {
+            ui->eng2prgbar->setStyleSheet(PROGRESS_CRITICAL);
+        }
+        else if ( ui->eng2prgbar->value() > 75)
+        {
+            ui->eng2prgbar->setStyleSheet(PROGRESS_WARNING);
+        }
+        else
+        {
+            ui->eng2prgbar->setStyleSheet(PROGRESS_OK);
+        }
+
+        ui->eng3prgbar->setValue((m_commandedEngine3-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
+        if ( ui->eng3prgbar->value() > 90 )
+        {
+            ui->eng3prgbar->setStyleSheet(PROGRESS_CRITICAL);
+        }
+        else if ( ui->eng3prgbar->value() > 75)
+        {
+            ui->eng3prgbar->setStyleSheet(PROGRESS_WARNING);
+        }
+        else
+        {
+            ui->eng3prgbar->setStyleSheet(PROGRESS_OK);
+        }
+
+        ui->eng4prgbar->setValue((m_commandedEngine4-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
+        if ( ui->eng4prgbar->value() > 90 )
+        {
+            ui->eng4prgbar->setStyleSheet(PROGRESS_CRITICAL);
+        }
+        else if ( ui->eng4prgbar->value() > 75)
+        {
+            ui->eng4prgbar->setStyleSheet(PROGRESS_WARNING);
+        }
+        else
+        {
+            ui->eng4prgbar->setStyleSheet(PROGRESS_OK);
+        }
+
+        ui->fcCPUprgbar->setValue(m_fcCPUusage);
+
+        ui->fcUptimeLcd->display((double)m_fcUptime);
+
+        QString labelText;
+        labelText.setNum(m_voltage,'g',4);
+        ui->batterylbl->setText(labelText % " V");
     }
-    else
-    {
-        ui->rclbl->setText("OFF");
-        ui->rclinkprgbar->setValue(0);
-    }
-
-    labelText.setNum(m_commandedEngine1);
-    labelText = labelText % " us";
-    ui->eng1lbl->setText(labelText);
-    ui->eng1prgbar->setValue((m_commandedEngine1-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
-
-    labelText.setNum(m_commandedEngine2);
-    labelText = labelText % " us";
-    ui->eng2lbl->setText(labelText);
-    ui->eng2prgbar->setValue((m_commandedEngine2-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
-
-    labelText.setNum(m_commandedEngine3);
-    labelText = labelText % " us";
-    ui->eng3lbl->setText(labelText);
-    ui->eng3prgbar->setValue((m_commandedEngine3-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
-
-    labelText.setNum(m_commandedEngine4);
-    labelText = labelText % " us";
-    ui->eng4lbl->setText(labelText);
-    ui->eng4prgbar->setValue((m_commandedEngine4-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
-
-    labelText.setNum(m_fcCPUusage);
-    ui->fcCPUlbl->setText(labelText);
-    ui->fcCPUprgbar->setValue(m_fcCPUusage);
-
-    ui->fcUptimeLcd->display((double)m_fcUptime);
-
-    labelText.setNum(m_voltage);
-    ui->voltagelbl->setText(labelText);
-    ui->voltageprgbar->setValue(m_batteryPercentage);
     return;
 }

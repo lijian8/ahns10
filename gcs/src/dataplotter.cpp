@@ -49,12 +49,32 @@ ui->filteredRollchkbox, \
         ui->filteredVZchkbox, \
         ui->filteredAZchkbox, \
         ui->voltagechkbox, \
+        ui->tracechkbox, \
+        ui->imuRollchkbox, \
+        ui->imuPitchchkbox, \
+        ui->imuYawchkbox, \
+        ui->imuAXchkbox, \
+        ui->imuAYchkbox, \
+        ui->imuAZchkbox, \
+        ui->USchkbox, \
         ui->engine1chkbox, \
         ui->engine2chkbox, \
         ui->engine3chkbox, \
         ui->engine4chkbox, \
         ui->fcCPUchkbox, \
-        ui->fcRCchkbox\
+        ui->fcRCchkbox, \
+        ui->refRollchkbox, \
+        ui->refPitchchkbox, \
+        ui->refYawchkbox, \
+        ui->refXchkbox, \
+        ui->refYchkbox, \
+        ui->refZchkbox, \
+        ui->rollActivechkbox, \
+        ui->pitchActivechkbox, \
+        ui->yawActivechkbox, \
+        ui->xActivechkbox, \
+        ui->yActivechkbox, \
+        ui->zActivechkbox \
     };
 
 /**
@@ -69,89 +89,60 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     // Array of all Check boxes
     CHECK_BOX_ARRAY;
 
-    setMinimumSize(640,480);
-
     // Connect CheckBox Slots
     for (i = 0; i < CURVE_COUNT; ++i)
     {
         connect(checkBoxArray[i],SIGNAL(clicked()),this,SLOT(SetActive()));
-
-        // Update the Legend Items
-        switch (i)
-        {
-        case F_PHI:
-            m_plotCurves[i].setTitle(QwtText("Roll Angle [rad]"));
-            break;
-        case F_PHI_DOT:
-            m_plotCurves[i].setTitle(QwtText("Roll Rate [rad/s]"));
-            break;
-        case F_THETA:
-            m_plotCurves[i].setTitle(QwtText("Pitch Angle [rad]"));
-            break;
-        case F_THETA_DOT:
-            m_plotCurves[i].setTitle(QwtText("Pitch Rate [rad/s]"));
-            break;
-        case F_PSI:
-            m_plotCurves[i].setTitle(QwtText("Yaw Angle [rad]"));
-            break;
-        case F_PSI_DOT:
-            m_plotCurves[i].setTitle(QwtText("Yaw Rate [rad/s]"));
-            break;
-        case F_X:
-            m_plotCurves[i].setTitle(QwtText("x Position [m]"));
-            break;
-        case F_X_DOT:
-            m_plotCurves[i].setTitle(QwtText("x Velocity [m/s]"));
-            break;
-        case F_AX:
-            m_plotCurves[i].setTitle(QwtText("x Accelertaion [m/s]"));
-            break;
-        case F_Y:
-            m_plotCurves[i].setTitle(QwtText("y Position [m]"));
-            break;
-        case F_Y_DOT:
-            m_plotCurves[i].setTitle(QwtText("y Velocity [m/s]"));
-            break;
-        case F_AY:
-            m_plotCurves[i].setTitle(QwtText("y Accelertaion [m/s/s]"));
-            break;
-        case F_Z:
-            m_plotCurves[i].setTitle(QwtText("z Position [m]"));
-            break;
-        case F_Z_DOT:
-            m_plotCurves[i].setTitle(QwtText("z Velocity [m]"));
-            break;
-        case F_AZ:
-            m_plotCurves[i].setTitle(QwtText("z Accelertaion [m]"));
-            break;
-        case VOLTAGE:
-            m_plotCurves[i].setTitle(QwtText("Voltage [V]"));
-            break;
-        case ENGINE1:
-            m_plotCurves[i].setTitle(QwtText("Engine 1 Commanded [ms]"));
-            break;
-        case ENGINE2:
-            m_plotCurves[i].setTitle(QwtText("Engine 2 Commanded [ms]"));
-            break;
-        case ENGINE3:
-            m_plotCurves[i].setTitle(QwtText("Engine 3 Commanded [ms]"));
-            break;
-        case ENGINE4:
-            m_plotCurves[i].setTitle(QwtText("Engine 4 Commanded [ms]"));
-            break;
-        case FC_CPU:
-            m_plotCurves[i].setTitle(QwtText("CPU Usage [%]"));
-            break;
-        case RC_LINK:
-            m_plotCurves[i].setTitle(QwtText("RC Link [1/0]"));
-            break;
-        default:
-            AHNS_ALERT("DataPlotter::DataPlotter() [ UNHANDLED CURVE ]");
-        }
         m_plotCurves[i].setSymbol(QwtSymbol());
     }
 
     connect(ui->Clearbtn,SIGNAL(clicked()),this,SLOT(ClearPlots()));
+
+    m_plotCurves[F_PHI].setTitle(QwtText("Roll Angle [rad]"));
+    m_plotCurves[F_PHI_DOT].setTitle(QwtText("Roll Rate [rad/s]"));
+    m_plotCurves[F_THETA].setTitle(QwtText("Pitch Angle [rad]"));
+    m_plotCurves[F_THETA_DOT].setTitle(QwtText("Pitch Rate [rad/s]"));
+    m_plotCurves[F_PSI].setTitle(QwtText("Yaw Angle [rad]"));
+    m_plotCurves[F_PSI_DOT].setTitle(QwtText("Yaw Rate [rad/s]"));
+    m_plotCurves[F_X].setTitle(QwtText("x Position [m]"));
+    m_plotCurves[F_X_DOT].setTitle(QwtText("x Velocity [m/s]"));
+    m_plotCurves[F_AX].setTitle(QwtText("x Accelertaion [m/s]"));
+    m_plotCurves[F_Y].setTitle(QwtText("y Position [m]"));
+    m_plotCurves[F_Y_DOT].setTitle(QwtText("y Velocity [m/s]"));
+    m_plotCurves[F_AY].setTitle(QwtText("y Accelertaion [m/s/s]"));
+    m_plotCurves[F_Z].setTitle(QwtText("z Position [m]"));
+    m_plotCurves[F_Z_DOT].setTitle(QwtText("z Velocity [m]"));
+    m_plotCurves[F_AZ].setTitle(QwtText("z Accelertaion [m]"));
+    m_plotCurves[VOLTAGE].setTitle(QwtText("Voltage [V]"));
+    m_plotCurves[TRACE].setTitle(QwtText("Trace"));
+
+    m_plotCurves[IMU_ROLL_DOT].setTitle(QwtText("IMU Roll Rate [deg/s]"));
+    m_plotCurves[IMU_PITCH_DOT].setTitle(QwtText("IMU Pitch Rate [deg/s]"));
+    m_plotCurves[IMU_YAW_DOT].setTitle(QwtText("IMU Yaw Rate [deg/s]"));
+    m_plotCurves[IMU_AX].setTitle(QwtText("IMU X Acceleration [g's]"));
+    m_plotCurves[IMU_AY].setTitle(QwtText("IMU Y Acceleration [g's]"));
+    m_plotCurves[IMU_AZ].setTitle(QwtText("IMU Z Acceleration [g's]"));
+    m_plotCurves[US_Z].setTitle(QwtText("Ultrasonic Z Position [m]"));
+
+    m_plotCurves[ENGINE1].setTitle(QwtText("Engine 1 Commanded [us]"));
+    m_plotCurves[ENGINE2].setTitle(QwtText("Engine 2 Commanded [us]"));
+    m_plotCurves[ENGINE3].setTitle(QwtText("Engine 3 Commanded [us]"));
+    m_plotCurves[ENGINE4].setTitle(QwtText("Engine 4 Commanded [us]"));
+    m_plotCurves[FC_CPU].setTitle(QwtText("CPU Usage [%]"));
+    m_plotCurves[RC_LINK].setTitle(QwtText("RC Link [1/0]"));
+
+    m_plotCurves[REF_PHI].setTitle(QwtText("Reference Roll Angle [rad]"));
+    m_plotCurves[REF_THETA].setTitle(QwtText("Reference Pitch Angle [rad]"));
+    m_plotCurves[REF_PSI].setTitle(QwtText("Reference Yaw Angle [rad]"));
+    m_plotCurves[REF_X].setTitle(QwtText("Reference X Position [m]"));
+    m_plotCurves[REF_Y].setTitle(QwtText("Reference Y Position [m]"));
+    m_plotCurves[REF_Z].setTitle(QwtText("Reference Z Position [m]"));
+    m_plotCurves[PHI_ACTIVE].setTitle(QwtText("Roll Active [1/0]"));
+    m_plotCurves[THETA_ACTIVE].setTitle(QwtText("Pitch Active [1/0]"));
+    m_plotCurves[PSI_ACTIVE].setTitle(QwtText("Yaw Active [1/0]"));
+    m_plotCurves[X_ACTIVE].setTitle(QwtText("X Active [1/0]"));
+    m_plotCurves[Y_ACTIVE].setTitle(QwtText("Y Active [1/0]"));
+    m_plotCurves[Z_ACTIVE].setTitle(QwtText("Z Active [1/0]"));
 
     // Possible Curve Pens
     srand(time(NULL));
@@ -201,11 +192,6 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
 
     // Address of Data
     m_DataVector = srcData;
-
-    // Update Plots at 25Hz
-    updatePlotTimer.setInterval(40);
-    connect(&updatePlotTimer,SIGNAL(timeout()),this,SLOT(replot()));
-    updatePlotTimer.start();
 }
 
 DataPlotter::~DataPlotter()
@@ -234,7 +220,7 @@ void DataPlotter::changeEvent(QEvent *e)
   */
 QSize DataPlotter::sizeHint() const
 {
-    return QSize(640,480);
+    return QSize(880,480);
 }
 
 /**
@@ -243,7 +229,16 @@ QSize DataPlotter::sizeHint() const
 void DataPlotter::resizeEvent (QResizeEvent* e)
 {
     //AHNS_DEBUG("DataPlotter::resizeEvent (QResizeEvent* e)");
+
     ui->verticalLayoutWidget->resize(e->size());
+
+    // resize internal tab widgets
+    ui->gridLayoutWidget->resize(e->size().width(),77);
+    ui->gridLayoutWidget_2->resize(e->size().width(),77);
+    ui->gridLayoutWidget_3->resize(e->size().width(),77);
+    ui->gridLayoutWidget_4->resize(e->size().width(),77);
+    ui->gridLayoutWidget_5->resize(e->size().width(),77);
+    ui->gridLayoutWidget_6->resize(e->size().width(),77);
     return;
 }
 
@@ -262,65 +257,89 @@ void DataPlotter::replot()
     double timePoints[pointLimit];
     double dataPoints[pointLimit];
 
-    for (i = 0; i < CURVE_COUNT; ++i)
+    if (this->isVisible())
     {
-        if(m_activePlot[i] == true)
+        for (i = 0; i < CURVE_COUNT; ++i)
         {
-            // Update the Curves
-            switch (i)
+            if(m_activePlot[i] == true)
             {
-            case F_PHI:
-            case F_PHI_DOT:
-            case F_THETA:
-            case F_THETA_DOT:
-            case F_PSI:
-            case F_PSI_DOT:
-            case F_X:
-            case F_X_DOT:
-            case F_AX:
-            case F_Y:
-            case F_Y_DOT:
-            case F_AY:
-            case F_Z:
-            case F_Z_DOT:
-            case F_AZ:
-            case VOLTAGE:
-                j = 0;
-                while ((j < pointLimit) && (j < m_DataVector[i].size()))
+                // Update the Curves
+                switch (i)
                 {
-                    timePoints[j] = m_DataVector[HELI_STATE_TIME][m_DataVector[HELI_STATE_TIME].size()-j-1];
-                    dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
-                    j++;
+                case F_PHI:
+                case F_PHI_DOT:
+                case F_THETA:
+                case F_THETA_DOT:
+                case F_PSI:
+                case F_PSI_DOT:
+                case F_X:
+                case F_X_DOT:
+                case F_AX:
+                case F_Y:
+                case F_Y_DOT:
+                case F_AY:
+                case F_Z:
+                case F_Z_DOT:
+                case F_AZ:
+                case VOLTAGE:
+                    j = 0;
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[HELI_STATE_TIME][m_DataVector[HELI_STATE_TIME].size()-j-1];
+                        dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
+                case ENGINE1:
+                case ENGINE2:
+                case ENGINE3:
+                case ENGINE4:
+                case FC_CPU:
+                case RC_LINK:
+                    j = 0;
+                    while ( (j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[FC_STATE_TIME][m_DataVector[FC_STATE_TIME].size()-j-1];
+                        dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
+                case REF_PHI:
+                case REF_THETA:
+                case REF_PSI:
+                case REF_X:
+                case REF_Y:
+                case REF_Z:
+                case PHI_ACTIVE:
+                case THETA_ACTIVE:
+                case PSI_ACTIVE:
+                case X_ACTIVE:
+                case Y_ACTIVE:
+                case Z_ACTIVE:
+                    j = 0;
+                    while ( (j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[AP_STATE_TIME][m_DataVector[AP_STATE_TIME].size()-j-1];
+                        dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
                 }
-                m_plotCurves[i].setData(timePoints, dataPoints, j);
-                break;
-            case ENGINE1:
-            case ENGINE2:
-            case ENGINE3:
-            case ENGINE4:
-            case FC_CPU:
-            case RC_LINK:
-                j = 0;
-                while ( (j < pointLimit) && (j < m_DataVector[i].size()))
-                {
-                    timePoints[j] = m_DataVector[FC_STATE_TIME][m_DataVector[FC_STATE_TIME].size()-j-1];
-                    dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
-                    j++;
-                }
-                m_plotCurves[i].setData(timePoints, dataPoints, j);
-                break;
+
+                // Attach the curves
+                m_plotCurves[i].attach(ui->dataPlotqwtPlot);
             }
+            else
+            {
+                m_plotCurves[i].detach();
+            }
+        }
 
-            // Attach the curves
-            m_plotCurves[i].attach(ui->dataPlotqwtPlot);
-        }
-        else
-        {
-            m_plotCurves[i].detach();
-        }
+        ui->dataPlotqwtPlot->replot();
     }
-
-    ui->dataPlotqwtPlot->replot();
     return;
 }
 
@@ -332,6 +351,7 @@ void DataPlotter::SetActive()
     AHNS_DEBUG("DataPlotter::SetActive()");
 
     int i = 0;
+    int activeCount = 0;
 
     // Array of all Check boxes
     CHECK_BOX_ARRAY;
@@ -341,6 +361,7 @@ void DataPlotter::SetActive()
         if(checkBoxArray[i]->isChecked())
         {
             m_activePlot[i] = true;
+            activeCount++;
         }
         else
         {
@@ -348,7 +369,6 @@ void DataPlotter::SetActive()
         }
     }
 
-    replot();
     return;
 }
 

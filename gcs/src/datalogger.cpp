@@ -39,6 +39,11 @@ DataLogger::~DataLogger()
     {
         fcStateOutputFile.close();
     }
+
+    if (apStateOutputFile.is_open())
+    {
+        apStateOutputFile.close();
+    }
 }
 
 /**
@@ -50,6 +55,7 @@ void DataLogger::initialiseLogs()
     {
         stateOutputFile.close();
         fcStateOutputFile.close();
+        apStateOutputFile.close();
     }
 
     // Ensure Logging is on
@@ -96,6 +102,22 @@ void DataLogger::initialiseLogs()
         fcStateOutputFile << "RC_LINK, FC_UPTIME, FC_CPU" << std::endl;
     }
 
+    // AP State File
+    strftime(logFileName, 80, "logs/AP_State_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
+    apStateOutputFile.open(logFileName);
+    if (apStateOutputFile.fail())
+    {
+        AHNS_DEBUG("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
+        throw std::runtime_error("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
+    }
+    else
+    {
+        apStateOutputFile << "AHNS AP STATE MESSAGES LOG FOR " << logFileName << std::endl;
+        apStateOutputFile << "TIME, REF_PHI, REF_THETA, REF_PSI, REF_X, REF_Y, REF_Z, PHI_ACTIVE, THETA_ACTIVE,";
+        apStateOutputFile << "PSI_ACTIVE, X_ACTIVE, Y_ACTIVE, Z_ACTIVE" << std::endl;
+    }
+
+
     return;
 }
 
@@ -103,7 +125,7 @@ void DataLogger::initialiseLogs()
   * @brief Ensure new HeliState is available for plotting and plot if needed
   */
 
-void DataLogger::setHeliStateData(const timeval* const timeStamp, const state_t* heliState)
+void DataLogger::setHeliStateData(const timeval* const timeStamp, const state_t* const heliState)
 {
     AHNS_DEBUG("DataLogger::setHeliStateData(const timeval* timeStamp, const state_t* heliState)");
 
@@ -157,9 +179,9 @@ void DataLogger::setHeliStateData(const timeval* const timeStamp, const state_t*
   * @brief Ensure new FCState is available for plotting and plot if needed
   */
 
-void DataLogger::setFCStateData(const timeval* const timeStamp, const fc_state_t* fcState)
+void DataLogger::setFCStateData(const timeval* const timeStamp, const fc_state_t* const fcState)
 {
-    AHNS_DEBUG("DataLogger::setHeliStateData(const timeval* timeStamp, const state_t* heliState)");
+    AHNS_DEBUG("DataLogger::setFCStateData(const timeval* timeStamp, const fc_state_t* fcState)");
 
     // Time
     m_DataVector[FC_STATE_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
@@ -183,6 +205,49 @@ void DataLogger::setFCStateData(const timeval* const timeStamp, const fc_state_t
         fcStateOutputFile << m_DataVector[FC_STATE_RAW_TIME].last()-m_DataVector[FC_STATE_RAW_TIME].front() << "," << fcState->commandedEngine1 << ",";
         fcStateOutputFile << fcState->commandedEngine2 << "," << fcState->commandedEngine3 << "," << fcState->commandedEngine4 << ",";
         fcStateOutputFile << fcState->rclinkActive << "," << fcState->fcUptime << "," << fcState->fcCPUusage << std::endl;
+    }
+
+    return;
+}
+
+/**
+  * @brief Log new AP State for plotting and file output
+  */
+
+void DataLogger::setAPStateData(const timeval* const timeStamp, const ap_state_t* const apState)
+{
+    AHNS_DEBUG("DataLogger::setAPStateData(const timeval* timeStamp, const ap_state_t* const apState)");
+
+    // Time
+    m_DataVector[AP_STATE_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
+    m_DataVector[AP_STATE_TIME].push_back(m_DataVector[AP_STATE_RAW_TIME].last()-m_DataVector[AP_STATE_RAW_TIME].front());
+
+    // Reference Angles
+    m_DataVector[REF_PHI].push_back(apState->referencePhi);
+    m_DataVector[REF_THETA].push_back(apState->referenceTheta);
+    m_DataVector[REF_PSI].push_back(apState->referencePsi);
+
+    // Reference Position
+    m_DataVector[REF_X].push_back(apState->referenceX);
+    m_DataVector[REF_Y].push_back(apState->referenceY);
+    m_DataVector[REF_Z].push_back(apState->referenceZ);
+
+    // Active Loops
+    m_DataVector[PHI_ACTIVE].push_back(apState->phiActive);
+    m_DataVector[THETA_ACTIVE].push_back(apState->thetaActive);
+    m_DataVector[PSI_ACTIVE].push_back(apState->psiActive);
+    m_DataVector[X_ACTIVE].push_back(apState->xActive);
+    m_DataVector[Y_ACTIVE].push_back(apState->yActive);
+    m_DataVector[Z_ACTIVE].push_back(apState->zActive);
+
+    // Log the FC State Data
+    if (m_loggingOn)
+    {
+        apStateOutputFile << m_DataVector[AP_STATE_RAW_TIME].last()-m_DataVector[AP_STATE_RAW_TIME].front() << "," << apState->referencePhi << ",";
+        apStateOutputFile << apState->referenceTheta << "," << apState->referencePsi << "," << apState->referenceX << ",";
+        apStateOutputFile << apState->referenceY << "," << apState->referenceZ << "," << apState->phiActive << ",";
+        apStateOutputFile << apState->thetaActive << "," << apState->psiActive << "," << apState->xActive << ",";
+        apStateOutputFile << apState->yActive <<"," << apState->zActive << std::endl;
     }
 
     return;

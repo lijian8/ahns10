@@ -29,6 +29,7 @@
 #include "receiveconsole.h"
 #include "dataplotter.h"
 #include "bfimagefeed.h"
+#include "flightcontrol.h"
 
 // Threads
 #include "telemetrythread.h"
@@ -50,29 +51,25 @@ gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
     qRegisterMetaType<gains_t>("gains_t");
     qRegisterMetaType<loop_parameters_t>("loop_parameters_t");
 
-
-
     createDockWindows();
 
     // Actions for Main Menu
     connect(ui->actionExit,SIGNAL(triggered(bool)),this,SLOT(close()));
     connect(ui->actionAbout,SIGNAL(triggered()),this,SLOT(on_actionAbout_triggered()));
 
-    // Create about form
-    m_Aboutfrm = new aboutForm;
-    m_Aboutfrm->setStyleSheet(this->styleSheet());
-
     // TelemetryThread not started yet
     m_TelemetryThread = NULL;
 
-    // Timer signals
+    // Telemetry Timer
     connect(&m_oTelUptimer,SIGNAL(timeout()),this,SLOT(TelemetryMonitor()));
-
-    //timer variables
     m_oTelUptimer.setInterval(1000);
     m_TelSecCount = 0;
     m_TelMinCount = 0;
     m_TelHourCount = 0;
+
+    // Redraw Timer
+    connect(&m_updateTimer,SIGNAL(timeout()),this,SLOT(UpdateWidgets()));
+    m_updateTimer.setInterval(40); // 25 Hz
 }
 
 gcsMainWindow::~gcsMainWindow()
@@ -86,8 +83,6 @@ gcsMainWindow::~gcsMainWindow()
         m_TelemetryThread->wait();
         delete m_TelemetryThread;
     }
-
-    delete m_Aboutfrm;
     delete ui;
     AHNS_DEBUG("gcsMainWindow::~gcsMainWindow() [ COMPLETED ]");
 }
@@ -127,6 +122,8 @@ void gcsMainWindow::createDockWindows()
         dockDP->setObjectName("Data Plotter");
         QDockWidget* dockBF = new QDockWidget(tr("Blackfin"),this);
         dockBF->setObjectName("Blackfin Camera feed");
+        QDockWidget* dockFCtrl = new QDockWidget(tr("Flight Control"),this);
+        dockFCtrl->setObjectName("Flight Control");
 
         m_bfImageFeedWidget = new bfImageFeed(dockBF);
 
@@ -137,6 +134,7 @@ void gcsMainWindow::createDockWindows()
         m_wifiCommsWidget = new wifiComms(dockWC);
         m_receiveConsoleWidget = new ReceiveConsole(dockRC);
         m_dataPlotterWidget = new DataPlotter(m_Data.getData(),dockDP);
+        m_flightControlWidget = new FlightControl(dockFCtrl);
 
         dockAH->setWidget(m_ahWidget);
         dockSS->setWidget(m_systemStatusWidget);
@@ -144,6 +142,7 @@ void gcsMainWindow::createDockWindows()
         dockWC->setWidget(m_wifiCommsWidget);
         dockDP->setWidget(m_dataPlotterWidget);
         dockBF->setWidget(m_bfImageFeedWidget);
+        dockFCtrl->setWidget(m_flightControlWidget);
 
         addDockWidget(Qt::RightDockWidgetArea,dockAH);
         addDockWidget(Qt::RightDockWidgetArea,dockSS);
@@ -151,19 +150,22 @@ void gcsMainWindow::createDockWindows()
         addDockWidget(Qt::RightDockWidgetArea,dockWC);
         addDockWidget(Qt::LeftDockWidgetArea,dockDP);
         addDockWidget(Qt::RightDockWidgetArea,dockBF);
+        addDockWidget(Qt::LeftDockWidgetArea,dockFCtrl);
 
 
         //setTabPosition(Qt::RightDockWidgetArea,QTabWidget::South);
         tabifyDockWidget(dockWC,dockRC);
+        //tabifyDockWidget(dockFCtrl,dockSS);
         tabifyDockWidget(dockAH,dockBF);
+
 
         ui->menuView->insertAction(0,dockAH->toggleViewAction());
         ui->menuView->insertAction(0,dockSS->toggleViewAction());
         ui->menuView->insertAction(0,dockWC->toggleViewAction());
         ui->menuView->insertAction(0,dockRC->toggleViewAction());
         ui->menuView->insertAction(0,dockDP->toggleViewAction());
-
         ui->menuView->insertAction(0,dockBF->toggleViewAction());
+        ui->menuView->insertAction(0,dockFCtrl->toggleViewAction());
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
         connect(m_wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
@@ -214,7 +216,7 @@ void gcsMainWindow::on_actionNew_Plotting_Widget_triggered()
 void gcsMainWindow::on_actionAbout_triggered()
 {
     AHNS_DEBUG("gcsMainWindow::on_actionAbout_triggered()");
-    m_Aboutfrm->show();
+    m_Aboutfrm.show();
     return;
 }
 
@@ -244,10 +246,17 @@ void gcsMainWindow::on_actionRemove_Last_Plotting_Widget_triggered()
 {
     AHNS_DEBUG("gcsMainWindow::on_actionRemove_Last_Plotting_Widget_triggered()");
 
-    m_plottingDock.last()->setAttribute(Qt::WA_DeleteOnClose);
-    m_plottingDock.last()->close();
-    m_plottingDock.removeLast();
-    m_plottingWidgets.removeLast();
+    if (!m_plottingDock.isEmpty())
+    {
+        m_plottingDock.last()->setAttribute(Qt::WA_DeleteOnClose);
+        m_plottingDock.last()->close();
+        m_plottingDock.removeLast();
+        m_plottingWidgets.removeLast();
+    }
+    else
+    {
+        AHNS_DEBUG("gcsMainWindow::on_actionRemove_Last_Plotting_Widget_triggered() [ NO ADDITIONAL PLOTS ]");
+    }
     return;
 }
 
@@ -259,6 +268,7 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
 {
     AHNS_DEBUG("gcsMainWindow::StartTelemetry()");
     AHNS_DEBUG("gcsMainWindow::StartTelemetry() [ MAIN THREAD ID " << (int) QThread::currentThreadId() << " ]");
+
     if (m_TelemetryThread == NULL)
     {
         try
@@ -274,6 +284,7 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             connect(m_TelemetryThread,SIGNAL(NewAckMessage(const timeval, const int)),this,SLOT(ProcessAckMessage(const timeval, const int)));
             connect(m_TelemetryThread,SIGNAL(NewCloseMessage(const timeval, const int)),this,SLOT(ProcessCloseMessage(const timeval, const int)));
             connect(m_TelemetryThread,SIGNAL(NewFCState(const timeval, const fc_state_t, const int)),this,SLOT(ProcessFCState(const timeval, const fc_state_t, const int)));
+            connect(m_TelemetryThread,SIGNAL(NewAPState(const timeval, const ap_state_t, const int)),this,SLOT(ProcessAPState(const timeval, const ap_state_t, const int)));
             m_receiveConsoleWidget->clearConsole();
 
             // Start the timer
@@ -281,24 +292,20 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             m_TelMinCount = 0;
             m_TelHourCount = 0;
             m_oTelUptimer.start();
+
+            m_updateTimer.start();
         }
         catch (const std::exception &e)
         {
             AHNS_ALERT("gcsMainWindow::StartTelemetry() [ THREAD START FAILED " << e.what() << " ]");
             m_TelemetryThread = NULL;
-            QMessageBox messageBox(QMessageBox::Warning,"Failed Telemetry Launch",e.what());
-            messageBox.setStyleSheet(this->styleSheet());
-            messageBox.show();
-            messageBox.exec();
+            QMessageBox::warning(this,tr("Failed Telemetry Launch"),e.what(),QMessageBox::Ok);
         }
     }
     else
     {
         AHNS_DEBUG("gcsMainWindow::StartTelemetry() [ FALSE OPEN BUTTON PRESS ]");
-        QMessageBox messageBox(QMessageBox::Information,"Telemetry","Telemetry Already Running",QMessageBox::Ok);
-        messageBox.setStyleSheet(this->styleSheet());
-        messageBox.show();
-        messageBox.exec();
+        QMessageBox::information(this,tr("Telemetry"),tr("Telemetry Already Running"),QMessageBox::Ok);
     }
     return;
 }
@@ -309,6 +316,9 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
 void gcsMainWindow::CloseTelemetry()
 {
     AHNS_DEBUG("gcsMainWindow::CloseTelemetry()");
+
+    m_updateTimer.stop();
+
     if (m_TelemetryThread != NULL)
     {
         m_TelemetryThread->stop();
@@ -322,10 +332,7 @@ void gcsMainWindow::CloseTelemetry()
     else
     {
         AHNS_DEBUG("gcsMainWindow::CloseTelemetry() [ FALSE CLOSE BUTTON PRESS ]");
-        QMessageBox messageBox(QMessageBox::Information,"Telemetry","Telemetry Already Stopped",QMessageBox::Ok);
-        messageBox.setStyleSheet(this->styleSheet());
-        messageBox.show();
-        messageBox.exec();
+        QMessageBox::information(this,tr("Telemetry"),tr("Telemetry Already Stopped"),QMessageBox::Ok);
     }
     return;
 }
@@ -351,10 +358,7 @@ void gcsMainWindow::RetryTelemetry(quint16& serverPort, QString& serverIP, quint
         {
             AHNS_ALERT("gcsMainWindow::ResetTelemetry() [ THREAD RESET FAILED " << e.what() << " ]");
             m_TelemetryThread = NULL;
-            QMessageBox messageBox(QMessageBox::Warning,"Failed Telemetry Restart",e.what(),QMessageBox::Ok);
-            messageBox.setStyleSheet(this->styleSheet());
-            messageBox.show();
-            messageBox.exec();
+            QMessageBox::warning(this,tr("Failed Telemetry Restart"),e.what(),QMessageBox::Ok);
         }
     }
     else
@@ -391,29 +395,16 @@ void gcsMainWindow::TelemetryMonitor()
         else
         {
             AHNS_ALERT("gcsMainWindow::TelemetryMonitor() [ TELEMETRY THREAD DROPPED ]");
-            QMessageBox messageBox(QMessageBox::Critical,"Telemetry Thread Dropped","Thread Timed Out or Stopped",QMessageBox::Ok);
-            messageBox.setStyleSheet(this->styleSheet());
-            messageBox.show();
-            messageBox.exec();
+            QMessageBox::critical(this,tr("Telemetry Thread Dropped"),tr("Thread Timed Out or Stopped"),QMessageBox::Ok);
 
-            m_oTelUptimer.stop();
             // Not Connected so don't run
-            if (m_TelemetryThread != NULL)
-            {
-                m_TelemetryThread->stop();
-                m_TelemetryThread->wait();
-                delete m_TelemetryThread;
-                m_TelemetryThread = NULL;
-            }
+            CloseTelemetry();
         }
     }
     else
     {
         AHNS_ALERT("gcsMainWindow::TelemetryMonitor() [ TELEMETRY THREAD DELETED EARLY ]");
-        QMessageBox messageBox(QMessageBox::Critical,"Failed Telemetry Thread","Thread Deleted",QMessageBox::Ok);
-        messageBox.setStyleSheet(this->styleSheet());
-        messageBox.show();
-        messageBox.exec();
+        QMessageBox::critical(this,tr("Failed Telemetry Thread"),tr("Thread Deleted"),QMessageBox::Ok);
         m_oTelUptimer.stop();
     }
     return;
@@ -469,6 +460,9 @@ void gcsMainWindow::on_actionSave_Config_triggered()
     return;
 }
 
+/**
+  * Menu slot to load config
+  */
 void gcsMainWindow::on_actionLoad_Config_triggered()
 {
     AHNS_DEBUG("void gcsMainWindow::on_actionLoad_Config_triggered()");
@@ -533,4 +527,26 @@ void gcsMainWindow::on_actionRestart_Logging_triggered()
 {
     m_Data.clearData();
     m_Data.initialiseLogs();
+    return;
+}
+
+/**
+  * @brief Update Slot to update widgets
+  */
+void gcsMainWindow::UpdateWidgets()
+{
+    QLinkedList<DataPlotter *>::iterator iter = m_plottingWidgets.begin();
+
+    m_systemStatusWidget->UpdateStatus();
+    m_dataPlotterWidget->replot();
+    m_ahWidget->UpdateRoll();
+
+    if (!m_plottingWidgets.isEmpty())
+    {
+        for (iter = m_plottingWidgets.begin(); iter != m_plottingWidgets.end(); ++iter)
+        {
+            (**iter).replot();
+        }
+    }
+    return;
 }

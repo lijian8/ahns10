@@ -196,3 +196,58 @@ void gcsMainWindow::ProcessFCState(const timeval timeStamp, const fc_state_t fcS
 
     return;
 }
+
+/**
+  * @brief Slot to receive a AUTOPILOT_STATE Message
+  */
+void gcsMainWindow::ProcessAPState(const timeval timeStamp, const ap_state_t apState, const int discarded)
+{
+    AHNS_DEBUG("gcsMainWindow::ProcessAPState(const timeval timeStamp, const ap_state_t apState, const int discarded)");
+    QString consoleText;
+    QString timeStampStr = timeStamptoString(timeStamp);
+
+    if (m_receiveConsoleWidget->receivedShow() || m_receiveConsoleWidget->discardedShow()) // form string if either shown
+    {
+        if (!m_receiveConsoleWidget->detailShow()) // only keep first line
+        {
+            consoleText = timeStampStr % " [ AUTOPILOT_STATE ]";
+        }
+        else
+        {
+            QString refPhi, refTheta, refPsi, refX, refY, refZ, actPhi, actTheta, actPsi, actX, actY, actZ;
+
+            refPhi.setNum(apState.referencePhi);
+            refTheta.setNum(apState.referenceTheta);
+            refPsi.setNum(apState.referencePsi);
+
+            refX.setNum(apState.referenceX);
+            refY.setNum(apState.referenceY);
+            refZ.setNum(apState.referenceZ);
+
+            actPhi.setNum(apState.phiActive);
+            actTheta.setNum(apState.thetaActive);
+            actPsi.setNum(apState.psiActive);
+
+            actX.setNum(apState.xActive);
+            actY.setNum(apState.yActive);
+            actZ.setNum(apState.zActive);
+
+            consoleText = "[ AUTOPILOT_STATE ] \n\t" % timeStampStr %"\n\t"
+                          % refPhi %" \t " % refTheta %" \t "% refPsi %"\n\t"
+                          % refX %" \t " % refY %" \t "% refZ %"\n\t"
+                          % actPhi %" \t " % actTheta %" \t "% actPsi %"\n\t"
+                          % actX %" \t " % actY %" \t "% actZ %"\n\t";
+        }
+    }
+
+    m_receiveConsoleWidget->addItem(consoleText,discarded);
+
+    if (!discarded)
+    {
+        // Update the GUI
+        m_Data.setAPStateData(&timeStamp,&apState);
+        //m_systemStatusWidget->loadFCState(fcState);
+    }
+
+    return;
+}
