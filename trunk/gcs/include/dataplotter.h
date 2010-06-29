@@ -60,9 +60,6 @@ private:
 
     Ui::DataPlotter *ui;
 
-    /** Timer for Plot Updating at 50Hz*/
-    QTimer updatePlotTimer;
-
     /** @name Active Plots */
     volatile bool m_activePlot[CURVE_COUNT];
 

@@ -1,6 +1,6 @@
-/* $Author: tlmolloy $
+/* $Author$
  * $Name:  $
- * $Id: client.c 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Id$
  * $Source: /home/luis/cvsroot/net-api/client.c,v $
  * $Log: client.c,v $
  * Revision 1.1.1.1  2008-05-05 07:07:57  luis

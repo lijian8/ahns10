@@ -1,6 +1,6 @@
-/* $Author: tlmolloy $
+/* $Author$
  * $Name:  $
- * $Id: udp.h 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Id$
  * $Source: /home/luis/cvsroot/net-api/udp.h,v $
  * $Log: udp.h,v $
  * Revision 1.1.1.1  2008-05-05 07:07:57  luis

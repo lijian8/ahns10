@@ -6,24 +6,25 @@
  * Revision 1.1.1.1  2008-05-05 07:07:57  luis
  * initial import
  *
- * Revision 1.1.1.1  2008-05-05 06:49:35  luis
- * initial import
+ * @brief Test Program for the Development of the GCS
+ *        Currently Transmits:
+ *         - state_t
+ *         - fc_state_t
+ *         - COMMAND_ACK
+ *        
+ *        Currently Receives:
+ *         - COMMAND_CLOSE
+ *         - COMMAND_OPEN
  *
- * Revision 1.2  2006/01/18 15:47:45  cvs
- * *** empty log message ***
  *
- * Revision 1.1.1.1  2005/11/06 10:56:35  cvs
- * initial creeation
- *
- * Revision 1.1.1.1  2005/10/22 16:44:22  cvs
- * initial creation
- *
- * Revision 1.1.1.1  2005/10/15 15:14:06  cvs
- * initial project comments
- *
- * Revision 1.1.1.1  2004/03/03 11:03:06  srik
- * Initial Release 0.1
- *
+ * @TODO
+ *        - Gains
+ *        - Loop Parameters
+ *        - AP Get, Set and Save CONFIG
+ *        - IMU Structure
+ *        - Raw Sensor Data
+ *        - Desired Position
+ *        - Desired Attitude
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,13 +35,19 @@
 #include "server.h"
 #include "commands.h"
 
-
 #include "udp.h"
 
+#define DEFAULT_SERVER_IP 127.0.0.1
+
+/** Testing Functions */
+void FilteredStateData(int count, state_t* testState);
+void FCStateData(int count, fc_state_t* testState);
+void APStateData(int count, ap_state_t* testState);
+void GainsData(int count, gains_t* testState);
+void LoopParametersData(int count, loop_parameters_t* testState);
 
 int verbose = 0;
 int server_port = 2002;
-
 char *server_host;
 static Server server;
 unsigned char init = 1;
@@ -48,25 +55,34 @@ struct timeval timestamp, local_time;
 char text[128];
 
 
-
 int
 main (int argc, char *argv[])
 {
   const char *program = argv[0];
-
   int c, errflag = 0;
+  int count = 0;
+  int type = 0;
+  unsigned char buffer[512];
+  int dataLength = 0;
 
+  // Allocate the Testing Structures
+  state_t state;
+  fc_state_t fcState;
+  ap_state_t apState;
+  gains_t gains;
+  loop_parameters_t loopParameters;
+
+  // Allocate Server
   server_host = (char *) malloc (100 * sizeof (char));
-
   if (server_host == NULL)
-    {
-      fprintf (stderr, "cannot allocate mem\n");
-      exit (-1);
-    }
+  {
+    fprintf (stderr, "ERROR: Cannot allocate mem\n");
+    exit (-1);
+  }
 
+  server_host = "DEFAULT_SERVER_IP";
 
-  server_host = "127.0.0.1";
-
+  // Parse Commandline Arguments
   while ((c = getopt (argc, argv, "s:p:v:")) != -1)
     {
       switch (c)
@@ -89,29 +105,15 @@ main (int argc, char *argv[])
 	}
     }
 
-
-  msg_camera_t cam_msg;
-  state_t state;
-  fc_state_t fc_state;
-
-  int count = 0;
-  int type;
-
-  server_init (&server, 2002);
-  server_handle (&server, CAM_STATE, server_cam_state, (void *) &cam_msg);
-  memset ((void *) (&cam_msg), 0, sizeof (msg_camera_t));
-  memset ((void *) (&state), 0, sizeof (state_t));
-  memset ((void *) (&fc_state), 0, sizeof (fc_state_t));
+  server_init (&server, server_port);
 
   while (1)
     {
       gettimeofday (&local_time, 0);
-      int type = 0;
       if (server_poll (&server, 1))
+      {
 	type = server_get_packet (&server);
-
-
-
+      }
       if (type < 0)
 	{
 	  fprintf (stderr, "Read error from server");
@@ -122,52 +124,116 @@ main (int argc, char *argv[])
       count++;
       usleep (20e3);
 
-      /* send data to the socket */
-      if (count % 1 == 0)
+      if (count % 1 == 0) // non-zero count
+      {
 	init = 1;
+      }
 
       if (init)
-	{
-	  memset ((void *) (&state), 0, sizeof (state_t));
-  	  memset ((void *) (&fc_state), 0, sizeof (fc_state_t));
-
-	  state.phi = fmod (count / 180.0 * 5.0 / 4.0, M_PI / 2.0);
-	  state.theta = fmod (count / 180.0 * 10 / 7.0, M_PI / 2.0);
-	  state.psi = fmod (count / 180.0 * 10.0 / 3.0, 2 * M_PI);
-          state.p = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
-          state.q = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
-          state.r = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
-          state.x = fmod((count - 300.0) * count/M_PI, 300);
-          state.y = fmod((count - 200.0) * count/M_PI, 200);
-          state.z = fmod((count - 100.0) * count,100);
-	  state.voltage = (count/100 % 4) + 9;
-
-
-	  printf ("\n\nSending state: Size %d \n",sizeof(state_t)),
-          fprintf (stderr, "state : %f  %f %f \n", state.phi, state.theta, state.psi);
+      {
 	  gettimeofday (&local_time, 0);
-	  fprintf (stderr, "time: %.4f\n", local_time.tv_sec + local_time.tv_usec/1e6);
-	  fprintf (stderr, "count: %d\n", count);
+          fprintf (stderr, "Time: %.4f\n", local_time.tv_sec + local_time.tv_usec/1e6);
+	  fprintf (stderr, "Count: %d\n", count);
+	  
+	  // State Test Structure
+	  FilteredStateData(count, &state);
+	  printf ("\n\nSending state: Size %d \n",sizeof(state_t)),
+          fprintf (stderr, "phi = %f   \t theta = %f \t psi = %f \n", state.phi, state.theta, state.psi);
+          fprintf (stderr, "p = %f     \t q = %f     \t r = %f \n", state.p, state.q, state.r);
+          fprintf (stderr, "x = %f     \t y = %f     \t z = %f \n", state.x, state.y, state.z);
+          fprintf (stderr, "vx = %f    \t vy = %f    \t vz = %f \n", state.vx, state.vy, state.vz);
+          fprintf (stderr, "ax = %f    \t ay = %f    \t az = %f \n", state.ax, state.ay, state.az);
+          fprintf (stderr, "trace = %f \t voltage = %f", state.trace, state.voltage); 
 	  server_send_packet (&server, HELI_STATE, &state, sizeof (state_t));
+  
+ 	  // FC Test Structure
+          FCStateData(count,&fcState);
+	  printf ("\n\nSending fcState: Size %d \n",sizeof(fc_state_t)),
+          fprintf (stderr, "Eng1 = %d \t Eng2 = %d \t Eng3 = %d \t Eng4 = %d \n", fcState.commandedEngine1, fcState.commandedEngine2, fcState.commandedEngine3, fcState.commandedEngine4);
+          fprintf (stderr, "fcUptime = %llu \t fcCPUusage = %d \t rclinkActive = %d \n", fcState.fcUptime, fcState.fcCPUusage, fcState.rclinkActive);
+	  dataLength = PackFCState(buffer,&fcState);
+	  server_send_packet (&server, FC_STATE, &fcState, dataLength);
 
-	  fc_state.commandedEngine1 = 1000 + fmod(0 + count*2*M_PI, 1000);
-	  fc_state.commandedEngine2 = 1000 + fmod(100 + count*3*M_PI, 1000);
-	  fc_state.commandedEngine3 = 1000 + fmod(200 + count*4*M_PI, 1000);
-	  fc_state.commandedEngine4 = 1000 + fmod(300 + count*5*M_PI, 1000);
+          // AP Test Structure
+          APStateData(count, &apState);
+          printf ("\n\nSending apState: Size %d \n",sizeof(ap_state_t)),
+          fprintf (stderr, "referencePhi = %f   \t referenceTheta = %f \t referencePsi = %f \n", apState.referencePhi, apState.referenceTheta, apState.referencePsi);
+          fprintf (stderr, "referenceX = %f \t referenceY = %f \t referenceZ = %f \n", apState.referenceX, apState.referenceY, apState.referenceZ);
+          fprintf (stderr, "phiActive = %u \t thetaActive = %u \t psiActive = %u \n", apState.phiActive, apState.thetaActive, apState.psiActive);
+          fprintf (stderr, "xActive = %u \t yActive = %u \t zActive = %u \n", apState.xActive, apState.yActive, apState.zActive);
 
-	  fc_state.rclinkActive = ((count % 200) < 100 ) ? 1 : 0;
-	  fc_state.fcUptime = count*(count+1);
-          fc_state.fcCPUusage = 2*count % 100;
-
-	  fprintf(stderr,"fc_size: %d\tUpTime: %llu\tUsage: %d\tRC Link: %d",sizeof(fc_state_t),fc_state.fcUptime,fc_state.fcCPUusage,fc_state.rclinkActive);
-	  unsigned char buffer[2000];
-	  int dataLength = PackFCState(buffer,&fc_state);
-	  server_send_packet (&server, FC_STATE, &fc_state, dataLength);
-
-
-
+	  dataLength = PackAPState(buffer,&apState);	  
+          server_send_packet (&server, AUTOPILOT_STATE, &apState, dataLength);
+	   
 	  init = 0;
 	}
     }
   return 0;
+}
+
+void FilteredStateData(int count, state_t* testState)
+{
+  memset ((void *) (testState), 0, sizeof (state_t));
+  
+  testState->phi = fmod (count / 180.0 * 5.0 / 4.0, M_PI / 2.0);
+  testState->theta = fmod (count / 180.0 * 10 / 7.0, M_PI / 2.0);
+  testState->psi = fmod (count / 180.0 * 10.0 / 3.0, 2 * M_PI);
+
+  testState->p = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
+  testState->q = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
+  testState->r = fmod((count - 500) * count/M_PI*180.0, M_PI/100);
+
+  testState->x = fmod((count - 300.0) * count/M_PI, 300);
+  testState->y = fmod((count - 200.0) * count/M_PI, 200);
+  testState->z = fmod((count - 100.0) * count,100);
+
+  testState->vx = fmod((count - 300.0) * count/M_PI, 50);
+  testState->vy = fmod((count - 200.0) * count/M_PI, 50);
+  testState->vz = fmod((count - 100.0) * count,100);
+
+  testState->ax = fmod((count - 300.0) * count/M_PI, 2*9);
+  testState->ay = fmod((count - 200.0) * count/M_PI, 5*9);
+  testState->az = fmod((count - 100.0) * count,3*9);
+
+  testState->trace = count % 50;
+  testState->voltage = (count/100 % 4) + 9;
+
+  return;
+}
+
+void FCStateData(int count, fc_state_t* testState)
+{
+  memset ((void *) (testState), 0, sizeof (fc_state_t));
+  
+  testState->commandedEngine1 = 1000 + fmod(0 + count*2*M_PI, 1000);
+  testState->commandedEngine2 = 1000 + fmod(100 + count*3*M_PI, 1000);
+  testState->commandedEngine3 = 1000 + fmod(200 + count*4*M_PI, 1000);
+  testState->commandedEngine4 = 1000 + fmod(300 + count*5*M_PI, 1000);
+  testState->rclinkActive = ((count % 200) < 100 ) ? 1 : 0;
+  testState->fcUptime = count++;
+  testState->fcCPUusage = 2*count % 100;
+
+  return;
+}
+
+void APStateData(int count, ap_state_t* testState)
+{
+  testState->referencePhi = fmod(count,M_PI/2);
+  testState->referenceTheta = fmod(2*count,M_PI);
+  testState->referencePsi = fmod(3*count,M_PI/2);
+
+  testState->referenceX = fmod(4*count,M_PI/2);
+  testState->referenceY = fmod(5*count,M_PI);
+  testState->referenceZ = pow(-1,count)*fmod(5*count,M_PI);
+
+  testState->phiActive = ((count % 225) < 100 ) ? 1 : 0;
+  testState->thetaActive = ((count % 285) < 100 ) ? 1 : 0;
+  testState->psiActive = ((count % 250) < 100 ) ? 1 : 0;
+
+  
+  testState->xActive = ((count % 200) < 100 ) ? 1 : 0;
+  testState->yActive = ((count % 175) < 100 ) ? 1 : 0;
+  testState->zActive = ((count % 150) < 100 ) ? 1 : 0;
+
+  return;
 }

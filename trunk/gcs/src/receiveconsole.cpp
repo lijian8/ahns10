@@ -143,7 +143,7 @@ void ReceiveConsole::clearConsole()
     ui->discardedlcdNumber->display((double) m_discardedCount);
     ui->receivedlcdNumber->display((double) m_packetCount);
     ui->listWidget->clear();
-    ui->Speedlbl->setText("0 kBs");
+    ui->Speedlbl->setText("0 Bs");
     return;
 }
 

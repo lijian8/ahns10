@@ -28,12 +28,6 @@ AHclass::AHclass(QWidget* parent) : QGLWidget(parent)
     int argc = 0;
     char** argv = NULL;
     glutInit(&argc, argv);
-
-    // Force Update at 25Hz
-    updateTimer.setInterval(40);
-    updating = false;
-    connect(&updateTimer,SIGNAL(timeout()),this,SLOT(UpdateRoll()));
-    updateTimer.start();
 }
 
 AHclass::~AHclass()

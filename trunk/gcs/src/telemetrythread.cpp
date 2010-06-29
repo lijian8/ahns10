@@ -349,7 +349,9 @@ void TelemetryThread::DataPending()
                 emit NewFCState(*timeStampPointer, receivedState, discarded);
                 break;
             case AUTOPILOT_STATE:
-                emit NewAPState(*timeStampPointer, *(ap_state_t*) buffer, discarded);
+                ap_state_t receivedAPState;
+                UnpackAPState((unsigned char*) buffer, &receivedAPState);
+                emit NewAPState(*timeStampPointer, receivedAPState, discarded);
                 break;
             case FAILSAFE:
                 emit NewFailSafe(*timeStampPointer,discarded);
