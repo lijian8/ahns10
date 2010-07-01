@@ -136,11 +136,9 @@ void FlightControl::on_attitudeBtn_clicked()
     ui->yChkbox->setChecked(false);
     ui->zChkbox->setChecked(false);
 
-    // reset Angle setpoints
-    ui->rollCmdResetBtn->click();
-    ui->pitchCmdResetBtn->click();
-    ui->yawCmdResetBtn->click();
-
+    // enable all command buttons
+    ui->sendAttitudeBtn->setEnabled(true);
+    ui->sendPositionBtn->setEnabled(true);
 
     return;
 }
@@ -153,24 +151,24 @@ void FlightControl::on_positionBtn_clicked()
     AHNS_DEBUG("void FlightControl::on_positionBtn_clicked()");
 
     // enable user to change active loops
-    ui->rollChkbox->setEnabled(true);
-    ui->pitchChkbox->setEnabled(true);
-    ui->yawChkbox->setEnabled(true);
-    ui->zChkbox->setEnabled(true);
+    ui->rollChkbox->setEnabled(false);
+    ui->pitchChkbox->setEnabled(false);
+    ui->yawChkbox->setEnabled(false);
+    ui->zChkbox->setEnabled(false);
 
     // enable loop setpoints
-    ui->rollCmdBox->setEnabled(true);
-    ui->pitchCmdBox->setEnabled(true);
-    ui->yawCmdBox->setEnabled(true);
-    ui->xCmdBox->setEnabled(false);
-    ui->yCmdBox->setEnabled(false);
+    ui->rollCmdBox->setEnabled(false);
+    ui->pitchCmdBox->setEnabled(false);
+    ui->yawCmdBox->setEnabled(false);
+    ui->xCmdBox->setEnabled(true);
+    ui->yCmdBox->setEnabled(true);
     ui->zCmdBox->setEnabled(true);
 
-    ui->rollCmdResetBtn->setEnabled(true);
-    ui->pitchCmdResetBtn->setEnabled(true);
-    ui->yawCmdResetBtn->setEnabled(true);
-    ui->xCmdResetBtn->setEnabled(false);
-    ui->yCmdResetBtn->setEnabled(false);
+    ui->rollCmdResetBtn->setEnabled(false);
+    ui->pitchCmdResetBtn->setEnabled(false);
+    ui->yawCmdResetBtn->setEnabled(false);
+    ui->xCmdResetBtn->setEnabled(true);
+    ui->yCmdResetBtn->setEnabled(true);
     ui->zCmdResetBtn->setEnabled(true);
 
     // select angle and altitude loops
@@ -178,9 +176,13 @@ void FlightControl::on_positionBtn_clicked()
     ui->pitchChkbox->setChecked(true);
     ui->yawChkbox->setChecked(true);
 
-    ui->xChkbox->setChecked(false);
-    ui->yChkbox->setChecked(false);
+    ui->xChkbox->setChecked(true);
+    ui->yChkbox->setChecked(true);
     ui->zChkbox->setChecked(true);
+
+    // disable attitude command button
+    ui->sendAttitudeBtn->setEnabled(false);
+    ui->sendPositionBtn->setEnabled(true);
 
     return;
 }
@@ -204,22 +206,26 @@ void FlightControl::on_guidanceBtn_clicked()
     ui->rollCmdBox->setEnabled(false);
     ui->pitchCmdBox->setEnabled(false);
     ui->yawCmdBox->setEnabled(false);
-    ui->xCmdBox->setEnabled(true);
-    ui->yCmdBox->setEnabled(true);
-    ui->zCmdBox->setEnabled(true);
+    ui->xCmdBox->setEnabled(false);
+    ui->yCmdBox->setEnabled(false);
+    ui->zCmdBox->setEnabled(false);
 
     ui->rollCmdResetBtn->setEnabled(false);
     ui->pitchCmdResetBtn->setEnabled(false);
     ui->yawCmdResetBtn->setEnabled(false);
-    ui->xCmdResetBtn->setEnabled(true);
-    ui->yCmdResetBtn->setEnabled(true);
-    ui->zCmdResetBtn->setEnabled(true);
+    ui->xCmdResetBtn->setEnabled(false);
+    ui->yCmdResetBtn->setEnabled(false);
+    ui->zCmdResetBtn->setEnabled(false);
 
     // disable user from changing active loops
     ui->rollChkbox->setEnabled(false);
     ui->pitchChkbox->setEnabled(false);
     ui->yawChkbox->setEnabled(false);
     ui->zChkbox->setEnabled(false);
+
+    // disable all command buttons
+    ui->sendAttitudeBtn->setEnabled(false);
+    ui->sendPositionBtn->setEnabled(false);
 
     return;
 }
@@ -286,6 +292,156 @@ void FlightControl::on_zCmdResetBtn_clicked()
 {
     AHNS_DEBUG("void FlightControl::on_zCmdResetBtn_clicked()");
     ui->zCmdBox->setValue(1.50);
+
+    return;
+}
+
+/**
+  * @brief Handle ap state from server
+  */
+void FlightControl::SetAPState(const ap_state_t* const srcState)
+{
+    AHNS_DEBUG("void FlightControl::SetAPState(const ap_state_t* const srcState)");
+
+    // Show set points if disabled
+    if (!ui->rollCmdBox->isEnabled())
+    {
+        ui->rollCmdBox->setValue(srcState->referencePhi);
+    }
+
+    if (!ui->pitchCmdBox->isEnabled())
+    {
+        ui->pitchCmdBox->setValue(srcState->referenceTheta);
+    }
+
+    if (!ui->yawCmdBox->isEnabled())
+    {
+        ui->yawCmdBox->setValue(srcState->referencePsi);
+    }
+
+    if (!ui->xCmdBox->isEnabled())
+    {
+        ui->xCmdBox->setValue(srcState->referenceX);
+    }
+
+    if (!ui->yCmdBox->isEnabled())
+    {
+        ui->yCmdBox->setValue(srcState->referenceY);
+    }
+
+    if (!ui->zCmdBox->isEnabled())
+    {
+        ui->zCmdBox->setValue(srcState->referenceZ);
+    }
+
+    // Update the lights
+    if (srcState->phiActive)
+    {
+        ui->rollActivelbl->setStyleSheet("QLabel { background-color: green }");
+    }
+    else
+    {
+        ui->rollActivelbl->setStyleSheet("QLabel { background-color: red }");
+    }
+
+    if (srcState->thetaActive)
+    {
+        ui->pitchActivelbl->setStyleSheet("QLabel { background-color: green }");
+    }
+    else
+    {
+        ui->pitchActivelbl->setStyleSheet("QLabel { background-color: red }");
+    }
+
+    if (srcState->psiActive)
+    {
+        ui->yawActivelbl->setStyleSheet("QLabel { background-color: green }");
+    }
+    else
+    {
+        ui->yawActivelbl->setStyleSheet("QLabel { background-color: red }");
+    }
+
+    if (srcState->xActive)
+    {
+        ui->xActivelbl->setStyleSheet("QLabel { background-color: green }");
+    }
+    else
+    {
+        ui->xActivelbl->setStyleSheet("QLabel { background-color: red }");
+    }
+
+    if (srcState->yActive)
+    {
+        ui->yActivelbl->setStyleSheet("QLabel { background-color: green }");
+    }
+    else
+    {
+        ui->yActivelbl->setStyleSheet("QLabel { background-color: red }");
+    }
+
+    if (srcState->zActive)
+    {
+        ui->zActivelbl->setStyleSheet("QLabel { background-color: green }");
+    }
+    else
+    {
+        ui->zActivelbl->setStyleSheet("QLabel { background-color: red }");
+    }
+
+    return;
+}
+
+/**
+  * @brief Collect and Send the Active Loop configuration
+  */
+void FlightControl::on_sendSetConfigBtn_clicked()
+{
+    AHNS_DEBUG("void FlightControl::on_sendSetConfigBtn_clicked()");
+
+    ap_config_t txConfig;
+
+    txConfig.phiActive = ui->rollChkbox->isChecked();
+    txConfig.thetaActive = ui->pitchChkbox->isChecked();
+    txConfig.psiActive = ui->yawChkbox->isChecked();
+    txConfig.xActive = ui->xChkbox->isChecked();
+    txConfig.yActive = ui->yChkbox->isChecked();
+    txConfig.zActive = ui->zChkbox->isChecked();
+
+    emit sendSetAPConfig(txConfig);
+
+    return;
+}
+
+/**
+  * @brief Collect and send the position setpoints
+  */
+void FlightControl::on_sendPositionBtn_clicked()
+{
+    AHNS_DEBUG("void FlightControl::on_sendPositionBtn_clicked()");
+
+    position_t txPosition;
+
+    txPosition.x = ui->xCmdBox->value();
+    txPosition.y = ui->yCmdBox->value();
+    txPosition.z = ui->zCmdBox->value();
+
+
+    return;
+}
+
+/**
+  * @brief Collect and send the attitude setpoints
+  */
+void FlightControl::on_sendAttitudeBtn_clicked()
+{
+    AHNS_DEBUG("void FlightControl::on_sendAttitudeBtn_clicked()");
+
+    attitude_t txAttitude;
+
+    txAttitude.phi = ui->rollCmdBox->value();
+    txAttitude.theta = ui->pitchCmdBox->value();
+    txAttitude.psi = ui->yawCmdBox->value();
 
     return;
 }

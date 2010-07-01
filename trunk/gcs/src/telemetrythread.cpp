@@ -29,6 +29,7 @@
 #include <ctime>
 
 #include "state.h"
+#include "primitive_serialisation.h"
 #include "commands.h"
 
 /**
@@ -167,6 +168,9 @@ void TelemetryThread::clientInitialise()
 {
     AHNS_DEBUG("TelemetryThread::clientInitialise()");
 
+    // Initialisation of Flags
+    m_configReceived = true;
+
     try
     {
         // Create Socket
@@ -178,19 +182,19 @@ void TelemetryThread::clientInitialise()
 
         // Send Connect Request to Server
         quint8 tryCounter = 0;
-        m_ackReceived = false;
-        while ((!m_ackReceived) && (tryCounter < 10) && (!m_stopped))
+        m_openReceived = false;
+        while ((!m_openReceived) && (tryCounter < 10) && (!m_stopped))
         {
             tryCounter++;
             sendMessage(COMMAND_OPEN);
             msleep(1000); // wait for reply
             DataPending();
         }
-        if (!m_ackReceived)
+        if (!m_openReceived)
         {
             throw std::runtime_error("Connection Timed Out");
         }
-        m_ackReceived = false; // reset flag
+        m_openReceived = false; // reset flag
     }
     catch(const std::exception& e)
     {
@@ -231,7 +235,7 @@ bool TelemetryThread::packetInitialise()
   * @return Number of bytes successfully transmitted, -1 for failed
   */
 
-int TelemetryThread::sendMessage(uint32_t type, const char* txData, int txDataByteLength)
+int TelemetryThread::sendMessage(uint32_t type, const unsigned char* txData, int txDataByteLength)
 {
     AHNS_DEBUG("TelemetryThread::sendMessage(uint32_t type, char* txData, int txDataByteLength)");
 
@@ -255,7 +259,7 @@ int TelemetryThread::sendMessage(uint32_t type, const char* txData, int txDataBy
     // Data
     if (( txData != NULL ) || (txData != 0))
     {
-        datagram += QByteArray::fromRawData(txData,txDataByteLength);
+        datagram += QByteArray::fromRawData((char*) txData,txDataByteLength);
     }
 
     // Speed Data
@@ -334,8 +338,10 @@ void TelemetryThread::DataPending()
             switch (messageType)
             {
             case COMMAND_ACK:
-                m_ackReceived = true; 
-                emit NewAckMessage(*timeStampPointer,discarded);
+                uint32_t ackType;
+                UnpackUInt32((unsigned char*) buffer, &ackType);
+                ackSort(ackType);
+                emit NewAckMessage(*timeStampPointer, ackType, discarded);
                 break;
             case COMMAND_CLOSE:
                 m_closeReceived = true;
@@ -462,3 +468,148 @@ bool TelemetryThread::isConnected() const
     return m_connected;
 }
 
+/**
+  * @brief Method to determine the nature of the acknowledgement
+  */
+
+bool TelemetryThread::ackSort(const uint32_t& ackType)
+{
+    bool bRet = true;
+
+    if (ackType == COMMAND_OPEN)
+    {
+        m_openReceived = true;
+    }
+    else if (ackType == SET_CONFIG)
+    {
+        m_configReceived = true;
+    }
+
+    return bRet;
+}
+
+/**
+  * @brief Send Position Setpoint and await acknowledgement
+  */
+void TelemetryThread::sendPositionCommand(position_t desiredPosition)
+{
+    AHNS_DEBUG("void TelemetryThread::sendPositionCommand(position_t desiredPosition)");
+
+    return;
+}
+
+/**
+  * @brief Send Attitude Setpoint and await acknowledgement
+  */
+void TelemetryThread::sendAttitudeCommand(attitude_t desiredAttitude)
+{
+    AHNS_DEBUG("void TelemetryThread::sendAttitudeCommand(attitude_t desiredAttitude)");
+
+    return;
+}
+
+/**
+  * @brief Send Gains and await acknowledgement
+  */
+void TelemetryThread::sendGains(uint32_t loop, gains_t desiredGains)
+{
+    AHNS_DEBUG("void TelemetryThread::sendGains(uint32_t loop, gains_t desiredGains)");
+
+    return;
+}
+
+/**
+  * @brief Send Loop parameters and await acknowledgement
+  */
+void TelemetryThread::sendParameters(uint32_t loop, loop_parameters_t desiredGains)
+{
+    AHNS_DEBUG("void TelemetryThread::sendParameters(uint32_t loop, loop_parameters_t desiredGains)");
+
+    return;
+}
+
+/**
+  * @brief Send AP configuration if not waiting for acknowledgement
+  */
+void TelemetryThread::sendSetAPConfig(ap_config_t apConfig)
+{
+    AHNS_ALERT("void TelemetryThread::sendSetAPConfig(ap_config_t apConfig)");
+
+    unsigned char buffer[sizeof(ap_config_t)];
+
+    if (m_configReceived)
+    {
+        m_txAPConfig = apConfig;
+
+        // Send the Message
+        PackAPConfigData(buffer, &m_txAPConfig);
+        sendMessage(SET_CONFIG, buffer, sizeof(ap_config_t));
+
+        // Await Reply
+        m_configReceived = false;
+        m_configTryCount = 1;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySetAPConfig()));
+    }
+    else
+    {
+        AHNS_DEBUG("void TelemetryThread::sendSetAPConfig(ap_config_t apConfig) [ STILL WAITING ]");
+    }
+    return;
+}
+
+/**
+  * @brief Monitor AP configuration acknowledgement
+  */
+void TelemetryThread::retrySetAPConfig()
+{
+    AHNS_DEBUG("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig)");
+
+    unsigned char buffer[sizeof(ap_config_t)];
+
+    if ((!m_configReceived) && (m_configTryCount < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
+    {
+        m_configTryCount++;
+
+        // Send the Message
+        PackAPConfigData(buffer, &m_txAPConfig);
+        sendMessage(SET_CONFIG, buffer, sizeof(ap_config_t));
+
+        // Await Reply
+        m_configReceived = false;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySetAPConfig()));
+    }
+    else // stopped either due to count or recieved
+    {
+        if(m_configReceived)
+        {
+            AHNS_ALERT("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig) [ SUCCESS ]");
+        }
+        else
+        {
+            m_configReceived = true;
+            AHNS_ALERT("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig) [ FAILED " << m_configTryCount << " ]");
+        }
+    }
+    return;
+}
+
+
+/**
+  * @brief Send request of complete AP config data
+  */
+void TelemetryThread::sendGetConfig()
+{
+    AHNS_DEBUG("void TelemetryThread::sendGetConfig()");
+
+    return;
+}
+
+/**
+  * @brief Send Command for FC to save all settings
+  */
+void TelemetryThread::sendSaveConfig()
+{
+    AHNS_DEBUG("void TelemetryThread::sendSaveConfig()");
+
+    return;
+}

@@ -117,6 +117,9 @@ void DataLogger::initialiseLogs()
         apStateOutputFile << "PSI_ACTIVE, X_ACTIVE, Y_ACTIVE, Z_ACTIVE" << std::endl;
     }
 
+    struct timeval time0;
+    gettimeofday(&time0,NULL);
+    m_zeroTime = time0.tv_sec + time0.tv_usec*1.0e-6;
 
     return;
 }
@@ -131,7 +134,7 @@ void DataLogger::setHeliStateData(const timeval* const timeStamp, const state_t*
 
     // Time
     m_DataVector[HELI_STATE_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
-    m_DataVector[HELI_STATE_TIME].push_back(m_DataVector[HELI_STATE_RAW_TIME].last()-m_DataVector[HELI_STATE_RAW_TIME].front());
+    m_DataVector[HELI_STATE_TIME].push_back(m_DataVector[HELI_STATE_RAW_TIME].last()-m_zeroTime);
 
     // Angular Position
     m_DataVector[F_PHI].push_back(heliState->phi);
@@ -160,6 +163,7 @@ void DataLogger::setHeliStateData(const timeval* const timeStamp, const state_t*
 
     // Voltage Accelerations
     m_DataVector[VOLTAGE].push_back(heliState->voltage);
+    m_DataVector[TRACE].push_back(heliState->trace);
 
 
     // Log the State Data
@@ -185,7 +189,7 @@ void DataLogger::setFCStateData(const timeval* const timeStamp, const fc_state_t
 
     // Time
     m_DataVector[FC_STATE_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
-    m_DataVector[FC_STATE_TIME].push_back(m_DataVector[FC_STATE_RAW_TIME].last()-m_DataVector[FC_STATE_RAW_TIME].front());
+    m_DataVector[FC_STATE_TIME].push_back(m_DataVector[FC_STATE_RAW_TIME].last()-m_zeroTime);
 
     // Commanded Engine PWM
     m_DataVector[ENGINE1].push_back(fcState->commandedEngine1);
@@ -220,7 +224,7 @@ void DataLogger::setAPStateData(const timeval* const timeStamp, const ap_state_t
 
     // Time
     m_DataVector[AP_STATE_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
-    m_DataVector[AP_STATE_TIME].push_back(m_DataVector[AP_STATE_RAW_TIME].last()-m_DataVector[AP_STATE_RAW_TIME].front());
+    m_DataVector[AP_STATE_TIME].push_back(m_DataVector[AP_STATE_RAW_TIME].last()-m_zeroTime);
 
     // Reference Angles
     m_DataVector[REF_PHI].push_back(apState->referencePhi);

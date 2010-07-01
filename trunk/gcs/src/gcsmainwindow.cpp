@@ -34,10 +34,20 @@
 // Threads
 #include "telemetrythread.h"
 
-
-
 // AHNS Reuse
 #include "ahns_logger.h"
+
+// Declare the Types for signal/slot use
+Q_DECLARE_METATYPE(timeval)
+Q_DECLARE_METATYPE(state_t)
+Q_DECLARE_METATYPE(fc_state_t)
+Q_DECLARE_METATYPE(ap_state_t)
+Q_DECLARE_METATYPE(gains_t)
+Q_DECLARE_METATYPE(loop_parameters_t)
+Q_DECLARE_METATYPE(uint32_t)
+Q_DECLARE_METATYPE(attitude_t)
+Q_DECLARE_METATYPE(position_t)
+Q_DECLARE_METATYPE(ap_config_t)
 
 gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::gcsMainWindow)
 {
@@ -50,6 +60,11 @@ gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
     qRegisterMetaType<ap_state_t>("ap_state_t");
     qRegisterMetaType<gains_t>("gains_t");
     qRegisterMetaType<loop_parameters_t>("loop_parameters_t");
+    qRegisterMetaType<uint32_t>("uint32_t");
+    qRegisterMetaType<attitude_t>("attitude_t");
+    qRegisterMetaType<position_t>("position_t");
+    qRegisterMetaType<ap_config_t>("ap_config_t");
+
 
     createDockWindows();
 
@@ -281,11 +296,14 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
 
             // Rx Messages
             connect(m_TelemetryThread,SIGNAL(NewHeliState(const timeval, const state_t, const int)),this,SLOT(ProcessHeliState(const timeval, const state_t, const int)));
-            connect(m_TelemetryThread,SIGNAL(NewAckMessage(const timeval, const int)),this,SLOT(ProcessAckMessage(const timeval, const int)));
+            connect(m_TelemetryThread,SIGNAL(NewAckMessage(const timeval, const uint32_t, const int)),this,SLOT(ProcessAckMessage(const timeval, const uint32_t, const int)));
             connect(m_TelemetryThread,SIGNAL(NewCloseMessage(const timeval, const int)),this,SLOT(ProcessCloseMessage(const timeval, const int)));
             connect(m_TelemetryThread,SIGNAL(NewFCState(const timeval, const fc_state_t, const int)),this,SLOT(ProcessFCState(const timeval, const fc_state_t, const int)));
             connect(m_TelemetryThread,SIGNAL(NewAPState(const timeval, const ap_state_t, const int)),this,SLOT(ProcessAPState(const timeval, const ap_state_t, const int)));
             m_receiveConsoleWidget->clearConsole();
+
+            // Tx Messages
+            connect(m_flightControlWidget,SIGNAL(sendSetAPConfig(ap_config_t)),m_TelemetryThread,SLOT(sendSetAPConfig(ap_config_t)));
 
             // Start the timer
             m_TelSecCount = 0;
