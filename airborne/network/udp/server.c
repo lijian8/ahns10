@@ -66,6 +66,8 @@ static int command_nop(void *priv,const Host_t *src, int type,const struct timev
 
 void server_add_client(Server *server,const Host_t *src)
 {
+	unsigned char BUFFER[80];
+	PackUInt32(BUFFER,COMMAND_OPEN);                       
 	fprintf(stderr,"void server_add_client(Server *server,const Host_t *src)");
 	
 	// First make sure the client isn't already in the global list of clients
@@ -75,7 +77,7 @@ void server_add_client(Server *server,const Host_t *src)
 		if (client[index].sin_addr.s_addr == src->sin_addr.s_addr && client[index].sin_port == src->sin_port)
 		{
 			// This client is already in the array.  Send it a COMMAND_ACK and exit
-			udp_send(server->sock, &client[i], COMMAND_ACK, 0, 0);
+			udp_send(server->sock, &client[i], COMMAND_ACK, BUFFER, sizeof(uint32_t));
 			return;
 		}
 	}
@@ -92,7 +94,7 @@ void server_add_client(Server *server,const Host_t *src)
 	client[i].sin_addr.s_addr = src->sin_addr.s_addr;
 	client[i].sin_port = src->sin_port;
      
-   	udp_send(server->sock, &client[i], COMMAND_ACK, 0, 0);
+   	udp_send(server->sock, &client[i], COMMAND_ACK, BUFFER, sizeof(uint32_t));
 
 	i++;
 	client_added =1;

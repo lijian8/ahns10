@@ -282,6 +282,7 @@ void DataPlotter::replot()
                 case F_Z_DOT:
                 case F_AZ:
                 case VOLTAGE:
+                case TRACE:
                     j = 0;
                     while ((j < pointLimit) && (j < m_DataVector[i].size()))
                     {

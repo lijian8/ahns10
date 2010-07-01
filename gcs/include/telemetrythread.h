@@ -30,6 +30,9 @@
 #include "state.h"
 #include "commands.h"
 
+#define REPLY_TIMEOUT_MS 500
+#define RETRY_TIME_MS 100
+
 /**
   * @brief Thread Class Inherided from QThread
   */
@@ -70,7 +73,7 @@ signals:
     void NewGuidanceXParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
     void NewGuidanceYParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
     void NewGuidanceZParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
-    void NewAckMessage(const timeval timeStamp, const int discarded = 0);
+    void NewAckMessage(const timeval timeStamp, const uint32_t ackType, const int discarded = 0);
     void NewCloseMessage(const timeval timeStamp, const int discarded = 0);
     void NewFailSafe(const timeval timeStamp, const int discarded = 0);
 
@@ -81,15 +84,24 @@ signals:
 protected:
 
 public slots:
-    // Methods for Data Transmission
-    int sendMessage(uint32_t type, const char* txData = NULL, int txDataByteLength = 0);
+    /** Methods for Data Transmission */
+    void sendPositionCommand(position_t desiredPosition);
+    void sendAttitudeCommand(attitude_t desiredAttitude);
+    void sendGains(uint32_t loop, gains_t desiredGains);
+    void sendParameters(uint32_t loop, loop_parameters_t desiredGains);
+    void sendSetAPConfig(ap_config_t apConfig);
+    void sendGetConfig();
+    void sendSaveConfig();
 
 private slots:
     void DataPending();
     void clientInitialise();
+    void retrySetAPConfig();
 
 private:
     bool packetInitialise();
+    bool ackSort(const uint32_t& ackType);
+    int sendMessage(uint32_t type, const unsigned char* txData = NULL, int txDataByteLength = 0);
 
     /** Array to Track last packet of message type corresponding to the array element*/
     struct timeval lastPacket[COMMAND_MAX+1];
@@ -107,12 +119,21 @@ private:
     quint64 m_txData;
     time_t timeFirstTxPacket;
 
-    // Thread Management
+    /** @name Thread Management */
     QMutex m_mutex;
     volatile bool m_connected;
     volatile bool m_stopped;
-    volatile bool m_ackReceived; /**< Flag used to check for COMMAND_ACK received */
-    volatile bool m_closeReceived; /**< Flag used to check for COMMAND_CLOSE received */
+
+    /** @name Received Flags */
+    volatile bool m_openReceived;   /**< Flag used to check for COMMAND_ACK received in relation to connection*/
+    volatile bool m_closeReceived;  /**< Flag used to check for COMMAND_CLOSE received */
+
+
+    /** @name AP Config Count, Flag and Data */
+    quint8 m_configTryCount;        /**< Counter of tries */
+    volatile bool m_configReceived; /**< Flag used to check for SET_CONFIG received */
+    ap_config_t m_txAPConfig;       /**< current Config being transmitted */
+
 };
 
 #endif // TELEMETRYTHREAD_H

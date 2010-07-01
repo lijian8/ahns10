@@ -93,6 +93,7 @@ public:
 private:
     /** Vector of Data Vectors */
     QVector<double> m_DataVector[DATA_COUNT];
+    double m_zeroTime;
 
     /** @name Log Files */
     volatile bool m_loggingOn;

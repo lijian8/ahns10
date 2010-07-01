@@ -22,14 +22,6 @@
 #include "gcsmainwindow.h"
 #include "ahns_logger.h"
 
-// Declare the Types for signal/slot use
-Q_DECLARE_METATYPE(timeval)
-Q_DECLARE_METATYPE(state_t)
-Q_DECLARE_METATYPE(fc_state_t)
-Q_DECLARE_METATYPE(ap_state_t)
-Q_DECLARE_METATYPE(gains_t)
-Q_DECLARE_METATYPE(loop_parameters_t)
-
 /**
 * @brief Function to convert timeval to QString
 */
@@ -128,12 +120,29 @@ void gcsMainWindow::ProcessHeliState(const timeval timeStamp, const state_t heli
 
 /**
   * @brief Slot to receive an ACK Message
+  * After the ACK an ackType identifies the nature of ack return.
   */
-void gcsMainWindow::ProcessAckMessage(const timeval timeStamp, const int discarded)
+void gcsMainWindow::ProcessAckMessage(const timeval timeStamp, const uint32_t ackType, const int discarded)
 {
     QString consoleText;
+    QString aType;
     QString timeStampStr = timeStamptoString(timeStamp);
-    consoleText = timeStampStr % "[ COMMAND_ACK ]";
+
+
+    switch (ackType)
+    {
+    case COMMAND_OPEN:
+        aType = "COMMAND_OPEN";
+        break;
+    case AUTOPILOT_STATE:
+        aType = "AUTOPILOT_STATE";
+        break;
+    default:
+        aType = "UNKNOWN";
+        break;
+    }
+
+    consoleText = timeStampStr % "[ COMMAND_ACK ] " % aType;
     m_receiveConsoleWidget->addItem(consoleText,discarded);
 
     return;
@@ -246,7 +255,7 @@ void gcsMainWindow::ProcessAPState(const timeval timeStamp, const ap_state_t apS
     {
         // Update the GUI
         m_Data.setAPStateData(&timeStamp,&apState);
-        //m_systemStatusWidget->loadFCState(fcState);
+        m_flightControlWidget->SetAPState(&apState);
     }
 
     return;

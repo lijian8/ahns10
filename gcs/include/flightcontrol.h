@@ -17,6 +17,7 @@
 #define FLIGHTCONTROL_H
 
 #include <QWidget>
+#include "state.h"
 
 namespace Ui {
     class FlightControl;
@@ -30,6 +31,12 @@ public:
 
     QSize sizeHint() const;
 
+signals:
+    void sendSetAPConfig(ap_config_t apConfig);
+
+public slots:
+    void SetAPState(const ap_state_t* const srcState);
+
 protected:
     void changeEvent(QEvent* e);
     void resizeEvent (QResizeEvent* e);
@@ -38,13 +45,22 @@ private:
     Ui::FlightControl *ui;
 
 private slots:
-    void on_guidanceBtn_clicked();
+
+    /** Uplink Commands */
+    void on_sendSetConfigBtn_clicked();
+    void on_sendPositionBtn_clicked();
+    void on_sendAttitudeBtn_clicked();
+
+    /** Quick restore buttons */
     void on_xCmdResetBtn_clicked();
     void on_yCmdResetBtn_clicked();
     void on_zCmdResetBtn_clicked();
     void on_rollCmdResetBtn_clicked();
     void on_pitchCmdResetBtn_clicked();
     void on_yawCmdResetBtn_clicked();
+
+    /** Mode Change Buttons */
+    void on_guidanceBtn_clicked();
     void on_positionBtn_clicked();
     void on_attitudeBtn_clicked();
     void on_rcBtn_clicked();
