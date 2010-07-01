@@ -304,6 +304,8 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
 
             // Tx Messages
             connect(m_flightControlWidget,SIGNAL(sendSetAPConfig(ap_config_t)),m_TelemetryThread,SLOT(sendSetAPConfig(ap_config_t)));
+            connect(m_flightControlWidget,SIGNAL(sendPosition(position_t)),m_TelemetryThread,SLOT(sendPositionCommand(position_t)));
+            connect(m_flightControlWidget,SIGNAL(sendAttitude(attitude_t)),m_TelemetryThread,SLOT(sendAttitudeCommand(attitude_t)));
 
             // Start the timer
             m_TelSecCount = 0;

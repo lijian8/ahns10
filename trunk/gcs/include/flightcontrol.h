@@ -33,6 +33,8 @@ public:
 
 signals:
     void sendSetAPConfig(ap_config_t apConfig);
+    void sendPosition(position_t desiredPosition);
+    void sendAttitude(attitude_t desiredAttitude);
 
 public slots:
     void SetAPState(const ap_state_t* const srcState);

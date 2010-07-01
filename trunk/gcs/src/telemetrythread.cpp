@@ -170,6 +170,8 @@ void TelemetryThread::clientInitialise()
 
     // Initialisation of Flags
     m_configReceived = true;
+    m_attitudeReceived = true;
+    m_positionReceived = true;
 
     try
     {
@@ -362,41 +364,11 @@ void TelemetryThread::DataPending()
             case FAILSAFE:
                 emit NewFailSafe(*timeStampPointer,discarded);
                 break;
-            case ATTITUDE_GAIN_ROLL:
-                emit NewRollGain(*timeStampPointer, *(gains_t*) buffer, discarded);
+            case GAINS:
+                emit NewGains(*timeStampPointer, *(gains_t*) buffer, discarded);
                 break;
-            case ATTITUDE_GAIN_PITCH:
-                emit NewPitchGain(*timeStampPointer, *(gains_t*) buffer, discarded);
-                break;
-            case ATTITUDE_GAIN_YAW:
-                emit NewYawGain(*timeStampPointer, *(gains_t*) buffer, discarded);
-                break;
-            case GUIDANCE_GAIN_X:
-                emit NewGuidanceXGain(*timeStampPointer, *(gains_t*) buffer, discarded);
-                break;
-            case GUIDANCE_GAIN_Y:
-                emit NewGuidanceYGain(*timeStampPointer, *(gains_t*) buffer, discarded);
-                break;
-            case GUIDANCE_GAIN_Z:
-                emit NewGuidanceZGain(*timeStampPointer, *(gains_t*) buffer, discarded);
-                break;
-            case ATTITUDE_PARAMETERS_ROLL:
-                emit NewRollParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
-                break;
-            case ATTITUDE_PARAMETERS_PITCH:
-                emit NewPitchParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
-                break;
-            case ATTITUDE_PARAMETERS_YAW:
-                emit NewYawParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
-                break;
-            case GUIDANCE_PARAMETERS_X:
-                emit NewGuidanceXParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
-                break;
-            case GUIDANCE_PARAMETERS_Y:
-                emit NewGuidanceYParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
-                break;
-            case GUIDANCE_PARAMETERS_Z:
-                emit NewGuidanceZParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
+            case PARAMETERS:
+                emit NewParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
                 break;
             default:
                 AHNS_DEBUG("TelemetryThread::DataPending() [ MESSAGE TYPE NOT MATCHED ]");
@@ -484,27 +456,148 @@ bool TelemetryThread::ackSort(const uint32_t& ackType)
     {
         m_configReceived = true;
     }
+    else if (ackType == DESIRED_ATTITUDE)
+    {
+        m_attitudeReceived = true;
+    }
+    else if (ackType == DESIRED_POSITION)
+    {
+        m_positionReceived = true;
+    }
 
     return bRet;
 }
 
 /**
-  * @brief Send Position Setpoint and await acknowledgement
+  * @brief Send Position Setpoint if not awaiting acknowledgement
   */
 void TelemetryThread::sendPositionCommand(position_t desiredPosition)
 {
-    AHNS_DEBUG("void TelemetryThread::sendPositionCommand(position_t desiredPosition)");
+    AHNS_ALERT("void TelemetryThread::sendPositionCommand(position_t desiredPosition)");
+
+    unsigned char buffer[sizeof(position_t)];
+
+    if (m_positionReceived)
+    {
+        m_txPosition = desiredPosition;
+
+        // Send the Message
+        PackPositionData(buffer, &m_txPosition);
+        sendMessage(DESIRED_POSITION, buffer, sizeof(position_t));
+
+        // Await Reply
+        m_positionReceived = false;
+        m_positionTryCount = 1;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySendPosition()));
+    }
+    else
+    {
+        AHNS_ALERT("void TelemetryThread::sendPositionCommand(position_t desiredPosition) [ STILL WAITING ]");
+    }
 
     return;
 }
 
 /**
-  * @brief Send Attitude Setpoint and await acknowledgement
+  * @brief Monitor desired Position acknowledgement
+  */
+void TelemetryThread::retrySendPosition()
+{
+    AHNS_ALERT("void TelemetryThread::retrySendPosition()");
+
+    unsigned char buffer[sizeof(position_t)];
+
+    if ((!m_positionReceived) && (m_positionTryCount < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
+    {
+        m_positionTryCount++;
+
+        // Send the Message
+        PackPositionData(buffer, &m_txPosition);
+        sendMessage(DESIRED_POSITION, buffer, sizeof(position_t));
+
+        // Await Reply
+        m_positionReceived = false;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySendPosition()));
+    }
+    else // stopped either due to count or recieved
+    {
+        if(m_positionReceived)
+        {
+            AHNS_ALERT("void TelemetryThread::retrySendPosition() [ SUCCESS ]");
+        }
+        else
+        {
+            m_positionReceived = true;
+            AHNS_ALERT("void TelemetryThread::retrySendPosition() [ FAILED ]");
+        }
+    }
+    return;
+}
+
+
+/**
+  * @brief Send Attitude Setpoint if not awaiting acknowledgement
   */
 void TelemetryThread::sendAttitudeCommand(attitude_t desiredAttitude)
 {
     AHNS_DEBUG("void TelemetryThread::sendAttitudeCommand(attitude_t desiredAttitude)");
 
+    unsigned char buffer[sizeof(position_t)];
+
+    if (m_attitudeReceived)
+    {
+        m_txAttitude = desiredAttitude;
+
+        // Send the Message
+        PackAttitudeData(buffer, &m_txAttitude);
+        sendMessage(DESIRED_ATTITUDE, buffer, sizeof(attitude_t));
+
+        // Await Reply
+        m_attitudeReceived = false;
+        m_attitudeTryCount = 1;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySendAttitude()));
+    }
+    else
+    {
+        AHNS_DEBUG("void TelemetryThread::sendPositionCommand(position_t desiredPosition) [ STILL WAITING ]");
+    }
+
+    return;
+}
+
+/**
+  * @brief Monitor desired Attitude acknowledgement
+  */
+void TelemetryThread::retrySendAttitude()
+{
+    AHNS_DEBUG("void TelemetryThread::retrySendAttitude()");
+
+    unsigned char buffer[sizeof(position_t)];
+
+    if ((!m_attitudeReceived) && (m_attitudeTryCount < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
+    {
+        m_attitudeTryCount++;
+
+        // Send the Message
+        PackAttitudeData(buffer, &m_txAttitude);
+        sendMessage(DESIRED_ATTITUDE, buffer, sizeof(attitude_t));
+
+        // Await Reply
+        m_attitudeReceived = false;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySendAttitude()));
+    }
+    else // stopped either due to count or recieved
+    {
+        if(m_attitudeReceived)
+        {
+            AHNS_ALERT("void TelemetryThread::retrySendAttitude() [ SUCCESS ]");
+        }
+        else
+        {
+            m_attitudeReceived = true;
+            AHNS_ALERT("void TelemetryThread::retrySendAttitude() [ FAILED ]");
+        }
+    }
     return;
 }
 

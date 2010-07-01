@@ -47,6 +47,7 @@ void GainsData(int count, gains_t* testState);
 void LoopParametersData(int count, loop_parameters_t* testState);
 
 int verbose = 0;
+int receive = 0;
 int server_port = 2002;
 char *server_host;
 static Server server;
@@ -83,7 +84,7 @@ main (int argc, char *argv[])
   server_host = "DEFAULT_SERVER_IP";
 
   // Parse Commandline Arguments
-  while ((c = getopt (argc, argv, "s:p:v:")) != -1)
+  while ((c = getopt (argc, argv, "s:p:v:r:")) != -1)
     {
       switch (c)
 	{
@@ -99,6 +100,9 @@ main (int argc, char *argv[])
 	  verbose = atoi (optarg);
 	  fprintf (stderr, "verbose %d\n", verbose);
 	  break;
+        case 'r':
+          receive = atoi(optarg);
+          fprintf (stderr, "receiver testing %d\n", receive);
 	case '?':
 	  ++errflag;
 	  break;
@@ -129,8 +133,9 @@ main (int argc, char *argv[])
 	init = 1;
       }
 
-      if (init)
+      if (init && (receive != 1))
       {
+          // Test the Server sending packets
 	  gettimeofday (&local_time, 0);
           fprintf (stderr, "Time: %.4f\n", local_time.tv_sec + local_time.tv_usec/1e6);
 	  fprintf (stderr, "Count: %d\n", count);
@@ -167,6 +172,11 @@ main (int argc, char *argv[])
 	   
 	  init = 0;
 	}
+        else if (receive == 1)
+        {
+          // Test the Server's Response to Packets
+          init = 0;
+        }
     }
   return 0;
 }

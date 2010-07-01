@@ -61,18 +61,8 @@ signals:
     void NewHeliState(const timeval timeStamp, const state_t receivedState, const int discarded = 0);
     void NewFCState(const timeval timeStamp, const fc_state_t receivedState, const int discarded = 0);
     void NewAPState(const timeval timeStamp, const ap_state_t receivedState, const int discarded = 0);
-    void NewRollGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
-    void NewPitchGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
-    void NewYawGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
-    void NewGuidanceXGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
-    void NewGuidanceYGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
-    void NewGuidanceZGain(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
-    void NewRollParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
-    void NewPitchParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
-    void NewYawParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
-    void NewGuidanceXParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
-    void NewGuidanceYParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
-    void NewGuidanceZParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
+    void NewGains(const timeval timeStamp, const gains_t receivedGains, const int discarded = 0);
+    void NewParameters(const timeval timeStamp, const loop_parameters_t receivedParameters, const int discarded = 0);
     void NewAckMessage(const timeval timeStamp, const uint32_t ackType, const int discarded = 0);
     void NewCloseMessage(const timeval timeStamp, const int discarded = 0);
     void NewFailSafe(const timeval timeStamp, const int discarded = 0);
@@ -97,6 +87,10 @@ private slots:
     void DataPending();
     void clientInitialise();
     void retrySetAPConfig();
+    void retrySendPosition();
+    void retrySendAttitude();
+    //void retrySendGains();
+    //void retrySendParameters();
 
 private:
     bool packetInitialise();
@@ -134,6 +128,15 @@ private:
     volatile bool m_configReceived; /**< Flag used to check for SET_CONFIG received */
     ap_config_t m_txAPConfig;       /**< current Config being transmitted */
 
+    /** @name Position Count, Flag and Data */
+    quint8 m_positionTryCount;        /**< Counter of tries */
+    volatile bool m_positionReceived; /**< Flag used to check for DESIRED_POSITION received */
+    position_t m_txPosition;       /**< current Config being transmitted */
+
+    /** @name Attitude Count, Flag and Data */
+    quint8 m_attitudeTryCount;      /**< Counter of tries */
+    volatile bool m_attitudeReceived; /**< Flag used to check for DESIRED_ATTITUDE received */
+    attitude_t m_txAttitude;       /**< current attitude being transmitted */
 };
 
 #endif // TELEMETRYTHREAD_H
