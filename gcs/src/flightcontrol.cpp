@@ -426,6 +426,7 @@ void FlightControl::on_sendPositionBtn_clicked()
     txPosition.y = ui->yCmdBox->value();
     txPosition.z = ui->zCmdBox->value();
 
+    emit sendPosition(txPosition);
 
     return;
 }
@@ -442,6 +443,8 @@ void FlightControl::on_sendAttitudeBtn_clicked()
     txAttitude.phi = ui->rollCmdBox->value();
     txAttitude.theta = ui->pitchCmdBox->value();
     txAttitude.psi = ui->yawCmdBox->value();
+
+    emit sendAttitude(txAttitude);
 
     return;
 }

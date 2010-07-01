@@ -3,26 +3,6 @@
  * $Id$
  * $Source: /home/luis/cvsroot/net-api/server.c,v $
  * $Log: server.c,v $
- * Revision 1.1.1.1  2008-05-05 07:07:57  luis
- * initial import
- *
- * Revision 1.1.1.1  2008-05-05 06:49:35  luis
- * initial import
- *
- * Revision 1.1.1.1  2005/11/06 10:56:35  cvs
- * initial creeation
- *
- * Revision 1.2  2005/10/23 17:24:28  cvs
- * *** empty log message ***
- *
- * Revision 1.1.1.1  2005/10/22 16:44:22  cvs
- * initial creation
- *
- * Revision 1.1.1.1  2005/10/15 15:14:06  cvs
- * initial project comments
- *
- * Revision 1.1.1.1  2004/03/03 11:03:06  srik
- * Initial Release 0.1
  *
  */
 #include <unistd.h>
@@ -33,13 +13,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
-
-
 #include "server.h"
 #include "state.h"
 #include "commands.h"
 #include "udp.h"
+
+#include "control.h"
 
 
 /** Array of client IP addresses and Ports */
@@ -77,7 +56,7 @@ void server_add_client(Server *server,const Host_t *src)
 		if (client[index].sin_addr.s_addr == src->sin_addr.s_addr && client[index].sin_port == src->sin_port)
 		{
 			// This client is already in the array.  Send it a COMMAND_ACK and exit
-			udp_send(server->sock, &client[i], COMMAND_ACK, BUFFER, sizeof(uint32_t));
+			udp_send(server->sock, &client[index], COMMAND_ACK, BUFFER, sizeof(uint32_t));
 			return;
 		}
 	}
@@ -149,6 +128,145 @@ static int command_close(void *priv,const Host_t *src, int type,const struct tim
 	return 1;
 }
 
+static int set_config(void *priv, const Host_t *src, int type, const struct timeval *when, const void *data, size_t len)
+{
+	Server *self = (Server*) priv;
+        unsigned char* BUFFER[sizeof(uint32_t)];
+        PackUInt32(BUFFER,SET_CONFIG);
+        
+        // Unpack ap_config_t structure
+        ap_config_t receivedConfig;
+        UnpackAPConfigData((unsigned char*) data, &receivedConfig);
+
+        // Verify  and Save Configuration for Control
+        if(setAPConfig(&receivedConfig))
+        {		         
+        	// Responed with command_ack and set_config
+        	udp_send(self->sock, src, COMMAND_ACK, BUFFER, sizeof(uint32_t));
+     	}
+
+        fprintf(stderr,"receivedConfig \nRoll Active = %u \tPitch Active = %u \tYaw Active = %u\n", receivedConfig.phiActive, receivedConfig.thetaActive, receivedConfig.psiActive);
+        fprintf(stderr,"x Active = %u \ty Active = %u \tz Active = %u\n", receivedConfig.xActive, receivedConfig.yActive, receivedConfig.zActive);
+        
+	return 1;
+}
+
+static int set_gains(void *priv, const Host_t *src, int type, const struct timeval *when, const void *data, size_t len)
+{
+	Server *self = (Server*) priv;
+        unsigned char* BUFFER[sizeof(uint32_t)];
+	PackUInt32(BUFFER, GAINS);
+
+        // Unpack gains_t structure
+        gains_t receivedGains;
+        UnpackGains((unsigned char*) data, &receivedGains);
+
+        // Verify  and Save Configuration for Control
+        if(setGains(&receivedGains))
+        {		         
+        	// Responed with command_ack and set_config
+        	udp_send(self->sock, src, COMMAND_ACK, BUFFER, sizeof(uint32_t));
+     	}
+
+        fprintf(stderr,"receivedGains \nRoll = %f %f %f", receivedGains.rollKp, receivedGains.rollKi, receivedGains.rollKd);
+        fprintf(stderr,"\tPitch = %f %f %f", receivedGains.pitchKp, receivedGains.pitchKi, receivedGains.pitchKd);
+        fprintf(stderr,"\tYaw = %f %f %f \n", receivedGains.yawKp, receivedGains.yawKi, receivedGains.yawKd);
+        fprintf(stderr,"X = %f %f %f \t", receivedGains.xKp, receivedGains.xKi, receivedGains.xKd);
+        fprintf(stderr,"\tY = %f %f %f ", receivedGains.yKp, receivedGains.yKi, receivedGains.yKd);
+        fprintf(stderr,"\tZ = %f %f %f \n", receivedGains.zKp, receivedGains.zKi, receivedGains.zKd);
+        
+	return 1;
+}
+
+static int set_parameters(void *priv, const Host_t *src, int type, const struct timeval *when, const void *data, size_t len)
+{
+	Server *self = (Server*) priv;
+        unsigned char* BUFFER[sizeof(uint32_t)];
+	PackUInt32(BUFFER, PARAMETERS);
+
+        // Unpack gains_t structure
+        loop_parameters_t receivedParameters;
+        UnpackParameters((unsigned char*) data, &receivedParameters);
+
+        // Verify  and Save Configuration for Control
+        if(setParameters(&receivedParameters))
+        {		         
+        	// Responed with command_ack and set_config
+        	udp_send(self->sock, src, COMMAND_ACK, BUFFER, sizeof(uint32_t));
+     	}
+
+        fprintf(stderr,"receivedParameters \nRoll = %f %f %f", receivedParameters.rollMaximum, receivedParameters.rollMinimum, receivedParameters.rollNeutral);
+        fprintf(stderr,"\tPitch = %f %f %f", receivedParameters.pitchMaximum, receivedParameters.pitchMinimum, receivedParameters.pitchNeutral);
+        fprintf(stderr,"\tYaw = %f %f %f \n", receivedParameters.yawMaximum, receivedParameters.yawMinimum, receivedParameters.yawNeutral);
+        fprintf(stderr,"X = %f %f %f \t", receivedParameters.xMaximum, receivedParameters.xMinimum, receivedParameters.xNeutral);
+        fprintf(stderr,"\tY = %f %f %f ", receivedParameters.yMaximum, receivedParameters.yMinimum, receivedParameters.yNeutral);
+        fprintf(stderr,"\tZ = %f %f %f \n", receivedParameters.zMaximum, receivedParameters.zMinimum, receivedParameters.zNeutral);
+	return 1;
+}
+
+static int desired_position(void *priv, const Host_t *src, int type, const struct timeval *when, const void *data, size_t len)
+{
+	Server *self = (Server*) priv;
+        unsigned char* BUFFER[sizeof(uint32_t)];
+	PackUInt32(BUFFER, DESIRED_POSITION);
+
+        // Unpack position_t structure
+        position_t receivedPosition;
+        UnpackPositionData((unsigned char*) data, &receivedPosition);
+
+        // Verify  and Save Configuration for Control
+        if(setPosition(&receivedPosition))
+        {		         
+        	// Responed with command_ack and set_config
+        	udp_send(self->sock, src, COMMAND_ACK, BUFFER, sizeof(uint32_t));
+     	}
+
+        fprintf(stderr,"receivedPosition \nPosition = %f %f %f", receivedPosition.x, receivedPosition.y, receivedPosition.z);
+	return 1;
+}
+
+static int desired_attitude(void *priv, const Host_t *src, int type, const struct timeval *when, const void *data, size_t len)
+{
+	Server *self = (Server*) priv;
+        unsigned char* BUFFER[sizeof(uint32_t)];
+	PackUInt32(BUFFER, DESIRED_ATTITUDE);
+
+        // Unpack attitude_t structure
+        attitude_t receivedAttitude;
+        UnpackAttitudeData((unsigned char*) data, &receivedAttitude);
+
+        // Verify  and Save Configuration for Control
+        if(setAttitude(&receivedAttitude))
+        {		         
+        	// Responed with command_ack and set_config
+        	udp_send(self->sock, src, COMMAND_ACK, BUFFER, sizeof(uint32_t));
+     	}
+
+        fprintf(stderr,"receivedAttitude \nAttitude = %f %f %f", receivedAttitude.phi, receivedAttitude.theta, receivedAttitude.psi);
+	return 1;
+}
+
+static int save_config(void *priv, const Host_t *src, int type, const struct timeval *when, const void *data, size_t len)
+{
+	Server *self = (Server*) priv;
+        unsigned char* BUFFER[sizeof(uint32_t)];
+	PackUInt32(BUFFER, SAVE_CONFIG);
+
+        /** TODO Save the Control Configs */
+        if(saveConfig())
+        {		         
+        	// Responed with command_ack and set_config
+        	udp_send(self->sock, src, COMMAND_ACK, BUFFER, sizeof(uint32_t));
+     	}
+
+	return 1;
+}
+
+static int get_config(void *priv, const Host_t *src, int type, const struct timeval *when, const void *data, size_t len)
+{
+	return 1;
+}
+
 void serve(Server *server, int port)
 {
 	//port = 0;
@@ -182,13 +300,26 @@ void serve(Server *server, int port)
 	// Zero our handler table and install the defaults
 	int i;
 	for( i=0 ; i < COMMAND_MAX ; i++ )
+        {
 		server_handle(server, i, 0, 0 );
+        }
 
 	server_handle(server, COMMAND_NOP, command_nop, 0 );
 	server_handle(server, COMMAND_ACK, command_nop, 0 );
 	server_handle(server, COMMAND_OPEN, command_open, (void*) server );
 	server_handle(server, COMMAND_CLOSE, command_close, (void*) server );
+        
+        // Additional Messages
+        server_handle(server, SET_CONFIG, set_config, (void*) server );
+        server_handle(server, GAINS, set_gains, (void*) server );
+        server_handle(server, PARAMETERS, set_parameters, (void*) server );
+        server_handle(server, DESIRED_POSITION, desired_position, (void*) server );
+        server_handle(server, DESIRED_ATTITUDE, desired_attitude, (void*) server );
+        server_handle(server, SAVE_CONFIG, save_config, (void*) server );
+        server_handle(server, GET_CONFIG , get_config, (void*) server );
+
 }
+
 void server_init(Server *server, int port)	
 {
 	server->sock = -1;
