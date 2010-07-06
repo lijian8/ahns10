@@ -96,6 +96,9 @@ void FlightControl::on_rcBtn_clicked()
     ui->yChkbox->setChecked(false);
     ui->zChkbox->setChecked(false);
 
+    ui->sendAttitudeBtn->setEnabled(true);
+    ui->sendPositionBtn->setEnabled(true);
+
     return;
 }
 
@@ -139,6 +142,7 @@ void FlightControl::on_attitudeBtn_clicked()
     // enable all command buttons
     ui->sendAttitudeBtn->setEnabled(true);
     ui->sendPositionBtn->setEnabled(true);
+
 
     return;
 }
@@ -440,9 +444,9 @@ void FlightControl::on_sendAttitudeBtn_clicked()
 
     attitude_t txAttitude;
 
-    txAttitude.phi = ui->rollCmdBox->value();
-    txAttitude.theta = ui->pitchCmdBox->value();
-    txAttitude.psi = ui->yawCmdBox->value();
+    txAttitude.phi = ui->rollCmdBox->value()*M_PI/180.0;
+    txAttitude.theta = ui->pitchCmdBox->value()*M_PI/180.0;
+    txAttitude.psi = ui->yawCmdBox->value()*M_PI/180.0;
 
     emit sendAttitude(txAttitude);
 

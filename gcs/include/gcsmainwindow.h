@@ -34,6 +34,8 @@
 #include "dataplotter.h"
 #include "datalogger.h"
 #include "flightcontrol.h"
+#include "gainscontrol.h"
+#include "parametercontrol.h"
 
 
 namespace Ui {
@@ -96,6 +98,8 @@ private:
     DataPlotter* m_dataPlotterWidget;
     bfImageFeed* m_bfImageFeedWidget;
     FlightControl* m_flightControlWidget;
+    GainsControl* m_gainsControlWidget;
+    ParameterControl* m_parameterControlWidget;
 
     // Additional Plotting Widgets
     QLinkedList<DataPlotter *> m_plottingWidgets;

@@ -36,6 +36,7 @@
 #include "commands.h"
 
 #include "udp.h"
+#include "control.h"
 
 #define DEFAULT_SERVER_IP 127.0.0.1
 
@@ -175,6 +176,15 @@ main (int argc, char *argv[])
         else if (receive == 1)
         {
           // Test the Server's Response to Packets
+          APStateData(count, &apState);
+          printf ("\n\nSending apState: Size %d \n",sizeof(ap_state_t)),
+          fprintf (stderr, "referencePhi = %f   \t referenceTheta = %f \t referencePsi = %f \n", apState.referencePhi, apState.referenceTheta, apState.referencePsi);
+          fprintf (stderr, "referenceX = %f \t referenceY = %f \t referenceZ = %f \n", apState.referenceX, apState.referenceY, apState.referenceZ);
+          fprintf (stderr, "phiActive = %u \t thetaActive = %u \t psiActive = %u \n", apState.phiActive, apState.thetaActive, apState.psiActive);
+          fprintf (stderr, "xActive = %u \t yActive = %u \t zActive = %u \n", apState.xActive, apState.yActive, apState.zActive);
+
+	  dataLength = PackAPState(buffer,&apState);	  
+          server_send_packet (&server, AUTOPILOT_STATE, &apState, dataLength);
           init = 0;
         }
     }
@@ -228,22 +238,26 @@ void FCStateData(int count, fc_state_t* testState)
 
 void APStateData(int count, ap_state_t* testState)
 {
-  testState->referencePhi = fmod(count,M_PI/2);
-  testState->referenceTheta = fmod(2*count,M_PI);
-  testState->referencePsi = fmod(3*count,M_PI/2);
+  MutexLockAllLoops();
+  
+  testState->referencePhi = rollLoop.reference;
+  testState->referenceTheta = pitchLoop.reference;
+  testState->referencePsi = yawLoop.reference;
 
-  testState->referenceX = fmod(4*count,M_PI/2);
-  testState->referenceY = fmod(5*count,M_PI);
-  testState->referenceZ = pow(-1,count)*fmod(5*count,M_PI);
+  testState->referenceX = xLoop.reference;
+  testState->referenceY = yLoop.reference;
+  testState->referenceZ = zLoop.reference; 
 
-  testState->phiActive = ((count % 225) < 100 ) ? 1 : 0;
-  testState->thetaActive = ((count % 285) < 100 ) ? 1 : 0;
-  testState->psiActive = ((count % 250) < 100 ) ? 1 : 0;
+  testState->phiActive = rollLoop.active;
+  testState->thetaActive = pitchLoop.active;
+  testState->psiActive = yawLoop.active;
 
   
-  testState->xActive = ((count % 200) < 100 ) ? 1 : 0;
-  testState->yActive = ((count % 175) < 100 ) ? 1 : 0;
-  testState->zActive = ((count % 150) < 100 ) ? 1 : 0;
+  testState->xActive = xLoop.active;
+  testState->yActive = yLoop.active;
+  testState->zActive = zLoop.active;
+  
+  MutexUnlockAllLoops();
 
   return;
 }
