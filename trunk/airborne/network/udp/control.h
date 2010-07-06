@@ -70,8 +70,8 @@ uint8_t saveConfig();
 
 extern void MutexLockAllLoops();
 extern void MutexUnlockAllLoops();
-extern void MutexLockAnglularLoops();
-extern void MutexUnlockAnglularLoops();
+extern void MutexLockAngularLoops();
+extern void MutexUnlockAngularLoops();
 extern void MutexLockGuidanceLoops();
 extern void MutexUnlockGuidanceLoops();
 

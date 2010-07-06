@@ -105,6 +105,11 @@ void server_del_client(Server *server, const Host_t *src)
 		}
 		++j;
 	} while( j < i && !found);
+
+        if (!found) // client not in array, send Close anyway
+        {
+		udp_send(server->sock, src, COMMAND_CLOSE, 0, 0);
+        }
 	client_removed = 1;
 }
 

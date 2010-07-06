@@ -115,18 +115,94 @@ uint8_t setGains(const gains_t* const srcGains)
 uint8_t setParameters(const loop_parameters_t* const srcParameters)
 {
   uint8_t bRet = 1;
+
+  MutexLockAllLoops();
+
+  if(!(srcParameters->rollMaximum >= srcParameters->rollNeutral) || !(srcParameters->rollNeutral >= srcParameters->rollMinimum))
+  {
+    bRet = 0;
+  }
+  else if (!(srcParameters->pitchMaximum >= srcParameters->pitchNeutral) || !(srcParameters->pitchNeutral >= srcParameters->pitchMinimum))
+  {
+    bRet = 0;
+  }
+  else if (!(srcParameters->yawMaximum >= srcParameters->yawNeutral) || !(srcParameters->yawNeutral >= srcParameters->yawMinimum))
+  {
+    bRet = 0;
+  }
+  else if (!(srcParameters->xMaximum >= srcParameters->xNeutral) || !(srcParameters->xNeutral >= srcParameters->xMinimum))
+  {
+    bRet = 0;
+  }
+  else if (!(srcParameters->yMaximum >= srcParameters->yNeutral) || !(srcParameters->yNeutral >= srcParameters->yMinimum))
+  {
+    bRet = 0;
+  }
+  else if(!(srcParameters->zMaximum >= srcParameters->zNeutral) || !(srcParameters->zNeutral >= srcParameters->zMinimum))
+  {
+    bRet = 0;
+  }
+  else
+  {
+    bRet = 1;
+    rollLoop.maximum = srcParameters->rollMaximum;
+    rollLoop.minimum = srcParameters->rollMinimum;
+    rollLoop.neutral = srcParameters->pitchNeutral;
+    
+    pitchLoop.maximum = srcParameters->pitchMaximum;
+    pitchLoop.minimum = srcParameters->pitchMinimum;
+    pitchLoop.neutral = srcParameters->pitchNeutral;
+
+    yawLoop.maximum = srcParameters->yawMaximum;
+    yawLoop.minimum = srcParameters->yawMinimum;
+    yawLoop.neutral = srcParameters->yawNeutral;
+
+    xLoop.maximum = srcParameters->xMaximum;
+    xLoop.minimum = srcParameters->xMinimum;
+    xLoop.neutral = srcParameters->xNeutral;
+    
+    yLoop.maximum = srcParameters->yMaximum;
+    yLoop.minimum = srcParameters->yMinimum;
+    yLoop.neutral = srcParameters->yNeutral;
+    
+    zLoop.maximum = srcParameters->zMaximum;
+    zLoop.minimum = srcParameters->zMinimum;
+    zLoop.neutral = srcParameters->zNeutral;
+    
+  }
+
+
+  MutexUnlockAllLoops();  
+
   return bRet;
 }
 
 uint8_t setAttitude(const attitude_t* const srcAttitude)
 {
   uint8_t bRet = 1;
+
+  MutexLockAngularLoops();
+  
+  rollLoop.reference = srcAttitude->phi;
+  pitchLoop.reference = srcAttitude->theta;
+  yawLoop.reference = srcAttitude->psi;
+
+  MutexUnlockAngularLoops();
   return bRet;
 }
 
 uint8_t setPosition(const position_t* const srcPosition)
 {
   uint8_t bRet = 1;
+  
+  MutexLockGuidanceLoops();
+
+  xLoop.reference = srcPosition->x;
+  yLoop.reference = srcPosition->y;
+  zLoop.reference = srcPosition->z;
+
+  MutexUnlockGuidanceLoops();
+  
   return bRet;
 }
 
@@ -159,7 +235,7 @@ void MutexUnlockAllLoops()
 }
 
 
-void MutexLockAnglularLoops()
+void MutexLockAngularLoops()
 {
   pthread_mutex_lock(&rollLoopMutex);
   pthread_mutex_lock(&pitchLoopMutex);
@@ -168,7 +244,7 @@ void MutexLockAnglularLoops()
   return;
 }
 
-void MutexUnlockAnglularLoops()
+void MutexUnlockAngularLoops()
 {
   pthread_mutex_unlock(&yawLoopMutex);
   pthread_mutex_unlock(&pitchLoopMutex);

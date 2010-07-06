@@ -139,17 +139,22 @@ void gcsMainWindow::createDockWindows()
         dockBF->setObjectName("Blackfin Camera feed");
         QDockWidget* dockFCtrl = new QDockWidget(tr("Flight Control"),this);
         dockFCtrl->setObjectName("Flight Control");
-
-        m_bfImageFeedWidget = new bfImageFeed(dockBF);
+        QDockWidget* dockGCtrl = new QDockWidget(tr("Gains Control"),this);
+        dockGCtrl->setObjectName("Gains Control");
+        QDockWidget* dockPCtrl =new QDockWidget(tr("Parameter Control"),this);
+        dockPCtrl->setObjectName("Parameter Control");
 
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Creating Widgets ]");
         m_ahWidget = new AHclass(dockAH);
+        m_bfImageFeedWidget = new bfImageFeed(dockBF);
         m_systemStatusWidget = new SystemStatus(dockSS);
         m_wifiCommsWidget = new wifiComms(dockWC);
         m_receiveConsoleWidget = new ReceiveConsole(dockRC);
         m_dataPlotterWidget = new DataPlotter(m_Data.getData(),dockDP);
         m_flightControlWidget = new FlightControl(dockFCtrl);
+        m_gainsControlWidget = new GainsControl(dockGCtrl);
+        m_parameterControlWidget = new ParameterControl(dockPCtrl);
 
         dockAH->setWidget(m_ahWidget);
         dockSS->setWidget(m_systemStatusWidget);
@@ -158,6 +163,8 @@ void gcsMainWindow::createDockWindows()
         dockDP->setWidget(m_dataPlotterWidget);
         dockBF->setWidget(m_bfImageFeedWidget);
         dockFCtrl->setWidget(m_flightControlWidget);
+        dockGCtrl->setWidget(m_gainsControlWidget);
+        dockPCtrl->setWidget(m_parameterControlWidget);
 
         addDockWidget(Qt::RightDockWidgetArea,dockAH);
         addDockWidget(Qt::RightDockWidgetArea,dockSS);
@@ -166,12 +173,15 @@ void gcsMainWindow::createDockWindows()
         addDockWidget(Qt::LeftDockWidgetArea,dockDP);
         addDockWidget(Qt::RightDockWidgetArea,dockBF);
         addDockWidget(Qt::LeftDockWidgetArea,dockFCtrl);
-
+        addDockWidget(Qt::LeftDockWidgetArea,dockGCtrl);
+        addDockWidget(Qt::LeftDockWidgetArea,dockPCtrl);
 
         //setTabPosition(Qt::RightDockWidgetArea,QTabWidget::South);
+        tabifyDockWidget(dockWC,dockSS);
         tabifyDockWidget(dockWC,dockRC);
-        //tabifyDockWidget(dockFCtrl,dockSS);
+        tabifyDockWidget(dockFCtrl,dockGCtrl);
         tabifyDockWidget(dockAH,dockBF);
+        tabifyDockWidget(dockGCtrl,dockPCtrl);
 
 
         ui->menuView->insertAction(0,dockAH->toggleViewAction());

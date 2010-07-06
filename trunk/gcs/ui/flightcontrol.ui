@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>401</height>
+    <width>460</width>
+    <height>220</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,8 +18,8 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>360</width>
-    <height>275</height>
+    <width>460</width>
+    <height>220</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -30,60 +30,12 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>490</width>
-     <height>335</height>
+     <width>461</width>
+     <height>219</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="mainGridLayout">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_4">
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Mode Select</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
     <item row="1" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QPushButton" name="rcBtn">
-        <property name="text">
-         <string>RC</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="attitudeBtn">
-        <property name="text">
-         <string>Attitude Hold</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="positionBtn">
-        <property name="text">
-         <string>Position Hold</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="guidanceBtn">
-        <property name="text">
-         <string>Guidance</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="2" column="0">
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="2">
        <widget class="QDoubleSpinBox" name="rollCmdBox">
@@ -105,27 +57,6 @@
         </property>
         <property name="text">
          <string>0</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="4">
-       <widget class="QLabel" name="label_42">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>7</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>degrees</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
         </property>
        </widget>
       </item>
@@ -152,27 +83,6 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="4">
-       <widget class="QLabel" name="label_44">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>7</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>degrees</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-       </widget>
-      </item>
       <item row="3" column="2">
        <widget class="QDoubleSpinBox" name="yawCmdBox">
         <property name="minimum">
@@ -193,27 +103,6 @@
         </property>
         <property name="text">
          <string>0</string>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="4">
-       <widget class="QLabel" name="label_43">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>7</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>degrees</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
         </property>
        </widget>
       </item>
@@ -261,27 +150,6 @@
         </property>
         <property name="text">
          <string>0</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="4">
-       <widget class="QLabel" name="label_41">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>7</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>metres</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
         </property>
        </widget>
       </item>
@@ -348,27 +216,6 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="4">
-       <widget class="QLabel" name="label_45">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>7</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>metres</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
-        </property>
-       </widget>
-      </item>
       <item row="6" column="3">
        <widget class="QPushButton" name="zCmdResetBtn">
         <property name="sizePolicy">
@@ -391,27 +238,6 @@
         </property>
         <property name="text">
          <string>1.5</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="4">
-       <widget class="QLabel" name="label_46">
-        <property name="maximumSize">
-         <size>
-          <width>200</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>7</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>metres</string>
-        </property>
-        <property name="textFormat">
-         <enum>Qt::PlainText</enum>
         </property>
        </widget>
       </item>
@@ -1131,44 +957,37 @@
         </property>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item row="4" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
-      <property name="spacing">
-       <number>4</number>
-      </property>
-      <item>
-       <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+      <item row="0" column="4">
+       <widget class="QLabel" name="label_5">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
         </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::MinimumExpanding</enum>
+        <property name="text">
+         <string>Commands</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>4</height>
-         </size>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
-       </spacer>
+       </widget>
       </item>
-      <item>
+      <item row="1" column="4">
        <widget class="QPushButton" name="sendAttitudeBtn">
         <property name="text">
          <string>Send Attitude</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="2" column="4">
        <widget class="QPushButton" name="sendPositionBtn">
         <property name="text">
          <string>Send Position</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="3" column="4">
        <widget class="QPushButton" name="sendSetConfigBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -1181,23 +1000,51 @@
         </property>
        </widget>
       </item>
+      <item row="0" column="5">
+       <widget class="QLabel" name="label_4">
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text">
+         <string>Mode Select</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <widget class="QPushButton" name="rcBtn">
+        <property name="text">
+         <string>RC</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="5">
+       <widget class="QPushButton" name="attitudeBtn">
+        <property name="text">
+         <string>Attitude Hold</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="5">
+       <widget class="QPushButton" name="positionBtn">
+        <property name="text">
+         <string>Position Hold</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="5">
+       <widget class="QPushButton" name="guidanceBtn">
+        <property name="text">
+         <string>Guidance</string>
+        </property>
+       </widget>
+      </item>
      </layout>
-    </item>
-    <item row="3" column="0">
-     <widget class="QLabel" name="label_5">
-      <property name="font">
-       <font>
-        <weight>75</weight>
-        <bold>true</bold>
-       </font>
-      </property>
-      <property name="text">
-       <string>Uplink Commands</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-      </property>
-     </widget>
     </item>
    </layout>
   </widget>
