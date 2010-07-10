@@ -13,72 +13,46 @@
  * Test driver for Little Endian network to host and host to network functions
  */
 
-
+#include <sys/socket.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <primitive_serialisation.h>
+#include <sys/time.h>
 
 int main (int argc, char* argv[])
 {
-  unsigned char Buffer[2];
-
+  printf("Size of Timeval: %u\n",sizeof(struct timeval));
   printf("Little Endian Test Driver :\n");
-    
-  printf("Case 1: 16 bit to and from Network: \n");
-  uint16_t original = 1;
-  uint16_t test = 0;
+  printf("Case 1: ntohl Test\n");
   
-  PackUInt16(Buffer,original);
-  UnpackUInt16(Buffer,&test);
+  struct timeval timeOriginal;
+  struct timeval timeFinal;
+  gettimeofday(&timeOriginal, 0);
 
-  if ( test == original )
-  {
-    printf ("Pass\n");
-  }
-  else 
-  {
-    printf("Fail: Original %d Final %d\n",original,test); 
-  }
-   {
-  unsigned char Buffer[1];
-  printf("Case 2: 8 bit to from Network: \n");
-  uint8_t original = 10;
-  uint8_t test = 0;
-  
-  PackUInt8(Buffer,original);
-  UnpackUInt8(Buffer,&test);
+  // Pack Time stamp but keep track of started
+  char buffer[8];
+  char* msgTimePointer = buffer;
 
-  if ( test == original )
-  {
-    printf ("Pass\n");
-  }
-  else 
-  {
-    printf("Fail: Original %d Final %d\n",original,test); 
-  }
- }
+  // 32-bit Transmission of Time
+  PackInt32((unsigned char*) buffer,(int32_t) timeOriginal.tv_sec);  
+  PackInt32((unsigned char*) &buffer[4],(int32_t) timeOriginal.tv_usec);
 
- {
-  unsigned char Buffer[1];
-  printf("Case 3: 64 bit to from Network: \n");
-  uint64_t original = 155553;
-  uint64_t test = 0;
-  
-  PackUInt64(Buffer,original);
-  UnpackUInt64(Buffer,&test);
+  // 32 bit Rx
+  int32_t tv_sec, tv_usec;
+  msgTimePointer += UnpackInt32((unsigned char*) msgTimePointer, &tv_sec);
+  msgTimePointer += UnpackInt32((unsigned char*) msgTimePointer, &tv_usec);
+  timeFinal.tv_sec = (int64_t) tv_sec;
+  timeFinal.tv_usec = (int64_t) tv_usec;
 
-  if ( test == original )
-  {
-    printf ("Pass: Original %llu Final %llu\n",original,test);
-  }
-  else 
-  {
-    printf("Fail: Original %llu Final %llu\n",original,test); 
-  }
- }
+  /*timeFinal.tv_sec = (int64_t) ntohl(*(int32_t*) msgTimePointer);
+  msgTimePointer += 4;
+  timeFinal.tv_usec = (int64_t) ntohl(*(int32_t*) msgTimePointer);
+  msgTimePointer += 4;
+  */
 
- 
-  
+
+  printf("timeOriginal: %i %i \n", timeOriginal.tv_sec, timeOriginal.tv_usec);
+  printf("timeFinal: %i %i \n", timeFinal.tv_sec, timeFinal.tv_usec);
 
   return 0;
 }
