@@ -3,28 +3,52 @@
 # -------------------------------------------------
 HELI = $(HELICONNECT)
 SERIAL = $(UDP_SERIALISATION)
-QT += opengl \
-    network
+QT += network opengl
 CONFIG += debug
 TARGET = gcs
 TEMPLATE = app
 OBJECTS_DIR = obj/
-INCLUDEPATH += . \
+UI_DIR = ui
+UI_HEADERS_DIR = tmp
+UI_SOURCES_DIR = tmp
+RCC_DIR = tmp
+MOC_DIR = tmp
+
+linux-g++ {
+  message(QMAKE BUILDING FOR LINUX)
+
+  INCLUDEPATH += . \
     include \
     AHWidget/include \
     reuse/ \
     /usr/include/qwt-qt4/ \
     $$HELI \
     udp/
-UI_DIR = ui
-UI_HEADERS_DIR = tmp
-UI_SOURCES_DIR = tmp
-RCC_DIR = tmp
-MOC_DIR = tmp
-LIBS += -lQtNetwork \
+
+  LIBS += -lQtNetwork \
     -lglut \
     -lGLU \
     -lqwt
+}
+macx-g++ {
+  message(QMAKE BUIDING FOR MACOSX)
+
+  QWT_ROOT = /usr/local/qwt-5.2.1-svn/
+  QWTLIB = qwt
+
+  INCLUDEPATH += . \
+    include \
+    AHWidget/include \
+    reuse/ \
+    /usr/local/qwt-5.2.1-svn/include/ \
+    $$HELI \
+    udp/
+
+  LIBS += -L/usr/local/qwt-5.2.1-svn/lib\
+          -lqwt \
+          -framework GLUT
+}
+
 SOURCES += src/main.cpp \
     src/gcsmainwindow.cpp \
     src/systemstatus.cpp \
@@ -69,8 +93,8 @@ HEADERS += include/gcsmainwindow.h \
     include/bfglrenderer.h \
     src/bfimagefeed.h \
     include/bfcameracomms.h \
-    src/bfimagefeed.h \
-    src/bfimagefeed.h \
+    #src/bfimagefeed.h \
+    #src/bfimagefeed.h \
     $$HELI/primitive_serialisation.h \
     include/datalogger.h \
     include/flightcontrol.h \
