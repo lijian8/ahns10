@@ -93,8 +93,6 @@ HEADERS += include/gcsmainwindow.h \
     include/bfglrenderer.h \
     src/bfimagefeed.h \
     include/bfcameracomms.h \
-    #src/bfimagefeed.h \
-    #src/bfimagefeed.h \
     $$HELI/primitive_serialisation.h \
     include/datalogger.h \
     include/flightcontrol.h \
