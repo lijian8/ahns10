@@ -3,7 +3,7 @@
 #include "AH.h"
 #include <cstdio>
 
-#include <GL/glut.h>
+#include <GLUT/glut.h>
 
 using namespace std;
 

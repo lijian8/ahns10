@@ -5,7 +5,7 @@
 
 #include "AH.h"
 
-#include <GL/glut.h>
+#include <GLUT/glut.h>
 
 using namespace std;
 

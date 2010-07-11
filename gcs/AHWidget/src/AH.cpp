@@ -1,5 +1,5 @@
 #include "AH.h"
-#include "GL/glut.h"
+#include "GLUT/glut.h"
 #include <QString>
 #include <QTime>
 #include <QtOpenGL>
