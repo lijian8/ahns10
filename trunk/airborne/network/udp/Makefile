@@ -11,19 +11,16 @@ LD = $(CC)
 
 CFLAGS = 
 LDFLAGS =  -L./ -lstate -lm
-INCDIR = -I $(HELICONNECT) -I $(UDP_SERIALISATION) 
+INCDIR = -I $(HELICONNECT) 
 
-SRCS = control.c client.c server.c $(HELICONNECT)/state.c udp.c $(UDP_SERIALISATION)src/little_host_serialisation.c
-INCLUDES = control.h server.h $(HELICONNECT)/state.h udp.h commands.h $(UDP_SERIALISATION)/include/primitive_serialisation.h
-OBJS = control.o client.o server.o $(HELICONNECT)/state.o udp.o $(UDP_SERIALISATION)/obj/little_host_serialisation.o
+SRCS = control.c client.c server.c $(HELICONNECT)/state.c udp.c serialisation.c
+INCLUDES = control.h server.h $(HELICONNECT)/state.h udp.h commands.h $(HELICONNECT)/primitive_serialisation.h
+OBJS = control.o client.o server.o $(HELICONNECT)/state.o udp.o serialisation.o
 LIBSTATE= libstate.a 
 all:  $(LIBSTATE)
 
 %.o: %.c
 	$(CC) -O2 -c $< $(CFLAGS) -o $@ $(INCDIR)
-
-$(UDP_SERIALISATION)/obj/little_host_serialisation.o :
-	cd $(UDP_SERIALISATION); make
 
 $(LIBSTATE): $(OBJS)
 	ar -cr $(LIBSTATE) $(OBJS)

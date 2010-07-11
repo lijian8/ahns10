@@ -51,7 +51,7 @@ int UnpackUInt16(const unsigned char *buf, uint16_t *i)
 
     for ( ii = 0; ii < 2; ++ii )
     {
-        p[ii] = buf[ii];
+        p[ii] = buf[1-ii];
     }
 
     return 2;
@@ -209,7 +209,7 @@ int UnpackFloat64(const unsigned char *buf, double *d)
 
     for (i = 0; i < 8; ++i)
     {
-        p[i] = buf[i];
+        p[i] = buf[7-i];
     }
 
     return sizeof(double);
