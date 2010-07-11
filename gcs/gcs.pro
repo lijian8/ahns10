@@ -2,7 +2,7 @@
 # Project created by QtCreator 2010-04-25T11:58:01
 # -------------------------------------------------
 HELI = $(HELICONNECT)
-SERIAL = $(UDP_SERIALISATION)
+
 QT += network opengl
 CONFIG += debug
 TARGET = gcs
@@ -58,7 +58,6 @@ SOURCES += src/main.cpp \
     AHWidget/src/AH_Utility.cpp \
     AHWidget/src/AH_Motion.cpp \
     AHWidget/src/AH.cpp \
-    $$SERIAL/src/little_host_serialisation.c \
     $$HELI/state.c \
     reuse/ahns_logger.cpp \
     src/aboutform.cpp \
@@ -74,7 +73,8 @@ SOURCES += src/main.cpp \
     src/datalogger.cpp \
     src/flightcontrol.cpp \
     src/gainscontrol.cpp \
-    src/parametercontrol.cpp
+    src/parametercontrol.cpp \
+    src/gcsSerialisation.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -91,7 +91,6 @@ HEADERS += include/gcsmainwindow.h \
     include/ioimagehandler.h \
     include/bfimagefeed.h \
     include/bfglrenderer.h \
-    src/bfimagefeed.h \
     include/bfcameracomms.h \
     $$HELI/primitive_serialisation.h \
     include/datalogger.h \

@@ -1,8 +1,16 @@
 /**
- *  @brief Serialisation for the GCS
+ * \file
+ * \author Tim Molloy
  *
+ * Last Modified by: $Author: tlmolloy $
  *
- *  @author Tim Molloy
+ * $LastChangedDate: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
+ * $Rev: 164 $
+ *
+ * Queensland University of Technology
+ *
+ * \section DESCRIPTION
+ * Implementation of GCS Primitive Serialisation
  */
 
 #include "primitive_serialisation.h"
@@ -26,7 +34,7 @@ int UnpackInt16(const unsigned char *buf, int16_t *i)
 
     for ( ii = 0; ii < 2; ++ii )
     {
-        p[ii] = buf[1-ii];
+        p[ii] = buf[ii];
     }
     return 2;
 }
@@ -77,7 +85,7 @@ int UnpackInt32(const unsigned char *buf, int32_t *i)
 
     for ( ii = 0; ii < 4; ++ii )
     {
-        p[ii] = buf[3-ii];
+        p[ii] = buf[ii];
     }
     return 4;
 }
@@ -102,7 +110,7 @@ int UnpackUInt32(const unsigned char *buf, uint32_t *i)
 
     for ( ii = 0; ii < 4; ++ii )
     {
-        p[ii] = buf[3-ii];
+        p[ii] = buf[ii];
     }
 
     return 4;
@@ -128,7 +136,7 @@ int UnpackInt64(const unsigned char *buf, int64_t *i)
 
     for ( ii = 0; ii < 8; ++ii )
     {
-        p[ii] = buf[7-ii];
+        p[ii] = buf[ii];
     }
 
     return 8;
@@ -154,7 +162,7 @@ int UnpackUInt64(const unsigned char *buf, uint64_t *i)
 
     for ( ii = 0; ii < 8; ++ii )
     {
-        p[ii] = buf[7-ii];
+        p[ii] = buf[ii];
     }
 
     return 8;
@@ -162,29 +170,11 @@ int UnpackUInt64(const unsigned char *buf, uint64_t *i)
 
 int PackFloat32(unsigned char *buf, float f)
 {
-        // Convert "f" to the IEEE754 binary32 floating point number format (single precision), and pack it as if it were an int
-        /*
-         *      int32_t intInIEEE754Binary32Format;
-         *      intInIEEE754Binary32Format = convertFloatToFloat754Binary32(f);
-         *      return PackInt32(buf, intInIEEE754Binary32Format);
-         */
-
-        // However, C compilers should already use the binary32 format for floats, so the conversion step can be skipped
-        // Cast the memory address of the float (&f) to a pointer of an int32_t (int32_t*), and then pass the value that this points to (*), to the PackInt32 function
         return PackInt32(buf, *((int32_t*)&f));
 }
 
 int UnpackFloat32(const unsigned char *buf, float *f)
 {
-        // Ussuming PackFloat32 was used to pack the Float, do the reverse to unpack it
-        /*
-         *      int32_t intInIEEE754Binary32Format;
-         *      UnpackInt32(buf, &intInIEEE754Binary32Format);
-         *      *f = convertFloat754Binary32ToFloat(intInIEEE754Binary32Format);
-         *      return 4;
-         */
-
-        // If PackFloat32 skipped the step where the float is converted to binary32 format...
         return UnpackInt32(buf, (int32_t*)f);
 }
 
@@ -215,8 +205,6 @@ int UnpackFloat64(const unsigned char *buf, double *d)
     return sizeof(double);
 }
 
-// Any object can be treated as an array of unsigned char's
-// This is why this method can be used by both int8_t and uint8_t.  They get type cast to an unsigned char because that is the defined type of the argument "c"
 int PackUChar(unsigned char *buf, unsigned char c)
 {
     // Record the char
@@ -228,10 +216,8 @@ int PackUChar(unsigned char *buf, unsigned char c)
 
 int UnpackUChar(const unsigned char *buf, unsigned char *c)
 {
-    // Retrieve the char
     *c = buf[0];
 
-    // Return the number of octets read from the buffer
     return 1;
 }
 
