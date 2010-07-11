@@ -35,6 +35,7 @@ signals:
     void sendSetAPConfig(ap_config_t apConfig);
     void sendPosition(position_t desiredPosition);
     void sendAttitude(attitude_t desiredAttitude);
+    void sendSaveConfig();
 
 public slots:
     void SetAPState(const ap_state_t* const srcState);
@@ -49,6 +50,7 @@ private:
 private slots:
 
     /** Uplink Commands */
+    void on_saveBtn_clicked();
     void on_sendSetConfigBtn_clicked();
     void on_sendPositionBtn_clicked();
     void on_sendAttitudeBtn_clicked();

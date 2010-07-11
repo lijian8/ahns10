@@ -16,6 +16,7 @@
 #include <QThread>
 #include <QMutexLocker>
 #include <QtNetwork>
+#include <QMessageBox>
 
 #include "telemetrythread.h"
 #include "ahns_logger.h"
@@ -172,6 +173,10 @@ void TelemetryThread::clientInitialise()
     m_configReceived = true;
     m_attitudeReceived = true;
     m_positionReceived = true;
+    m_parametersReceived = true;
+    m_gainsReceived = true;
+    m_saveReceived = true;
+    m_getReceived = true;
 
     try
     {
@@ -232,7 +237,7 @@ bool TelemetryThread::packetInitialise()
 /**
   * @brief Send time stamped, data of a given command type
   * @param type Message type as defined in commands.h
-  * @param txData Network integer formatted, char* of data to be transmitted
+  * @param txData Network integer formatted, unsigned char* of data to be transmitted
   * @param txDataByteLength Length in Bytes of the data to be transmitted
   * @return Number of bytes successfully transmitted, -1 for failed
   */
@@ -243,19 +248,27 @@ int TelemetryThread::sendMessage(uint32_t type, const unsigned char* txData, int
 
     // Time Stamp
     struct timeval timeStamp;
-    gettimeofday(&timeStamp, 0 );
-    timeStamp.tv_sec	= htonl(timeStamp.tv_sec);
-    timeStamp.tv_usec	= htonl(timeStamp.tv_usec);
-    struct timeval* timeStampPointer = &timeStamp;
-    char* msgTimePointer = (char*) timeStampPointer;
+    gettimeofday(&timeStamp, 0);
 
-    // Message Type
+    // Pack Time stamp but keep track of started
+    char buffer[2*sizeof(int32_t)];
+    char* msgTimePointer = buffer;
+
+    // 32-bit Transmission of Time
+    //int32_t tv_sec, tv_usec;
+    //tv_sec = htonl((int32_t) timeStamp.tv_sec);
+    //tv_usec = htonl((int32_t) timeStamp.tv_usec);
+
+    PackInt32((unsigned char*) buffer,(int32_t) timeStamp.tv_sec);
+    PackInt32((unsigned char*) &buffer[sizeof(int32_t)],(int32_t) timeStamp.tv_usec);
+
+    // Message 
     type = htonl(type);
     uint32_t *typePointer = &type;
     char* msgTypePointer = (char*) typePointer;
 
     // Form Datagram
-    QByteArray datagram = QByteArray::fromRawData(msgTimePointer,sizeof(timeStamp));
+    QByteArray datagram = QByteArray::fromRawData(msgTimePointer,2*sizeof(int32_t));
     datagram += QByteArray::fromRawData(msgTypePointer,sizeof(type));
 
     // Data
@@ -265,7 +278,7 @@ int TelemetryThread::sendMessage(uint32_t type, const unsigned char* txData, int
     }
 
     // Speed Data
-    m_txData += sizeof(timeStamp) + sizeof(type) + txDataByteLength;
+    m_txData += sizeof(2*sizeof(int32_t)) + sizeof(type) + txDataByteLength;
     if (timeFirstTxPacket == 0)
     {
         timeFirstTxPacket = time(NULL);
@@ -282,7 +295,10 @@ int TelemetryThread::sendMessage(uint32_t type, const unsigned char* txData, int
 void TelemetryThread::DataPending()
 {
     AHNS_DEBUG("TelemetryThread::DataPending() [ Thead = " << QThread::currentThreadId() << " ]");
-    timeval* timeStampPointer = NULL;
+
+    timeval timeStamp;
+    int32_t tv_sec, tv_usec;
+
     uint32_t messageType = -1;
     char* buffer = NULL;
     int discarded = 0;
@@ -294,13 +310,16 @@ void TelemetryThread::DataPending()
         m_socket->readDatagram(byteBuffer.data(),byteBuffer.size());
         buffer = byteBuffer.data();
 
-        // Determine Message Time
-        timeStampPointer = (struct timeval*) buffer;
-        buffer += sizeof(struct timeval);
+        // Rx Message Time - 32 bit transmission
+        buffer += UnpackInt32((unsigned char*) buffer, &tv_sec);
+        buffer += UnpackInt32((unsigned char*) buffer, &tv_usec);
+        timeStamp.tv_sec = (int64_t) tv_sec;
+        timeStamp.tv_usec = (int64_t) tv_usec;
 
-        timeStampPointer->tv_sec = ntohl(timeStampPointer->tv_sec);
-        timeStampPointer->tv_usec = ntohl(timeStampPointer->tv_usec);
-
+//        timeStamp.tv_sec = (int64_t) ntohl(*(int32_t*) buffer);
+//        buffer += sizeof(int32_t);
+//        timeStamp.tv_usec = (int64_t) ntohl(*(int32_t*) buffer);
+//        buffer += sizeof(int32_t);
 
         // Estimate Speed
         if (timeFirstRxPacket == 0)
@@ -318,14 +337,14 @@ void TelemetryThread::DataPending()
 
         if (messageType < COMMAND_MAX) // Message Type Valid
         {
-            if (timercmp(&lastPacket[messageType],timeStampPointer, <)) // timeStampPointer after lastPacket
+            if (timercmp(&lastPacket[messageType],&timeStamp, <)) // timeStamp after lastPacket
             {
                 //AHNS_DEBUG("TelemetryThread::DataPending() [ PACKET IN ORDER ]");
                 discarded = false;
-                lastPacket[messageType].tv_sec =  timeStampPointer->tv_sec;
-                lastPacket[messageType].tv_usec =  timeStampPointer->tv_usec;
+                lastPacket[messageType].tv_sec =  timeStamp.tv_sec;
+                lastPacket[messageType].tv_usec =  timeStamp.tv_usec;
             }
-            else if (timercmp(&lastPacket[messageType],timeStampPointer, >))
+            else if (timercmp(&lastPacket[messageType],&timeStamp, >))
             {
                 discarded = -1;
                 //AHNS_DEBUG("TelemetryThread::DataPending() [ LATE PACKET ]");
@@ -342,33 +361,35 @@ void TelemetryThread::DataPending()
             case COMMAND_ACK:
                 uint32_t ackType;
                 UnpackUInt32((unsigned char*) buffer, &ackType);
+                //ackType = ntohl(*(uint32_t*) buffer);
+                std::cerr << "COMMAND_OPEN AND RX " << COMMAND_OPEN << " " << ackType << std::endl;
                 ackSort(ackType);
-                emit NewAckMessage(*timeStampPointer, ackType, discarded);
+                emit NewAckMessage(timeStamp, ackType, discarded);
                 break;
             case COMMAND_CLOSE:
                 m_closeReceived = true;
-                emit NewCloseMessage(*timeStampPointer,discarded);
+                emit NewCloseMessage(timeStamp,discarded);
             case HELI_STATE:
-                emit NewHeliState(*timeStampPointer, *(state_t*) buffer, discarded);
+                emit NewHeliState(timeStamp, *(state_t*) buffer, discarded);
                 break;
             case FC_STATE:
                 fc_state_t receivedState;
                 UnpackFCState((unsigned char*) buffer, &receivedState);
-                emit NewFCState(*timeStampPointer, receivedState, discarded);
+                emit NewFCState(timeStamp, receivedState, discarded);
                 break;
             case AUTOPILOT_STATE:
                 ap_state_t receivedAPState;
                 UnpackAPState((unsigned char*) buffer, &receivedAPState);
-                emit NewAPState(*timeStampPointer, receivedAPState, discarded);
+                emit NewAPState(timeStamp, receivedAPState, discarded);
                 break;
             case FAILSAFE:
-                emit NewFailSafe(*timeStampPointer,discarded);
+                emit NewFailSafe(timeStamp,discarded);
                 break;
             case GAINS:
-                emit NewGains(*timeStampPointer, *(gains_t*) buffer, discarded);
+                emit NewGains(timeStamp, *(gains_t*) buffer, discarded);
                 break;
             case PARAMETERS:
-                emit NewParameters(*timeStampPointer, *(loop_parameters_t*) buffer, discarded);
+                emit NewParameters(timeStamp, *(loop_parameters_t*) buffer, discarded);
                 break;
             default:
                 AHNS_DEBUG("TelemetryThread::DataPending() [ MESSAGE TYPE NOT MATCHED ]");
@@ -473,7 +494,7 @@ bool TelemetryThread::ackSort(const uint32_t& ackType)
   */
 void TelemetryThread::sendPositionCommand(position_t desiredPosition)
 {
-    AHNS_ALERT("void TelemetryThread::sendPositionCommand(position_t desiredPosition)");
+    AHNS_DEBUG("void TelemetryThread::sendPositionCommand(position_t desiredPosition)");
 
     unsigned char buffer[sizeof(position_t)];
 
@@ -492,7 +513,7 @@ void TelemetryThread::sendPositionCommand(position_t desiredPosition)
     }
     else
     {
-        AHNS_ALERT("void TelemetryThread::sendPositionCommand(position_t desiredPosition) [ STILL WAITING ]");
+        AHNS_DEBUG("void TelemetryThread::sendPositionCommand(position_t desiredPosition) [ STILL WAITING ]");
     }
 
     return;
@@ -503,7 +524,7 @@ void TelemetryThread::sendPositionCommand(position_t desiredPosition)
   */
 void TelemetryThread::retrySendPosition()
 {
-    AHNS_ALERT("void TelemetryThread::retrySendPosition()");
+    AHNS_DEBUG("void TelemetryThread::retrySendPosition()");
 
     unsigned char buffer[sizeof(position_t)];
 
@@ -523,12 +544,14 @@ void TelemetryThread::retrySendPosition()
     {
         if(m_positionReceived)
         {
-            AHNS_ALERT("void TelemetryThread::retrySendPosition() [ SUCCESS ]");
+            AHNS_DEBUG("void TelemetryThread::retrySendPosition() [ SUCCESS ]");
+            emit SentPositionCommand();
         }
         else
         {
             m_positionReceived = true;
-            AHNS_ALERT("void TelemetryThread::retrySendPosition() [ FAILED ]");
+            AHNS_DEBUG("void TelemetryThread::retrySendPosition() [ FAILED ]");
+            emit SentPositionCommand(false);
         }
     }
     return;
@@ -590,12 +613,14 @@ void TelemetryThread::retrySendAttitude()
     {
         if(m_attitudeReceived)
         {
-            AHNS_ALERT("void TelemetryThread::retrySendAttitude() [ SUCCESS ]");
+            emit SentAttitudeCommand();
+            AHNS_DEBUG("void TelemetryThread::retrySendAttitude() [ SUCCESS ]");
         }
         else
         {
             m_attitudeReceived = true;
-            AHNS_ALERT("void TelemetryThread::retrySendAttitude() [ FAILED ]");
+            SentAttitudeCommand(false);
+            AHNS_DEBUG("void TelemetryThread::retrySendAttitude() [ FAILED ]");
         }
     }
     return;
@@ -604,19 +629,41 @@ void TelemetryThread::retrySendAttitude()
 /**
   * @brief Send Gains and await acknowledgement
   */
-void TelemetryThread::sendGains(uint32_t loop, gains_t desiredGains)
+void TelemetryThread::sendGains(gains_t desiredGains)
 {
-    AHNS_DEBUG("void TelemetryThread::sendGains(uint32_t loop, gains_t desiredGains)");
+    AHNS_DEBUG("void TelemetryThread::sendGains(gains_t desiredGains)");
 
     return;
 }
 
 /**
+  * @brief Monitor Gains sent for Acknowledgement
+  */
+void TelemetryThread::retrySendGains()
+{
+    AHNS_DEBUG("void TelemetryThread::retrySendGains()");
+
+    return;
+}
+
+
+
+/**
   * @brief Send Loop parameters and await acknowledgement
   */
-void TelemetryThread::sendParameters(uint32_t loop, loop_parameters_t desiredGains)
+void TelemetryThread::sendParameters(loop_parameters_t desiredGains)
 {
-    AHNS_DEBUG("void TelemetryThread::sendParameters(uint32_t loop, loop_parameters_t desiredGains)");
+    AHNS_DEBUG("void TelemetryThread::sendParameters(loop_parameters_t desiredGains)");
+
+    return;
+}
+
+/**
+  * @brief Monitor Parameters sent for Acknowledgement
+  */
+void TelemetryThread::retrySendParameters()
+{
+    AHNS_DEBUG("void TelemetryThread::retrySendParameters()");
 
     return;
 }
@@ -626,7 +673,7 @@ void TelemetryThread::sendParameters(uint32_t loop, loop_parameters_t desiredGai
   */
 void TelemetryThread::sendSetAPConfig(ap_config_t apConfig)
 {
-    AHNS_ALERT("void TelemetryThread::sendSetAPConfig(ap_config_t apConfig)");
+    AHNS_DEBUG("void TelemetryThread::sendSetAPConfig(ap_config_t apConfig)");
 
     unsigned char buffer[sizeof(ap_config_t)];
 
@@ -675,12 +722,14 @@ void TelemetryThread::retrySetAPConfig()
     {
         if(m_configReceived)
         {
-            AHNS_ALERT("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig) [ SUCCESS ]");
+            emit SentSetAPConfig();
+            AHNS_DEBUG("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig) [ SUCCESS ]");
         }
         else
         {
+            emit SentSetAPConfig(false);
             m_configReceived = true;
-            AHNS_ALERT("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig) [ FAILED " << m_configTryCount << " ]");
+            AHNS_DEBUG("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig) [ FAILED " << m_configTryCount << " ]");
         }
     }
     return;
@@ -698,11 +747,31 @@ void TelemetryThread::sendGetConfig()
 }
 
 /**
+  * @brief Monitor Get Config acknowledgement
+  */
+void TelemetryThread::retryGetConfigParameters()
+{
+    AHNS_DEBUG("void TelemetryThread::retryGetConfigParameters()");
+
+    return;
+}
+
+/**
   * @brief Send Command for FC to save all settings
   */
 void TelemetryThread::sendSaveConfig()
 {
     AHNS_DEBUG("void TelemetryThread::sendSaveConfig()");
+
+    return;
+}
+
+/**
+  * @brief Monitor Save Config acknowledgement
+  */
+void TelemetryThread::retrySaveConfigParameters()
+{
+    AHNS_DEBUG("void TelemetryThread::retrySaveConfigParameters()");
 
     return;
 }

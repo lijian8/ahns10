@@ -260,3 +260,56 @@ void gcsMainWindow::ProcessAPState(const timeval timeStamp, const ap_state_t apS
 
     return;
 }
+
+/**
+  * @brief Slot to receive PARAMETERS Message
+  */
+void gcsMainWindow::ProcessParameters(const timeval timeStamp, const loop_parameters_t loopParameters, const int discarded)
+{
+    AHNS_DEBUG("void ProcessParameters(const timeval timeStamp, const loop_parameters_t loopParameters, const int discarded)");
+
+    QString consoleText;
+    QString timeStampStr = timeStamptoString(timeStamp);
+
+    if (m_receiveConsoleWidget->receivedShow() || m_receiveConsoleWidget->discardedShow()) // form string if either shown
+    {
+        if (!m_receiveConsoleWidget->detailShow()) // only keep first line
+        {
+            consoleText = timeStampStr % " [ PARAMETERS ]";
+        }
+        else
+        {
+            QString phiMax, phiNeutral, phiMin;
+
+
+           /* consoleText = "[ PARAMETERS ] \n\t" % timeStampStr %"\n\t"
+                          % refPhi %" \t " % refTheta %" \t "% refPsi %"\n\t"
+                          % refX %" \t " % refY %" \t "% refZ %"\n\t"
+                          % actPhi %" \t " % actTheta %" \t "% actPsi %"\n\t"
+                          % actX %" \t " % actY %" \t "% actZ %"\n\t";*/
+        }
+    }
+
+    m_receiveConsoleWidget->addItem(consoleText,discarded);
+
+    if (!discarded)
+    {
+        // Update the GUI
+        // Log Parameters
+        m_parameterControlWidget->SetLoopParameters(&loopParameters);
+    }
+
+    return;
+}
+
+/**
+  * @brief Slot to receive GAINS Message
+  */
+void gcsMainWindow::ProcessGains(const timeval timeStamp, const gains_t loopGains, const int discarded)
+{
+    AHNS_DEBUG("void ProcessGains(const timeval timeStamp, const gains_t loopGains, const int discarded)");
+
+
+
+    return;
+}

@@ -83,6 +83,8 @@ private slots:
    void ProcessCloseMessage(const timeval timeStamp, const int discarded = 0);
    void ProcessFCState(const timeval timeStamp, const fc_state_t fcState, const int discarded = 0);
    void ProcessAPState(const timeval timeStamp, const ap_state_t apState, const int discarded = 0);
+   void ProcessParameters(const timeval timeStamp, const loop_parameters_t loopParameters, const int discarded = 0);
+   void ProcessGains(const timeval timeStamp, const gains_t loopGains, const int discarded = 0);
 
    void UpdateWidgets();
 private:

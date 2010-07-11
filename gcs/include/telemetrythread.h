@@ -68,6 +68,15 @@ signals:
     void NewFailSafe(const timeval timeStamp, const int discarded = 0);
 
 
+    /** @name Signals for Tx Messages */
+    void SentPositionCommand(bool success = true);
+    void SentAttitudeCommand(bool success = true);
+    void SentGains(bool success = true);
+    void SentParameters(bool success = true);
+    void SentSetAPConfig(bool success = true);
+    void SentGetConfig(bool success = true);
+    void SentSaveConfig(bool success = true);
+
     /** @name Signals for Connection Status */
     void RxEstimate(const double& linkSpeed);
 
@@ -77,9 +86,9 @@ public slots:
     /** Methods for Data Transmission */
     void sendPositionCommand(position_t desiredPosition);
     void sendAttitudeCommand(attitude_t desiredAttitude);
-    void sendGains(uint32_t loop, gains_t desiredGains);
-    void sendParameters(uint32_t loop, loop_parameters_t desiredGains);
     void sendSetAPConfig(ap_config_t apConfig);
+    void sendGains(gains_t desiredGains);
+    void sendParameters(loop_parameters_t desiredGains);
     void sendGetConfig();
     void sendSaveConfig();
 
@@ -89,8 +98,10 @@ private slots:
     void retrySetAPConfig();
     void retrySendPosition();
     void retrySendAttitude();
-    //void retrySendGains();
-    //void retrySendParameters();
+    void retrySendGains();
+    void retrySendParameters();
+    void retryGetConfigParameters();
+    void retrySaveConfigParameters();
 
 private:
     bool packetInitialise();
@@ -131,12 +142,32 @@ private:
     /** @name Position Count, Flag and Data */
     quint8 m_positionTryCount;        /**< Counter of tries */
     volatile bool m_positionReceived; /**< Flag used to check for DESIRED_POSITION received */
-    position_t m_txPosition;       /**< current Config being transmitted */
+    position_t m_txPosition;          /**< current Config being transmitted */
 
     /** @name Attitude Count, Flag and Data */
-    quint8 m_attitudeTryCount;      /**< Counter of tries */
+    quint8 m_attitudeTryCount;        /**< Counter of tries */
     volatile bool m_attitudeReceived; /**< Flag used to check for DESIRED_ATTITUDE received */
-    attitude_t m_txAttitude;       /**< current attitude being transmitted */
+    attitude_t m_txAttitude;          /**< current attitude being transmitted */
+
+    /** @name Parameter Count, Flag and Data */
+    quint8 m_parametersTryCount;        /**< Counter of tries */
+    volatile bool m_parametersReceived; /**< Flag used to check for PARAMETERS received */
+    loop_parameters_t m_txParameters;   /**< current parameters being transmitted */
+
+
+    /** @name Gains Count, Flag and Data */
+    quint8 m_gainsTryCount;        /**< Counter of tries */
+    volatile bool m_gainsReceived; /**< Flag used to check for GAINS received */
+    gains_t m_txGains;             /**< current gains being transmitted */
+
+    /** @name Save Config Count, Flag and Data */
+    quint8 m_saveTryCount;        /**< Counter of tries */
+    volatile bool m_saveReceived; /**< Flag used to check for SAVE_CONFIG received */
+
+    /** @name Get Config Count, Flag and Data */
+    quint8 m_getTryCount;        /**< Counter of tries */
+    volatile bool m_getReceived; /**< Flag used to check for GET_CONFIG received */
+
 };
 
 #endif // TELEMETRYTHREAD_H

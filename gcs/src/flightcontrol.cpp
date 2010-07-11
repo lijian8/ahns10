@@ -98,6 +98,9 @@ void FlightControl::on_rcBtn_clicked()
 
     ui->sendAttitudeBtn->setEnabled(true);
     ui->sendPositionBtn->setEnabled(true);
+    
+    // Force Upload
+    ui->sendSetConfigBtn->click();
 
     return;
 }
@@ -142,6 +145,9 @@ void FlightControl::on_attitudeBtn_clicked()
     // enable all command buttons
     ui->sendAttitudeBtn->setEnabled(true);
     ui->sendPositionBtn->setEnabled(true);
+
+    // Force Upload
+    ui->sendSetConfigBtn->click();
 
 
     return;
@@ -188,6 +194,9 @@ void FlightControl::on_positionBtn_clicked()
     ui->sendAttitudeBtn->setEnabled(false);
     ui->sendPositionBtn->setEnabled(true);
 
+    // Force Upload
+    ui->sendSetConfigBtn->click();
+
     return;
 }
 
@@ -230,6 +239,9 @@ void FlightControl::on_guidanceBtn_clicked()
     // disable all command buttons
     ui->sendAttitudeBtn->setEnabled(false);
     ui->sendPositionBtn->setEnabled(false);
+
+    // Force Upload
+    ui->sendSetConfigBtn->click();
 
     return;
 }
@@ -450,5 +462,15 @@ void FlightControl::on_sendAttitudeBtn_clicked()
 
     emit sendAttitude(txAttitude);
 
+    return;
+}
+
+/**
+  * @brief Command for FC to save all AP parameters, gains, references and config
+  */
+void FlightControl::on_saveBtn_clicked()
+{
+    AHNS_DEBUG("void FlightControl::on_saveBtn_clicked()");
+    emit sendSaveConfig();
     return;
 }

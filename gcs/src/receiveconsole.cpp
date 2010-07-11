@@ -28,8 +28,8 @@ ReceiveConsole::ReceiveConsole(QWidget *parent) : QWidget(parent), ui(new Ui::Re
     m_discardedCount = 0;
 
     ui->Speedlbl->setText("0 kBs");
-    ui->receivedChkbox->setChecked(true);
-    ui->discardedChkbox->setChecked(true);
+    ui->receivedChkbox->setChecked(false);
+    ui->discardedChkbox->setChecked(false);
 }
 
 ReceiveConsole::~ReceiveConsole()
