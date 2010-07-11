@@ -18,6 +18,8 @@
 
 #include <QWidget>
 
+#include "state.h"
+
 namespace Ui {
     class GainsControl;
 }
@@ -28,6 +30,12 @@ public:
     GainsControl(QWidget *parent = 0);
     ~GainsControl();
 
+signals:
+    void sendGains(gains_t loopGains);
+
+public slots:
+    void SetGains(const gains_t* const srcGains);
+
 protected:
     void changeEvent(QEvent *e);
     QSize SizeHint() const;
@@ -35,6 +43,12 @@ protected:
 
 private:
     Ui::GainsControl *ui;
+
+private slots:
+    /** @name Command Buttons */
+    void on_loadBtn_clicked();
+    void on_SaveBtn_clicked();
+    void on_SendBtn_clicked();
 };
 
 #endif // GAINSCONTROL_H

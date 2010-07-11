@@ -22,7 +22,7 @@
 #include "sys/time.h"
 #include "state.h"
 
-/** @name Possible Plot Data */
+/** @name Data */
 enum PlotData {
     F_PHI,
     F_PHI_DOT,

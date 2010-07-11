@@ -300,6 +300,7 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
         {   
             // Allocate the Thread
             m_TelemetryThread = new TelemetryThread(serverPort,serverIP,clientPort,clientIP);
+            m_receiveConsoleWidget->clearConsole();
 
             // Speed Information
             connect(m_TelemetryThread,SIGNAL(RxEstimate(double)),m_receiveConsoleWidget,SLOT(RxSpeed(const double&)));
@@ -310,12 +311,17 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             connect(m_TelemetryThread,SIGNAL(NewCloseMessage(const timeval, const int)),this,SLOT(ProcessCloseMessage(const timeval, const int)));
             connect(m_TelemetryThread,SIGNAL(NewFCState(const timeval, const fc_state_t, const int)),this,SLOT(ProcessFCState(const timeval, const fc_state_t, const int)));
             connect(m_TelemetryThread,SIGNAL(NewAPState(const timeval, const ap_state_t, const int)),this,SLOT(ProcessAPState(const timeval, const ap_state_t, const int)));
-            m_receiveConsoleWidget->clearConsole();
 
             // Tx Messages
+            // Flight Control -> Attitude, Position and Config
             connect(m_flightControlWidget,SIGNAL(sendSetAPConfig(ap_config_t)),m_TelemetryThread,SLOT(sendSetAPConfig(ap_config_t)));
             connect(m_flightControlWidget,SIGNAL(sendPosition(position_t)),m_TelemetryThread,SLOT(sendPositionCommand(position_t)));
             connect(m_flightControlWidget,SIGNAL(sendAttitude(attitude_t)),m_TelemetryThread,SLOT(sendAttitudeCommand(attitude_t)));
+            connect(m_flightControlWidget,SIGNAL(sendSaveConfig()),m_TelemetryThread,SLOT(sendSaveConfig()));
+            // Parameters Control -> Parameters
+            connect(m_parameterControlWidget,SIGNAL(sendParameters(loop_parameters_t)),m_TelemetryThread,SLOT(sendParameters(loop_parameters_t)));
+            // Gains Control -> Gains
+            connect(m_gainsControlWidget,SIGNAL(sendGains(gains_t)),m_TelemetryThread,SLOT(sendGains(gains_t)));
 
             // Start the timer
             m_TelSecCount = 0;
