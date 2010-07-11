@@ -51,7 +51,7 @@ int UnpackUInt16(const unsigned char *buf, uint16_t *i)
 
     for ( ii = 0; ii < 2; ++ii )
     {
-        p[ii] = buf[1-ii];
+        p[ii] = buf[ii];
     }
 
     return 2;

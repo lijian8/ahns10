@@ -69,13 +69,7 @@ signals:
 
 
     /** @name Signals for Tx Messages */
-    void SentPositionCommand(bool success = true);
-    void SentAttitudeCommand(bool success = true);
-    void SentGains(bool success = true);
-    void SentParameters(bool success = true);
-    void SentSetAPConfig(bool success = true);
-    void SentGetConfig(bool success = true);
-    void SentSaveConfig(bool success = true);
+    void SentMessage(uint32_t messageType, bool success = true);
 
     /** @name Signals for Connection Status */
     void RxEstimate(const double& linkSpeed);
@@ -88,7 +82,7 @@ public slots:
     void sendAttitudeCommand(attitude_t desiredAttitude);
     void sendSetAPConfig(ap_config_t apConfig);
     void sendGains(gains_t desiredGains);
-    void sendParameters(loop_parameters_t desiredGains);
+    void sendParameters(loop_parameters_t desiredParameters);
     void sendGetConfig();
     void sendSaveConfig();
 
@@ -100,8 +94,8 @@ private slots:
     void retrySendAttitude();
     void retrySendGains();
     void retrySendParameters();
-    void retryGetConfigParameters();
-    void retrySaveConfigParameters();
+    void retryGetConfig();
+    void retrySaveConfig();
 
 private:
     bool packetInitialise();
@@ -160,13 +154,13 @@ private:
     volatile bool m_gainsReceived; /**< Flag used to check for GAINS received */
     gains_t m_txGains;             /**< current gains being transmitted */
 
-    /** @name Save Config Count, Flag and Data */
-    quint8 m_saveTryCount;        /**< Counter of tries */
-    volatile bool m_saveReceived; /**< Flag used to check for SAVE_CONFIG received */
-
     /** @name Get Config Count, Flag and Data */
     quint8 m_getTryCount;        /**< Counter of tries */
     volatile bool m_getReceived; /**< Flag used to check for GET_CONFIG received */
+
+    /** @name Save Config Count, Flag and Data */
+    quint8 m_saveTryCount;        /**< Counter of tries */
+    volatile bool m_saveReceived; /**< Flag used to check for SAVE_CONFIG received */
 
 };
 

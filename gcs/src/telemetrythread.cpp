@@ -477,6 +477,14 @@ bool TelemetryThread::ackSort(const uint32_t& ackType)
     {
         m_configReceived = true;
     }
+    else if (ackType == GET_CONFIG)
+    {
+        m_getReceived = true;
+    }
+    else if (ackType == SAVE_CONFIG)
+    {
+        m_saveReceived = true;
+    }
     else if (ackType == DESIRED_ATTITUDE)
     {
         m_attitudeReceived = true;
@@ -484,6 +492,18 @@ bool TelemetryThread::ackSort(const uint32_t& ackType)
     else if (ackType == DESIRED_POSITION)
     {
         m_positionReceived = true;
+    }
+    else if (ackType == PARAMETERS)
+    {
+        m_parametersReceived = true;
+    }
+    else if (ackType == GAINS)
+    {
+        m_gainsReceived = true;
+    }
+    else
+    {
+        bRet = false;
     }
 
     return bRet;
@@ -545,13 +565,13 @@ void TelemetryThread::retrySendPosition()
         if(m_positionReceived)
         {
             AHNS_DEBUG("void TelemetryThread::retrySendPosition() [ SUCCESS ]");
-            emit SentPositionCommand();
+            emit SentMessage(DESIRED_POSITION);
         }
         else
         {
             m_positionReceived = true;
             AHNS_DEBUG("void TelemetryThread::retrySendPosition() [ FAILED ]");
-            emit SentPositionCommand(false);
+            emit SentMessage(DESIRED_POSITION,false);
         }
     }
     return;
@@ -613,14 +633,14 @@ void TelemetryThread::retrySendAttitude()
     {
         if(m_attitudeReceived)
         {
-            emit SentAttitudeCommand();
             AHNS_DEBUG("void TelemetryThread::retrySendAttitude() [ SUCCESS ]");
+            emit SentMessage(DESIRED_ATTITUDE);
         }
         else
         {
             m_attitudeReceived = true;
-            SentAttitudeCommand(false);
             AHNS_DEBUG("void TelemetryThread::retrySendAttitude() [ FAILED ]");
+            emit SentMessage(DESIRED_ATTITUDE,false);
         }
     }
     return;
@@ -633,6 +653,26 @@ void TelemetryThread::sendGains(gains_t desiredGains)
 {
     AHNS_DEBUG("void TelemetryThread::sendGains(gains_t desiredGains)");
 
+    unsigned char buffer[sizeof(gains_t)];
+
+    if (m_gainsReceived)
+    {
+        m_txGains = desiredGains;
+
+        // Send the Message
+        PackGains(buffer, &m_txGains);
+        sendMessage(GAINS, buffer, sizeof(gains_t));
+
+        // Await Reply
+        m_gainsReceived = false;
+        m_gainsTryCount = 1;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySendGains()));
+    }
+    else
+    {
+        AHNS_DEBUG("void TelemetryThread::sendGains(gains_t desiredGains) [ STILL WAITING ]");
+    }
+
     return;
 }
 
@@ -643,6 +683,35 @@ void TelemetryThread::retrySendGains()
 {
     AHNS_DEBUG("void TelemetryThread::retrySendGains()");
 
+    unsigned char buffer[sizeof(gains_t)];
+
+    if ((!m_gainsReceived) && (m_gainsTryCount < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
+    {
+        m_gainsTryCount++;
+
+        // Send the Message
+        PackGains(buffer, &m_txGains);
+        sendMessage(GAINS, buffer, sizeof(gains_t));
+
+        // Await Reply
+        m_gainsReceived = false;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySendGains()));
+    }
+    else // stopped either due to count or recieved
+    {
+        if(m_gainsReceived)
+        {
+            AHNS_DEBUG("void TelemetryThread::retrySendGains() [ SUCCESS ]");
+            emit SentMessage(GAINS);
+        }
+        else
+        {
+            m_gainsReceived = true;
+            AHNS_DEBUG("void TelemetryThread::retrySendGains() [ FAILED ]");
+            emit SentMessage(GAINS,false);
+        }
+    }
+
     return;
 }
 
@@ -651,9 +720,29 @@ void TelemetryThread::retrySendGains()
 /**
   * @brief Send Loop parameters and await acknowledgement
   */
-void TelemetryThread::sendParameters(loop_parameters_t desiredGains)
+void TelemetryThread::sendParameters(loop_parameters_t desiredParameters)
 {
-    AHNS_DEBUG("void TelemetryThread::sendParameters(loop_parameters_t desiredGains)");
+    AHNS_DEBUG("void TelemetryThread::sendParameters(loop_parameters_t desiredParameters)");
+
+    unsigned char buffer[sizeof(loop_parameters_t)];
+
+    if (m_parametersReceived)
+    {
+        m_txParameters = desiredParameters;
+
+        // Send the Message
+        PackParameters(buffer, &m_txParameters);
+        sendMessage(PARAMETERS, buffer, sizeof(loop_parameters_t));
+
+        // Await Reply
+        m_parametersReceived = false;
+        m_parametersTryCount = 1;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySendParameters()));
+    }
+    else
+    {
+        AHNS_DEBUG("void TelemetryThread::sendParameters(loop_parameters_t desiredParameters) [ STILL WAITING ]");
+    }
 
     return;
 }
@@ -664,6 +753,35 @@ void TelemetryThread::sendParameters(loop_parameters_t desiredGains)
 void TelemetryThread::retrySendParameters()
 {
     AHNS_DEBUG("void TelemetryThread::retrySendParameters()");
+
+    unsigned char buffer[sizeof(loop_parameters_t)];
+
+    if ((!m_parametersReceived) && (m_parametersTryCount < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
+    {
+        m_parametersTryCount++;
+
+        // Send the Message
+        PackParameters(buffer, &m_txParameters);
+        sendMessage(PARAMETERS, buffer, sizeof(loop_parameters_t));
+
+        // Await Reply
+        m_parametersReceived = false;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySendParameters()));
+    }
+    else // stopped either due to count or recieved
+    {
+        if(m_parametersReceived)
+        {
+            AHNS_DEBUG("void TelemetryThread::retrySendParameters() [ SUCCESS ]");
+            emit SentMessage(PARAMETERS);
+        }
+        else
+        {
+            m_parametersReceived = true;
+            AHNS_DEBUG("void TelemetryThread::retrySendParameters() [ FAILED ]");
+            emit SentMessage(PARAMETERS, false);
+        }
+    }
 
     return;
 }
@@ -698,7 +816,7 @@ void TelemetryThread::sendSetAPConfig(ap_config_t apConfig)
 }
 
 /**
-  * @brief Monitor AP configuration acknowledgement
+  * @brief Monitor SET_CONFIG configuration acknowledgement
   */
 void TelemetryThread::retrySetAPConfig()
 {
@@ -722,14 +840,14 @@ void TelemetryThread::retrySetAPConfig()
     {
         if(m_configReceived)
         {
-            emit SentSetAPConfig();
             AHNS_DEBUG("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig) [ SUCCESS ]");
+            emit SentMessage(SET_CONFIG);
         }
         else
         {
-            emit SentSetAPConfig(false);
             m_configReceived = true;
             AHNS_DEBUG("void TelemetryThread::retrySetAPConfig(ap_config_t apConfig) [ FAILED " << m_configTryCount << " ]");
+            emit SentMessage(SET_CONFIG,false);
         }
     }
     return;
@@ -743,15 +861,56 @@ void TelemetryThread::sendGetConfig()
 {
     AHNS_DEBUG("void TelemetryThread::sendGetConfig()");
 
+    if (m_getReceived)
+    {
+        // Send the Message
+        sendMessage(GET_CONFIG);
+
+        // Await Reply
+        m_getReceived = false;
+        m_getTryCount = 1;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retryGetConfig()));
+    }
+    else
+    {
+        AHNS_DEBUG("void TelemetryThread::sendGetConfig() [ STILL WAITING ]");
+    }
+
     return;
 }
 
 /**
   * @brief Monitor Get Config acknowledgement
   */
-void TelemetryThread::retryGetConfigParameters()
+void TelemetryThread::retryGetConfig()
 {
     AHNS_DEBUG("void TelemetryThread::retryGetConfigParameters()");
+
+    if ((!m_getReceived) && (m_getTryCount < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
+    {
+        m_getTryCount++;
+
+        // Send the Message
+        sendMessage(GET_CONFIG);
+
+        // Await Reply
+        m_getReceived = false;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retryGetConfig()));
+    }
+    else // stopped either due to count or recieved
+    {
+        if(m_getReceived)
+        {
+            AHNS_DEBUG("void TelemetryThread::retryGetConfigParameters() [ SUCCESS ]");
+            emit SentMessage(GET_CONFIG);
+        }
+        else
+        {
+            m_getReceived = true;
+            AHNS_DEBUG("void TelemetryThread::retryGetConfigParameters() [ FAILED " << m_getTryCount << " ]");
+            emit SentMessage(GET_CONFIG, false);
+        }
+    }
 
     return;
 }
@@ -763,15 +922,56 @@ void TelemetryThread::sendSaveConfig()
 {
     AHNS_DEBUG("void TelemetryThread::sendSaveConfig()");
 
+    if (m_saveReceived)
+    {
+        // Send the Message
+        sendMessage(SAVE_CONFIG);
+
+        // Await Reply
+        m_saveReceived = false;
+        m_saveTryCount = 1;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySaveConfig()));
+    }
+    else
+    {
+        AHNS_DEBUG("void TelemetryThread::sendSaveConfig() [ STILL WAITING ]");
+    }
+    
     return;
 }
 
 /**
   * @brief Monitor Save Config acknowledgement
   */
-void TelemetryThread::retrySaveConfigParameters()
+void TelemetryThread::retrySaveConfig()
 {
-    AHNS_DEBUG("void TelemetryThread::retrySaveConfigParameters()");
+    AHNS_DEBUG("void TelemetryThread::retrySaveConfig()");
+
+    if ((!m_saveReceived) && (m_saveReceived < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
+    {
+        m_saveReceived++;
+
+        // Send the Message
+        sendMessage(SAVE_CONFIG);
+
+        // Await Reply
+        m_saveReceived = false;
+        QTimer::singleShot(RETRY_TIME_MS,this,SLOT(retrySaveConfig()));
+    }
+    else // stopped either due to count or recieved
+    {
+        if(m_saveReceived)
+        {
+            AHNS_DEBUG("void TelemetryThread::retrySaveConfig() [ SUCCESS ]");
+            emit SentMessage(SAVE_CONFIG);
+        }
+        else
+        {
+            m_saveReceived = true;
+            AHNS_DEBUG("void TelemetryThread::retrySaveConfig() [ FAILED " << m_saveTryCount << " ]");
+            emit SentMessage(SAVE_CONFIG, false);
+        }
+    }
 
     return;
 }
