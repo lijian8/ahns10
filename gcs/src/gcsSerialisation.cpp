@@ -85,7 +85,7 @@ int UnpackInt32(const unsigned char *buf, int32_t *i)
 
     for ( ii = 0; ii < 4; ++ii )
     {
-        p[ii] = buf[ii];
+        p[ii] = buf[3-ii];
     }
     return 4;
 }
@@ -110,7 +110,7 @@ int UnpackUInt32(const unsigned char *buf, uint32_t *i)
 
     for ( ii = 0; ii < 4; ++ii )
     {
-        p[ii] = buf[ii];
+        p[ii] = buf[3-ii];
     }
 
     return 4;
