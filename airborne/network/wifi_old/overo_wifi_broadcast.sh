@@ -9,7 +9,7 @@
 # $Id$
 
 ifconfig wlan0 down
-iwconfig wlan0 essid 'dd-wrt'
+iwconfig wlan0 essid 'heliconnect10'
 ifconfig wlan0 up
 
 dhclient wlan0
