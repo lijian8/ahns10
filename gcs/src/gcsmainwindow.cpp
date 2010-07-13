@@ -311,6 +311,8 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             connect(m_TelemetryThread,SIGNAL(NewCloseMessage(const timeval, const int)),this,SLOT(ProcessCloseMessage(const timeval, const int)));
             connect(m_TelemetryThread,SIGNAL(NewFCState(const timeval, const fc_state_t, const int)),this,SLOT(ProcessFCState(const timeval, const fc_state_t, const int)));
             connect(m_TelemetryThread,SIGNAL(NewAPState(const timeval, const ap_state_t, const int)),this,SLOT(ProcessAPState(const timeval, const ap_state_t, const int)));
+            connect(m_TelemetryThread,SIGNAL(NewGains(timeval,gains_t,int)),this,SLOT(ProcessGains(timeval,gains_t,int)));
+            connect(m_TelemetryThread,SIGNAL(NewParameters(timeval,loop_parameters_t,int)),this,SLOT(ProcessParameters(timeval,loop_parameters_t,int)));
 
             // Tx Messages
             // Flight Control -> Attitude, Position and Config
