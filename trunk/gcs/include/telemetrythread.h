@@ -31,7 +31,7 @@
 #include "commands.h"
 
 #define REPLY_TIMEOUT_MS 500
-#define RETRY_TIME_MS 100
+#define RETRY_TIME_MS 50
 
 /**
   * @brief Thread Class Inherided from QThread
@@ -124,43 +124,43 @@ private:
     volatile bool m_stopped;
 
     /** @name Received Flags */
-    volatile bool m_openReceived;   /**< Flag used to check for COMMAND_ACK received in relation to connection*/
-    volatile bool m_closeReceived;  /**< Flag used to check for COMMAND_CLOSE received */
+    volatile bool m_openReceived;   /**< Flag used to check for COMMAND_ACK received at FC*/
+    volatile bool m_closeReceived;  /**< Flag used to check for COMMAND_CLOSE received  at FC*/
 
 
     /** @name AP Config Count, Flag and Data */
     quint8 m_configTryCount;        /**< Counter of tries */
-    volatile bool m_configReceived; /**< Flag used to check for SET_CONFIG received */
+    volatile bool m_configReceived; /**< Flag used to check for SET_CONFIG received  at FC*/
     ap_config_t m_txAPConfig;       /**< current Config being transmitted */
 
     /** @name Position Count, Flag and Data */
     quint8 m_positionTryCount;        /**< Counter of tries */
-    volatile bool m_positionReceived; /**< Flag used to check for DESIRED_POSITION received */
+    volatile bool m_positionReceived; /**< Flag used to check for DESIRED_POSITION received at FC*/
     position_t m_txPosition;          /**< current Config being transmitted */
 
     /** @name Attitude Count, Flag and Data */
     quint8 m_attitudeTryCount;        /**< Counter of tries */
-    volatile bool m_attitudeReceived; /**< Flag used to check for DESIRED_ATTITUDE received */
+    volatile bool m_attitudeReceived; /**< Flag used to check for DESIRED_ATTITUDE received at FC*/
     attitude_t m_txAttitude;          /**< current attitude being transmitted */
 
     /** @name Parameter Count, Flag and Data */
     quint8 m_parametersTryCount;        /**< Counter of tries */
-    volatile bool m_parametersReceived; /**< Flag used to check for PARAMETERS received */
+    volatile bool m_parametersReceived; /**< Flag used to check for PARAMETERS received at FC*/
     loop_parameters_t m_txParameters;   /**< current parameters being transmitted */
 
 
     /** @name Gains Count, Flag and Data */
     quint8 m_gainsTryCount;        /**< Counter of tries */
-    volatile bool m_gainsReceived; /**< Flag used to check for GAINS received */
+    volatile bool m_gainsReceived; /**< Flag used to check for GAINS received at FC*/
     gains_t m_txGains;             /**< current gains being transmitted */
 
     /** @name Get Config Count, Flag and Data */
     quint8 m_getTryCount;        /**< Counter of tries */
-    volatile bool m_getReceived; /**< Flag used to check for GET_CONFIG received */
+    volatile bool m_getReceived; /**< Flag used to check for GET_CONFIG received at FC*/
 
     /** @name Save Config Count, Flag and Data */
     quint8 m_saveTryCount;        /**< Counter of tries */
-    volatile bool m_saveReceived; /**< Flag used to check for SAVE_CONFIG received */
+    volatile bool m_saveReceived; /**< Flag used to check for SAVE_CONFIG received at FC*/
 
 };
 

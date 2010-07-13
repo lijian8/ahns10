@@ -78,7 +78,7 @@ uint8_t setAPConfig(const ap_config_t* const srcConfig)
 
 uint8_t setGains(const gains_t* const srcGains)
 {
-  uint8_t bRet = 0;
+  uint8_t bRet = 1;
 
   MutexLockAllLoops();
 

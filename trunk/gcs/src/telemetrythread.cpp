@@ -361,8 +361,6 @@ void TelemetryThread::DataPending()
             case COMMAND_ACK:
                 uint32_t ackType;
                 UnpackUInt32((unsigned char*) buffer, &ackType);
-                //ackType = ntohl(*(uint32_t*) buffer);
-                std::cerr << "COMMAND_OPEN AND RX " << COMMAND_OPEN << " " << ackType << std::endl;
                 ackSort(ackType);
                 emit NewAckMessage(timeStamp, ackType, discarded);
                 break;
@@ -386,10 +384,14 @@ void TelemetryThread::DataPending()
                 emit NewFailSafe(timeStamp,discarded);
                 break;
             case GAINS:
-                emit NewGains(timeStamp, *(gains_t*) buffer, discarded);
+                gains_t receivedGains;
+                UnpackGains((unsigned char*) buffer, &receivedGains);
+                emit NewGains(timeStamp, receivedGains, discarded);
                 break;
             case PARAMETERS:
-                emit NewParameters(timeStamp, *(loop_parameters_t*) buffer, discarded);
+                loop_parameters_t receivedParameters;
+                UnpackParameters((unsigned char*) buffer, &receivedParameters);
+                emit NewParameters(timeStamp, receivedParameters, discarded);
                 break;
             default:
                 AHNS_DEBUG("TelemetryThread::DataPending() [ MESSAGE TYPE NOT MATCHED ]");

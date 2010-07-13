@@ -90,7 +90,6 @@ private slots:
 private:
     Ui::gcsMainWindow *ui;
     void createDockWindows();
-    QString timeStamptoString(const timeval& timeStamp);
 
     // Docked Widgets Widget
     AHclass* m_ahWidget;
@@ -113,17 +112,26 @@ private:
     // Threads
     TelemetryThread* m_TelemetryThread;
 
-    // Telemetry Timer
+    /** @name Telemetry Timer */
     QTimer m_oTelUptimer;
     quint8 m_TelSecCount;
     quint8 m_TelMinCount;
     quint32 m_TelHourCount;
 
-    // GUI Update Timer
+    /** @name GUI Update Timer */
     QTimer m_updateTimer;
 
-    // Data Logger Object
+    /** @name Data Logger Object */
     DataLogger m_Data;
+
+    /** @brief Functions to Convert Messages to QStrings */
+    QString timeStampToString(const timeval& timeStamp);
+    QString stateToString(const state_t& heliState);
+    QString ackMessageToString(const uint32_t& ackType);
+    QString fcStateToString(const fc_state_t& fcState);
+    QString apStateToString(const ap_state_t& apState);
+    QString parametersToString(const loop_parameters_t& loopParameters);
+    QString gainsToString(const gains_t& loopGains);
 };
 
 #endif // GCSMAINWINDOW_H

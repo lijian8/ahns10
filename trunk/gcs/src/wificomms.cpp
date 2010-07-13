@@ -40,7 +40,7 @@
 #include "ahns_timeformat.h"
 
 // Default Network Settings
-#define DEFAULT_SERVER_IP "192.168.0.15"
+#define DEFAULT_SERVER_IP "192.168.1.107"
 #define DEFAULT_CLIENT_IP "127.0.0.1"
 #define DEFAULT_SERVER_PORT "2002"
 #define DEFAULT_CLIENT_PORT "45455"
@@ -178,7 +178,7 @@ void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
 
         ui->serverIPlineEdit->setText(DEFAULT_SERVER_IP);
         ui->serverPortlineEdit->setText(DEFAULT_SERVER_PORT);
-        ui->clientIPlineEdit->setText(szHostIP);
+        ui->clientIPlineEdit->setText(DEFAULT_CLIENT_IP);
         ui->clientPortlineEdit->setText(DEFAULT_CLIENT_PORT);
     }
     else // ui is wrong
