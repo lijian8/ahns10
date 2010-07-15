@@ -3,6 +3,7 @@
 #
 #
 #
+make all
 
 HEX=obj/mcu.hex:i  # :i for intel hex - only important for read
 
