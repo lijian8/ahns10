@@ -35,13 +35,14 @@ uint8_t escCommands[4] = {0, 0, 0, 0};
 // PWM Defines
 #define F_PWM ((double) F_CPU/(64.0*510.0))
 #define PWM_MAX_US 2000
-#define PWM_MIN_US 1000
+#define PWM_MIN_US 600
 
 // Boolian Defines
 #define TRUE 1
 #define FALSE 0
-
-
+#define SBR(x) (1<<(x))   /* Set bit 'x' in register */
+#define CBR(x) ~(1<<(x))  /* Clear bit 'x' in register */
+#define BRS(r,x) (((1 << (x)) & ((r) & (1 << (x)))) == 1) /* determine if bit 'x' on register 'r' is set */
 
 void init();
 uint8_t InitialiseModeIndicator();
@@ -57,28 +58,90 @@ uint8_t InitialiseTimer1();
 uint8_t StartPWM();
 uint8_t StopPWM();
 
-// Pin Change Interupt
+// Input Pins for PC
+#define NUM_CHANNELS 6
 #define CHANNEL1 5
 #define CHANNEL2 4
 #define CHANNEL3 3
 #define CHANNEL4 2
 #define CHANNEL5 1
 #define CHANNEL6 0
-
 uint8_t InitialisePC();
+
+// Inputs for PC
+typedef struct
+{
+  uint8_t isHigh;
+  uint32_t startTimerCount;
+  uint32_t overflowCount;
+  uint32_t measuredPulseWidth;
+} Channel;
+
+volatile Channel inputChannels[NUM_CHANNELS];
+volatile uint8_t risenPINC;
+volatile uint8_t fallenPINC;
+volatile uint8_t countChanged;
+
+inline void ProcessPC();
+
+// Timer2 for PC Pulse Width Timing
+uint8_t InitialiseTimer2();
+
 
 void main (void)
 {
   StopPWM();
   init();
+  StartPWM();
 
   for ( ; ; )
   {
+    ProcessPC();
   }
 
   return;
 }
 
+void ProcessPC()
+{
+  uint8_t i = 0;
+  if ((risenPINC != 0) || (fallenPINC != 0))  // process input capture
+  {
+    for (i = 0; i < NUM_CHANNELS; ++i)
+    {
+      if (BRS(risenPINC,i)) // channel i changed to high
+      {
+        risenPINC &= CBR(i);
+
+        if (!inputChannels[i].isHigh) // not known high - ok
+        {
+          inputChannels[i].isHigh = 1;
+          inputChannels[i].startTimerCount = countChanged;
+        }
+        else // known high - lost falling edge
+        {
+          inputChannels[i].isHigh = 1;
+          inputChannels[i].startTimerCount = countChanged;
+          inputChannels[i].overflowCount = 0;
+        }
+      }
+      else if (BRS(fallenPINC,i)) // channel i changed to low
+      {
+        fallenPINC &= CBR(i);
+        if (inputChannels[i].isHigh) // not known low so tracked - ok
+        {
+          inputChannels[i].isHigh = 0;
+          inputChannels[i].measuredPulseWidth = (256 - inputChannels[i].startTimerCount) + (inputChannels[i].overflowCount - 1)*256 + countChanged;
+          inputChannels[i].startTimerCount = 0;
+	  inputChannels[i].overflowCount = 0;
+        }
+        //else known low - missed rising edge ignore
+       }
+    }
+  }
+
+  return;
+}
 
 void init()
 {
@@ -90,14 +153,12 @@ void init()
   InitialiseTimer0();
   InitialiseTimer1();
 
+
+  InitialiseUSART();
+
+  InitialiseTimer2();
   InitialisePC();
-
-  if (InitialiseUSART())
-  {
-    // Start PWM
-    StartPWM();
-  }
-
+  
   sei();
 
   return;
@@ -166,6 +227,25 @@ uint8_t InitialiseTimer1()
   return 1;
 }
 
+uint8_t InitialiseTimer2()
+{
+  // Register A
+  // COM2A_10 = 00 for normal mode
+  // WGM2_210 = 000 for normal mode
+  TCCR2A = (0 << COM2A1) | (0 << COM2A0) | 
+           (0 << WGM21) | (0 << WGM20);
+
+  // Register B
+  // CS2_210 = 010 for Prescale or 8 to 1MHz
+  TCCR2B = (0 << WGM22) | (0 << CS22) | (1 << CS21) | (0 << CS20);
+
+  // Interrupt Mask
+  // TOIE2 - for Timer overflow
+  TIMSK2 = (1 << TOIE2);
+
+  return 1;
+}	
+
 uint8_t StopPWM()
 {
   // ESC 1 and 2
@@ -206,6 +286,9 @@ uint8_t InitialiseUSART()
 
 uint8_t InitialisePC()
 {
+  // Pins to Inputs to enable read of high or low
+  DDRC = (1 << CHANNEL1) | (1 << CHANNEL2) | (1 << CHANNEL3) | (1 << CHANNEL4) | (1 << CHANNEL5) | (1 << CHANNEL6);
+ 
   // PC Interrupt Control Reg
   PCICR = (1 << PCIE1);
 
@@ -213,25 +296,54 @@ uint8_t InitialisePC()
   // Interrupts for the Pins all in PCMSK1
   PCMSK1 = (1 << PCINT13) | (1 << PCINT12) | (1 << PCINT11) | (1 << PCINT10) | (1 << PCINT9) | (1 << PCINT8);
    
-  // Pins to Inputs to enable read of high or low
-  DDRC = (1 << CHANNEL1) | (1 << CHANNEL2) | (1 << CHANNEL3) | (1 << CHANNEL4) | (1 << CHANNEL5) | (1 << CHANNEL6);
-  
   return 1;
 }
 
-// Find the Pin that Changed
-// Get Time that it changed
-// if ( pin high )
-//   log time
-//   return and wait for low
-// else if ( pin low )
-//   calculate elapsed time
-//   scale to range 0-255 for the pwm timers
-// else
-//   undefined
-// endif
-
 ISR(PCINT1_vect)
 {
+  static uint8_t previousPINC = 0;
+  uint8_t changedPINC = 0;
+  uint8_t i = 0;
+
+  // Get Changed Time
+  countChanged = TCNT2;
+
+  // Flag the Changes
+  changedPINC = PINC ^ previousPINC;
   
+  // Determine Falling or Rising Edge
+  // TODO Only Check Changed Channels
+  for (i = 0; i < NUM_CHANNELS; ++i)
+  {
+    if (BRS(changedPINC,i))
+    {
+      if (BRS(previousPINC,i)) // previously high
+      {
+        fallenPINC |= SBR(i);
+	risenPINC &= CBR(i);
+      }
+      else // previously low
+      {
+        risenPINC |= SBR(i);
+	fallenPINC &= CBR(i);
+      }
+    }
+  }
+
+  // Update Previous
+  previousPINC = PINC;
+}
+
+ISR(TIMER2_OVF_vect)
+{
+  uint8_t i = 0;
+ 
+  // Increment Timer Overflow Counts of High Pulses
+  for (i = 0; i < NUM_CHANNELS; ++i)
+  {
+    if (inputChannels[i].isHigh)
+    {
+      inputChannels[i].overflowCount++;
+    }
+  }
 }
