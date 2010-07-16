@@ -1,80 +1,77 @@
-# avr-gcc to complie and link
-# avr-libc for C libraries
-# avrdude to upload
+###############################################################################
+# Makefile for the project mcu
+###############################################################################
 
+## General Flags
+PROJECT = mcu
+MCU = atmega328p
+TARGET = obj/mcu.elf
 CC = avr-gcc
-LD = $(CC)
-OBJCOPY = avr-objcopy
-OBJDUMP = avr-objdump
 
-TARGET = obj/mcu
+CPP = avr-g++
 
-override CFLAGS = -c -O -g -c -ffreestanding -funsigned-char -funsigned-bitfields -fshort-enums -fpack-struct -mmcu=$(MCU_TARGET)
-# -g : avr-gdb
-# -ffreestanding : turn off builting functions
+## Options common to compile, link and assembly rules
+COMMON = -mmcu=$(MCU)
 
-override LDFLAGS = -Wl,-Map,$(TARGET).map
+## Compile options common for all C compilation units.
+CFLAGS = $(COMMON)
+CFLAGS += -Wall -gdwarf-2 -std=gnu99 -Os -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums
+CFLAGS += -MD -MP -MT $(*F).o -MF dep/$(@F).d 
 
-MCU_TARGET = atmega328p
-UPFLAGS = -p m328p
+## Assembly specific flags
+ASMFLAGS = $(COMMON)
+ASMFLAGS += $(CFLAGS)
+ASMFLAGS += -x assembler-with-cpp -Wa,-gdwarf2
 
-LIB = 
-INC = 
-HEADERS = 
-OBJS = obj/mcu.o
-SRCS = src/mcu.c
-
-obj/%.o: src/%.c
-	$(CC) $(CFLAGS) -o $@ $< $(INC) $(LIB)
-
-all: $(TARGET).elf text eeprom
+## Linker flags
+LDFLAGS = $(COMMON)
+LDFLAGS +=  -Wl,-Map=mcu.map
 
 
-$(TARGET).elf:  $(OBJS) $(HEADERS)
-	$(CC) $(CDFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(INC) $(LIB)
+## Intel Hex file production flags
+HEX_FLASH_FLAGS = -R .eeprom -R .fuse -R .lock -R .signature
+
+HEX_EEPROM_FLAGS = -j .eeprom
+HEX_EEPROM_FLAGS += --set-section-flags=.eeprom="alloc,load"
+HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
-# Rules for building the .text rom images
-text: lst hex bin srec
+## Objects that must be built in order to link
+OBJECTS = obj/mcu.o 
 
-lst: $(TARGET).lst
-hex:  $(TARGET).hex
-bin:  $(TARGET).bin
-srec: $(TARGET).srec
+## Objects explicitly added by the user
+LINKONLYOBJECTS = 
 
-%.lst: %.elf
-	$(OBJDUMP) -h -S $< > $@
+## Build
+all: $(TARGET) obj/mcu.hex obj/mcu.eep obj/mcu.lss size
 
-%.hex: %.elf
-	$(OBJCOPY) -j .text -j .data -O ihex $< $@
+## Compile
+obj/mcu.o: src/mcu.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
 
-%.srec: %.elf
-	$(OBJCOPY) -j .text -j .data -O srec $< $@
+##Link
+$(TARGET): $(OBJECTS)
+	 $(CC) $(LDFLAGS) $(OBJECTS) $(LINKONLYOBJECTS) $(LIBDIRS) $(LIBS) -o $(TARGET)
 
-%.bin: %.elf
-	$(OBJCOPY) -j .text -j .data -O binary $< $@
+%.hex: $(TARGET)
+	avr-objcopy -O ihex $(HEX_FLASH_FLAGS)  $< $@
 
-# Rules for building the .eeprom rom images
+%.eep: $(TARGET)
+	-avr-objcopy $(HEX_EEPROM_FLAGS) -O ihex $< $@ || exit 0
 
-eeprom: ehex ebin esrec
+%.lss: $(TARGET)
+	avr-objdump -h -S $< > $@
 
-ehex:  $(TARGET)_eeprom.hex
-ebin:  $(TARGET)_eeprom.bin
-esrec: $(TARGET)_eeprom.srec
+size: ${TARGET}
+	@echo
+	@avr-size -C --mcu=${MCU} ${TARGET}
 
-%_eeprom.hex: %.elf
-	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O ihex $< $@ \
-        || { echo empty $@ not generated; exit 0; }
-
-%_eeprom.srec: %.elf
-	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O srec $< $@ \
-        || { echo empty $@ not generated; exit 0; }
-
-%_eeprom.bin: %.elf
-	$(OBJCOPY) -j .eeprom --change-section-lma .eeprom=0 -O binary $< $@ \
-        || { echo empty $@ not generated; exit 0; }
- 
+## Clean target
+.PHONY: clean
 clean:
-	rm obj/*
+	-rm -rf $(OBJECTS) obj/mcu.elf dep/* obj/mcu.hex obj/mcu.eep obj/mcu.lss obj/mcu.map
 
-.phony: all clean lst hex bin srec ehex ebin esrec text eeprom
+
+## Other dependencies
+-include $(shell mkdir dep 2>/dev/null) $(wildcard dep/*)
+

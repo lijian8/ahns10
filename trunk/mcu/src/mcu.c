@@ -20,6 +20,7 @@
 #include <util/delay.h>
 
 // Mode LED Indicator Defines
+// All Port C
 #define GREEN_LED 3
 #define BLUE_LED 4
 #define RED_LED 2
@@ -30,10 +31,10 @@
 #define ESC3 OCR1A
 #define ESC4 OCR1B
 
-uint8_t escCommands[4] = {0, 0, 0, 0};
-
 // PWM Defines
+// Pre-scalar of 64 
 #define F_PWM ((double) F_CPU/(64.0*510.0))
+#define PWM_DT_US ((double) (1e6 * 64.0 / F_CPU))
 #define PWM_MAX_US 2000
 #define PWM_MIN_US 600
 
@@ -42,7 +43,7 @@ uint8_t escCommands[4] = {0, 0, 0, 0};
 #define FALSE 0
 #define SBR(x) (1<<(x))   /* Set bit 'x' in register */
 #define CBR(x) ~(1<<(x))  /* Clear bit 'x' in register */
-#define BRS(r,x) (((1 << (x)) & ((r) & (1 << (x)))) == 1) /* determine if bit 'x' on register 'r' is set */
+#define BRS(r,x) !!((r) & (1 << (x))) /* determine if bit 'x' on register 'r' is set */
 
 void init();
 uint8_t InitialiseModeIndicator();
@@ -57,6 +58,7 @@ uint8_t InitialiseTimer1();
 // PWM Functions
 uint8_t StartPWM();
 uint8_t StopPWM();
+inline uint8_t SetPWM(uint32_t pulseHighTime);
 
 // Input Pins for PC
 #define NUM_CHANNELS 6
@@ -66,7 +68,6 @@ uint8_t StopPWM();
 #define CHANNEL4 2
 #define CHANNEL5 1
 #define CHANNEL6 0
-uint8_t InitialisePC();
 
 // Inputs for PC
 typedef struct
@@ -82,11 +83,11 @@ volatile uint8_t risenPINC;
 volatile uint8_t fallenPINC;
 volatile uint8_t countChanged;
 
+uint8_t InitialisePC();
 inline void ProcessPC();
 
 // Timer2 for PC Pulse Width Timing
 uint8_t InitialiseTimer2();
-
 
 void main (void)
 {
@@ -134,12 +135,20 @@ void ProcessPC()
           inputChannels[i].measuredPulseWidth = (256 - inputChannels[i].startTimerCount) + (inputChannels[i].overflowCount - 1)*256 + countChanged;
           inputChannels[i].startTimerCount = 0;
 	  inputChannels[i].overflowCount = 0;
+          if ( i == CHANNEL1 )
+	  {
+	  	ESC1 = SetPWM(inputChannels[CHANNEL1].measuredPulseWidth);
+	  }
         }
         //else known low - missed rising edge ignore
        }
-    }
-  }
+     }
+   }
 
+
+  //ESC2 = SetPWM(inputChannels[CHANNEL1].measuredPulseWidth);
+  //ESC3 = SetPWM(inputChannels[CHANNEL1].measuredPulseWidth);
+  //ESC4 = SetPWM(inputChannels[CHANNEL1].measuredPulseWidth);
   return;
 }
 
@@ -285,13 +294,14 @@ uint8_t InitialiseUSART()
 {
   uint8_t bRet = 1;
 
+
   return bRet;
 }
 
 uint8_t InitialisePC()
 {
   // Pins to Inputs to enable read of high or low
-  DDRC = (1 << CHANNEL1) | (1 << CHANNEL2) | (1 << CHANNEL3) | (1 << CHANNEL4) | (1 << CHANNEL5) | (1 << CHANNEL6);
+  DDRC = (0 << CHANNEL1) | (0 << CHANNEL2) | (0 << CHANNEL3) | (0 << CHANNEL4) | (0 << CHANNEL5) | (0 << CHANNEL6);
  
   // PC Interrupt Control Reg
   PCICR = (1 << PCIE1);
@@ -317,10 +327,11 @@ ISR(PCINT1_vect)
   
   // Determine Falling or Rising Edge
   // TODO Only Check Changed Channels
-  for (i = 0; i < NUM_CHANNELS; ++i)
-  {
+ for (i = 0; i < NUM_CHANNELS; ++i)
+ {
     if (BRS(changedPINC,i))
     {
+        PORTD ^= (1 << RED_LED);
       if (BRS(previousPINC,i)) // previously high
       {
         fallenPINC |= SBR(i);
@@ -332,7 +343,7 @@ ISR(PCINT1_vect)
 	fallenPINC &= CBR(i);
       }
     }
-  }
+ }
 
   // Update Previous
   previousPINC = PINC;
@@ -341,6 +352,7 @@ ISR(PCINT1_vect)
 
 ISR(TIMER2_OVF_vect)
 {
+  
   uint8_t i = 0;
   
   // Increment Timer Overflow Counts of High Pulses
@@ -352,3 +364,11 @@ ISR(TIMER2_OVF_vect)
     }
   }
 }
+
+inline uint8_t SetPWM(uint32_t pulseHighTime)
+{
+  // Convert micro-seconds to timer compare
+  
+  return pulseHighTime / (2.0 * PWM_DT_US) ;
+}
+
