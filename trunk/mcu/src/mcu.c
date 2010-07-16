@@ -229,6 +229,9 @@ uint8_t InitialiseTimer1()
 
 uint8_t InitialiseTimer2()
 {
+  // Clear Asynchronous Source
+  ASSR = 0;
+
   // Register A
   // COM2A_10 = 00 for normal mode
   // WGM2_210 = 000 for normal mode
@@ -241,7 +244,8 @@ uint8_t InitialiseTimer2()
 
   // Interrupt Mask
   // TOIE2 - for Timer overflow
-  TIMSK2 = (1 << TOIE2);
+  //TIMSK2 = 0;
+  TIMSK2 |= (1 << TOIE2);
 
   return 1;
 }	
@@ -269,10 +273,10 @@ uint8_t StartPWM()
   TCCR0B |= (0 << CS02) | (1 << CS01) | (1 << CS00);
   TCCR1B |= (0 << CS12) | (1 << CS11) | (1 << CS10);
 
-  OCR0A = 150;
-  OCR0B = 150;
-  OCR1A = 150;
-  OCR1B = 150;
+  OCR0A = 0;
+  OCR0B = 0;
+  OCR1A = 0;
+  OCR1B = 0;
 
   return 1;
 }
@@ -334,10 +338,11 @@ ISR(PCINT1_vect)
   previousPINC = PINC;
 }
 
+
 ISR(TIMER2_OVF_vect)
 {
   uint8_t i = 0;
- 
+  
   // Increment Timer Overflow Counts of High Pulses
   for (i = 0; i < NUM_CHANNELS; ++i)
   {
