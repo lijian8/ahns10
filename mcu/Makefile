@@ -5,7 +5,7 @@
 ## General Flags
 PROJECT = mcu
 MCU = atmega328p
-TARGET = obj/mcu.elf
+TARGET = mcu.elf
 CC = avr-gcc
 
 CPP = avr-g++
@@ -36,40 +36,55 @@ HEX_EEPROM_FLAGS += --set-section-flags=.eeprom="alloc,load"
 HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
+## Include Directories
+INCLUDES = -I include/
+
 ## Objects that must be built in order to link
-OBJECTS = obj/mcu.o 
+OBJECTS = obj/mcu.o obj/pwm.o obj/pulsecapture.o obj/modeindicator.o obj/usart.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
 
 ## Build
-all: $(TARGET) obj/mcu.hex obj/mcu.eep obj/mcu.lss size
+all: $(TARGET) obj/mcu.hex obj/mcu.eep obj/mcu.lss
 
 ## Compile
 obj/mcu.o: src/mcu.c
-	$(CC) $(INCLUDES) $(CFLAGS) -c $< -o $@
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $< -o $@
+
+obj/pwm.o: src/pwm.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $< -o $@
+
+obj/pulsecapture.o: src/pulsecapture.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $< -o $@
+
+obj/modeindicator.o: src/modeindicator.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $< -o $@
+
+obj/usart.o: src/usart.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $< -o $@
 
 ##Link
 $(TARGET): $(OBJECTS)
 	 $(CC) $(LDFLAGS) $(OBJECTS) $(LINKONLYOBJECTS) $(LIBDIRS) $(LIBS) -o $(TARGET)
 
-%.hex: $(TARGET)
+obj/%.hex: $(TARGET)
 	avr-objcopy -O ihex $(HEX_FLASH_FLAGS)  $< $@
 
-%.eep: $(TARGET)
+obj/%.eep: $(TARGET)
 	-avr-objcopy $(HEX_EEPROM_FLAGS) -O ihex $< $@ || exit 0
 
-%.lss: $(TARGET)
+obj/%.lss: $(TARGET)
 	avr-objdump -h -S $< > $@
 
-size: ${TARGET}
-	@echo
-	@avr-size -C --mcu=${MCU} ${TARGET}
+#size: ${TARGET}
+	#@echo
+	#@avr-size -Bt --mcu=${MCU} ${TARGET}
 
 ## Clean target
 .PHONY: clean
 clean:
-	-rm -rf $(OBJECTS) obj/mcu.elf dep/* obj/mcu.hex obj/mcu.eep obj/mcu.lss obj/mcu.map
+	-rm -rf $(OBJECTS) mcu.elf dep/* obj/mcu.hex obj/mcu.eep obj/mcu.lss obj/mcu.map
 
 
 ## Other dependencies

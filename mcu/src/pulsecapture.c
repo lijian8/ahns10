@@ -2,10 +2,10 @@
  * \file   pulsecapture.c
  * \author Tim Molloy
  *
- * $Author: tlmolloy $
- * $Date: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
- * $Rev: 164 $
- * $Id: main.cpp 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
  *
  * Queensland University of Technology
  *
@@ -39,13 +39,13 @@ uint8_t InitialiseTimer2()
            (0 << WGM21) | (0 << WGM20);
 
   // Register B
-  // CS2_210 = 010 for Prescale or 8 to 1MHz
-  //         = 100 for 64 to 125kHz
+  // CS2_210 = 010 for Prescale or 8 to 1MHz or 1us
+  //         = 011 for 32 to 250kHz or 4us
+  //         = 100 for 64 to 125kHz or 8us
   TCCR2B = (0 << WGM22) | (1 << CS22) | (0 << CS21) | (0 << CS20);
 
   // Interrupt Mask
   // TOIE2 - for Timer overflow
-  //TIMSK2 = 0;
   TIMSK2 |= (1 << TOIE2);
 
   return 1;
@@ -73,46 +73,46 @@ void ProcessPC()
   {
     for (i = 0; i < NUM_CHANNELS; ++i)
     {
-      if (BRS(risenPINC,i)) // channel i changed to high
+      if (BRS(fallenPINC,i)) // channel i changed to low
       {
-        risenPINC &= CBR(i);
-
-        if (!inputChannel[i].isHigh) // not known high - ok
+        if (inputChannel[i].overflowCount > 0) // overflowed
         {
-          inputChannel[i].isHigh = 1;
-          inputChannel[i].startTimerCount = countChanged;
+          inputChannel[i].measuredPulseWidth = PC_DT_US*((256 - inputChannel[i].startTimerCount) + (inputChannel[i].overflowCount - 1)*256 + countChanged);
         }
-        else // known high - lost falling edge
+        else // no known overflow
         {
-          inputChannel[i].isHigh = 1;
-          inputChannel[i].startTimerCount = countChanged;
-          inputChannel[i].overflowCount = 0;
+          if (countChanged > inputChannel[i].startTimerCount)
+          {
+            inputChannel[i].measuredPulseWidth = PC_DT_US*(countChanged - inputChannel[i].startTimerCount);
+          }
+          else // missed an overflow during processing
+          {
+            inputChannel[i].measuredPulseWidth = PC_DT_US*((256 - inputChannel[i].startTimerCount) + countChanged);
+          }
         }
-      }
-      else if (BRS(fallenPINC,i)) // channel i changed to low
-      {
-        fallenPINC &= CBR(i);
-        if (inputChannel[i].isHigh) // not known low so tracked - ok
-        {
-          inputChannel[i].isHigh = 0;
-          inputChannel[i].measuredPulseWidth = 8.0*((256 - inputChannel[i].startTimerCount) + (inputChannel[i].overflowCount - 1)*256 + countChanged);
-          inputChannel[i].startTimerCount = 0;
-	  inputChannel[i].overflowCount = 0;
-          
-	  // DEBUG
-	  printf("Channel %i: %lu \t",i,inputChannel[i].measuredPulseWidth);
 
-
-	  /*if ( i == CHANNEL1 )
+          #ifdef DEBUG
+          if (inputChannel[i].measuredPulseWidth > 3000)
 	  {
-	  	ESC1_COUNTER = SetPWM(inputChannel[CHANNEL1].measuredPulseWidth);
-	  }*/
-        }
-        //else known low - missed rising edge ignore
-       }
-     }
-   }
+	    printf("Channel %i: %lu Start Count: %u Overflow Count: %u End Count: %u\n",i,inputChannel[i].measuredPulseWidth,inputChannel[i].startTimerCount,inputChannel[i].overflowCount,countChanged);
+          }
+          #endif
 
+          inputChannel[i].isHigh = 0;
+	  inputChannel[i].overflowCount = 0;
+          inputChannel[i].startTimerCount = 0;
+          fallenPINC &= CBR(i);
+        
+      }
+      else if (BRS(risenPINC,i)) // channel i changed to high
+      {
+        inputChannel[i].isHigh = 1;
+        inputChannel[i].startTimerCount = countChanged;
+        inputChannel[i].overflowCount = 0;
+        risenPINC &= CBR(i);
+      }
+    }
+  }
   return;
 }
 
@@ -173,7 +173,10 @@ ISR(TIMER2_OVF_vect)
   {
     if (inputChannel[i].isHigh)
     {
-      inputChannel[i].overflowCount++;
+      if (!BRS(fallenPINC,i))
+      {
+        inputChannel[i].overflowCount++;
+      }
     }
   }
 }

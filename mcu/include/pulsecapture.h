@@ -2,10 +2,10 @@
  * \file   pulsecapture.h
  * \author Tim Molloy
  *
- * $Author: tlmolloy $
- * $Date: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
- * $Rev: 164 $
- * $Id: main.cpp 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
  *
  * Queensland University of Technology
  *
@@ -21,6 +21,8 @@
 #ifndef PULSECAPTURE_H
 #define PULSECAPTURE_H
 
+/** @name Pulse Capture Resolution in micro-seconds*/
+#define PC_DT_US (1e6*64.0/F_CPU)
 
 /** @name Input Pins for Pulse Capture using Pin Change Interrupts */
 #define NUM_CHANNELS 6
@@ -34,10 +36,10 @@
 /** @name Input Channel Data Structure */
 typedef struct
 {
-  uint8_t isHigh;                /**< Flag indicating detected channel status */
-  uint32_t startTimerCount;      /**< Count of the Timer when channel last went high */
-  uint32_t overflowCount;        /**< Number of times Timer has overflowed since channel went high*/
-  uint32_t measuredPulseWidth;   /**< Previous Captured Pulse Width of the channel in US*/
+  uint8_t isHigh;               /**< Flag indicating detected channel status */
+  uint8_t startTimerCount;      /**< Count of the Timer when channel last went high */
+  uint8_t overflowCount;        /**< Number of times Timer has overflowed since channel went high*/
+  uint32_t measuredPulseWidth;  /**< Previous Captured Pulse Width of the channel in US*/
 } Channel;
 
 /** @brief Array of Input Channels */

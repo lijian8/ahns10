@@ -2,10 +2,10 @@
  * \file   modeindicator.h
  * \author Tim Molloy
  *
- * $Author: tlmolloy $
- * $Date: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
- * $Rev: 164 $
- * $Id: main.cpp 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
  *
  * Queensland University of Technology
  *
@@ -23,9 +23,30 @@
 #define BLUE_LED PD4  /**< Port Blue LED is connected to */
 #define RED_LED PD2   /**< Port Red LED is connected to */
 
+/** @name LED Modes */
+#define TOGGLE 3 /**< Toggle mode integer */
+#define ON 1 /**< On mode integer */
+#define OFF 0 /**< Off mode integer */
+
 /**
  * @brief Initialise the Mode indicator LED Ports
  */
 extern uint8_t InitialiseModeIndicator();
+
+/**
+ * @brief Toggle the Red LED on or off
+ */
+extern void ToggleRed(uint8_t mode);
+
+/**
+ * @brief Toggle the Green LED on or off
+ */
+extern void ToggleGreen(uint8_t mode);
+
+/**
+ * @brief Toggle the Blue LED on or off
+ * @param mode 1 for on, 0 for off, 3 for toggle
+ */
+extern void ToggleBlue(uint8_t mode);
 
 #endif // MODEINDICATOR_H

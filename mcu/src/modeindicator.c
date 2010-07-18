@@ -2,10 +2,10 @@
  * \file   modeindicator.c
  * \author Tim Molloy
  *
- * $Author: tlmolloy $
- * $Date: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
- * $Rev: 164 $
- * $Id: main.cpp 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
  *
  * Queensland University of Technology
  *
@@ -22,15 +22,59 @@
 
 uint8_t InitialiseModeIndicator()
 {
-  DDRD |= (1<<RED_LED) | (1<<GREEN_LED) | (1<<BLUE_LED);
+  DDRD |= (1 << RED_LED) | (1 << GREEN_LED) | (1 << BLUE_LED);
   
   uint8_t i = 0;
   for (i = 0; i < 4; ++i)
   {
-    PORTD ^= (1<<RED_LED) | (1<<GREEN_LED) | (1<<BLUE_LED);
+    PORTD ^= (1 << RED_LED) | (1 << GREEN_LED) | (1 << BLUE_LED);
     _delay_ms(250);
   }
 
   return 1;
 }
 
+void ToggleRed(uint8_t mode)
+{
+  switch (mode)
+  {
+    case ON:
+      PORTD |= SBR(RED_LED);
+      break;
+    case OFF:
+      PORTD &= CBR(RED_LED);
+      break;
+    case TOGGLE:
+      PORTD ^= (1 << RED_LED);
+  }
+}
+
+void ToggleGreen(uint8_t mode)
+{
+  switch (mode)
+  {
+    case ON:
+      PORTD |= SBR(GREEN_LED);
+      break;
+    case OFF:
+      PORTD &= CBR(GREEN_LED);
+      break;
+    case TOGGLE:
+      PORTD ^= (1 << GREEN_LED);
+  }
+}
+
+void ToggleBlue(uint8_t mode)
+{
+  switch (mode)
+  {
+    case ON:
+      PORTD |= SBR(BLUE_LED);
+      break;
+    case OFF:
+      PORTD &= CBR(BLUE_LED);
+      break;
+    case TOGGLE:
+      PORTD ^= (1 << BLUE_LED);
+  }
+}
