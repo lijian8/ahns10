@@ -2,10 +2,10 @@
  * \file   avrdefines.h
  * \author Tim Molloy
  *
- * $Author: tlmolloy $
- * $Date: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
- * $Rev: 164 $
- * $Id: main.cpp 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
  *
  * Queensland University of Technology
  *
@@ -15,6 +15,9 @@
 
 #ifndef AVRDEFINES_H
 #define AVRDEFINES_H
+
+/** Build in debug Mode */
+#define DEBUG 
 
 /** CPU Clock Speed in Hz */
 #define F_CPU 8000000UL // 16MHz scaled to 8 MHz

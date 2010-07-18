@@ -2,10 +2,10 @@
  * \file   pwm.h
  * \author Tim Molloy
  *
- * $Author: tlmolloy $
- * $Date: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
- * $Rev: 164 $
- * $Id: main.cpp 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
  *
  * Queensland University of Technology
  *
@@ -21,8 +21,8 @@
 /** @name PWM Defines */
 #define F_PWM ((double) F_CPU/(64.0*510.0))       /**< Pre-scalar of 64 */
 #define PWM_DT_US ((double) (1e6 * 64.0 / F_CPU)) /**< Time Resolution of generated PWM signals */
-#define PWM_MAX_US 2000 /**< Maximum Bound on PWM */
-#define PWM_MIN_US 600  /**< Minimum Bound on PWM */       
+#define PWM_MAX_US 2500 /**< Maximum Bound on PWM */
+#define PWM_MIN_US 900  /**< Minimum Bound on PWM */       
 
 /** @name ESC Output Compare Counters */
 #define ESC1_COUNTER OCR0A

@@ -2,10 +2,10 @@
  * \file   mcu.c
  * \author Tim Molloy
  *
- * $Author: tlmolloy $
- * $Date: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
- * $Rev: 164 $
- * $Id: main.cpp 164 2010-06-10 13:59:05Z tlmolloy $
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
  *
  * Queensland University of Technology
  *
@@ -37,15 +37,49 @@ void main (void)
   StopPWM();
   
   init();
+  sei();
+  _delay_ms(250);
+
+
+  // Initialise and detect the Inputs
+  #ifndef DEBUG
+  uint8_t inputsInitialised = 0;
+  do 
+  {
+    ProcessPC();
+    if ((inputChannel[inputsInitialised].measuredPulseWidth < PWM_MAX_US) && (inputChannel[inputsInitialised].measuredPulseWidth > PWM_MIN_US))
+    {
+      inputsInitialised++;
+    }
+    else
+    {
+      ToggleRed(TOGGLE);
+      _delay_ms(250);
+    }
+  } while (inputsInitialised < NUM_CHANNELS);
+  ToggleGreen(ON);
+  ToggleRed(OFF);
+  #endif
+
   stdout = &debugOut;
   printf("System Initialised\n");
-  
 
   StartPWM();
 
   for ( ; ; )
   {
+    // Pulse Capture
     ProcessPC();
+
+    // Mix
+    //ESC1_COUNTER = COMMANDED_COLLECTIVE + COMMANDED_PITCH + COMMANDED_YAW;
+    //ESC2_COUNTER = COMMANDED_COLLECTIVE + COMMANDED_ROLL - COMMANDED_YAW;
+    //ESC3_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_PITCH + COMMANDED_YAW;
+    //ESC4_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_ROLL - COMMANDED_YAW;
+
+    // Output Mixed PWM Signals
+    
+    
   }
 
   return;
@@ -67,6 +101,5 @@ inline void init()
   InitialiseTimer2();
   InitialisePC();
 
-  sei();
   return;
 }

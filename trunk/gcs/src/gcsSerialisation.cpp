@@ -2,10 +2,10 @@
  * \file
  * \author Tim Molloy
  *
- * Last Modified by: $Author: tlmolloy $
+ * Last Modified by: $Author$
  *
- * $LastChangedDate: 2010-06-10 23:59:05 +1000 (Thu, 10 Jun 2010) $
- * $Rev: 164 $
+ * $LastChangedDate$
+ * $Rev$
  *
  * Queensland University of Technology
  *
