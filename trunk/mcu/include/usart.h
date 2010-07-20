@@ -45,4 +45,9 @@ extern void USARTtxData(unsigned char txData);
  */
 extern void USARTtxChar(char txChar, FILE *outStream);
 
+/**
+ * @brief Receive char of Data from USART
+ */ 
+extern unsigned char USARTrxData();
+
 #endif // USART_H

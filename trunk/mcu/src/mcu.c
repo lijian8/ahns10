@@ -63,11 +63,12 @@ void main (void)
 
   stdout = &debugOut;
   printf("System Initialised\n");
-
   StartPWM();
 
   for ( ; ; )
   {
+    // Process USART Commands
+    
     // Pulse Capture
     ProcessPC();
 
@@ -78,7 +79,7 @@ void main (void)
     //ESC4_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_ROLL - COMMANDED_YAW;
 
     // Output Mixed PWM Signals
-    
+
     
   }
 
