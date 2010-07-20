@@ -87,9 +87,7 @@ uint8_t StartPWM()
   return 1;
 }
 
-uint8_t SetPWM(uint32_t pulseHighTime)
-{
-  // Convert micro-seconds to timer compare
-  
+uint8_t counterPWMConverion(uint32_t pulseHighTime)
+{ 
   return pulseHighTime / (2.0 * PWM_DT_US) ;
 }

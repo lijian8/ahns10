@@ -25,12 +25,10 @@
 #include "usart.h"
 #include "modeindicator.h"
 
-
 /**
  * @brief Pack of all Initialise Routines
  */
 void init();
-
 
 void main (void)
 {
@@ -67,16 +65,18 @@ void main (void)
 
   for ( ; ; )
   {
-    // Process USART Commands
-    
+    // Process USART Commands all in interrupts
+
     // Pulse Capture
     ProcessPC();
 
-    // Mix
-    //ESC1_COUNTER = COMMANDED_COLLECTIVE + COMMANDED_PITCH + COMMANDED_YAW;
-    //ESC2_COUNTER = COMMANDED_COLLECTIVE + COMMANDED_ROLL - COMMANDED_YAW;
-    //ESC3_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_PITCH + COMMANDED_YAW;
-    //ESC4_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_ROLL - COMMANDED_YAW;
+    // Mix RC and USART inputs
+    mixCommands();
+
+    //ESC1_COUNTER = COMMANDED_COLLECTIVE + COMMANDED_PITCH - COMMANDED_YAW;
+    //ESC2_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_ROLL + COMMANDED_YAW;
+    //ESC3_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_PITCH - COMMANDED_YAW;
+    //ESC4_COUNTER = COMMANDED_COLLECTIVE + COMMANDED_ROLL + COMMANDED_YAW;
 
     // Output Mixed PWM Signals
 
