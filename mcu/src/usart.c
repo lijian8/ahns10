@@ -73,4 +73,8 @@ void USARTtxData(unsigned char txChar)
   return;
 }
 
+extern unsigned char USARTrxData()
+{
+  
+}
 
