@@ -21,8 +21,8 @@
 /** @name PWM Defines */
 #define F_PWM ((double) F_CPU/(64.0*510.0))       /**< Pre-scalar of 64 */
 #define PWM_DT_US ((double) (1e6 * 64.0 / F_CPU)) /**< Time Resolution of generated PWM signals */
-#define PWM_MAX_US 2500 /**< Maximum Bound on PWM */
-#define PWM_MIN_US 900  /**< Minimum Bound on PWM */       
+#define PWM_MAX_US 2000 /**< Maximum Bound on PWM */
+#define PWM_MIN_US 1200 /**< Minimum Bound on PWM */       
 
 /** @name ESC Output Compare Counters */
 #define ESC1_COUNTER OCR0A
@@ -43,6 +43,10 @@ extern uint8_t InitialiseTimer1();
 /** @name PWM Control Functions */
 extern uint8_t StartPWM();
 extern uint8_t StopPWM();
-extern uint8_t SetPWM(uint32_t pulseHighTime);
+
+/**
+ * @brief Convert micro-seconds of high to timer 8 bit range
+ */
+extern uint8_t counterPWMConverion(uint32_t pulseHighTime);
 
 #endif // PWM_H
