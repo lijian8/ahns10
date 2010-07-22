@@ -36,6 +36,19 @@
 #define ESC3_PIN PB1
 #define ESC4_PIN PB2
 
+/** @name Maximum and Minimum ESC PWM Values*/ 
+#define ESC1_MAX 2000
+#define ESC1_MIN 1200
+
+#define ESC2_MAX 2000
+#define ESC2_MIN 1200
+
+#define ESC3_MAX 2000
+#define ESC3_MIN 1200
+
+#define ESC4_MAX 2000
+#define ESC4_MIN 1200
+
 /** @name PWM Timer Functions */
 extern uint8_t InitialiseTimer0();
 extern uint8_t InitialiseTimer1();
@@ -47,6 +60,6 @@ extern uint8_t StopPWM();
 /**
  * @brief Convert micro-seconds of high to timer 8 bit range
  */
-extern uint8_t counterPWMConverion(uint32_t pulseHighTime);
+extern uint8_t PWMToCounter(uint32_t pulseHighTime);
 
 #endif // PWM_H

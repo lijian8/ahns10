@@ -18,7 +18,7 @@
 
 #include "pwm.h"
 
-uint8_t InitialiseTimer0()
+inline uint8_t InitialiseTimer0()
 {
   // Register A 
   // COM0A = 10 for Non-inverting PWM
@@ -38,7 +38,7 @@ uint8_t InitialiseTimer0()
   return 1;
 }
 
-uint8_t InitialiseTimer1()
+inline uint8_t InitialiseTimer1()
 {   
   // Register A 
   // COM1A = 10 for Non-inverting PWM
@@ -58,7 +58,7 @@ uint8_t InitialiseTimer1()
   return 1;
 }
 
-uint8_t StopPWM()
+inline uint8_t StopPWM()
 {
   // Set ESC's to zero
   ESC1_COUNTER = 0;
@@ -73,7 +73,7 @@ uint8_t StopPWM()
   return 1;
 }
 
-uint8_t StartPWM()
+inline uint8_t StartPWM()
 {
   // CS0_210 = 011 for N = 64
   TCCR0B |= (0 << CS02) | (1 << CS01) | (1 << CS00);
@@ -87,7 +87,7 @@ uint8_t StartPWM()
   return 1;
 }
 
-uint8_t counterPWMConverion(uint32_t pulseHighTime)
+inline uint8_t PWMToCounter(uint32_t pulseHighTime)
 { 
   return pulseHighTime / (2.0 * PWM_DT_US) ;
 }

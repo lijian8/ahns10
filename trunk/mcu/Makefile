@@ -40,7 +40,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 INCLUDES = -I include/
 
 ## Objects that must be built in order to link
-OBJECTS = obj/mcu.o obj/pwm.o obj/pulsecapture.o obj/modeindicator.o obj/usart.o 
+OBJECTS = obj/mcu.o obj/pwm.o obj/pulsecapture.o obj/modeindicator.o obj/usart.o obj/mode.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
@@ -64,6 +64,10 @@ obj/modeindicator.o: src/modeindicator.c
 obj/usart.o: src/usart.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $< -o $@
 
+obj/mode.o: src/mode.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $< -o $@
+
+
 ##Link
 $(TARGET): $(OBJECTS)
 	 $(CC) $(LDFLAGS) $(OBJECTS) $(LINKONLYOBJECTS) $(LIBDIRS) $(LIBS) -o $(TARGET)
@@ -84,7 +88,7 @@ obj/%.lss: $(TARGET)
 ## Clean target
 .PHONY: clean
 clean:
-	-rm -rf $(OBJECTS) mcu.elf dep/* obj/mcu.hex obj/mcu.eep obj/mcu.lss obj/mcu.map
+	-rm -rf $(OBJECTS) mcu.elf dep/* obj/mcu.hex obj/mcu.eep obj/mcu.lss obj/mcu.map mcu.map
 
 
 ## Other dependencies

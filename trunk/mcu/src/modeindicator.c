@@ -78,3 +78,24 @@ void ToggleBlue(uint8_t mode)
       PORTD ^= (1 << BLUE_LED);
   }
 }
+
+inline void IndicateManual()
+{
+  ToggleRed(ON);
+  ToggleGreen(OFF);
+  ToggleBlue(OFF);
+}
+
+inline void IndicateAugmented()
+{
+  ToggleRed(OFF);
+  ToggleGreen(OFF);
+  ToggleBlue(ON);
+}
+
+inline void IndicateAutopilot()
+{
+  ToggleRed(OFF);
+  ToggleGreen(OFF);
+  ToggleBlue(ON);
+}

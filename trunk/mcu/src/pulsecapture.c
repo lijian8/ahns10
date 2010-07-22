@@ -21,11 +21,18 @@
 
 #include "pulsecapture.h"
 
+/** @brief Register of PINC Ports indicating those going high last PCINT */
+static volatile uint8_t risenPINC;
+
+/** @brief Register of PINC Ports indicating those going low last PCINT */
+static volatile uint8_t fallenPINC;
+
+/** @brief Timer Count at last PCINT */
+static volatile uint8_t countChanged;
 
 volatile Channel inputChannel[NUM_CHANNELS];
-volatile uint8_t risenPINC;
-volatile uint8_t fallenPINC;
-volatile uint8_t countChanged;
+
+volatile uint16_t systemSec;
 
 uint8_t InitialiseTimer2()
 {
@@ -66,9 +73,11 @@ uint8_t InitialisePC()
   return 1;
 }
 
-void ProcessPC()
+uint8_t ProcessPC()
 {
+  uint8_t newRC = 1; // assume updates
   uint8_t i = 0;
+
   if ((risenPINC != 0) || (fallenPINC != 0))  // process input capture
   {
     for (i = 0; i < NUM_CHANNELS; ++i)
@@ -113,7 +122,18 @@ void ProcessPC()
       }
     }
   }
-  return;
+  else // no updates
+  {
+    newRC = 0;
+  }
+
+  return newRC;
+}
+
+uint8_t UpdateRC()
+{
+  /** TODO Implement the RC conversion from inputChannels */ 
+  return 0;
 }
 
 /**
@@ -161,12 +181,21 @@ ISR(PCINT1_vect)
 /**
  * @brief Interrupt called when Timer2 Overflows to log time
  *
- * In the RC pulse capturing 1MHz cannot provide non-overflow timing 
+ * In the RC pulse capturing 125kHz cannot provide non-overflow timing 
  * thus channels being timed need to track the number of overflows too. 
  */
 ISR(TIMER2_OVF_vect)
 {
   uint8_t i = 0;
+  static uint16_t timerOverflowCount = 0;
+
+  // estimate seconds uptime
+  timerOverflowCount++;
+  if (timerOverflowCount == 1.0/(256.0 * PC_DT_US))
+  {
+    systemSec++;
+    timerOverflowCount = 0;
+  }
   
   // Increment Timer Overflow Counts of High Pulses
   for (i = 0; i < NUM_CHANNELS; ++i)

@@ -24,6 +24,7 @@
 #include "pulsecapture.h"
 #include "usart.h"
 #include "modeindicator.h"
+#include "mode.h"
 
 /**
  * @brief Pack of all Initialise Routines
@@ -65,24 +66,32 @@ void main (void)
 
   for ( ; ; )
   {
-    // Process USART Commands all in interrupts
 
-    // Pulse Capture
-    ProcessPC();
-
-    // Mix RC and USART inputs
-    mixCommands();
-
-    //ESC1_COUNTER = COMMANDED_COLLECTIVE + COMMANDED_PITCH - COMMANDED_YAW;
-    //ESC2_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_ROLL + COMMANDED_YAW;
-    //ESC3_COUNTER = COMMANDED_COLLECTIVE - COMMANDED_PITCH - COMMANDED_YAW;
-    //ESC4_COUNTER = COMMANDED_COLLECTIVE + COMMANDED_ROLL + COMMANDED_YAW;
-
-    // Output Mixed PWM Signals
-
+    // RC Pulse Capture
+    if(ProcessPC()) // new RC values to process
+    {
+      if(!UpdateRC()) // failsafe and tell flight computer
+      {
+        ESC1_COUNTER = 0;
+        ESC2_COUNTER = 0;
+        ESC3_COUNTER = 0;
+        ESC4_COUNTER = 0;
+      }
+      else
+      {	      
+        // Combine RC and AP inputs
+        // Then Output them
+        CombineCommands();
+	newAPCommands = 0;
+      }
+    }
+    else if (newAPCommands) // only new autopilot commands
+    {
+      newAPCommands = 0;
+      CombineCommands();
+    }
     
   }
-
   return;
 }
 
