@@ -25,6 +25,12 @@
 /** USART FC Baud Rate */
 #define BAUD_RATE 57600
 
+/** Time of Last Received AP Packet */
+extern volatile uint16_t apLastSec;
+ 
+/** New Autopilot Commands Received */
+extern volatile uint8_t newAPCommands;
+
 /**
  * @brief Output File for debugging
  */
@@ -45,9 +51,5 @@ extern void USARTtxData(unsigned char txData);
  */
 extern void USARTtxChar(char txChar, FILE *outStream);
 
-/**
- * @brief Receive Data from USART
- */ 
-extern void USARTrxData();
 
 #endif // USART_H

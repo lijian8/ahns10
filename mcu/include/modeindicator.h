@@ -49,4 +49,19 @@ extern void ToggleGreen(uint8_t mode);
  */
 extern void ToggleBlue(uint8_t mode);
 
+/**
+ * @brief Toggle LEDs to indicate Manual Mode
+ */
+extern void IndicateManual();
+
+/**
+ * @brief Toggle LEDs to indicate Augmented Mode
+ */
+extern void IndicateAugmented();
+
+/**
+ * @brief Toggle LEDs to indicate Autopilot Mode
+ */
+extern void IndicateAutopilot();
+
 #endif // MODEINDICATOR_H

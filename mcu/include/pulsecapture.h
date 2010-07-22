@@ -45,14 +45,8 @@ typedef struct
 /** @brief Array of Input Channels */
 extern volatile Channel inputChannel[NUM_CHANNELS];
 
-/** @brief Register of PINC Ports indicating those going high last PCINT */
-extern volatile uint8_t risenPINC;
-
-/** @brief Register of PINC Ports indicating those going low last PCINT */
-extern volatile uint8_t fallenPINC;
-
-/** @brief Timer Count at last PCINT */
-extern volatile uint8_t countChanged;
+/** @brief Timer 2 Second Counter*/
+extern volatile uint16_t systemSec;
 
 /**
  * @ brief Initialise Port C and the required Pin Change Interrupts
@@ -64,13 +58,24 @@ uint8_t InitialisePC();
  * @brief Update Channel Information based on interrupt data
  * 
  * Called from outside the timer and pin capture interrupts in the main.
+ * @return 1 If new pulses were captured else 0
  */
-void ProcessPC();
+uint8_t ProcessPC();
+
+
+/**
+ * @brief Update the RC data values and check for failsafe conditions
+ * 
+ * Called after processing to check for receiver failsafe.
+ * Converts the captured PWM widths to the counter values for use in global variables.
+ * @return 1 for success 0 for RC in fail safe
+ */ 
+uint8_t UpdateRC();
 
 /** 
  * @brief Initialise Timer2 for Timing Pulse Width
  *
- * Runs at 1 MHz in 8 bit mode to enable 1us resolution in timing
+ * Runs at 125 kHz in 8 bit mode to enable 8us resolution in timing
  */
 uint8_t InitialiseTimer2();
 

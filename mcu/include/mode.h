@@ -18,36 +18,54 @@
 #ifndef MODE_H
 #define MODE_H
 
-/**
- * @brief Flight Mode
- */
-extern volatile uint32_t flightMode;
-
-enum {
+enum FlightModes {
        MANUAL_DEBUG,  /**< Manual Mode with no AP mixing */
        AUGMENTED,     /**< Manual Mode with additional AP mixing */
        AUTOPILOT      /**< AP Mode only*/
 };
 
+
+/**
+ * @brief Flight Mode
+ */
+extern volatile enum FlightModes flightMode;
+
 /** 
  * @brief RC Command Inputs from Pulse Capture
  */
-extern volatile uint8_t RCcollective; /**< RC Commanded Collective */
-extern volatile uint8_t RCroll;       /**< RC Commanded Roll */
-extern volatile uint8_t RCpitch;      /**< RC Commanded Pitch */
-extern volatile uint8_t RCyaw;        /**< RC Commanded Yaw  */
+extern enum FlightModes RCmode; /**< RC Commanded Mode */
+extern uint8_t rcThrottle;    /**< RC Commanded Throttle */
+extern uint8_t rcRoll;          /**< RC Commanded Roll */
+extern uint8_t rcPitch;         /**< RC Commanded Pitch */
+extern uint8_t rcYaw;           /**< RC Commanded Yaw  */
 
 /** 
  * @brief AP Command Inputs from USART Link
  */
-extern volatile uint8_t APcollective; /**< AP Commanded Collective */
-extern volatile uint8_t AProll;       /**< AP Commanded Roll */
-extern volatile uint8_t APpitch;      /**< AP Commanded Pitch */
-extern volatile uint8_t APyaw;        /**< AP Commanded Yaw  */
+extern volatile enum FlightModes apMode; /**< AP Commanded Mode */
+extern volatile uint8_t apThrottle;    /**< AP Commanded Throttle */
+extern volatile uint8_t apRoll;          /**< AP Commanded Roll */
+extern volatile uint8_t apPitch;         /**< AP Commanded Pitch */
+extern volatile uint8_t apYaw;           /**< AP Commanded Yaw  */
 
 /**
- * @brief Generate the low level esc commands from abstracted controls
+ * @brief Generate the low level esc commands
+ * 
+ * Involves Mixing the high level inputs to low level commands.
+ * To limit motor failure or performance loss a moving average filter will
+ * be applied to the current and previous inputs.
  */
-void mixCommands();
+extern void MixCommands(uint8_t commandedThrottle, uint8_t commandedRoll, uint8_t commandedPitch, uint8_t commandedYaw);
+
+/**
+ * @brief Combine High Level Commands
+ *
+ * Depending on the selected flight mode:
+ * 
+ * - Pass the RC Commands without modification
+ * - Augment the RC commands with AP commands
+ * - Pass the AP Commands without modification 
+ */
+extern void CombineCommands();
 
 #endif // MODE_H
