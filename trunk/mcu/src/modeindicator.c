@@ -34,7 +34,7 @@ uint8_t InitialiseModeIndicator()
   return 1;
 }
 
-void ToggleRed(uint8_t mode)
+inline void ToggleRed(uint8_t mode)
 {
   switch (mode)
   {
@@ -49,7 +49,7 @@ void ToggleRed(uint8_t mode)
   }
 }
 
-void ToggleGreen(uint8_t mode)
+inline void ToggleGreen(uint8_t mode)
 {
   switch (mode)
   {
@@ -64,7 +64,7 @@ void ToggleGreen(uint8_t mode)
   }
 }
 
-void ToggleBlue(uint8_t mode)
+inline void ToggleBlue(uint8_t mode)
 {
   switch (mode)
   {
@@ -79,23 +79,3 @@ void ToggleBlue(uint8_t mode)
   }
 }
 
-inline void IndicateManual()
-{
-  ToggleRed(ON);
-  ToggleGreen(OFF);
-  ToggleBlue(OFF);
-}
-
-inline void IndicateAugmented()
-{
-  ToggleRed(OFF);
-  ToggleGreen(OFF);
-  ToggleBlue(ON);
-}
-
-inline void IndicateAutopilot()
-{
-  ToggleRed(OFF);
-  ToggleGreen(OFF);
-  ToggleBlue(ON);
-}

@@ -22,7 +22,7 @@
 #define PULSECAPTURE_H
 
 /** @name Pulse Capture Resolution in micro-seconds*/
-#define PC_DT_US (1e6*64.0/F_CPU)
+extern const uint8_t PC_DT_US;
 
 /** @name Input Pins for Pulse Capture using Pin Change Interrupts */
 #define NUM_CHANNELS 6
@@ -33,35 +33,30 @@
 #define CHANNEL5 PC4
 #define CHANNEL6 PC5
 
+/** @name RC Input Pulse Widths */
+#define PC_PWM_MAX 2000
+#define PC_PWM_MIN 800
+
+#define PULSE_TOLERANCE 200
+
 /** @name Input Channel Data Structure */
 typedef struct
 {
   uint8_t isHigh;               /**< Flag indicating detected channel status */
-  uint8_t startTimerCount;      /**< Count of the Timer when channel last went high */
-  uint8_t overflowCount;        /**< Number of times Timer has overflowed since channel went high*/
-  uint32_t measuredPulseWidth;  /**< Previous Captured Pulse Width of the channel in US*/
+  uint32_t startTime;            /**< Counter Value at Start Time */
+  volatile uint16_t measuredPulseWidth;  /**< Previous Captured Pulse Width of the channel in US*/
 } Channel;
 
 /** @brief Array of Input Channels */
 extern volatile Channel inputChannel[NUM_CHANNELS];
 
-/** @brief Timer 2 Second Counter*/
-extern volatile uint16_t systemSec;
+/** @name Flag for new RC pulses */
+extern volatile uint8_t newRC;
 
 /**
  * @ brief Initialise Port C and the required Pin Change Interrupts
  */
-uint8_t InitialisePC();
-
-
-/**
- * @brief Update Channel Information based on interrupt data
- * 
- * Called from outside the timer and pin capture interrupts in the main.
- * @return 1 If new pulses were captured else 0
- */
-uint8_t ProcessPC();
-
+extern uint8_t InitialisePC();
 
 /**
  * @brief Update the RC data values and check for failsafe conditions
@@ -70,13 +65,20 @@ uint8_t ProcessPC();
  * Converts the captured PWM widths to the counter values for use in global variables.
  * @return 1 for success 0 for RC in fail safe
  */ 
-uint8_t UpdateRC();
+extern uint8_t UpdateRC();
 
 /** 
  * @brief Initialise Timer2 for Timing Pulse Width
  *
  * Runs at 125 kHz in 8 bit mode to enable 8us resolution in timing
  */
-uint8_t InitialiseTimer2();
+extern uint8_t InitialiseTimer2();
+
+/** 
+ * @brief Calculate Timer 2 System Time to resolution of 8us
+ * Will overflow after 71 minutes due to 32bit return
+ * @return System Time in micro-seconds since start up
+ */
+extern uint32_t micro();
 
 #endif // PULSECAPTURE_H

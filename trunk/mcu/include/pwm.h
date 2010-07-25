@@ -19,10 +19,10 @@
 #include <avr/io.h>
 
 /** @name PWM Defines */
-#define F_PWM ((double) F_CPU/(64.0*510.0))       /**< Pre-scalar of 64 */
-#define PWM_DT_US ((double) (1e6 * 64.0 / F_CPU)) /**< Time Resolution of generated PWM signals */
+extern const double F_PWM;       /**< Pre-scalar of 64 */
+extern const double PWM_DT_US;   /**< Time Resolution of generated PWM signals */
 #define PWM_MAX_US 2000 /**< Maximum Bound on PWM */
-#define PWM_MIN_US 1200 /**< Minimum Bound on PWM */       
+#define PWM_MIN_US 800 /**< Minimum Bound on PWM */       
 
 /** @name ESC Output Compare Counters */
 #define ESC1_COUNTER OCR0A
@@ -49,6 +49,9 @@
 #define ESC4_MAX 2000
 #define ESC4_MIN 1200
 
+extern const uint8_t esc1Min, esc1Max, esc2Min, esc2Max,
+                     esc3Min, esc3Max, esc4Min, esc4Max;
+
 /** @name PWM Timer Functions */
 extern uint8_t InitialiseTimer0();
 extern uint8_t InitialiseTimer1();
@@ -57,9 +60,12 @@ extern uint8_t InitialiseTimer1();
 extern uint8_t StartPWM();
 extern uint8_t StopPWM();
 
+/** @name System Sec Timer */
+extern volatile uint32_t systemSec;
+
 /**
  * @brief Convert micro-seconds of high to timer 8 bit range
  */
-extern uint8_t PWMToCounter(uint32_t pulseHighTime);
+#define PWMToCounter(pulseHighTime) ((pulseHighTime) / (2.0 * PWM_DT_US));
 
 #endif // PWM_H

@@ -20,19 +20,18 @@
 #include <stdio.h>
 
 #include "pulsecapture.h"
-
-/** @brief Register of PINC Ports indicating those going high last PCINT */
-static volatile uint8_t risenPINC;
-
-/** @brief Register of PINC Ports indicating those going low last PCINT */
-static volatile uint8_t fallenPINC;
-
-/** @brief Timer Count at last PCINT */
-static volatile uint8_t countChanged;
+#include "modeindicator.h"
+#include "mode.h"
+#include "pwm.h"
 
 volatile Channel inputChannel[NUM_CHANNELS];
 
-volatile uint16_t systemSec;
+const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
+
+volatile uint8_t newRC = 0;
+
+/** @brief Timer 2 Overflow Counter */
+static volatile uint32_t timer2OverflowCount = 0;
 
 uint8_t InitialiseTimer2()
 {
@@ -73,67 +72,66 @@ uint8_t InitialisePC()
   return 1;
 }
 
-uint8_t ProcessPC()
-{
-  uint8_t newRC = 1; // assume updates
-  uint8_t i = 0;
-
-  if ((risenPINC != 0) || (fallenPINC != 0))  // process input capture
-  {
-    for (i = 0; i < NUM_CHANNELS; ++i)
-    {
-      if (BRS(fallenPINC,i)) // channel i changed to low
-      {
-        if (inputChannel[i].overflowCount > 0) // overflowed
-        {
-          inputChannel[i].measuredPulseWidth = PC_DT_US*((256 - inputChannel[i].startTimerCount) + (inputChannel[i].overflowCount - 1)*256 + countChanged);
-        }
-        else // no known overflow
-        {
-          if (countChanged > inputChannel[i].startTimerCount)
-          {
-            inputChannel[i].measuredPulseWidth = PC_DT_US*(countChanged - inputChannel[i].startTimerCount);
-          }
-          else // missed an overflow during processing
-          {
-            inputChannel[i].measuredPulseWidth = PC_DT_US*((256 - inputChannel[i].startTimerCount) + countChanged);
-          }
-        }
-
-          #ifdef DEBUG
-          if (inputChannel[i].measuredPulseWidth > 3000)
-	  {
-	    printf("Channel %i: %lu Start Count: %u Overflow Count: %u End Count: %u\n",i,inputChannel[i].measuredPulseWidth,inputChannel[i].startTimerCount,inputChannel[i].overflowCount,countChanged);
-          }
-          #endif
-
-          inputChannel[i].isHigh = 0;
-	  inputChannel[i].overflowCount = 0;
-          inputChannel[i].startTimerCount = 0;
-          fallenPINC &= CBR(i);
-        
-      }
-      else if (BRS(risenPINC,i)) // channel i changed to high
-      {
-        inputChannel[i].isHigh = 1;
-        inputChannel[i].startTimerCount = countChanged;
-        inputChannel[i].overflowCount = 0;
-        risenPINC &= CBR(i);
-      }
-    }
-  }
-  else // no updates
-  {
-    newRC = 0;
-  }
-
-  return newRC;
-}
-
+#define SWITCH_HISTORY_SIZE 5
 uint8_t UpdateRC()
 {
-  /** TODO Implement the RC conversion from inputChannels */ 
-  return 0;
+  static uint16_t switchHistory[1][SWITCH_HISTORY_SIZE];
+  static uint8_t index = 0;
+  
+  uint8_t notFailSafe = 1;
+  
+  // Inputs Channels to RC Channel
+  //uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth;
+  uint16_t modePulse = inputChannel[CHANNEL1].measuredPulseWidth;
+  uint16_t throttlePulse = inputChannel[CHANNEL2].measuredPulseWidth;
+  uint16_t rollPulse = inputChannel[CHANNEL3].measuredPulseWidth;
+  uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
+  uint16_t yawPulse = inputChannel[CHANNEL5].measuredPulseWidth;
+ 
+  // Store Arm and Mode Switch Input
+  switchHistory[1][index] = modePulse;
+  //switchHistory[2][index] = armPulse;
+  index = (index + 1) % SWITCH_HISTORY_SIZE;
+
+  // Average
+  modePulse = MovingAverage(switchHistory[1],SWITCH_HISTORY_SIZE);
+  //armPulse = MovingAverage(switchHistory[2],SWITCH_HISTORY_SIZE);
+  
+  // Determine AP Mode
+  #ifdef DEBUG
+  //if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
+  //{
+  #endif
+    if (modePulse > (PC_PWM_MAX - PULSE_TOLERANCE))
+    {
+      rcMode = AUTOPILOT;
+    }
+    else if (modePulse > (PC_PWM_MIN - PULSE_TOLERANCE))
+    {
+      rcMode = AUGMENTED;
+    }
+  #ifdef DEBUG
+  //}
+  //else
+  //{
+  //  rcMode = MANUAL_DEBUG;
+  //}
+  #endif
+
+  /** @TODO Check Failsafes*/
+
+  // Remove Bias and convert to timer values for mixing
+  rcThrottle = PWMToCounter(throttlePulse - PC_PWM_MIN);
+  rcRoll = PWMToCounter(rollPulse - PC_PWM_MIN);
+  rcPitch = PWMToCounter(pitchPulse - PC_PWM_MIN);
+  rcYaw = PWMToCounter(yawPulse - PC_PWM_MIN);
+
+  #ifdef DEBUG
+    //printf("%u\n", throttlePulse);
+    //printf("%u\n", modePulse);
+    //printf("%u\n", rollPulse);
+  #endif
+  return notFailSafe;
 }
 
 /**
@@ -141,36 +139,43 @@ uint8_t UpdateRC()
  * 
  * Determines those channels changed, if they were rising or falling
  * and logs the time that these changed.
- * Updated data is processes by ProcessPC() later.
  */
 ISR(PCINT1_vect)
 {
   static uint8_t previousPINC = 0;
   uint8_t changedPINC = 0;
   uint8_t i = 0;
+  uint16_t tempPulse = 0;
 
-  // Get Changed Time
-  countChanged = TCNT2;
+  // Time Changed 
+  uint32_t timeChanged = micro();
 
   // Flag the Changes
   changedPINC = PINC ^ previousPINC;
   
   // Determine Falling or Rising Edge
-  // TODO Only Check Changed Channels
   for (i = 0; i < NUM_CHANNELS; ++i)
   {
     if (BRS(changedPINC,i))
     {
       //PORTD ^= (1 << RED_LED);
-      if (BRS(previousPINC,i)) // previously high
+      if (BRS(previousPINC,i)) // fallen
       {
-        fallenPINC |= SBR(i);
-	risenPINC &= CBR(i);
+        if(inputChannel[i].isHigh) // got edge
+        { 
+          newRC = 1;
+          inputChannel[i].isHigh = 0;
+          tempPulse = timeChanged - inputChannel[i].startTime;
+          if ((tempPulse > PC_PWM_MIN) && (tempPulse < PC_PWM_MAX)) // update only with valid pulse
+          {
+            inputChannel[i].measuredPulseWidth = tempPulse;
+          }
+        }
       }
-      else // previously low
+      else // risen
       {
-        risenPINC |= SBR(i);
-	fallenPINC &= CBR(i);
+        inputChannel[i].isHigh = 1;
+        inputChannel[i].startTime = timeChanged;
       }
     }
   }
@@ -186,27 +191,11 @@ ISR(PCINT1_vect)
  */
 ISR(TIMER2_OVF_vect)
 {
-  uint8_t i = 0;
-  static uint16_t timerOverflowCount = 0;
-
-  // estimate seconds uptime
-  timerOverflowCount++;
-  if (timerOverflowCount == 1.0/(256.0 * PC_DT_US))
-  {
-    systemSec++;
-    timerOverflowCount = 0;
-  }
-  
-  // Increment Timer Overflow Counts of High Pulses
-  for (i = 0; i < NUM_CHANNELS; ++i)
-  {
-    if (inputChannel[i].isHigh)
-    {
-      if (!BRS(fallenPINC,i))
-      {
-        inputChannel[i].overflowCount++;
-      }
-    }
-  }
+  // log the overflow
+  timer2OverflowCount++;
 }
 
+inline uint32_t micro()
+{
+  return PC_DT_US*(TCNT2 + (timer2OverflowCount*256));
+}
