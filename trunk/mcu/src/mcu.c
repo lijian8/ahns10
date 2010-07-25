@@ -132,7 +132,7 @@ inline void CombineCommands()
   {
     case MANUAL_DEBUG:
       IndicateManual();
-      MixCommands(&rcThrottle, &rcRoll, &rcPitch, &rcYaw);
+      //MixCommands(&rcThrottle, &rcRoll, &rcPitch, &rcYaw);
       break;
     case AUGMENTED: // Combine AP and RC Commands
       IndicateAugmented();
@@ -140,7 +140,7 @@ inline void CombineCommands()
       break;
     case AUTOPILOT: // Pass AP unaltered
       IndicateAutopilot();
-      MixCommands(&apThrottle, &apRoll, &apPitch, &apYaw);
+      //MixCommands(&apThrottle, &apRoll, &apPitch, &apYaw);
   }
   return;
 }
