@@ -37,10 +37,10 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Include Directories
-INCLUDES = -I"Z:\tlmolloy\Documents\University\AHNS\code\ahns10\trunk\mcu\include" 
+INCLUDES = -I"Z:\tlmolloy\Documents\University\AHNS\code\ahns10\trunk\mcu\avr-studio\..\include" 
 
 ## Objects that must be built in order to link
-OBJECTS = mcu.o pwm.o pulsecapture.o modeindicator.o usart.o 
+OBJECTS = usart.o pwm.o pulsecapture.o modeindicator.o mcu.o mode.o 
 
 ## Objects explicitly added by the user
 LINKONLYOBJECTS = 
@@ -49,19 +49,22 @@ LINKONLYOBJECTS =
 all: $(TARGET) mcu.hex mcu.eep mcu.lss size
 
 ## Compile
-mcu.o: ../src/mcu.c
+usart.o: ../../src/usart.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-pwm.o: ../src/pwm.c
+pwm.o: ../../src/pwm.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-pulsecapture.o: ../src/pulsecapture.c
+pulsecapture.o: ../../src/pulsecapture.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-modeindicator.o: ../src/modeindicator.c
+modeindicator.o: ../../src/modeindicator.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
-usart.o: ../src/usart.c
+mcu.o: ../../src/mcu.c
+	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
+
+mode.o: ../../src/mode.c
 	$(CC) $(INCLUDES) $(CFLAGS) -c  $<
 
 ##Link
