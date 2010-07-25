@@ -19,9 +19,9 @@
 #define MODEINDICATOR_H
 
 /** @name Mode LED Indicator */
+#define RED_LED PD2   /**< Port Red LED is connected to */
 #define GREEN_LED PD3 /**< Port Green LED is connected to */
 #define BLUE_LED PD4  /**< Port Blue LED is connected to */
-#define RED_LED PD2   /**< Port Red LED is connected to */
 
 /** @name LED Modes */
 #define TOGGLE 3 /**< Toggle mode integer */
@@ -49,19 +49,41 @@ extern void ToggleGreen(uint8_t mode);
  */
 extern void ToggleBlue(uint8_t mode);
 
+inline void IndicateAugmented()
+{
+  ToggleRed(OFF);
+  ToggleGreen(OFF);
+  ToggleBlue(ON);
+}
+
+inline void IndicateAutopilot()
+{
+  ToggleRed(OFF);
+  ToggleGreen(OFF);
+  ToggleBlue(ON);
+}
 /**
  * @brief Toggle LEDs to indicate Manual Mode
+ * Macro implemented due to excessive functions calls
  */
-extern void IndicateManual();
+#define IndicateManual() ToggleRed(ON); \
+                         ToggleGreen(OFF);\
+                         ToggleBlue(OFF);
 
 /**
  * @brief Toggle LEDs to indicate Augmented Mode
+ * Macro implemented due to excessive functions calls
  */
-extern void IndicateAugmented();
+#define IndicateAugmented() ToggleRed(OFF); \
+                            ToggleGreen(OFF);\
+                            ToggleBlue(ON);
 
 /**
  * @brief Toggle LEDs to indicate Autopilot Mode
+ * Macro implemented due to excessive functions calls
  */
-extern void IndicateAutopilot();
+#define IndicateAutopilot() ToggleRed(OFF); \
+                            ToggleGreen(ON);\
+                            ToggleBlue(OFF);
 
 #endif // MODEINDICATOR_H

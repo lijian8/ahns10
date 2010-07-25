@@ -18,6 +18,22 @@
 
 #include "pwm.h"
 
+#define PWM_PRESCALAR 64.0
+
+const double F_PWM = ((double) F_CPU/(PWM_PRESCALAR*510.0));       
+const double PWM_DT_US = ((double) (1e6 * PWM_PRESCALAR / F_CPU)); 
+
+const uint8_t esc1Min = ESC1_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+const uint8_t esc2Min = ESC2_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+const uint8_t esc3Min = ESC3_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+const uint8_t esc4Min = ESC4_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+const uint8_t esc1Max = ESC1_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+const uint8_t esc2Max = ESC2_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+const uint8_t esc3Max = ESC3_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+const uint8_t esc4Max = ESC4_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+
+volatile uint32_t systemSec = 0;
+
 inline uint8_t InitialiseTimer0()
 {
   // Register A 
@@ -87,7 +103,3 @@ inline uint8_t StartPWM()
   return 1;
 }
 
-inline uint8_t PWMToCounter(uint32_t pulseHighTime)
-{ 
-  return pulseHighTime / (2.0 * PWM_DT_US) ;
-}

@@ -31,6 +31,17 @@
  */
 void init();
 
+/**
+ * @brief Combine High Level Commands
+ *
+ * Depending on the selected flight mode:
+ * 
+ * - Pass the RC Commands without modification
+ * - Augment the RC commands with AP commands
+ * - Pass the AP Commands without modification 
+ */
+void CombineCommands();
+
 void main (void)
 {
   StopPWM();
@@ -45,8 +56,7 @@ void main (void)
   uint8_t inputsInitialised = 0;
   do 
   {
-    ProcessPC();
-    if ((inputChannel[inputsInitialised].measuredPulseWidth < PWM_MAX_US) && (inputChannel[inputsInitialised].measuredPulseWidth > PWM_MIN_US))
+    if (inputChannel[inputsInitialised].measuredPulseWidth != 0)
     {
       inputsInitialised++;
     }
@@ -56,8 +66,7 @@ void main (void)
       _delay_ms(250);
     }
   } while (inputsInitialised < NUM_CHANNELS);
-  ToggleGreen(ON);
-  ToggleRed(OFF);
+  IndicateAugmented();
   #endif
 
   stdout = &debugOut;
@@ -68,8 +77,9 @@ void main (void)
   {
 
     // RC Pulse Capture
-    if(ProcessPC()) // new RC values to process
+    if(newRC) // new RC values to process
     {
+      newRC = 0;
       if(!UpdateRC()) // failsafe and tell flight computer
       {
         ESC1_COUNTER = 0;
@@ -81,8 +91,8 @@ void main (void)
       {	      
         // Combine RC and AP inputs
         // Then Output them
+        newAPCommands = 0;
         CombineCommands();
-	newAPCommands = 0;
       }
     }
     else if (newAPCommands) // only new autopilot commands
@@ -90,7 +100,6 @@ void main (void)
       newAPCommands = 0;
       CombineCommands();
     }
-    
   }
   return;
 }
@@ -111,5 +120,27 @@ inline void init()
   InitialiseTimer2();
   InitialisePC();
 
+  return;
+}
+
+inline void CombineCommands()
+{
+  // Flight Mode Choice limited to RC
+  flightMode = rcMode;
+  
+  switch(flightMode)
+  {
+    case MANUAL_DEBUG:
+      IndicateManual();
+      MixCommands(&rcThrottle, &rcRoll, &rcPitch, &rcYaw);
+      break;
+    case AUGMENTED: // Combine AP and RC Commands
+      IndicateAugmented();
+      /** TODO IMPELEMENT THE AUGMENTATION */
+      break;
+    case AUTOPILOT: // Pass AP unaltered
+      IndicateAutopilot();
+      MixCommands(&apThrottle, &apRoll, &apPitch, &apYaw);
+  }
   return;
 }

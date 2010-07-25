@@ -25,6 +25,9 @@ enum FlightModes {
 };
 
 
+/** @brief Moving Average Function */
+extern uint16_t MovingAverage(uint16_t* valueArray, uint8_t arrayLength);
+
 /**
  * @brief Flight Mode
  */
@@ -33,7 +36,7 @@ extern volatile enum FlightModes flightMode;
 /** 
  * @brief RC Command Inputs from Pulse Capture
  */
-extern enum FlightModes RCmode; /**< RC Commanded Mode */
+extern enum FlightModes rcMode; /**< RC Commanded Mode */
 extern uint8_t rcThrottle;    /**< RC Commanded Throttle */
 extern uint8_t rcRoll;          /**< RC Commanded Roll */
 extern uint8_t rcPitch;         /**< RC Commanded Pitch */
@@ -55,17 +58,6 @@ extern volatile uint8_t apYaw;           /**< AP Commanded Yaw  */
  * To limit motor failure or performance loss a moving average filter will
  * be applied to the current and previous inputs.
  */
-extern void MixCommands(uint8_t commandedThrottle, uint8_t commandedRoll, uint8_t commandedPitch, uint8_t commandedYaw);
-
-/**
- * @brief Combine High Level Commands
- *
- * Depending on the selected flight mode:
- * 
- * - Pass the RC Commands without modification
- * - Augment the RC commands with AP commands
- * - Pass the AP Commands without modification 
- */
-extern void CombineCommands();
+extern void MixCommands(uint8_t* commandedThrottle, uint8_t* commandedRoll, uint8_t* commandedPitch, uint8_t* commandedYaw);
 
 #endif // MODE_H
