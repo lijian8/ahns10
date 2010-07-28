@@ -35,8 +35,8 @@ extern const uint8_t PC_DT_US;
 
 /** @name RC Input Pulse Widths */
 #define PC_PWM_MAX 2000
-#define PC_PWM_MIN 1000
-#define PULSE_TOLERANCE 300
+#define PC_PWM_MIN 900
+#define PULSE_TOLERANCE 400
 
 /** @name Input Channel Data Structure */
 typedef struct
@@ -51,6 +51,7 @@ extern volatile Channel inputChannel[NUM_CHANNELS];
 
 /** @name Flag for new RC pulses */
 extern volatile uint8_t newRC;
+extern volatile uint8_t failSafe;
 
 /**
  * @ brief Initialise Port C and the required Pin Change Interrupts
@@ -62,9 +63,8 @@ extern uint8_t InitialisePC();
  * 
  * Called after processing to check for receiver failsafe.
  * Converts the captured PWM widths to the counter values for use in global variables.
- * @return 1 for success 0 for RC in fail safe
  */ 
-extern uint8_t UpdateRC();
+extern void UpdateRC();
 
 /** 
  * @brief Initialise Timer2 for Timing Pulse Width

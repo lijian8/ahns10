@@ -29,6 +29,7 @@ volatile Channel inputChannel[NUM_CHANNELS];
 const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
 
 volatile uint8_t newRC = 0;
+volatile uint8_t failSafe = 0;
 
 /** @brief Timer 2 Overflow Counter */
 static volatile uint32_t timer2OverflowCount = 0;
@@ -73,12 +74,10 @@ uint8_t InitialisePC()
 }
 
 #define SWITCH_HISTORY_SIZE 8
-uint8_t UpdateRC()
+inline void UpdateRC()
 {
   static uint16_t switchHistory[2][SWITCH_HISTORY_SIZE];
   static uint8_t index = 0;
-  
-  uint8_t notFailSafe = 1;
   
   // Map Input Channels to RC Channel
   uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth;
@@ -100,11 +99,15 @@ uint8_t UpdateRC()
   modePulse = MovingAverage(switchHistory[1],SWITCH_HISTORY_SIZE);
   armPulse = MovingAverage(switchHistory[2],SWITCH_HISTORY_SIZE);
   
+  //printf("%u\n", throttlePulse);
+  
   // Determine AP Mode
-  #ifdef DEBUG
-  if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
+  if (throttlePulse < (1100)) // failsafe
   {
-  #endif
+    failSafe = 1;
+  }
+  else if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
+  {
     if (modePulse > (PC_PWM_MAX - PULSE_TOLERANCE))
     {
       rcMode = AUTOPILOT;
@@ -113,15 +116,11 @@ uint8_t UpdateRC()
     {
       rcMode = AUGMENTED;
     }
-  #ifdef DEBUG
   }
   else
   {
     rcMode = MANUAL_DEBUG;
   }
-  #endif
-
-  /** @TODO Check Failsafes*/
 
   // Remove Bias and convert to timer values for mixing
   rcThrottle = PWMToCounter(throttlePulse - PC_PWM_MIN);
@@ -134,7 +133,7 @@ uint8_t UpdateRC()
     //printf("%u\n", modePulse);
     //printf("%u\n", rollPulse);
   #endif
-  return notFailSafe;
+  return;
 }
 
 /**

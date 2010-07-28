@@ -80,7 +80,8 @@ void main (void)
     if(newRC) // new RC values to process
     {
       newRC = 0;
-      if(!UpdateRC()) // failsafe and tell flight computer
+      UpdateRC();
+      if(failSafe) // failsafe and tell flight computer
       {
         ESC1_COUNTER = 0;
         ESC2_COUNTER = 0;
