@@ -49,19 +49,6 @@ extern void ToggleGreen(uint8_t mode);
  */
 extern void ToggleBlue(uint8_t mode);
 
-inline void IndicateAugmented()
-{
-  ToggleRed(OFF);
-  ToggleGreen(OFF);
-  ToggleBlue(ON);
-}
-
-inline void IndicateAutopilot()
-{
-  ToggleRed(OFF);
-  ToggleGreen(OFF);
-  ToggleBlue(ON);
-}
 /**
  * @brief Toggle LEDs to indicate Manual Mode
  * Macro implemented due to excessive functions calls

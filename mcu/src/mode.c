@@ -35,8 +35,8 @@ volatile uint8_t apRoll;
 volatile uint8_t apPitch;
 volatile uint8_t apYaw;
 
-#define HISTORY_SIZE 5
-inline void MixCommands(uint8_t* commandedThrottle, uint8_t* commandedRoll, uint8_t* commandedPitch, uint8_t* commandedYaw)
+#define HISTORY_SIZE 8
+inline void MixCommands(volatile uint8_t* commandedThrottle, volatile uint8_t* commandedRoll, volatile uint8_t* commandedPitch, volatile uint8_t* commandedYaw)
 {
   static uint16_t escHistory[4][HISTORY_SIZE];
   static uint16_t index = 0;
@@ -53,7 +53,10 @@ inline void MixCommands(uint8_t* commandedThrottle, uint8_t* commandedRoll, uint
   ESC3_COUNTER = Bound(esc3Min + MovingAverage(escHistory[2], HISTORY_SIZE), esc3Max, esc3Min);
   ESC4_COUNTER = Bound(esc4Min + MovingAverage(escHistory[3], HISTORY_SIZE), esc4Max, esc4Min);
   
-  index = (index + 1) % HISTORY_SIZE;
+  if (++index == HISTORY_SIZE)
+  {
+    index = 0;
+  }
   return;
 }
 
