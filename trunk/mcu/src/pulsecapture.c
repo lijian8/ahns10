@@ -72,7 +72,7 @@ uint8_t InitialisePC()
   return 1;
 }
 
-#define SWITCH_HISTORY_SIZE 5
+#define SWITCH_HISTORY_SIZE 8
 uint8_t UpdateRC()
 {
   static uint16_t switchHistory[1][SWITCH_HISTORY_SIZE];
@@ -83,15 +83,18 @@ uint8_t UpdateRC()
   // Inputs Channels to RC Channel
   //uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth;
   uint16_t modePulse = inputChannel[CHANNEL1].measuredPulseWidth;
-  uint16_t throttlePulse = inputChannel[CHANNEL2].measuredPulseWidth;
+  uint16_t throttlePulse = inputChannel[CHANNEL6].measuredPulseWidth;
   uint16_t rollPulse = inputChannel[CHANNEL3].measuredPulseWidth;
   uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
-  uint16_t yawPulse = inputChannel[CHANNEL5].measuredPulseWidth;
+  uint16_t yawPulse = inputChannel[CHANNEL2].measuredPulseWidth;
  
   // Store Arm and Mode Switch Input
   switchHistory[1][index] = modePulse;
   //switchHistory[2][index] = armPulse;
-  index = (index + 1) % SWITCH_HISTORY_SIZE;
+  if (++index == SWITCH_HISTORY_SIZE)
+  {
+    index = 0;
+  }
 
   // Average
   modePulse = MovingAverage(switchHistory[1],SWITCH_HISTORY_SIZE);

@@ -58,6 +58,6 @@ extern volatile uint8_t apYaw;           /**< AP Commanded Yaw  */
  * To limit motor failure or performance loss a moving average filter will
  * be applied to the current and previous inputs.
  */
-extern void MixCommands(uint8_t* commandedThrottle, uint8_t* commandedRoll, uint8_t* commandedPitch, uint8_t* commandedYaw);
+extern void MixCommands(volatile uint8_t* commandedThrottle, volatile uint8_t* commandedRoll, volatile uint8_t* commandedPitch, volatile uint8_t* commandedYaw);
 
 #endif // MODE_H
