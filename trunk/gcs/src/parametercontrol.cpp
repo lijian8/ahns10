@@ -111,6 +111,9 @@ void ParameterControl::SetLoopParameters(const loop_parameters_t* const srcParam
 void ParameterControl::on_loadBtn_clicked()
 {
     AHNS_DEBUG("void ParameterControl::on_loadBtn_clicked()");
+
+
+
     return;
 }
 
@@ -121,6 +124,40 @@ void ParameterControl::on_SaveBtn_clicked()
 {
     AHNS_DEBUG("void ParameterControl::on_SaveBtn_clicked()");
 
+    QString fileName;
+    QFile saveFile;
+    bool writeSuccess = false;
+    QString msg;
+    QTextStream writeStream;
+
+    fileName = QFileDialog::getSaveFileName(this, tr("Save Parameters"));
+    if (!fileName.isEmpty())
+    {
+        saveFile.setFileName(fileName);
+
+        if (!saveFile.open(QFile::WriteOnly))
+        {
+            msg = tr("Failed to open %1\n%2").arg(fileName).arg(saveFile.errorString());
+            QMessageBox::warning(this, tr("Save Error"), msg);
+            AHNS_DEBUG("void ParameterControl::on_SaveBtn_clicked() [ OPEN FAILED ]");
+        }
+        else
+        {
+            writeSuccess = saveFile
+            if (writeSuccess)
+            {
+                writeSuccess = file.write(geo_data) == geo_data.size();
+            }
+
+            if (!writeSuccess)
+            {
+                msg = tr("Error writing to %1\n%2") .arg(fileName).arg(file.errorString());
+                QMessageBox::warning(this, tr("Save Error"), msg);
+                AHNS_DEBUG("void ParameterControl::on_SaveBtn_clicked() [ SAVE FAILED ]");
+            }
+            saveFile.close();
+        }
+    }
     return;
 }
 
