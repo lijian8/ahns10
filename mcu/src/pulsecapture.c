@@ -75,35 +75,35 @@ uint8_t InitialisePC()
 #define SWITCH_HISTORY_SIZE 8
 uint8_t UpdateRC()
 {
-  static uint16_t switchHistory[1][SWITCH_HISTORY_SIZE];
+  static uint16_t switchHistory[2][SWITCH_HISTORY_SIZE];
   static uint8_t index = 0;
   
   uint8_t notFailSafe = 1;
   
-  // Inputs Channels to RC Channel
-  //uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth;
-  uint16_t modePulse = inputChannel[CHANNEL1].measuredPulseWidth;
-  uint16_t throttlePulse = inputChannel[CHANNEL6].measuredPulseWidth;
-  uint16_t rollPulse = inputChannel[CHANNEL3].measuredPulseWidth;
-  uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
-  uint16_t yawPulse = inputChannel[CHANNEL2].measuredPulseWidth;
+  // Map Input Channels to RC Channel
+  uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth;
+  uint16_t modePulse = inputChannel[CHANNEL2].measuredPulseWidth;
+  uint16_t throttlePulse = inputChannel[CHANNEL3].measuredPulseWidth;
+  uint16_t rollPulse = inputChannel[CHANNEL4].measuredPulseWidth;
+  uint16_t pitchPulse = inputChannel[CHANNEL5].measuredPulseWidth;
+  uint16_t yawPulse = inputChannel[CHANNEL6].measuredPulseWidth;
  
   // Store Arm and Mode Switch Input
   switchHistory[1][index] = modePulse;
-  //switchHistory[2][index] = armPulse;
+  switchHistory[2][index] = armPulse;
   if (++index == SWITCH_HISTORY_SIZE)
   {
     index = 0;
   }
 
-  // Average
+  // Average Switches
   modePulse = MovingAverage(switchHistory[1],SWITCH_HISTORY_SIZE);
-  //armPulse = MovingAverage(switchHistory[2],SWITCH_HISTORY_SIZE);
+  armPulse = MovingAverage(switchHistory[2],SWITCH_HISTORY_SIZE);
   
   // Determine AP Mode
   #ifdef DEBUG
-  //if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
-  //{
+  if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
+  {
   #endif
     if (modePulse > (PC_PWM_MAX - PULSE_TOLERANCE))
     {
@@ -114,11 +114,11 @@ uint8_t UpdateRC()
       rcMode = AUGMENTED;
     }
   #ifdef DEBUG
-  //}
-  //else
-  //{
-  //  rcMode = MANUAL_DEBUG;
-  //}
+  }
+  else
+  {
+    rcMode = MANUAL_DEBUG;
+  }
   #endif
 
   /** @TODO Check Failsafes*/

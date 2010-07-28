@@ -35,9 +35,8 @@ extern const uint8_t PC_DT_US;
 
 /** @name RC Input Pulse Widths */
 #define PC_PWM_MAX 2000
-#define PC_PWM_MIN 800
-
-#define PULSE_TOLERANCE 200
+#define PC_PWM_MIN 1000
+#define PULSE_TOLERANCE 300
 
 /** @name Input Channel Data Structure */
 typedef struct

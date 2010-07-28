@@ -50,14 +50,18 @@ void main (void)
   sei();
   _delay_ms(250);
 
+  #ifdef DEBUG
+  stdout = &debugOut;
+  printf("System Initialised\n");
+  #endif
 
   // Initialise and detect the Inputs
-  #ifndef DEBUG
   uint8_t inputsInitialised = 0;
   do 
   {
-    if (inputChannel[inputsInitialised].measuredPulseWidth != 0)
+    if (inputChannel[inputsInitialised].measuredPulseWidth < (PC_PWM_MIN + PULSE_TOLERANCE) )
     {
+      //printf("%u\n",inputChannel[inputsInitialised].measuredPulseWidth);
       inputsInitialised++;
     }
     else
@@ -66,11 +70,7 @@ void main (void)
       _delay_ms(250);
     }
   } while (inputsInitialised < NUM_CHANNELS);
-  IndicateAugmented();
-  #endif
 
-  stdout = &debugOut;
-  printf("System Initialised\n");
   StartPWM();
 
   for ( ; ; )
