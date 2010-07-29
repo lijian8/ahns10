@@ -26,7 +26,7 @@ enum FlightModes {
 
 
 /** @brief Moving Average Function */
-extern uint16_t MovingAverage(uint16_t* valueArray, uint8_t arrayLength);
+extern int32_t MovingAverage(int32_t* valueArray, uint8_t arrayLength);
 
 /**
  * @brief Flight Mode
