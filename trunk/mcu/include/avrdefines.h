@@ -33,10 +33,5 @@
 #define CBR(x) ~(1<<(x))  /**< Clear bit 'x' in register */
 #define BRS(r,x) !!((r) & (1 << (x))) /**< Determine if bit 'x' in register 'r' is set */
 
-/** @name Bounding Macro */
-#define Bound(x,max,min) ((x) > (max) ? (max) : \
-                         ((x) < (min) ? (min) : (x)))
-                         
-
 #endif // AVRDEFINES_H
 
