@@ -42,20 +42,54 @@ inline void MixCommands(volatile uint8_t* commandedThrottle, volatile uint8_t* c
 {
   static int32_t escHistory[4][HISTORY_SIZE];
   static uint8_t index = 0;
-  
+  uint8_t setPoint = 0;
+  uint8_t i = 0;
+ 
+  // Only Throttle has Full Authority
+  static const double controlFactor = 0.2;
+  *commandedRoll *= controlFactor;
+  *commandedPitch *= controlFactor;
+  *commandedYaw *= controlFactor;
+
   // Mix the Signals
   if ((*commandedThrottle) && (*commandedRoll) && (*commandedPitch) && (*commandedYaw))
   {
-    escHistory[0][index] = esc1Min + *commandedThrottle + *commandedPitch - *commandedYaw;
-    escHistory[1][index] = esc2Min + *commandedThrottle - *commandedRoll + *commandedYaw;
-    escHistory[2][index] = esc3Min + *commandedThrottle - *commandedPitch - *commandedYaw;
-    escHistory[3][index] = esc4Min + *commandedThrottle + *commandedRoll + *commandedYaw;
+    escHistory[0][index] = escLimits[0][0] + *commandedThrottle + *commandedPitch - *commandedYaw;
+    escHistory[1][index] = escLimits[1][0] + *commandedThrottle - *commandedRoll + *commandedYaw;
+    escHistory[2][index] = escLimits[2][0] + *commandedThrottle - *commandedPitch - *commandedYaw;
+    escHistory[3][index] = escLimits[3][0] + *commandedThrottle + *commandedRoll + *commandedYaw;
 
-    // Offset the Mixed signals by min
-    ESC1_COUNTER = escHistory[0][index];
-    ESC2_COUNTER = escHistory[1][index];
-    ESC3_COUNTER = escHistory[2][index];
-    ESC4_COUNTER = escHistory[3][index];
+    // Bound and Output
+    for (i = 0; i < 4; ++i)
+    {
+      if(escHistory[i][index] > escLimits[i][1])
+      {
+        setPoint = escLimits[i][1];
+      }
+      else if(escHistory[i][index] < escLimits[i][0])
+      {
+        setPoint = escLimits[i][0];
+      }
+      else
+      {
+        setPoint = escHistory[i][index];
+      }
+      
+      switch (i)
+      {
+        case 0:
+          ESC1_COUNTER = setPoint;
+          break;
+        case 1:
+          ESC2_COUNTER = setPoint;
+          break;
+        case 2:
+          ESC3_COUNTER = setPoint;
+          break;
+        case 3:
+          ESC4_COUNTER = setPoint;
+      }
+    }
     if (++index == HISTORY_SIZE)
     {
       index = 0;

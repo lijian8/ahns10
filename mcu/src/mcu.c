@@ -72,10 +72,10 @@ void main (void)
   } while (inputsInitialised < NUM_CHANNELS);
 
   // Minimum Output
-  ESC1_COUNTER = esc1Min;
-  ESC2_COUNTER = esc2Min;
-  ESC3_COUNTER = esc3Min;
-  ESC4_COUNTER = esc4Min;
+  ESC1_COUNTER = escLimits[0][0];
+  ESC2_COUNTER = escLimits[1][0];
+  ESC3_COUNTER = escLimits[2][0];
+  ESC4_COUNTER = escLimits[3][0];
   StartPWM();
 
   for ( ; ; )
@@ -90,10 +90,10 @@ void main (void)
         static uint8_t toggleEnabled = 0;
         
         // Minimum Commands
-        ESC1_COUNTER = esc1Min;
-        ESC2_COUNTER = esc2Min;
-        ESC3_COUNTER = esc3Min;
-        ESC4_COUNTER = esc4Min;
+      ESC1_COUNTER = escLimits[0][0];
+      ESC2_COUNTER = escLimits[1][0];
+      ESC3_COUNTER = escLimits[2][0];
+      ESC4_COUNTER = escLimits[3][0];
   
         // Toggle Yellow Error at 10Hz
         if (!toggleEnabled)
