@@ -23,14 +23,7 @@
 const double F_PWM = ((double) F_CPU/(PWM_PRESCALAR*510.0));       
 const double PWM_DT_US = ((double) (1e6 * PWM_PRESCALAR / F_CPU)); 
 
-const uint8_t esc1Min = ESC1_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-const uint8_t esc2Min = ESC2_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-const uint8_t esc3Min = ESC3_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-const uint8_t esc4Min = ESC4_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-const uint8_t esc1Max = ESC1_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-const uint8_t esc2Max = ESC2_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-const uint8_t esc3Max = ESC3_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-const uint8_t esc4Max = ESC4_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+uint8_t escLimits[4][2];
 
 volatile uint32_t systemSec = 0;
 
@@ -99,6 +92,15 @@ inline uint8_t StartPWM()
   ESC2_COUNTER = 0;
   ESC3_COUNTER = 0;
   ESC4_COUNTER = 0;
+
+  escLimits[0][0] = ESC1_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+  escLimits[1][0] = ESC2_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+  escLimits[2][0] = ESC3_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+  escLimits[3][0] = ESC4_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+  escLimits[0][1] = ESC1_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+  escLimits[1][1] = ESC2_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+  escLimits[2][1] = ESC3_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
+  escLimits[3][1] = ESC4_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
 
   return 1;
 }
