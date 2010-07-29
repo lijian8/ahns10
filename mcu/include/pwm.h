@@ -38,16 +38,16 @@ extern const double PWM_DT_US;   /**< Time Resolution of generated PWM signals *
 
 /** @name Maximum and Minimum ESC PWM Values*/ 
 #define ESC1_MAX 2000
-#define ESC1_MIN 1200
+#define ESC1_MIN 1000
 
 #define ESC2_MAX 2000
-#define ESC2_MIN 1200
+#define ESC2_MIN 1000
 
 #define ESC3_MAX 2000
-#define ESC3_MIN 1200
+#define ESC3_MIN 1000
 
 #define ESC4_MAX 2000
-#define ESC4_MIN 1200
+#define ESC4_MIN 1000
 
 extern const uint8_t esc1Min, esc1Max, esc2Min, esc2Max,
                      esc3Min, esc3Max, esc4Min, esc4Max;
