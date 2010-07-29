@@ -52,10 +52,10 @@ inline void MixCommands(volatile uint8_t* commandedThrottle, volatile uint8_t* c
     escHistory[3][index] = esc4Min + *commandedThrottle + *commandedRoll + *commandedYaw;
 
     // Offset the Mixed signals by min
-    ESC1_COUNTER = Bound(esc1Min + MovingAverage(escHistory[0], HISTORY_SIZE), esc1Max, esc1Min);
-    ESC2_COUNTER = Bound(esc2Min + MovingAverage(escHistory[1], HISTORY_SIZE), esc2Max, esc2Min);
-    ESC3_COUNTER = Bound(escHistory[2][index], esc3Max, esc3Min);
-    ESC4_COUNTER = Bound(esc4Min + MovingAverage(escHistory[3], HISTORY_SIZE), esc4Max, esc4Min);
+    ESC1_COUNTER = escHistory[0][index];
+    ESC2_COUNTER = escHistory[1][index];
+    ESC3_COUNTER = escHistory[2][index];
+    ESC4_COUNTER = escHistory[3][index];
     if (++index == HISTORY_SIZE)
     {
       index = 0;
