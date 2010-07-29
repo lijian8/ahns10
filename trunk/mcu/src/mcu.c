@@ -71,22 +71,46 @@ void main (void)
     }
   } while (inputsInitialised < NUM_CHANNELS);
 
+  // Minimum Output
+  ESC1_COUNTER = esc1Min;
+  ESC2_COUNTER = esc2Min;
+  ESC3_COUNTER = esc3Min;
+  ESC4_COUNTER = esc4Min;
   StartPWM();
 
   for ( ; ; )
   {
-
     // RC Pulse Capture
     if(newRC) // new RC values to process
     {
       newRC = 0;
       UpdateRC();
-      if(failSafe) // failsafe and tell flight computer
+      if(failSafe) // Never Recover from Failsafe 
       {
-        ESC1_COUNTER = 0;
-        ESC2_COUNTER = 0;
-        ESC3_COUNTER = 0;
-        ESC4_COUNTER = 0;
+        static uint8_t toggleEnabled = 0;
+        
+        // Minimum Commands
+        ESC1_COUNTER = esc1Min;
+        ESC2_COUNTER = esc2Min;
+        ESC3_COUNTER = esc3Min;
+        ESC4_COUNTER = esc4Min;
+  
+        // Toggle Yellow Error at 10Hz
+        if (!toggleEnabled)
+        {
+          toggleEnabled = 1;
+          ToggleRed(OFF);
+          ToggleGreen(OFF);
+	}
+        else
+        {
+	  _delay_ms(100);
+          ToggleGreen(TOGGLE);
+          ToggleRed(TOGGLE);
+        }
+        
+        /** TODO: Tell Flight Computer */
+        
       }
       else
       {	      
@@ -129,7 +153,7 @@ inline void CombineCommands()
   // Flight Mode Choice limited to RC
   flightMode = rcMode;
   
-  switch(flightMode)
+  switch (flightMode)
   {
     case MANUAL_DEBUG:
       IndicateManual();

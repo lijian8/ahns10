@@ -82,10 +82,10 @@ inline void UpdateRC()
   // Map Input Channels to RC Channel
   uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth;
   uint16_t modePulse = inputChannel[CHANNEL2].measuredPulseWidth;
-  uint16_t throttlePulse = inputChannel[CHANNEL3].measuredPulseWidth;
-  uint16_t rollPulse = inputChannel[CHANNEL4].measuredPulseWidth;
-  uint16_t pitchPulse = inputChannel[CHANNEL5].measuredPulseWidth;
-  uint16_t yawPulse = inputChannel[CHANNEL6].measuredPulseWidth;
+  uint16_t yawPulse = inputChannel[CHANNEL3].measuredPulseWidth;
+  uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
+  uint16_t rollPulse = inputChannel[CHANNEL5].measuredPulseWidth;
+  uint16_t throttlePulse = inputChannel[CHANNEL6].measuredPulseWidth;
  
   // Store Arm and Mode Switch Input
   switchHistory[1][index] = modePulse;
