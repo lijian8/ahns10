@@ -478,12 +478,12 @@ QString gcsMainWindow::sensorDataToString(const sensor_data_t& sensorData)
     QString consoleText;
     QString p,q,r,ax,ay,az;
 
-    p = sensorData.p;
-    q = sensorData.q;
-    r = sensorData.r;
-    ax = sensorData.ax;
-    ay = sensorData.ay;
-    az = sensorData.az;
+    p.setNum(sensorData.p);
+    q.setNum(sensorData.q);
+    r.setNum(sensorData.r);
+    ax.setNum(sensorData.ax);
+    ay.setNum(sensorData.ay);
+    az.setNum(sensorData.az);
 
     consoleText = "[ SENSOR_DATA ]\n"
                   % p %" \t " % q %" \t " % r %"\n"
