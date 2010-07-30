@@ -33,5 +33,8 @@
 #define CBR(x) ~(1<<(x))  /**< Clear bit 'x' in register */
 #define BRS(r,x) !!((r) & (1 << (x))) /**< Determine if bit 'x' in register 'r' is set */
 
+/** @name Absolute of integer */
+#define abs(x) ((x) < 0 ? -(x) : (x))
+
 #endif // AVRDEFINES_H
 

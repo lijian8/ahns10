@@ -31,6 +31,12 @@ const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
 volatile uint8_t newRC = 0;
 volatile uint8_t failSafe = 0;
 
+uint16_t zeroThrottle = 0;
+uint16_t zeroRoll = 0;
+uint16_t zeroPitch = 0; 
+uint16_t zeroYaw = 0;
+uint8_t inputsInitialised = 0;
+
 /** @brief Timer 2 Overflow Counter */
 static volatile uint32_t timer2OverflowCount = 0;
 
@@ -73,11 +79,11 @@ uint8_t InitialisePC()
   return 1;
 }
 
-#define SWITCH_HISTORY_SIZE 8
+#define SWITCH_HISTORY_SIZE 4
 inline void UpdateRC()
 {
-  static uint16_t switchHistory[2][SWITCH_HISTORY_SIZE];
-  static uint8_t index = 0;
+  static int32_t switchHistory[2][SWITCH_HISTORY_SIZE];
+  static int8_t index = 0;
   
   // Map Input Channels to RC Channel
   uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth;
@@ -99,7 +105,7 @@ inline void UpdateRC()
   modePulse = MovingAverage(switchHistory[1],SWITCH_HISTORY_SIZE);
   armPulse = MovingAverage(switchHistory[2],SWITCH_HISTORY_SIZE);
   
-  //printf("%u\n", throttlePulse);
+  //printf("%u\n", armPulse);
   
   // Determine AP Mode
   if (throttlePulse < (1100)) // failsafe
@@ -123,15 +129,26 @@ inline void UpdateRC()
   }
 
   // Remove Bias and convert to timer values for mixing
-  rcThrottle = PWMToCounter(throttlePulse - PC_PWM_MIN);
-  rcRoll = PWMToCounter(rollPulse - PC_PWM_MIN);
-  rcPitch = PWMToCounter(pitchPulse - PC_PWM_MIN);
-  rcYaw = PWMToCounter(yawPulse - PC_PWM_MIN);
+  if (inputsInitialised > 9)
+  {
+    rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
+    rcRoll = PWMToCounter(rollPulse - zeroRoll);
+    rcPitch = PWMToCounter(pitchPulse - zeroPitch);
+    rcYaw = PWMToCounter(yawPulse - zeroYaw);
+  }
+  else
+  {
+    zeroThrottle += throttlePulse;
+    zeroPitch += pitchPulse;
+    zeroRoll += rollPulse;
+    zeroYaw += yawPulse;
+    inputsInitialised++;
+  }
 
   #ifdef DEBUG
     //printf("%u\n", throttlePulse);
     //printf("%u\n", modePulse);
-    //printf("%u\n", rollPulse);
+    //printf("%u\n", zeroThrottle);
   #endif
   return;
 }
