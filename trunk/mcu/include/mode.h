@@ -36,20 +36,20 @@ extern volatile enum FlightModes flightMode;
 /** 
  * @brief RC Command Inputs from Pulse Capture
  */
-extern volatile enum FlightModes rcMode; /**< RC Commanded Mode */
-extern volatile uint8_t rcThrottle;    /**< RC Commanded Throttle */
-extern volatile uint8_t rcRoll;          /**< RC Commanded Roll */
-extern volatile uint8_t rcPitch;         /**< RC Commanded Pitch */
-extern volatile uint8_t rcYaw;           /**< RC Commanded Yaw  */
+extern enum FlightModes rcMode; /**< RC Commanded Mode */
+extern int8_t rcThrottle;    /**< RC Commanded Throttle */
+extern int8_t rcRoll;          /**< RC Commanded Roll */
+extern int8_t rcPitch;         /**< RC Commanded Pitch */
+extern int8_t rcYaw;           /**< RC Commanded Yaw  */
 
 /** 
  * @brief AP Command Inputs from USART Link
  */
 extern volatile enum FlightModes apMode; /**< AP Commanded Mode */
-extern volatile uint8_t apThrottle;    /**< AP Commanded Throttle */
-extern volatile uint8_t apRoll;          /**< AP Commanded Roll */
-extern volatile uint8_t apPitch;         /**< AP Commanded Pitch */
-extern volatile uint8_t apYaw;           /**< AP Commanded Yaw  */
+extern volatile int8_t apThrottle;    /**< AP Commanded Throttle */
+extern volatile int8_t apRoll;          /**< AP Commanded Roll */
+extern volatile int8_t apPitch;         /**< AP Commanded Pitch */
+extern volatile int8_t apYaw;           /**< AP Commanded Yaw  */
 
 /**
  * @brief Generate the low level esc commands
@@ -58,6 +58,6 @@ extern volatile uint8_t apYaw;           /**< AP Commanded Yaw  */
  * To limit motor failure or performance loss a moving average filter will
  * be applied to the current and previous inputs.
  */
-extern void MixCommands(volatile uint8_t* commandedThrottle, volatile uint8_t* commandedRoll, volatile uint8_t* commandedPitch, volatile uint8_t* commandedYaw);
+extern void MixCommands(volatile int8_t* commandedThrottle, volatile int8_t* commandedRoll, volatile int8_t* commandedPitch, volatile int8_t* commandedYaw);
 
 #endif // MODE_H

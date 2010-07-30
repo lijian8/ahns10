@@ -88,7 +88,7 @@ obj/%.lss: $(TARGET)
 ## Clean target
 .PHONY: clean
 clean:
-	-rm -rf $(OBJECTS) mcu.elf dep/* obj/mcu.hex obj/mcu.eep obj/mcu.lss obj/mcu.map mcu.map
+	-rm -rf $(OBJECTS) mcu.elf dep/* obj/mcu.hex obj/mcu.eep obj/mcu.lss obj/mcu.map mcu.map obj/*
 
 
 ## Other dependencies

@@ -23,36 +23,34 @@
 
 volatile enum FlightModes flightMode;
 
-volatile enum FlightModes rcMode; 
-volatile uint8_t rcThrottle;
-volatile uint8_t rcRoll;       
-volatile uint8_t rcPitch;       
-volatile uint8_t rcYaw;          
+enum FlightModes rcMode; 
+int8_t rcThrottle;
+int8_t rcRoll;       
+int8_t rcPitch;       
+int8_t rcYaw;          
 
 volatile enum FlightModes apMode;
-volatile uint8_t apThrottle;
-volatile uint8_t apRoll;       
-volatile uint8_t apPitch;
-volatile uint8_t apYaw;
-
-static inline uint8_t Bound(uint16_t setPoint, uint8_t maxValue, uint8_t minValue);
+volatile int8_t apThrottle;
+volatile int8_t apRoll;       
+volatile int8_t apPitch;
+volatile int8_t apYaw;
 
 #define HISTORY_SIZE 8
-inline void MixCommands(volatile uint8_t* commandedThrottle, volatile uint8_t* commandedRoll, volatile uint8_t* commandedPitch, volatile uint8_t* commandedYaw)
+inline void MixCommands(volatile int8_t* commandedThrottle, volatile int8_t* commandedRoll, volatile int8_t* commandedPitch, volatile int8_t* commandedYaw)
 {
   static int32_t escHistory[4][HISTORY_SIZE];
   static uint8_t index = 0;
-  uint8_t setPoint = 0;
+  int8_t setPoint = 0;
   uint8_t i = 0;
  
   // Only Throttle has Full Authority
-  static const double controlFactor = 0.2;
+  static const double controlFactor = 1;
   *commandedRoll *= controlFactor;
   *commandedPitch *= controlFactor;
   *commandedYaw *= controlFactor;
 
   // Mix the Signals
-  if ((*commandedThrottle) && (*commandedRoll) && (*commandedPitch) && (*commandedYaw))
+  if ((*commandedThrottle))
   {
     escHistory[0][index] = escLimits[0][0] + *commandedThrottle + *commandedPitch - *commandedYaw;
     escHistory[1][index] = escLimits[1][0] + *commandedThrottle - *commandedRoll + *commandedYaw;
@@ -111,20 +109,4 @@ inline int32_t MovingAverage(int32_t* valueArray, uint8_t arrayLength)
   average = sum / arrayLength;
 
   return average;
-}
-
-static inline uint8_t Bound(uint16_t setPoint, uint8_t maxValue, uint8_t minValue)
-{
-  uint8_t returnValue = setPoint;
-
-  if(setPoint > maxValue)
-  {
-    returnValue = maxValue;
-  }
-  else if(setPoint < minValue)
-  {
-    returnValue = minValue;
-  }
-  
-  return returnValue;
 }

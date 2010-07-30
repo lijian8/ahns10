@@ -42,8 +42,10 @@ void init();
  */
 void CombineCommands();
 
+
 void main (void)
 {
+  uint8_t i = 0;
   StopPWM();
   
   init();
@@ -56,10 +58,9 @@ void main (void)
   #endif
 
   // Initialise and detect the Inputs
-  uint8_t inputsInitialised = 0;
   do 
   {
-    if (inputChannel[inputsInitialised].measuredPulseWidth < (PC_PWM_MIN + PULSE_TOLERANCE) )
+    if (inputChannel[inputsInitialised].measuredPulseWidth < (PC_PWM_MIN + PULSE_TOLERANCE))
     {
       //printf("%u\n",inputChannel[inputsInitialised].measuredPulseWidth);
       inputsInitialised++;
@@ -71,6 +72,23 @@ void main (void)
     }
   } while (inputsInitialised < NUM_CHANNELS);
 
+  _delay_ms(500);
+  inputsInitialised = 0;
+  do 
+  {
+    for (i = 0; i < 4; ++i)
+    {
+      ToggleGreen(TOGGLE);
+      _delay_ms(50);
+    }
+    UpdateRC();
+  } while (inputsInitialised < 10);
+  
+  zeroThrottle /= inputsInitialised;
+  zeroRoll /= inputsInitialised;
+  zeroPitch /= inputsInitialised;
+  zeroYaw /= inputsInitialised;
+  
   // Minimum Output
   ESC1_COUNTER = escLimits[0][0];
   ESC2_COUNTER = escLimits[1][0];
@@ -90,9 +108,9 @@ void main (void)
         static uint8_t toggleEnabled = 0;
         
         // Minimum Commands
-        ESC1_COUNTER = escLimits[0][0];
-        ESC2_COUNTER = escLimits[1][0];
-        ESC3_COUNTER = escLimits[2][0];
+  	ESC1_COUNTER = escLimits[0][0];
+	ESC2_COUNTER = escLimits[1][0];
+	ESC3_COUNTER = escLimits[2][0];
         ESC4_COUNTER = escLimits[3][0];
   
         // Toggle Yellow Error at 10Hz
