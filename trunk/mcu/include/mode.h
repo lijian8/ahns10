@@ -36,11 +36,11 @@ extern volatile enum FlightModes flightMode;
 /** 
  * @brief RC Command Inputs from Pulse Capture
  */
-extern enum FlightModes rcMode; /**< RC Commanded Mode */
-extern uint8_t rcThrottle;    /**< RC Commanded Throttle */
-extern uint8_t rcRoll;          /**< RC Commanded Roll */
-extern uint8_t rcPitch;         /**< RC Commanded Pitch */
-extern uint8_t rcYaw;           /**< RC Commanded Yaw  */
+extern volatile enum FlightModes rcMode; /**< RC Commanded Mode */
+extern volatile uint8_t rcThrottle;    /**< RC Commanded Throttle */
+extern volatile uint8_t rcRoll;          /**< RC Commanded Roll */
+extern volatile uint8_t rcPitch;         /**< RC Commanded Pitch */
+extern volatile uint8_t rcYaw;           /**< RC Commanded Yaw  */
 
 /** 
  * @brief AP Command Inputs from USART Link

@@ -124,7 +124,7 @@ void ParameterControl::on_SaveBtn_clicked()
 {
     AHNS_DEBUG("void ParameterControl::on_SaveBtn_clicked()");
 
-    QString fileName;
+  /*  QString fileName;
     QFile saveFile;
     bool writeSuccess = false;
     QString msg;
@@ -157,7 +157,7 @@ void ParameterControl::on_SaveBtn_clicked()
             }
             saveFile.close();
         }
-    }
+    }*/
     return;
 }
 

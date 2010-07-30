@@ -393,6 +393,11 @@ void TelemetryThread::DataPending()
                 UnpackParameters((unsigned char*) buffer, &receivedParameters);
                 emit NewParameters(timeStamp, receivedParameters, discarded);
                 break;
+            case SENSOR_DATA:
+                sensor_data_t receivedSensor;
+                UnpackSensorData((unsigned char*) buffer, &receivedSensor);
+                emit NewSensorData(timeStamp, receivedSensor, discarded);
+                break;
             default:
                 AHNS_DEBUG("TelemetryThread::DataPending() [ MESSAGE TYPE NOT MATCHED ]");
                 break;

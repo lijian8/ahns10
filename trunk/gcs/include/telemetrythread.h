@@ -66,6 +66,7 @@ signals:
     void NewAckMessage(const timeval timeStamp, const uint32_t ackType, const int discarded = 0);
     void NewCloseMessage(const timeval timeStamp, const int discarded = 0);
     void NewFailSafe(const timeval timeStamp, const int discarded = 0);
+    void NewSensorData(const timeval timeStamp, const sensor_data_t receivedSensor, const int discraded = 0);
 
 
     /** @name Signals for Tx Messages */

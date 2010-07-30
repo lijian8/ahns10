@@ -46,6 +46,7 @@ void FCStateData(int count, fc_state_t* testState);
 void APStateData(int count, ap_state_t* testState);
 void GainsData(int count, gains_t* testState);
 void LoopParametersData(int count, loop_parameters_t* testState);
+void SensorData(int count, sensor_data_t* sensorData);
 
 int verbose = 0;
 int receive = 0;
@@ -73,6 +74,7 @@ main (int argc, char *argv[])
   ap_state_t apState;
   gains_t gains;
   loop_parameters_t loopParameters;
+  sensor_data_t sensorData;
 
   // Allocate Server
   server_host = (char *) malloc (100 * sizeof (char));
@@ -171,6 +173,11 @@ main (int argc, char *argv[])
 	  dataLength = PackAPState(buffer,&apState);	  
           server_send_packet (&server, AUTOPILOT_STATE, &apState, dataLength);
 	   
+          // Sensor Data
+          SensorData(count,&sensorData);
+          printf("\n\nSending Sensor Data: Size %d \n",sizeof(sensor_data_t));
+          dataLength = PackSensorData(buffer, &sensorData);
+          server_send_packet(&server, SENSOR_DATA, &sensorData, dataLength);
 	  init = 0;
 	}
         else if (receive == 1)
@@ -232,6 +239,19 @@ void FCStateData(int count, fc_state_t* testState)
   testState->rclinkActive = ((count % 200) < 100 ) ? 1 : 0;
   testState->fcUptime = count++;
   testState->fcCPUusage = 2*count % 100;
+
+  return;
+}
+
+void SensorData(int count, sensor_data_t* sensorData)
+{
+  sensorData->p = fmod(count,10);
+  sensorData->q = 2 + fmod(count,10);
+  sensorData->r = 3 + fmod(count,10);
+
+  sensorData->ax = fmod(count,100);
+  sensorData->ay = fmod(count,50);
+  sensorData->az = fmod(count,5);
 
   return;
 }

@@ -472,3 +472,56 @@ QString gcsMainWindow::gainsToString(const gains_t& loopGains)
 
     return consoleText;
 }
+
+QString gcsMainWindow::sensorDataToString(const sensor_data_t& sensorData)
+{
+    QString consoleText;
+    QString p,q,r,ax,ay,az;
+
+    p = sensorData.p;
+    q = sensorData.q;
+    r = sensorData.r;
+    ax = sensorData.ax;
+    ay = sensorData.ay;
+    az = sensorData.az;
+
+    consoleText = "[ SENSOR_DATA ]\n"
+                  % p %" \t " % q %" \t " % r %"\n"
+                  % ax %" \t " % ay %" \t " % az %"\n";
+
+    return consoleText;
+}
+
+/**
+  * @brief Slot to receive SENSOR_DATA Message
+  */
+void gcsMainWindow::ProcessSensorData(const timeval timeStamp, const sensor_data_t sensorData, const int discarded)
+{
+    AHNS_DEBUG("void gcsMainWindow::ProcessSensorData(const timeval timeStamp, const sensor_data_t sensorData, const int discarded)");
+
+    QString consoleText;
+    QString timeStampStr = timeStampToString(timeStamp);
+
+    if (m_receiveConsoleWidget->receivedShow() || m_receiveConsoleWidget->discardedShow()) // form string if either shown
+    {
+        if (!m_receiveConsoleWidget->detailShow()) // only keep first line
+        {
+            consoleText = timeStampStr % " [ SENSOR_DATA ]";
+        }
+        else
+        {
+            consoleText = timeStampStr % sensorDataToString(sensorData);
+        }
+    }
+
+    m_receiveConsoleWidget->addItem(consoleText,discarded);
+
+    if (!discarded)
+    {
+        // Update the GUI
+        m_receiveConsoleWidget->addItem(consoleText, discarded);
+        m_Data.setSensorData(&timeStamp, &sensorData);
+    }
+
+    return;
+}
