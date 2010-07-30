@@ -48,6 +48,7 @@ Q_DECLARE_METATYPE(uint32_t)
 Q_DECLARE_METATYPE(attitude_t)
 Q_DECLARE_METATYPE(position_t)
 Q_DECLARE_METATYPE(ap_config_t)
+Q_DECLARE_METATYPE(sensor_data_t)
 
 gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::gcsMainWindow)
 {
@@ -64,7 +65,7 @@ gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
     qRegisterMetaType<attitude_t>("attitude_t");
     qRegisterMetaType<position_t>("position_t");
     qRegisterMetaType<ap_config_t>("ap_config_t");
-
+    qRegisterMetaType<sensor_data_t>("sensor_data_t");
 
     createDockWindows();
 
@@ -313,6 +314,7 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             connect(m_TelemetryThread,SIGNAL(NewAPState(const timeval, const ap_state_t, const int)),this,SLOT(ProcessAPState(const timeval, const ap_state_t, const int)));
             connect(m_TelemetryThread,SIGNAL(NewGains(timeval,gains_t,int)),this,SLOT(ProcessGains(timeval,gains_t,int)));
             connect(m_TelemetryThread,SIGNAL(NewParameters(timeval,loop_parameters_t,int)),this,SLOT(ProcessParameters(timeval,loop_parameters_t,int)));
+            connect(m_TelemetryThread,SIGNAL(NewSensorData(timeval,sensor_data_t,int)),this,SLOT(ProcessSensorData(timeval,sensor_data_t,int)));
 
             // Tx Messages
             // Flight Control -> Attitude, Position and Config

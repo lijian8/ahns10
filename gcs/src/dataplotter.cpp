@@ -56,7 +56,6 @@ ui->filteredRollchkbox, \
         ui->imuAXchkbox, \
         ui->imuAYchkbox, \
         ui->imuAZchkbox, \
-        ui->USchkbox, \
         ui->engine1chkbox, \
         ui->engine2chkbox, \
         ui->engine3chkbox, \
@@ -122,7 +121,6 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     m_plotCurves[IMU_AX].setTitle(QwtText("IMU X Acceleration [g's]"));
     m_plotCurves[IMU_AY].setTitle(QwtText("IMU Y Acceleration [g's]"));
     m_plotCurves[IMU_AZ].setTitle(QwtText("IMU Z Acceleration [g's]"));
-    m_plotCurves[US_Z].setTitle(QwtText("Ultrasonic Z Position [m]"));
 
     m_plotCurves[ENGINE1].setTitle(QwtText("Engine 1 Commanded [us]"));
     m_plotCurves[ENGINE2].setTitle(QwtText("Engine 2 Commanded [us]"));
@@ -292,6 +290,20 @@ void DataPlotter::replot()
                     }
                     m_plotCurves[i].setData(timePoints, dataPoints, j);
                     break;
+                case IMU_ROLL_DOT:
+                case IMU_PITCH_DOT:
+                case IMU_YAW_DOT:
+                case IMU_AX:
+                case IMU_AY:
+                case IMU_AZ:
+                    j = 0;
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[SENSOR_TIME][m_DataVector[SENSOR_TIME].size()-j-1];
+                        dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
                 case ENGINE1:
                 case ENGINE2:
                 case ENGINE3:

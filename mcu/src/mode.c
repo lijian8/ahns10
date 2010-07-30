@@ -23,11 +23,11 @@
 
 volatile enum FlightModes flightMode;
 
-enum FlightModes rcMode; 
-uint8_t rcThrottle;
-uint8_t rcRoll;       
-uint8_t rcPitch;       
-uint8_t rcYaw;          
+volatile enum FlightModes rcMode; 
+volatile uint8_t rcThrottle;
+volatile uint8_t rcRoll;       
+volatile uint8_t rcPitch;       
+volatile uint8_t rcYaw;          
 
 volatile enum FlightModes apMode;
 volatile uint8_t apThrottle;

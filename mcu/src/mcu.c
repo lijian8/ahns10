@@ -90,10 +90,10 @@ void main (void)
         static uint8_t toggleEnabled = 0;
         
         // Minimum Commands
-      ESC1_COUNTER = escLimits[0][0];
-      ESC2_COUNTER = escLimits[1][0];
-      ESC3_COUNTER = escLimits[2][0];
-      ESC4_COUNTER = escLimits[3][0];
+        ESC1_COUNTER = escLimits[0][0];
+        ESC2_COUNTER = escLimits[1][0];
+        ESC3_COUNTER = escLimits[2][0];
+        ESC4_COUNTER = escLimits[3][0];
   
         // Toggle Yellow Error at 10Hz
         if (!toggleEnabled)

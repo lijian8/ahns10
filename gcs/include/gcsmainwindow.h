@@ -85,6 +85,7 @@ private slots:
    void ProcessAPState(const timeval timeStamp, const ap_state_t apState, const int discarded = 0);
    void ProcessParameters(const timeval timeStamp, const loop_parameters_t loopParameters, const int discarded = 0);
    void ProcessGains(const timeval timeStamp, const gains_t loopGains, const int discarded = 0);
+   void ProcessSensorData(const timeval timeStamp, const sensor_data_t sensorData, const int discarded = 0);
 
    void UpdateWidgets();
 private:
@@ -132,6 +133,7 @@ private:
     QString apStateToString(const ap_state_t& apState);
     QString parametersToString(const loop_parameters_t& loopParameters);
     QString gainsToString(const gains_t& loopGains);
+    QString sensorDataToString(const sensor_data_t& sensorData);
 };
 
 #endif // GCSMAINWINDOW_H

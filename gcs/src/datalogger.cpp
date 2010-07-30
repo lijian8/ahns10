@@ -72,6 +72,21 @@ void DataLogger::initialiseLogs()
     std::time(&logFileTime);
     char logFileName[80];
 
+    // Sensor Data File
+    strftime(logFileName, 80, "logs/SENSOR_DATA_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
+    sensorDataOutputFile.open(logFileName);
+    if (sensorDataOutputFile.fail())
+    {
+        AHNS_DEBUG("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
+        throw std::runtime_error("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
+    }
+    else
+    {
+        sensorDataOutputFile << "AHNS SENSOR MESSAGES LOG FOR " << logFileName << std::endl;
+        sensorDataOutputFile << "TIME, IMU_ROLL_DOT, IMU_PITCH_DOT, IMU_YAW_DOT";
+        sensorDataOutputFile << "IMU_AX, IMU_AY, IMU_AZ" << std::endl;
+    }
+
     // State File
     strftime(logFileName, 80, "logs/Filtered_States_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
     stateOutputFile.open(logFileName);
@@ -254,6 +269,37 @@ void DataLogger::setAPStateData(const timeval* const timeStamp, const ap_state_t
         apStateOutputFile << apState->yActive <<"," << apState->zActive << std::endl;
     }
 
+    return;
+}
+
+/**
+  * @brief Log new Sensor Data for plotting and file output
+  */
+void DataLogger::setSensorData(const timeval* timeStamp, const sensor_data_t* const sensorData)
+{
+    AHNS_DEBUG("void DataLogger::setSensorData(const timeval* timeStamp, const state_data_t* const sensorData)");
+
+    // Time
+    m_DataVector[SENSOR_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
+    m_DataVector[SENSOR_TIME].push_back(m_DataVector[SENSOR_RAW_TIME].last()-m_zeroTime);
+
+    // Angular Rates
+    m_DataVector[IMU_ROLL_DOT].push_back(sensorData->p);
+    m_DataVector[IMU_PITCH_DOT].push_back(sensorData->q);
+    m_DataVector[IMU_YAW_DOT].push_back(sensorData->r);
+
+    // Linear Accelerations
+    m_DataVector[IMU_AX].push_back(sensorData->ax);
+    m_DataVector[IMU_AY].push_back(sensorData->ay);
+    m_DataVector[IMU_AZ].push_back(sensorData->az);
+
+    // Log the Sensor Data
+    if (m_loggingOn)
+    {
+        sensorDataOutputFile << m_DataVector[SENSOR_RAW_TIME].last()-m_DataVector[SENSOR_RAW_TIME].front() << "," << sensorData->p << ",";
+        sensorDataOutputFile << sensorData->q << "," << sensorData->r << "," << sensorData->ax << ",";
+        sensorDataOutputFile << sensorData->ay << "," << sensorData->az << std::endl;
+    }
     return;
 }
 

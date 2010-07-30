@@ -47,7 +47,6 @@ enum PlotData {
     IMU_AX,
     IMU_AY,
     IMU_AZ,
-    US_Z,
     ENGINE1,
     ENGINE2,
     ENGINE3,
@@ -73,6 +72,8 @@ enum PlotData {
     FC_STATE_TIME,
     AP_STATE_RAW_TIME,
     AP_STATE_TIME,
+    SENSOR_RAW_TIME,
+    SENSOR_TIME,
     DATA_COUNT
 };
 
@@ -82,6 +83,7 @@ public:
     void setHeliStateData(const timeval* const timeStamp, const state_t* const heliState);
     void setFCStateData(const timeval* const timeStamp, const fc_state_t* const fcState);
     void setAPStateData(const timeval* const timeStamp, const ap_state_t* const apState);
+    void setSensorData(const timeval* const timeStamp, const sensor_data_t* const sensorData);
     void initialiseLogs();
     void clearData();
 
@@ -100,6 +102,7 @@ private:
     std::ofstream stateOutputFile;
     std::ofstream fcStateOutputFile;
     std::ofstream apStateOutputFile;
+    std::ofstream sensorDataOutputFile;
 };
 
 #endif // DATALOGGER_H
