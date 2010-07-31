@@ -74,7 +74,7 @@ SOURCES += src/main.cpp \
     src/flightcontrol.cpp \
     src/gainscontrol.cpp \
     src/parametercontrol.cpp \
-    src/gcsSerialisation.cpp
+    $$HELI/primitive_serialisation.c
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \

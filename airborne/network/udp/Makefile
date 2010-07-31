@@ -13,9 +13,9 @@ CFLAGS =
 LDFLAGS =  -L./ -lstate -lm
 INCDIR = -I $(HELICONNECT) 
 
-SRCS = control.c client.c server.c $(HELICONNECT)/state.c udp.c serialisation.c
+SRCS = control.c client.c server.c $(HELICONNECT)/state.c udp.c $(HELICONNECT)/primitive_serialisation.c
 INCLUDES = control.h server.h $(HELICONNECT)/state.h udp.h commands.h $(HELICONNECT)/primitive_serialisation.h
-OBJS = control.o client.o server.o $(HELICONNECT)/state.o udp.o serialisation.o
+OBJS = control.o client.o server.o $(HELICONNECT)/state.o udp.o $(HELICONNECT)/primitive_serialisation.o
 LIBSTATE= libstate.a 
 all:  $(LIBSTATE)
 
