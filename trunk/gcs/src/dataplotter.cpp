@@ -143,10 +143,11 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     m_plotCurves[Z_ACTIVE].setTitle(QwtText("Z Active [1/0]"));
 
     // Possible Curve Pens
+    /// \@todo Assign static colours and line styles
     srand(time(NULL));
     for (i = 0; i < CURVE_COUNT; ++i)
     {
-        QPen randomPen(QColor(50 + rand() % 206,50 + rand() % 206, 50 + rand() % 206));
+        QPen randomPen(QColor(rand() % 185, rand() % 185, rand() % 185));
 
         switch (rand() % 5 + 1)
         {
@@ -304,6 +305,7 @@ void DataPlotter::replot()
                         j++;
                     }
                     m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
                 case ENGINE1:
                 case ENGINE2:
                 case ENGINE3:
