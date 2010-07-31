@@ -30,6 +30,10 @@ DataLogger::DataLogger()
 
 DataLogger::~DataLogger()
 {
+    if (sensorDataOutputFile.is_open())
+    {
+        sensorDataOutputFile.close();
+    }
     if (stateOutputFile.is_open())
     {
         stateOutputFile.close();
@@ -53,6 +57,7 @@ void DataLogger::initialiseLogs()
 {
     if(m_loggingOn)
     {
+        sensorDataOutputFile.close();
         stateOutputFile.close();
         fcStateOutputFile.close();
         apStateOutputFile.close();
@@ -60,12 +65,6 @@ void DataLogger::initialiseLogs()
 
     // Ensure Logging is on
     m_loggingOn = true;
-
-    // Close Files if open
-    if (stateOutputFile.is_open())
-    {
-        stateOutputFile.close();
-    }
 
     // Open Log Files
     time_t logFileTime;

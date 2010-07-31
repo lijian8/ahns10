@@ -21,8 +21,6 @@
 /** @name PWM Defines */
 extern const double F_PWM;       /**< Pre-scalar of 64 */
 extern const double PWM_DT_US;   /**< Time Resolution of generated PWM signals */
-#define PWM_MAX_US 2000 /**< Maximum Bound on PWM */
-#define PWM_MIN_US 700 /**< Minimum Bound on PWM */       
 
 /** @name ESC Output Compare Counters */
 #define ESC1_COUNTER OCR0A

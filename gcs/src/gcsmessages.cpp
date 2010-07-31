@@ -237,53 +237,24 @@ QString gcsMainWindow::timeStampToString(const timeval& timeStamp)
 
 QString gcsMainWindow::stateToString(const state_t& heliState)
 {
-    QString phi;
-    phi.setNum(heliState.phi,'f',2);
-    QString theta;
-    theta.setNum(heliState.theta,'f',2);
-    QString psi;
-    psi.setNum(heliState.psi,'f',2);
-
-    QString p;
-    p.setNum(heliState.p,'f',2);
-    QString q;
-    q.setNum(heliState.q,'f',2);
-    QString r;
-    r.setNum(heliState.r,'f',2);
-
-    QString x;
-    x.setNum(heliState.x,'f',2);
-    QString y;
-    y.setNum(heliState.y,'f',2);
-    QString z;
-    z.setNum(heliState.z,'f',2);
-
-    QString vx;
-    vx.setNum(heliState.vx,'f',2);
-    QString vy;
-    vy.setNum(heliState.vy,'f',2);
-    QString vz;
-    vz.setNum(heliState.vz,'f',2);
-
-    QString ax;
-    ax.setNum(heliState.ax,'f',2);
-    QString ay;
-    ay.setNum(heliState.ay,'f',2);
-    QString az;
-    az.setNum(heliState.az,'f',2);
-
-    QString trace;
-    trace.setNum(heliState.trace,'f',2);
-    QString voltage;
-    voltage.setNum(heliState.voltage,'f',2);
-
-    QString consoleText = "[ HELI_STATE ]\n"
-                  % phi %" \t " % theta %" \t "% psi %"\n"
-                  % p %" \t " % q %" \t "% r %"\n"
-                  % x %" \t " % y %" \t "% z %"\n"
-                  % vx %" \t " % vy %" \t "% vz %"\n"
-                  % ax %" \t " % ay %" \t "% az %"\n"
-                  % trace %" \t " % voltage;
+    QString consoleText = QString("[ HELI_STATE ]\n%1 %2 %3\n%4 %5 %6\n%7 %8 %9\n%10 %11 %12\n%13 %14 %15\n%16 %17\n")
+                          .arg(QString::number(heliState.phi))
+                          .arg(QString::number(heliState.theta))
+                          .arg(QString::number(heliState.psi))
+                          .arg(QString::number(heliState.p))
+                          .arg(QString::number(heliState.q))
+                          .arg(QString::number(heliState.r))
+                          .arg(QString::number(heliState.x))
+                          .arg(QString::number(heliState.y))
+                          .arg(QString::number(heliState.z))
+                          .arg(QString::number(heliState.vx))
+                          .arg(QString::number(heliState.vy))
+                          .arg(QString::number(heliState.vz))
+                          .arg(QString::number(heliState.ax))
+                          .arg(QString::number(heliState.ay))
+                          .arg(QString::number(heliState.az))
+                          .arg(QString::number(heliState.trace))
+                          .arg(QString::number(heliState.voltage));
     return consoleText;
 }
 
@@ -333,162 +304,92 @@ QString gcsMainWindow::ackMessageToString(const uint32_t& ackType)
 
 QString gcsMainWindow::fcStateToString(const fc_state_t& fcState)
 {
-    QString consoleText;
-
-    QString e1, e2, e3, e4, rcLinkStatus, fcUptime, fcCPUusage;
-    e1.setNum(fcState.commandedEngine1);
-    e2.setNum(fcState.commandedEngine2);
-    e3.setNum(fcState.commandedEngine3);
-    e4.setNum(fcState.commandedEngine4);
-    rcLinkStatus.setNum(fcState.rclinkActive);
-    fcUptime.setNum(fcState.fcUptime);
-    fcCPUusage.setNum(fcState.fcCPUusage);
-
-    consoleText = "[ FC_STATE ]\n"
-                  % e1 %" \t " % e2 %" \t "% e3 %"\n"
-                  % e4 %" \t " % rcLinkStatus %" \t "% fcUptime %"\n"
-                  % fcCPUusage;
-
+    QString consoleText = QString(" [ FC_STATE ]\n%1 %2 %3 %4\n%5 %6 %7\n")
+                          .arg(QString::number(fcState.commandedEngine1))
+                          .arg(QString::number(fcState.commandedEngine2))
+                          .arg(QString::number(fcState.commandedEngine3))
+                          .arg(QString::number(fcState.commandedEngine4))
+                          .arg(QString::number(fcState.fcCPUusage))
+                          .arg(QString::number(fcState.fcUptime))
+                          .arg(QString::number(fcState.rclinkActive));
     return consoleText;
 }
 
 QString gcsMainWindow::apStateToString(const ap_state_t& apState)
 {
-    QString consoleText;
-    QString refPhi, refTheta, refPsi, refX, refY, refZ, actPhi, actTheta, actPsi, actX, actY, actZ;
-
-    refPhi.setNum(apState.referencePhi);
-    refTheta.setNum(apState.referenceTheta);
-    refPsi.setNum(apState.referencePsi);
-
-    refX.setNum(apState.referenceX);
-    refY.setNum(apState.referenceY);
-    refZ.setNum(apState.referenceZ);
-
-    actPhi.setNum(apState.phiActive);
-    actTheta.setNum(apState.thetaActive);
-    actPsi.setNum(apState.psiActive);
-
-    actX.setNum(apState.xActive);
-    actY.setNum(apState.yActive);
-    actZ.setNum(apState.zActive);
-
-    consoleText = "[ AUTOPILOT_STATE ] \n"
-                  % refPhi %" \t " % refTheta %" \t "% refPsi %"\n"
-                  % refX %" \t " % refY %" \t "% refZ %"\n"
-                  % actPhi %" \t " % actTheta %" \t "% actPsi %"\n"
-                  % actX %" \t " % actY %" \t "% actZ %"\n";
-
+    QString consoleText = QString(" [ AUTOPILOT_STATE ] \n%1 %2 %3\n%4 %5 %6\n%7 %8 %9\n%10 %11 %12\n")
+                          .arg(QString::number(apState.referencePhi))
+                          .arg(QString::number(apState.referenceTheta))
+                          .arg(QString::number(apState.referencePsi))
+                          .arg(QString::number(apState.referenceX))
+                          .arg(QString::number(apState.referenceY))
+                          .arg(QString::number(apState.referenceZ))
+                          .arg(QString::number(apState.phiActive))
+                          .arg(QString::number(apState.thetaActive))
+                          .arg(QString::number(apState.psiActive))
+                          .arg(QString::number(apState.xActive))
+                          .arg(QString::number(apState.yActive))
+                          .arg(QString::number(apState.zActive));
     return consoleText;
 }
 
 QString gcsMainWindow::parametersToString(const loop_parameters_t& loopParameters)
 {
-    QString consoleText;
-
-    QString rollMax, rollNeutral, rollMin,
-    pitchMax, pitchNeutral, pitchMin,
-    yawMax, yawNeutral, yawMin,
-    xMax, xNeutral, xMin,
-    yMax, yNeutral, yMin,
-    zMax, zNeutral, zMin;
-
-    rollMax.setNum(loopParameters.rollMaximum);
-    rollNeutral.setNum(loopParameters.rollNeutral);
-    rollMin.setNum(loopParameters.rollMinimum);
-
-    pitchMax.setNum(loopParameters.pitchMaximum);
-    pitchNeutral.setNum(loopParameters.pitchNeutral);
-    pitchMin.setNum(loopParameters.pitchMinimum);
-
-    yawMax.setNum(loopParameters.yawMaximum);
-    yawNeutral.setNum(loopParameters.yawNeutral);
-    yawMin.setNum(loopParameters.yawMinimum);
-
-    xMax.setNum(loopParameters.xMaximum);
-    xNeutral.setNum(loopParameters.xNeutral);
-    xMin.setNum(loopParameters.xMinimum);
-
-    yMax.setNum(loopParameters.yMaximum);
-    yNeutral.setNum(loopParameters.yNeutral);
-    yMin.setNum(loopParameters.yMinimum);
-
-    zMax.setNum(loopParameters.zMaximum);
-    zNeutral.setNum(loopParameters.zNeutral);
-    zMin.setNum(loopParameters.zMinimum);
-
-    consoleText = "[ PARAMETERS ]\n"
-                  % rollMax %" \t " % rollNeutral %" \t " % rollMin %"\n"
-                  % pitchMax %" \t " % pitchNeutral %" \t " % pitchMin %"\n"
-                  % yawMax %" \t " % yawNeutral %" \t " % yawMin %"\n"
-                  % xMax %" \t " % xNeutral %" \t " % xMin % "\n"
-                  % yMax %" \t " % yNeutral %" \t " % yMin % "\n"
-                  % zMax %" \t " % zNeutral %" \t " % zMin % "\n";
-
+    QString consoleText = QString(" [ PARAMETERS ]\n%1 %2 %3\n%4 %5 %6\n%7 %8 %9\n%10 %11 %12\n%13 %14 %15\n%16 %17 %18\n")
+                          .arg(QString::number(loopParameters.rollMaximum))
+                          .arg(QString::number(loopParameters.rollNeutral))
+                          .arg(QString::number(loopParameters.rollMinimum))
+                          .arg(QString::number(loopParameters.pitchMaximum))
+                          .arg(QString::number(loopParameters.pitchNeutral))
+                          .arg(QString::number(loopParameters.pitchMinimum))
+                          .arg(QString::number(loopParameters.yawMaximum))
+                          .arg(QString::number(loopParameters.yawNeutral))
+                          .arg(QString::number(loopParameters.yawMinimum))
+                          .arg(QString::number(loopParameters.xMaximum))
+                          .arg(QString::number(loopParameters.xNeutral))
+                          .arg(QString::number(loopParameters.xMinimum))
+                          .arg(QString::number(loopParameters.yMaximum))
+                          .arg(QString::number(loopParameters.yNeutral))
+                          .arg(QString::number(loopParameters.yMinimum))
+                          .arg(QString::number(loopParameters.zMaximum))
+                          .arg(QString::number(loopParameters.zNeutral))
+                          .arg(QString::number(loopParameters.zMinimum));
     return consoleText;
 }
 
 QString gcsMainWindow::gainsToString(const gains_t& loopGains)
 {
-    QString consoleText;
-    QString rollP, rollI, rollD,
-    pitchP, pitchI, pitchD,
-    yawP, yawI, yawD,
-    xP, xI, xD,
-    yP, yI, yD,
-    zP, zI, zD;
-
-    rollP.setNum(loopGains.rollKp);
-    rollI.setNum(loopGains.rollKi);
-    rollD.setNum(loopGains.rollKd);
-
-    pitchP.setNum(loopGains.pitchKp);
-    pitchI.setNum(loopGains.pitchKi);
-    pitchD.setNum(loopGains.pitchKd);
-
-    yawP.setNum(loopGains.yawKp);
-    yawI.setNum(loopGains.yawKi);
-    yawD.setNum(loopGains.yawKd);
-
-    xP.setNum(loopGains.xKp);
-    xI.setNum(loopGains.xKi);
-    xD.setNum(loopGains.xKd);
-
-    yP.setNum(loopGains.yKp);
-    yI.setNum(loopGains.yKi);
-    yD.setNum(loopGains.yKd);
-
-    zP.setNum(loopGains.zKp);
-    zI.setNum(loopGains.zKi);
-    zD.setNum(loopGains.zKd);
-
-    consoleText = "[ GAINS ]\n"
-                  % rollP %" \t " % rollI %" \t " % rollD %"\n"
-                  % pitchP %" \t " % pitchI %" \t " % pitchD %"\n"
-                  % yawP %" \t " % yawI %" \t " % yawD %"\n"
-                  % xP %" \t " % xI %" \t " % xD % "\n"
-                  % yP %" \t " % yI %" \t " % yD % "\n"
-                  % zP %" \t " % zI %" \t " % zD % "\n";
-
+    QString consoleText = QString(" [ GAINS ]\n%1 %2 %3\n%4 %5 %6\n%7 %8 %9\n%10 %11 %12\n%13 %14 %15\n%16 %17 %18\n")
+                          .arg(QString::number(loopGains.rollKp))
+                          .arg(QString::number(loopGains.rollKi))
+                          .arg(QString::number(loopGains.rollKd))
+                          .arg(QString::number(loopGains.pitchKp))
+                          .arg(QString::number(loopGains.pitchKi))
+                          .arg(QString::number(loopGains.pitchKd))
+                          .arg(QString::number(loopGains.yawKp))
+                          .arg(QString::number(loopGains.yawKi))
+                          .arg(QString::number(loopGains.yawKd))
+                          .arg(QString::number(loopGains.xKp))
+                          .arg(QString::number(loopGains.xKi))
+                          .arg(QString::number(loopGains.xKd))
+                          .arg(QString::number(loopGains.yKp))
+                          .arg(QString::number(loopGains.yKi))
+                          .arg(QString::number(loopGains.yKd))
+                          .arg(QString::number(loopGains.zKp))
+                          .arg(QString::number(loopGains.zKi))
+                          .arg(QString::number(loopGains.zKd));
     return consoleText;
 }
 
 QString gcsMainWindow::sensorDataToString(const sensor_data_t& sensorData)
 {
-    QString consoleText;
-    QString p,q,r,ax,ay,az;
-
-    p.setNum(sensorData.p);
-    q.setNum(sensorData.q);
-    r.setNum(sensorData.r);
-    ax.setNum(sensorData.ax);
-    ay.setNum(sensorData.ay);
-    az.setNum(sensorData.az);
-
-    consoleText = "[ SENSOR_DATA ]\n"
-                  % p %" \t " % q %" \t " % r %"\n"
-                  % ax %" \t " % ay %" \t " % az %"\n";
-
+    QString consoleText = QString(" [ SENSOR_DATA ]\n%1 %2 %3\n%4 %5 %6\n")
+                          .arg(QString::number(sensorData.p))
+                          .arg(QString::number(sensorData.q))
+                          .arg(QString::number(sensorData.r))
+                          .arg(QString::number(sensorData.ax))
+                          .arg(QString::number(sensorData.ay))
+                          .arg(QString::number(sensorData.az));
     return consoleText;
 }
 
