@@ -160,7 +160,7 @@ main (int argc, char *argv[])
           fprintf (stderr, "Eng1 = %d \t Eng2 = %d \t Eng3 = %d \t Eng4 = %d \n", fcState.commandedEngine1, fcState.commandedEngine2, fcState.commandedEngine3, fcState.commandedEngine4);
           fprintf (stderr, "fcUptime = %llu \t fcCPUusage = %d \t rclinkActive = %d \n", fcState.fcUptime, fcState.fcCPUusage, fcState.rclinkActive);
 	  dataLength = PackFCState(buffer,&fcState);
-	  server_send_packet (&server, FC_STATE, &fcState, dataLength);
+	  server_send_packet (&server, FC_STATE, buffer, dataLength);
 
           // AP Test Structure
           APStateData(count, &apState);
@@ -171,13 +171,13 @@ main (int argc, char *argv[])
           fprintf (stderr, "xActive = %u \t yActive = %u \t zActive = %u \n", apState.xActive, apState.yActive, apState.zActive);
 
 	  dataLength = PackAPState(buffer,&apState);	  
-          server_send_packet (&server, AUTOPILOT_STATE, &apState, dataLength);
+          server_send_packet (&server, AUTOPILOT_STATE, buffer, dataLength);
 	   
           // Sensor Data
           SensorData(count,&sensorData);
           printf("\n\nSending Sensor Data: Size %d \n",sizeof(sensor_data_t));
           dataLength = PackSensorData(buffer, &sensorData);
-          server_send_packet(&server, SENSOR_DATA, &sensorData, dataLength);
+          server_send_packet(&server, SENSOR_DATA, buffer, dataLength);
 	  init = 0;
 	}
         else if (receive == 1)
@@ -191,7 +191,7 @@ main (int argc, char *argv[])
           fprintf (stderr, "xActive = %u \t yActive = %u \t zActive = %u \n", apState.xActive, apState.yActive, apState.zActive);
 
 	  dataLength = PackAPState(buffer,&apState);	  
-          server_send_packet (&server, AUTOPILOT_STATE, &apState, dataLength);
+          server_send_packet (&server, AUTOPILOT_STATE, buffer, dataLength);
           init = 0;
         }
     }
