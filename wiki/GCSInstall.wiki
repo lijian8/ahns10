@@ -34,7 +34,3 @@ Logout to apply or use {{{ source .profile }}}
   {{{
     export HELICONNECT="${HOME}/heliconnect10/trunk/udp/"
   }}}
-* Shared Network Library for Serialisation *
-  {{{
-    export UDP_SERIALISATION="${HOME}/ahns10/trunk/udp/"
-  }}}

@@ -131,6 +131,7 @@ void DataLogger::initialiseLogs()
         apStateOutputFile << "PSI_ACTIVE, X_ACTIVE, Y_ACTIVE, Z_ACTIVE" << std::endl;
     }
 
+    // Set Common Zero Time
     struct timeval time0;
     gettimeofday(&time0,NULL);
     m_zeroTime = time0.tv_sec + time0.tv_usec*1.0e-6;

@@ -93,87 +93,223 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     {
         connect(checkBoxArray[i],SIGNAL(clicked()),this,SLOT(SetActive()));
         m_plotCurves[i].setSymbol(QwtSymbol());
-    }
-
-    connect(ui->Clearbtn,SIGNAL(clicked()),this,SLOT(ClearPlots()));
-
-    m_plotCurves[F_PHI].setTitle(QwtText("Roll Angle [rad]"));
-    m_plotCurves[F_PHI_DOT].setTitle(QwtText("Roll Rate [rad/s]"));
-    m_plotCurves[F_THETA].setTitle(QwtText("Pitch Angle [rad]"));
-    m_plotCurves[F_THETA_DOT].setTitle(QwtText("Pitch Rate [rad/s]"));
-    m_plotCurves[F_PSI].setTitle(QwtText("Yaw Angle [rad]"));
-    m_plotCurves[F_PSI_DOT].setTitle(QwtText("Yaw Rate [rad/s]"));
-    m_plotCurves[F_X].setTitle(QwtText("x Position [m]"));
-    m_plotCurves[F_X_DOT].setTitle(QwtText("x Velocity [m/s]"));
-    m_plotCurves[F_AX].setTitle(QwtText("x Accelertaion [m/s]"));
-    m_plotCurves[F_Y].setTitle(QwtText("y Position [m]"));
-    m_plotCurves[F_Y_DOT].setTitle(QwtText("y Velocity [m/s]"));
-    m_plotCurves[F_AY].setTitle(QwtText("y Accelertaion [m/s/s]"));
-    m_plotCurves[F_Z].setTitle(QwtText("z Position [m]"));
-    m_plotCurves[F_Z_DOT].setTitle(QwtText("z Velocity [m]"));
-    m_plotCurves[F_AZ].setTitle(QwtText("z Accelertaion [m]"));
-    m_plotCurves[VOLTAGE].setTitle(QwtText("Voltage [V]"));
-    m_plotCurves[TRACE].setTitle(QwtText("Trace"));
-
-    m_plotCurves[IMU_ROLL_DOT].setTitle(QwtText("IMU Roll Rate [deg/s]"));
-    m_plotCurves[IMU_PITCH_DOT].setTitle(QwtText("IMU Pitch Rate [deg/s]"));
-    m_plotCurves[IMU_YAW_DOT].setTitle(QwtText("IMU Yaw Rate [deg/s]"));
-    m_plotCurves[IMU_AX].setTitle(QwtText("IMU X Acceleration [g's]"));
-    m_plotCurves[IMU_AY].setTitle(QwtText("IMU Y Acceleration [g's]"));
-    m_plotCurves[IMU_AZ].setTitle(QwtText("IMU Z Acceleration [g's]"));
-
-    m_plotCurves[ENGINE1].setTitle(QwtText("Engine 1 Commanded [us]"));
-    m_plotCurves[ENGINE2].setTitle(QwtText("Engine 2 Commanded [us]"));
-    m_plotCurves[ENGINE3].setTitle(QwtText("Engine 3 Commanded [us]"));
-    m_plotCurves[ENGINE4].setTitle(QwtText("Engine 4 Commanded [us]"));
-    m_plotCurves[FC_CPU].setTitle(QwtText("CPU Usage [%]"));
-    m_plotCurves[RC_LINK].setTitle(QwtText("RC Link [1/0]"));
-
-    m_plotCurves[REF_PHI].setTitle(QwtText("Reference Roll Angle [rad]"));
-    m_plotCurves[REF_THETA].setTitle(QwtText("Reference Pitch Angle [rad]"));
-    m_plotCurves[REF_PSI].setTitle(QwtText("Reference Yaw Angle [rad]"));
-    m_plotCurves[REF_X].setTitle(QwtText("Reference X Position [m]"));
-    m_plotCurves[REF_Y].setTitle(QwtText("Reference Y Position [m]"));
-    m_plotCurves[REF_Z].setTitle(QwtText("Reference Z Position [m]"));
-    m_plotCurves[PHI_ACTIVE].setTitle(QwtText("Roll Active [1/0]"));
-    m_plotCurves[THETA_ACTIVE].setTitle(QwtText("Pitch Active [1/0]"));
-    m_plotCurves[PSI_ACTIVE].setTitle(QwtText("Yaw Active [1/0]"));
-    m_plotCurves[X_ACTIVE].setTitle(QwtText("X Active [1/0]"));
-    m_plotCurves[Y_ACTIVE].setTitle(QwtText("Y Active [1/0]"));
-    m_plotCurves[Z_ACTIVE].setTitle(QwtText("Z Active [1/0]"));
-
-    // Possible Curve Pens
-    /// \@todo Assign static colours and line styles
-    srand(time(NULL));
-    for (i = 0; i < CURVE_COUNT; ++i)
-    {
-        QPen randomPen(QColor(rand() % 185, rand() % 185, rand() % 185));
-
-        switch (rand() % 5 + 1)
-        {
-        case 1:
-            randomPen.setStyle(Qt::SolidLine);
-            break;
-        case 2:
-            randomPen.setStyle(Qt::DashLine);
-            break;
-        case 3:
-            //randomPen.setStyle(Qt::DotLine);
-            break;
-        case 4:
-            randomPen.setStyle(Qt::DashDotLine);
-            break;
-        case 5:
-            randomPen.setStyle(Qt::DashDotDotLine);
-            break;
-        }
-
-        // Set Curver Pen
-        m_plotCurves[i].setPen(randomPen);
 
         // All curves initially not active
         m_activePlot[i] = false;
     }
+
+    connect(ui->Clearbtn,SIGNAL(clicked()),this,SLOT(ClearPlots()));
+
+    QPen tempPen(QColor(0,0,0));
+
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setStyle(Qt::DashDotLine);
+    tempPen.setStyle(Qt::DashDotDotLine);
+
+    m_plotCurves[F_PHI].setTitle(QwtText("Roll Angle [rad]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,0,255));
+    m_plotCurves[F_PHI].setPen(tempPen);
+
+    m_plotCurves[F_PHI_DOT].setTitle(QwtText("Roll Rate [rad/s]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,0,119));
+    m_plotCurves[F_PHI_DOT].setPen(tempPen);
+
+    m_plotCurves[F_THETA].setTitle(QwtText("Pitch Angle [rad]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,153,0));
+    m_plotCurves[F_THETA].setPen(tempPen);
+
+    m_plotCurves[F_THETA_DOT].setTitle(QwtText("Pitch Rate [rad/s]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,85,0));
+    m_plotCurves[F_THETA_DOT].setPen(tempPen);
+
+    m_plotCurves[F_PSI].setTitle(QwtText("Yaw Angle [rad]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,0,0));
+    m_plotCurves[F_PSI].setPen(tempPen);
+
+    m_plotCurves[F_PSI_DOT].setTitle(QwtText("Yaw Rate [rad/s]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(119,0,0));
+    m_plotCurves[F_PSI_DOT].setPen(tempPen);
+
+    m_plotCurves[F_X].setTitle(QwtText("x Position [m]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,204,51));
+    m_plotCurves[F_X].setPen(tempPen);
+
+    m_plotCurves[F_X_DOT].setTitle(QwtText("x Velocity [m/s]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,153,0));
+    m_plotCurves[F_X_DOT].setPen(tempPen);
+
+    m_plotCurves[F_AX].setTitle(QwtText("x Accelertaion [m/s]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,102,0));
+    m_plotCurves[F_AX].setPen(tempPen);
+
+    m_plotCurves[F_Y].setTitle(QwtText("y Position [m]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,102,255));
+    m_plotCurves[F_Y].setPen(tempPen);
+
+    m_plotCurves[F_Y_DOT].setTitle(QwtText("y Velocity [m/s]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,102,102));
+    m_plotCurves[F_Y_DOT].setPen(tempPen);
+
+    m_plotCurves[F_AY].setTitle(QwtText("y Accelertaion [m/s/s]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,0,102));
+    m_plotCurves[F_AY].setPen(tempPen);
+
+    m_plotCurves[F_Z].setTitle(QwtText("z Position [m]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,153,0));
+    m_plotCurves[F_Z].setPen(tempPen);
+
+    m_plotCurves[F_Z_DOT].setTitle(QwtText("z Velocity [m]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,102,51));
+    m_plotCurves[F_Z_DOT].setPen(tempPen);
+
+    m_plotCurves[F_AZ].setTitle(QwtText("z Accelertaion [m]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,51,51));
+    m_plotCurves[F_AZ].setPen(tempPen);
+
+    m_plotCurves[VOLTAGE].setTitle(QwtText("Voltage [V]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,51,102));
+    m_plotCurves[F_AZ].setPen(tempPen);
+
+    m_plotCurves[TRACE].setTitle(QwtText("Trace"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,0,85));
+    m_plotCurves[F_AZ].setPen(tempPen);
+
+    m_plotCurves[IMU_ROLL_DOT].setTitle(QwtText("IMU Roll Rate [deg/s]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(153,102,0));
+    m_plotCurves[IMU_ROLL_DOT].setPen(tempPen);
+
+    m_plotCurves[IMU_PITCH_DOT].setTitle(QwtText("IMU Pitch Rate [deg/s]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(0,102,102));
+    m_plotCurves[IMU_PITCH_DOT].setPen(tempPen);
+
+    m_plotCurves[IMU_YAW_DOT].setTitle(QwtText("IMU Yaw Rate [deg/s]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(102,102,51));
+    m_plotCurves[IMU_YAW_DOT].setPen(tempPen);
+
+    m_plotCurves[IMU_AX].setTitle(QwtText("IMU X Acceleration [g's]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(0,153,0));
+    m_plotCurves[IMU_AX].setPen(tempPen);
+
+    m_plotCurves[IMU_AY].setTitle(QwtText("IMU Y Acceleration [g's]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(255,102,102));
+    m_plotCurves[IMU_AY].setPen(tempPen);
+
+    m_plotCurves[IMU_AZ].setTitle(QwtText("IMU Z Acceleration [g's]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(51,102,102));
+    m_plotCurves[IMU_AZ].setPen(tempPen);
+
+    m_plotCurves[ENGINE1].setTitle(QwtText("Engine 1 Commanded [us]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,102,255));
+    m_plotCurves[ENGINE1].setPen(tempPen);
+
+    m_plotCurves[ENGINE2].setTitle(QwtText("Engine 2 Commanded [us]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,0,0));
+    m_plotCurves[ENGINE2].setPen(tempPen);
+
+    m_plotCurves[ENGINE3].setTitle(QwtText("Engine 3 Commanded [us]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,102,51));
+    m_plotCurves[ENGINE3].setPen(tempPen);
+
+    m_plotCurves[ENGINE4].setTitle(QwtText("Engine 4 Commanded [us]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(102,51,204));
+    m_plotCurves[ENGINE4].setPen(tempPen);
+
+    m_plotCurves[FC_CPU].setTitle(QwtText("CPU Usage [%]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(0,0,0));
+    m_plotCurves[RC_LINK].setPen(tempPen);
+
+    m_plotCurves[RC_LINK].setTitle(QwtText("RC Link [1/0]"));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,0,0));
+    m_plotCurves[RC_LINK].setPen(tempPen);
+
+    m_plotCurves[REF_PHI].setTitle(QwtText("Reference Roll Angle [rad]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(102,0,0));
+    m_plotCurves[REF_PHI].setPen(tempPen);
+
+    m_plotCurves[REF_THETA].setTitle(QwtText("Reference Pitch Angle [rad]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(153,0,255));
+    m_plotCurves[REF_THETA].setPen(tempPen);
+
+    m_plotCurves[REF_PSI].setTitle(QwtText("Reference Yaw Angle [rad]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(0,0,102));
+    m_plotCurves[REF_PSI].setPen(tempPen);
+
+    m_plotCurves[REF_X].setTitle(QwtText("Reference X Position [m]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(153,51,0));
+    m_plotCurves[REF_X].setPen(tempPen);
+
+    m_plotCurves[REF_Y].setTitle(QwtText("Reference Y Position [m]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(51,0,153));
+    m_plotCurves[REF_Y].setPen(tempPen);
+
+    m_plotCurves[REF_Z].setTitle(QwtText("Reference Z Position [m]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(0,153,51));
+    m_plotCurves[REF_Z].setPen(tempPen);
+
+    m_plotCurves[PHI_ACTIVE].setTitle(QwtText("Roll Active [1/0]"));
+    tempPen.setStyle(Qt::DashDotLine);
+    tempPen.setColor(QColor(255,51,255));
+    m_plotCurves[PHI_ACTIVE].setPen(tempPen);
+
+    m_plotCurves[THETA_ACTIVE].setTitle(QwtText("Pitch Active [1/0]"));
+    tempPen.setStyle(Qt::DashDotLine);
+    tempPen.setColor(QColor(255,102,0));
+    m_plotCurves[PHI_ACTIVE].setPen(tempPen);
+
+    m_plotCurves[PSI_ACTIVE].setTitle(QwtText("Yaw Active [1/0]"));
+    tempPen.setStyle(Qt::DashDotLine);
+    tempPen.setColor(QColor(153,102,102));
+    m_plotCurves[PHI_ACTIVE].setPen(tempPen);
+
+    m_plotCurves[X_ACTIVE].setTitle(QwtText("X Active [1/0]"));
+    tempPen.setStyle(Qt::DashDotLine);
+    tempPen.setColor(QColor(204,102,255));
+    m_plotCurves[X_ACTIVE].setPen(tempPen);
+
+    m_plotCurves[Y_ACTIVE].setTitle(QwtText("Y Active [1/0]"));
+    tempPen.setStyle(Qt::DashDotLine);
+    tempPen.setColor(QColor(51,0,255));
+    m_plotCurves[Y_ACTIVE].setPen(tempPen);
+
+    m_plotCurves[Z_ACTIVE].setTitle(QwtText("Z Active [1/0]"));
+    tempPen.setStyle(Qt::DashDotLine);
+    tempPen.setColor(QColor(51,0,0));
+    m_plotCurves[PHI_ACTIVE].setPen(tempPen);
 
     // Legend
     ui->dataPlotqwtPlot->insertLegend(&m_legend,QwtPlot::BottomLegend);
@@ -313,7 +449,7 @@ void DataPlotter::replot()
                 case FC_CPU:
                 case RC_LINK:
                     j = 0;
-                    while ( (j < pointLimit) && (j < m_DataVector[i].size()))
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
                     {
                         timePoints[j] = m_DataVector[FC_STATE_TIME][m_DataVector[FC_STATE_TIME].size()-j-1];
                         dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
@@ -334,7 +470,7 @@ void DataPlotter::replot()
                 case Y_ACTIVE:
                 case Z_ACTIVE:
                     j = 0;
-                    while ( (j < pointLimit) && (j < m_DataVector[i].size()))
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
                     {
                         timePoints[j] = m_DataVector[AP_STATE_TIME][m_DataVector[AP_STATE_TIME].size()-j-1];
                         dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
@@ -383,7 +519,6 @@ void DataPlotter::SetActive()
             m_activePlot[i] = false;
         }
     }
-
     return;
 }
 
