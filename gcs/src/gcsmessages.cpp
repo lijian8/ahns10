@@ -71,7 +71,7 @@ void gcsMainWindow::ProcessAckMessage(const timeval timeStamp, const uint32_t ac
     QString timeStampStr = timeStampToString(timeStamp);
     QString consoleText;
 
-    consoleText = timeStampStr % "[ COMMAND_ACK ] " % ackMessageToString(ackType);
+    consoleText = timeStampStr % " [ COMMAND_ACK ] " % ackMessageToString(ackType);
     m_receiveConsoleWidget->addItem(consoleText,discarded);
 
     return;
@@ -84,7 +84,7 @@ void gcsMainWindow::ProcessCloseMessage(const timeval timeStamp, const int disca
 {
     QString consoleText;
     QString timeStampStr = timeStampToString(timeStamp);
-    consoleText = timeStampStr % "[ COMMAND_CLOSE ] ";
+    consoleText = timeStampStr % " [ COMMAND_CLOSE ] ";
     m_receiveConsoleWidget->addItem(consoleText,discarded);
 
     return;

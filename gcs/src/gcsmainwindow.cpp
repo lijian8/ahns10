@@ -54,7 +54,7 @@ gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
 {
     ui->setupUi(this);
 
-    // Register Types
+    // Register Types for signal/slot use
     qRegisterMetaType<timeval>("timeval");
     qRegisterMetaType<state_t>("state_t");
     qRegisterMetaType<fc_state_t>("fc_state_t");
@@ -119,7 +119,7 @@ void gcsMainWindow::changeEvent(QEvent *e)
 /**
   * @brief Create all dockable widgets to enable later toggling of display
   */
-void gcsMainWindow::createDockWindows()
+inline void gcsMainWindow::createDockWindows()
 {
     AHNS_DEBUG("gcsMainWindow::createDockWindows()");
     try
@@ -194,8 +194,8 @@ void gcsMainWindow::createDockWindows()
         ui->menuView->insertAction(0,dockFCtrl->toggleViewAction());
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
-        connect(m_wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
         connect(m_wifiCommsWidget,SIGNAL(ConnectionClose()),this,SLOT(CloseTelemetry()));
+        connect(m_wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
         connect(m_wifiCommsWidget,SIGNAL(ConnectionRetry(quint16&,QString&,quint16&,QString&)),this,SLOT(RetryTelemetry(quint16&,QString&,quint16&,QString&)));
         connect(this,SIGNAL(NewTelemetryStatus(quint32,quint8,quint8)),m_wifiCommsWidget,SLOT(lcdUpdate(quint32,quint8,quint8)));
     }
@@ -256,6 +256,7 @@ void gcsMainWindow::on_actionRemove_All_Plotting_Widgets_triggered()
     QLinkedList<QDockWidget*>::iterator iter = m_plottingDock.begin();
     for (iter = m_plottingDock.begin(); iter != m_plottingDock.end(); ++iter)
     {
+        // Close and delete the widgets
         (*iter)->setAttribute(Qt::WA_DeleteOnClose);
         (*iter)->close();
     }
@@ -572,6 +573,9 @@ void gcsMainWindow::on_actionRestart_Logging_triggered()
 
 /**
   * @brief Update Slot to update widgets
+  *
+  * Slot called to ensure the GUI widgets are updated at a single global
+  * rate controlled by m_updateTimer.
   */
 void gcsMainWindow::UpdateWidgets()
 {

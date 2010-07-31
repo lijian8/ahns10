@@ -154,7 +154,7 @@ void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
 
     AHNS_DEBUG("wifiComms::buttonBoxChanged()");
 
-    if (btnAbstract->text() == "&Close")
+    if ((btnAbstract->text() == "Close") || (btnAbstract->text() == "&Close"))
     {
         AHNS_DEBUG("wifiComms::buttonBoxChanged() [ Close ]");
 
