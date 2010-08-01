@@ -29,6 +29,7 @@
 #include "systemstatus.h"
 #include "AH.h"
 #include "receiveconsole.h"
+#include "transmitconsole.h"
 #include "dataplotter.h"
 #include "bfimagefeed.h"
 #include "dataplotter.h"
@@ -97,6 +98,7 @@ private:
     SystemStatus* m_systemStatusWidget;
     wifiComms* m_wifiCommsWidget;
     ReceiveConsole* m_receiveConsoleWidget;
+    TransmitConsole* m_transmitConsoleWidget;
     DataPlotter* m_dataPlotterWidget;
     bfImageFeed* m_bfImageFeedWidget;
     FlightControl* m_flightControlWidget;

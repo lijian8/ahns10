@@ -183,7 +183,6 @@ void gcsMainWindow::ProcessParameters(const timeval timeStamp, const loop_parame
     if (!discarded)
     {
         // Update the GUI
-        m_receiveConsoleWidget->addItem(consoleText,discarded);
         m_parameterControlWidget->SetLoopParameters(&loopParameters);
     }
 
@@ -217,7 +216,6 @@ void gcsMainWindow::ProcessGains(const timeval timeStamp, const gains_t loopGain
     if (!discarded)
     {
         // Update the GUI
-        m_receiveConsoleWidget->addItem(consoleText,discarded);
         m_gainsControlWidget->SetGains(&loopGains);
     }
 
@@ -420,7 +418,6 @@ void gcsMainWindow::ProcessSensorData(const timeval timeStamp, const sensor_data
     if (!discarded)
     {
         // Update the GUI
-        m_receiveConsoleWidget->addItem(consoleText, discarded);
         m_Data.setSensorData(&timeStamp, &sensorData);
     }
 

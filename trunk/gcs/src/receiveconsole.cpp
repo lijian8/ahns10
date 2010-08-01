@@ -27,7 +27,7 @@ ReceiveConsole::ReceiveConsole(QWidget *parent) : QWidget(parent), ui(new Ui::Re
     m_packetCount = 0;
     m_discardedCount = 0;
 
-    ui->Speedlbl->setText("0 kBs");
+    ui->Speedlbl->setText("0 kBps");
     ui->receivedChkbox->setChecked(false);
     ui->discardedChkbox->setChecked(false);
 }
@@ -134,7 +134,7 @@ void ReceiveConsole::addItem(QString& item, const int& discarded)
 }
 
 /**
-  * @brief Clear the Console and counters
+  * @brief Clear the Console and Counters
   */
 void ReceiveConsole::clearConsole()
 {
@@ -143,7 +143,7 @@ void ReceiveConsole::clearConsole()
     ui->discardedlcdNumber->display((double) m_discardedCount);
     ui->receivedlcdNumber->display((double) m_packetCount);
     ui->listWidget->clear();
-    ui->Speedlbl->setText("0 Bs");
+    ui->Speedlbl->setText("0 kBps");
     return;
 }
 
@@ -154,7 +154,7 @@ void ReceiveConsole::RxSpeed(const double& linkSpeed)
 {
     QString linkSpeedstr;
     linkSpeedstr.setNum(linkSpeed,'f',2);
-    linkSpeedstr.push_back(" Bs");
+    linkSpeedstr.push_back(" kBps");
     ui->Speedlbl->setText(linkSpeedstr);
     return;
 }

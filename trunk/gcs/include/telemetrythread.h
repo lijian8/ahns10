@@ -30,8 +30,8 @@
 #include "state.h"
 #include "commands.h"
 
-#define REPLY_TIMEOUT_MS 500
-#define RETRY_TIME_MS 50
+#define REPLY_TIMEOUT_MS 500 /** Timeout Limit on ACK Replies */
+#define RETRY_TIME_MS 50     /** Time between Attempts */
 
 /**
   * @brief Thread Class Inherided from QThread
@@ -68,12 +68,12 @@ signals:
     void NewFailSafe(const timeval timeStamp, const int discarded = 0);
     void NewSensorData(const timeval timeStamp, const sensor_data_t receivedSensor, const int discraded = 0);
 
-
     /** @name Signals for Tx Messages */
     void SentMessage(uint32_t messageType, bool success = true);
 
     /** @name Signals for Connection Status */
     void RxEstimate(const double& linkSpeed);
+    void TxEstimate(const double& linkSpeed);
 
 protected:
 
@@ -148,7 +148,6 @@ private:
     quint8 m_parametersTryCount;        /**< Counter of tries */
     volatile bool m_parametersReceived; /**< Flag used to check for PARAMETERS received at FC*/
     loop_parameters_t m_txParameters;   /**< current parameters being transmitted */
-
 
     /** @name Gains Count, Flag and Data */
     quint8 m_gainsTryCount;        /**< Counter of tries */

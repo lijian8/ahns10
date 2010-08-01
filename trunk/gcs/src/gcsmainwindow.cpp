@@ -132,6 +132,8 @@ inline void gcsMainWindow::createDockWindows()
         dockSS->setObjectName("System Status");
         QDockWidget* dockRC = new QDockWidget(tr("Received Packets"),this);
         dockRC->setObjectName("Received Packets");
+        QDockWidget* dockTC = new QDockWidget(tr("Transmitted Packets"),this);
+        dockTC->setObjectName("Transmitted Packets");
         QDockWidget* dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
         dockWC->setObjectName("Wi-Fi Communications");
         QDockWidget* dockDP = new QDockWidget(tr("Data Plotter"),this);
@@ -156,6 +158,7 @@ inline void gcsMainWindow::createDockWindows()
         m_flightControlWidget = new FlightControl(dockFCtrl);
         m_gainsControlWidget = new GainsControl(dockGCtrl);
         m_parameterControlWidget = new ParameterControl(dockPCtrl);
+        m_transmitConsoleWidget = new TransmitConsole(dockTC);
 
         dockAH->setWidget(m_ahWidget);
         dockSS->setWidget(m_systemStatusWidget);
@@ -166,6 +169,7 @@ inline void gcsMainWindow::createDockWindows()
         dockFCtrl->setWidget(m_flightControlWidget);
         dockGCtrl->setWidget(m_gainsControlWidget);
         dockPCtrl->setWidget(m_parameterControlWidget);
+        dockTC->setWidget(m_transmitConsoleWidget);
 
         addDockWidget(Qt::RightDockWidgetArea,dockAH);
         addDockWidget(Qt::RightDockWidgetArea,dockSS);
@@ -176,10 +180,12 @@ inline void gcsMainWindow::createDockWindows()
         addDockWidget(Qt::LeftDockWidgetArea,dockFCtrl);
         addDockWidget(Qt::LeftDockWidgetArea,dockGCtrl);
         addDockWidget(Qt::LeftDockWidgetArea,dockPCtrl);
+        addDockWidget(Qt::RightDockWidgetArea, dockTC);
 
         //setTabPosition(Qt::RightDockWidgetArea,QTabWidget::South);
-        tabifyDockWidget(dockWC,dockSS);
+        //tabifyDockWidget(dockWC,dockSS);
         tabifyDockWidget(dockWC,dockRC);
+        tabifyDockWidget(dockWC,dockTC);
         tabifyDockWidget(dockFCtrl,dockGCtrl);
         tabifyDockWidget(dockAH,dockBF);
         tabifyDockWidget(dockGCtrl,dockPCtrl);
@@ -192,6 +198,7 @@ inline void gcsMainWindow::createDockWindows()
         ui->menuView->insertAction(0,dockDP->toggleViewAction());
         ui->menuView->insertAction(0,dockBF->toggleViewAction());
         ui->menuView->insertAction(0,dockFCtrl->toggleViewAction());
+        ui->menuView->insertAction(0,dockTC->toggleViewAction());
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
         connect(m_wifiCommsWidget,SIGNAL(ConnectionClose()),this,SLOT(CloseTelemetry()));
@@ -306,6 +313,7 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
 
             // Speed Information
             connect(m_TelemetryThread,SIGNAL(RxEstimate(double)),m_receiveConsoleWidget,SLOT(RxSpeed(const double&)));
+            connect(m_TelemetryThread,SIGNAL(TxEstimate(double)),m_transmitConsoleWidget,SLOT(TxSpeed(const double&)));
 
             // Rx Messages
             connect(m_TelemetryThread,SIGNAL(NewHeliState(const timeval, const state_t, const int)),this,SLOT(ProcessHeliState(const timeval, const state_t, const int)));
@@ -327,6 +335,7 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             connect(m_parameterControlWidget,SIGNAL(sendParameters(loop_parameters_t)),m_TelemetryThread,SLOT(sendParameters(loop_parameters_t)));
             // Gains Control -> Gains
             connect(m_gainsControlWidget,SIGNAL(sendGains(gains_t)),m_TelemetryThread,SLOT(sendGains(gains_t)));
+            connect(m_TelemetryThread,SIGNAL(SentMessage(uint32_t,bool)),m_transmitConsoleWidget,SLOT(SentItem(uint32_t, bool)));
 
             // Start the timer
             m_TelSecCount = 0;
