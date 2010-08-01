@@ -129,14 +129,14 @@ inline void UpdateRC()
   }
 
   // Remove Bias and convert to timer values for mixing
-  if (inputsInitialised > 9)
+  if (inputsInitialised > 9) // after initialisation
   {
     rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
     rcRoll = PWMToCounter(rollPulse - zeroRoll);
     rcPitch = PWMToCounter(pitchPulse - zeroPitch);
     rcYaw = PWMToCounter(yawPulse - zeroYaw);
   }
-  else
+  else // not initialised yet
   {
     zeroThrottle += throttlePulse;
     zeroPitch += pitchPulse;

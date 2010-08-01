@@ -85,7 +85,7 @@ ISR(USART_RX_vect)
   enum {SYNC, MODE, THROTTLE, ROLL, PITCH, YAW, COMPLETE} rxState = SYNC;
   
   
-  static uint8_t tempMode = 0, tempThrottle = 0, tempRoll = 0, tempPitch = 0, tempYaw = 0;
+  static int8_t tempMode = 0, tempThrottle = 0, tempRoll = 0, tempPitch = 0, tempYaw = 0;
   uint8_t tempData = UDR0;
 
   switch (rxState)

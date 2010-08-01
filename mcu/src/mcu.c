@@ -72,18 +72,17 @@ void main (void)
     }
   } while (inputsInitialised < NUM_CHANNELS);
 
-  _delay_ms(500);
+  // Calibrate Neutral Pulse Widths
+  _delay_ms(1000);
   inputsInitialised = 0;
   do 
   {
-    for (i = 0; i < 4; ++i)
-    {
-      ToggleGreen(TOGGLE);
-      _delay_ms(50);
-    }
+    ToggleGreen(TOGGLE);
+    _delay_ms(200);
     UpdateRC();
   } while (inputsInitialised < 10);
   
+  // Average Reads
   zeroThrottle /= inputsInitialised;
   zeroRoll /= inputsInitialised;
   zeroPitch /= inputsInitialised;
