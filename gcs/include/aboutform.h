@@ -1,3 +1,18 @@
+/**
+ * @file   aboutform.h
+ * @author Tim Molloy
+ *
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
+ *
+ * Queensland University of Technology
+ *
+ * @section DESCRIPTION
+ * Declaration of About Form
+ */
+
 #ifndef ABOUTFORM_H
 #define ABOUTFORM_H
 

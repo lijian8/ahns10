@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>552</width>
-    <height>220</height>
+    <width>1033</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -30,8 +30,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>551</width>
-     <height>221</height>
+     <width>887</width>
+     <height>264</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="mainGridLayout">
@@ -39,6 +39,9 @@
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="2">
        <widget class="QDoubleSpinBox" name="rollCmdBox">
+        <property name="suffix">
+         <string> deg</string>
+        </property>
         <property name="minimum">
          <double>-60.000000000000000</double>
         </property>
@@ -62,6 +65,9 @@
       </item>
       <item row="2" column="2">
        <widget class="QDoubleSpinBox" name="pitchCmdBox">
+        <property name="suffix">
+         <string> deg</string>
+        </property>
         <property name="minimum">
          <double>-60.000000000000000</double>
         </property>
@@ -85,6 +91,9 @@
       </item>
       <item row="3" column="2">
        <widget class="QDoubleSpinBox" name="yawCmdBox">
+        <property name="suffix">
+         <string> deg</string>
+        </property>
         <property name="minimum">
          <double>-360.000000000000000</double>
         </property>
@@ -110,6 +119,9 @@
        <widget class="QDoubleSpinBox" name="xCmdBox">
         <property name="enabled">
          <bool>false</bool>
+        </property>
+        <property name="suffix">
+         <string> m</string>
         </property>
         <property name="minimum">
          <double>-100.000000000000000</double>
@@ -158,6 +170,9 @@
         <property name="enabled">
          <bool>false</bool>
         </property>
+        <property name="suffix">
+         <string> m</string>
+        </property>
         <property name="minimum">
          <double>-100.000000000000000</double>
         </property>
@@ -174,6 +189,9 @@
       </item>
       <item row="6" column="2">
        <widget class="QDoubleSpinBox" name="zCmdBox">
+        <property name="suffix">
+         <string> m</string>
+        </property>
         <property name="minimum">
          <double>0.200000000000000</double>
         </property>
@@ -867,6 +885,12 @@
       </item>
       <item row="0" column="2">
        <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="font">
          <font>
           <weight>75</weight>
@@ -883,6 +907,12 @@
       </item>
       <item row="0" column="1">
        <widget class="QLabel" name="label_2">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="font">
          <font>
           <weight>75</weight>
@@ -957,35 +987,21 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="4">
-       <widget class="QPushButton" name="attitudeBtn">
-        <property name="text">
-         <string>Attitude Hold</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="4">
-       <widget class="QPushButton" name="rcBtn">
-        <property name="text">
-         <string>RC</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="5">
        <widget class="QPushButton" name="sendAttitudeBtn">
         <property name="text">
          <string>Send Attitude</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="5">
+      <item row="2" column="4">
        <widget class="QPushButton" name="sendPositionBtn">
         <property name="text">
          <string>Send Position</string>
         </property>
        </widget>
       </item>
-      <item row="3" column="5">
+      <item row="3" column="4">
        <widget class="QPushButton" name="sendSetConfigBtn">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -999,23 +1015,13 @@
        </widget>
       </item>
       <item row="0" column="4">
-       <widget class="QLabel" name="label_4">
-        <property name="font">
-         <font>
-          <weight>75</weight>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>Mode Select</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="5">
        <widget class="QLabel" name="label_5">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="font">
          <font>
           <weight>75</weight>
@@ -1030,17 +1036,53 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="4">
-       <widget class="QPushButton" name="guidanceBtn">
+      <item row="0" column="5">
+       <widget class="QLabel" name="label_4">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
         <property name="text">
-         <string>Guidance</string>
+         <string>Mode Select</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
         </property>
        </widget>
       </item>
-      <item row="3" column="4">
+      <item row="1" column="5">
+       <widget class="QPushButton" name="rcBtn">
+        <property name="text">
+         <string>RC</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="5">
+       <widget class="QPushButton" name="attitudeBtn">
+        <property name="text">
+         <string>Attitude Hold</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="5">
        <widget class="QPushButton" name="positionBtn">
         <property name="text">
          <string>Position Hold</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="5">
+       <widget class="QPushButton" name="guidanceBtn">
+        <property name="text">
+         <string>Guidance</string>
         </property>
        </widget>
       </item>
@@ -1056,6 +1098,29 @@
    </layout>
   </widget>
  </widget>
+ <tabstops>
+  <tabstop>rollCmdBox</tabstop>
+  <tabstop>pitchCmdBox</tabstop>
+  <tabstop>yawCmdBox</tabstop>
+  <tabstop>sendAttitudeBtn</tabstop>
+  <tabstop>xCmdBox</tabstop>
+  <tabstop>yCmdBox</tabstop>
+  <tabstop>zCmdBox</tabstop>
+  <tabstop>sendPositionBtn</tabstop>
+  <tabstop>sendSetConfigBtn</tabstop>
+  <tabstop>zChkbox</tabstop>
+  <tabstop>zCmdResetBtn</tabstop>
+  <tabstop>pitchCmdResetBtn</tabstop>
+  <tabstop>yawCmdResetBtn</tabstop>
+  <tabstop>pitchChkbox</tabstop>
+  <tabstop>xChkbox</tabstop>
+  <tabstop>yawChkbox</tabstop>
+  <tabstop>rollChkbox</tabstop>
+  <tabstop>yCmdResetBtn</tabstop>
+  <tabstop>xCmdResetBtn</tabstop>
+  <tabstop>yChkbox</tabstop>
+  <tabstop>rollCmdResetBtn</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

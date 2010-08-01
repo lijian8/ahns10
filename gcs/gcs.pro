@@ -74,7 +74,8 @@ SOURCES += src/main.cpp \
     src/flightcontrol.cpp \
     src/gainscontrol.cpp \
     src/parametercontrol.cpp \
-    $$HELI/primitive_serialisation.c
+    $$HELI/primitive_serialisation.c \
+    src/transmitconsole.cpp
 HEADERS += include/gcsmainwindow.h \
     include/systemstatus.h \
     AHWidget/include/AH.h \
@@ -96,7 +97,8 @@ HEADERS += include/gcsmainwindow.h \
     include/datalogger.h \
     include/flightcontrol.h \
     include/gainscontrol.h \
-    include/parametercontrol.h
+    include/parametercontrol.h \
+    include/transmitconsole.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \
@@ -105,5 +107,6 @@ FORMS += ui/gcsmainwindow.ui \
     ui/dataplotter.ui \
     ui/flightcontrol.ui \
     ui/gainscontrol.ui \
-    ui/parametercontrol.ui
+    ui/parametercontrol.ui \
+    ui/transmitconsole.ui
 RESOURCES += resources/gcs.qrc

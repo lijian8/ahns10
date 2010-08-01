@@ -20,10 +20,15 @@
 #include "ahns_logger.h"
 
 #include <QResizeEvent>
+#include <QFileDialog>
+#include <QMessageBox>
+#include <fstream>
+
+using namespace std;
 
 ParameterControl::ParameterControl(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::ParameterControl)
+        QWidget(parent),
+        ui(new Ui::ParameterControl)
 {
     ui->setupUi(this);
 }
@@ -101,7 +106,6 @@ void ParameterControl::SetLoopParameters(const loop_parameters_t* const srcParam
     ui->zMinBox->setValue(srcParameters->zMinimum);
     ui->zNeutralBox->setValue(srcParameters->zNeutral);
 
-
     return;
 }
 
@@ -112,8 +116,77 @@ void ParameterControl::on_loadBtn_clicked()
 {
     AHNS_DEBUG("void ParameterControl::on_loadBtn_clicked()");
 
+    int i = 0;
+    int j = 0;
 
+    QString fileName, msg;
+    ifstream openFile;
 
+    // User Choose File Name
+    fileName = QFileDialog::getOpenFileName(this, tr("Load Parameters"),QString(""),tr("AHNS Parameters (*.ahnsparam)"));
+
+    if (!fileName.isEmpty())
+    {
+        openFile.open(fileName.toLatin1());
+
+        if (!openFile.is_open())
+        {
+            AHNS_DEBUG("void ParameterControl::on_loadBtn_clicked() [ OPEN FAILED ]");
+            msg = tr("Failed to open %1").arg(fileName);
+            QMessageBox::warning(this, tr("Load Error"), msg);
+        }
+        else
+        {
+            double parameters[6][3];
+
+            for (i = 0; i < 6; ++i)
+            {
+                for (j = 0; j < 3; ++j)
+                {
+                    openFile >> parameters[i][j];
+                }
+            }
+
+            if (openFile.eof() || openFile.fail())
+            {
+                AHNS_DEBUG("void ParameterControl::on_loadBtn_clicked() [ READ FAILED ]");
+                msg = tr("Failed to read %1").arg(fileName);
+                QMessageBox::warning(this, tr("Read Error"), msg);
+            }
+            else
+            {
+                // Set Roll Boxes
+                ui->rollMaxBox->setValue(parameters[0][0]);
+                ui->rollNeutralBox->setValue(parameters[0][1]);
+                ui->rollMinBox->setValue(parameters[0][2]);
+
+                // Set Pitch Boxes
+                ui->pitchMaxBox->setValue(parameters[1][0]);
+                ui->pitchNeutralBox->setValue(parameters[1][1]);
+                ui->pitchMinBox->setValue(parameters[1][2]);
+
+                // Set Yaw Boxes
+                ui->yawMaxBox->setValue(parameters[2][0]);
+                ui->yawNeutralBox->setValue(parameters[2][1]);
+                ui->yawMinBox->setValue(parameters[2][2]);
+
+                // Set x Boxes
+                ui->xMaxBox->setValue(parameters[3][0]);
+                ui->xNeutralBox->setValue(parameters[3][1]);
+                ui->xMinBox->setValue(parameters[3][2]);
+
+                // Set y Boxes
+                ui->yMaxBox->setValue(parameters[4][0]);
+                ui->yNeutralBox->setValue(parameters[4][1]);
+                ui->yMinBox->setValue(parameters[4][2]);
+
+                // Set z Boxes
+                ui->zMaxBox->setValue(parameters[5][0]);
+                ui->zNeutralBox->setValue(parameters[5][1]);
+                ui->zMinBox->setValue(parameters[5][2]);
+            }
+        }
+    }
     return;
 }
 
@@ -124,40 +197,44 @@ void ParameterControl::on_SaveBtn_clicked()
 {
     AHNS_DEBUG("void ParameterControl::on_SaveBtn_clicked()");
 
-  /*  QString fileName;
-    QFile saveFile;
-    bool writeSuccess = false;
-    QString msg;
-    QTextStream writeStream;
+    QString fileName, msg;
+    ofstream saveFile;
 
-    fileName = QFileDialog::getSaveFileName(this, tr("Save Parameters"));
+    // User Choose File Name
+    fileName = QFileDialog::getSaveFileName(this, tr("Save Parameters"),QString(),tr("AHNS Parameters (*.ahnsparam)"));
+    fileName.append(".ahnsparam");
+
     if (!fileName.isEmpty())
     {
-        saveFile.setFileName(fileName);
+        // Open File
+        saveFile.open(fileName.toLatin1());
 
-        if (!saveFile.open(QFile::WriteOnly))
+        if (!saveFile.is_open())
         {
-            msg = tr("Failed to open %1\n%2").arg(fileName).arg(saveFile.errorString());
-            QMessageBox::warning(this, tr("Save Error"), msg);
             AHNS_DEBUG("void ParameterControl::on_SaveBtn_clicked() [ OPEN FAILED ]");
+            msg = tr("Failed to open %1").arg(fileName);
+            QMessageBox::warning(this, tr("Save Error"), msg);
         }
         else
         {
-            writeSuccess = saveFile
-            if (writeSuccess)
-            {
-                writeSuccess = file.write(geo_data) == geo_data.size();
-            }
+            // Output in 6 x 3 Matrix of Values
+            saveFile << ui->rollMaxBox->value() << '\t' << ui->rollNeutralBox->value() << '\t' << ui->rollMinBox->value() << endl;
+            saveFile << ui->pitchMaxBox->value() << '\t' << ui->pitchNeutralBox->value() << '\t' << ui->pitchMinBox->value() << endl;
+            saveFile << ui->yawMaxBox->value() << '\t' << ui->yawNeutralBox->value() << '\t' << ui->yawMinBox->value() << endl;
 
-            if (!writeSuccess)
+            saveFile << ui->xMaxBox->value() << '\t' << ui->xNeutralBox->value() << '\t' << ui->xMinBox->value() << endl;
+            saveFile << ui->yMaxBox->value() << '\t' << ui->yNeutralBox->value() << '\t' << ui->yMinBox->value() << endl;
+            saveFile << ui->zMaxBox->value() << '\t' << ui->zNeutralBox->value() << '\t' << ui->zMinBox->value() << endl;
+
+            if (saveFile.fail())
             {
-                msg = tr("Error writing to %1\n%2") .arg(fileName).arg(file.errorString());
-                QMessageBox::warning(this, tr("Save Error"), msg);
                 AHNS_DEBUG("void ParameterControl::on_SaveBtn_clicked() [ SAVE FAILED ]");
+                msg = tr("Error writing to %1") .arg(fileName);
+                QMessageBox::warning(this, tr("Save Error"), msg);
             }
             saveFile.close();
         }
-    }*/
+    }
     return;
 }
 

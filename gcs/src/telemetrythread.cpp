@@ -279,10 +279,14 @@ int TelemetryThread::sendMessage(uint32_t type, const unsigned char* txData, int
 
     // Speed Data
     m_txData += sizeof(2*sizeof(int32_t)) + sizeof(type) + txDataByteLength;
+    time_t currentTime = time(NULL);
     if (timeFirstTxPacket == 0)
     {
         timeFirstTxPacket = time(NULL);
+        currentTime = timeFirstTxPacket;
     }
+
+    emit TxEstimate((const double&) (m_txData/difftime(currentTime,timeFirstTxPacket)/1024));
 
     return m_socket->writeDatagram(datagram,m_serverIP,m_serverPort);
 }
@@ -316,11 +320,6 @@ void TelemetryThread::DataPending()
         timeStamp.tv_sec = (int64_t) tv_sec;
         timeStamp.tv_usec = (int64_t) tv_usec;
 
-//        timeStamp.tv_sec = (int64_t) ntohl(*(int32_t*) buffer);
-//        buffer += sizeof(int32_t);
-//        timeStamp.tv_usec = (int64_t) ntohl(*(int32_t*) buffer);
-//        buffer += sizeof(int32_t);
-
         // Estimate Speed
         if (timeFirstRxPacket == 0)
         {
@@ -328,7 +327,7 @@ void TelemetryThread::DataPending()
         }
         time_t currentTime = time(NULL);
         m_rxData += byteBuffer.size();
-        emit RxEstimate((const double&) (m_rxData/difftime(currentTime,timeFirstRxPacket)));
+        emit RxEstimate((const double&) (m_rxData/difftime(currentTime,timeFirstRxPacket)/1024));
 
         // Determine Message Type
         messageType = ntohl(*(uint32_t*) buffer);
@@ -982,3 +981,4 @@ void TelemetryThread::retrySaveConfig()
 
     return;
 }
+
