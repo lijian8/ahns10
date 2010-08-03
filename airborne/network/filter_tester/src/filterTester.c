@@ -44,6 +44,7 @@ char *file;
 char text[128];
 int temp;
 int dataLength;
+unsigned char buffer[512];
 
 // IMU timing
 double startTime, endTime, diffTime;
@@ -102,7 +103,7 @@ gsl_matrix *state_p;
 
 // function defintions
 int attitudeFilterInitialise();
-int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *rateXf, double *rateYf, double *rateZf);
+int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *phif, double *thetaf, double *psif);
 
 int main(int argc, char *argv[])
 {
@@ -150,11 +151,11 @@ int main(int argc, char *argv[])
     }
   }
   // connect to the IMU
-  /*if (!openSerial(imu_serial_port, BAUD_RATE_DEFAULT))
+  if (!openSerial(imu_serial_port, BAUD_RATE_DEFAULT))
   {
     fprintf(stderr,"Cannot connect to IMU\n");
     return -1;
-  }*/
+  }
   //gravity_offset = gravity*0.99;
   // save the startTime
   gettimeofday(&timestamp, NULL); 
@@ -167,7 +168,6 @@ int main(int argc, char *argv[])
   // test for the sensor data
   sensor_data_t raw_IMU;
 
-  ap_state_t apState;
   
   int count=0;
   int type;
@@ -178,7 +178,6 @@ int main(int argc, char *argv[])
   memset((void *)(&state), 0, sizeof(state_t));
   memset((void *)(&state_old), 0, sizeof(state_t));
   memset((void *)(&raw_IMU), 0, sizeof(sensor_data_t));
-  memset((void *)(&apState), 0, sizeof(ap_state_t));
 
   attitudeFilterInitialise();
 
@@ -196,7 +195,7 @@ int main(int argc, char *argv[])
       return -1;
     }
     count++;
-    usleep(1000000); // 100hz
+    //usleep(1000000); // 100hz
     //send data to the socket
     if(count%1 == 0)
     {
@@ -205,21 +204,17 @@ int main(int argc, char *argv[])
 
     if(init)
     {
-      raw_IMU.p = 6;
-      raw_IMU.q = 5;
-      raw_IMU.r = 4;
-      raw_IMU.ax = 3;
-      raw_IMU.ay = 2;
-      raw_IMU.az = 1;
       //memset((void *)(&state), 0, sizeof(state_t));
       // get the IMU sensor data
       //getImuSensorData(&state.p, &state.q, &state.r, &state.ax, &state.ay, &state.az);
+      getImuSensorData(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az);
       // calculate the time elapsed since last update
       gettimeofday(&timestamp, NULL); 
       endTime=timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
       diffTime = endTime - startTime;
       // calculate attitude filter values
       //attitudeFilter(&state.p, &state.q, &state.r, &state.ax, &state.ay, &state.az, &state.vx, &state.vy, &state.vz);
+      attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.phi, &state.theta, &state.psi);
       //state.trace = state_filter.phi;
       //state.ay = state_filter.theta;
       //state.az = state_filter.psi;
@@ -231,19 +226,28 @@ int main(int argc, char *argv[])
       //state.vx = state_old.vx + diffTime*((state_old.ax*gravity+state.ax*gravity)/2);
       //state.vy = state_old.vy + diffTime*((state_old.ay*gravity+state.ay*gravity)/2);
       //state.vz = state_old.vz + diffTime*(((state_old.az*gravity+state.az*gravity)/2)-gravity_offset);
+      
+      // calculate the filtered Euler rates
+      state.p = ((state.phi - state_old.phi)/diffTime);//*PI/180;
+      state.q = ((state.theta - state_old.theta)/diffTime);//*PI/180;
+      state.r = ((state.psi - state_old.psi)/diffTime);//*PI/180;
+
       // calculate the Euler angles
-      state.phi = state_old.phi + diffTime*(state.p);
-      state.theta = state_old.theta + diffTime*(state.q);
-      state.psi = state_old.psi + diffTime*(state.r);
+      //state.phi = state_old.phi + diffTime*(state.p);
+      //state.theta = state_old.theta + diffTime*(state.q);
+      //state.psi = state_old.psi + diffTime*(state.r);
+      state.vy = state_old.vy + diffTime*(raw_IMU.p);
+      state.vx = state_old.vx + diffTime*(raw_IMU.q);
+      state.vz = state_old.vz + diffTime*(raw_IMU.r);
       // approx Euler angles estimate
-      state.x = atan2(state.ay,state.az) * 180/PI;
-      state.y = atan2(state.ax,state.az) * 180/PI;
-      state.z = atan2(state.ax,state.ay) * 180/PI;
+      state.y = atan2(raw_IMU.ay,raw_IMU.az) * 180/PI;
+      state.x = atan2(raw_IMU.ax,raw_IMU.az) * 180/PI;
+      state.z = atan2(raw_IMU.ax,raw_IMU.ay) * 180/PI;
       // calculate the frequency (save in voltage)
       state.voltage = 1/(diffTime);
       // save the old state values
       state_old = state;
-      // restart the clock
+      // restart the clock TODO: this should be moved 
       gettimeofday(&timestamp, NULL); 
       startTime=timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
       // output the sent states  
@@ -268,10 +272,13 @@ int main(int argc, char *argv[])
       //gettimeofday(&local_time,0);   
       //fprintf(stderr,"time: %d : %d", local_time.tv_sec,local_time.tv_usec);
       // send the server packet
-      //server_send_packet(&server, HELI_STATE, &state, sizeof(state_t));
-
-      server_send_packet(&server, SENSOR_DATA, &raw_IMU, sizeof(sensor_data_t)); 
-      //server_send_packet (&server, AUTOPILOT_STATE, &apState, sizeof(ap_state_t));
+      server_send_packet(&server, HELI_STATE, &state, sizeof(state_t));
+      
+      // pack the data
+     
+      dataLength = PackSensorData(buffer, &raw_IMU);
+      server_send_packet(&server, SENSOR_DATA, buffer, dataLength);
+      //server_send_packet(&server, SENSOR_DATA, &raw_IMU, sizeof(sensor_data_t)); 
       init = 0;
     }   
   }
@@ -281,115 +288,133 @@ int main(int argc, char *argv[])
 int attitudeFilterInitialise()
 {
   // number of states
-  int states = 2;
+  int n = 6;
   // number of measurements
-  int measurements = 1;
+  int m = 3;
   // formulate the state matrix (x) (t-1)
-  state_x_previous = gsl_matrix_calloc(states,1);
+  state_x_previous = gsl_matrix_calloc(n,1);
   // formulate the one step ahead prediction matrix (x) (t-)
-  state_x_one_step = gsl_matrix_calloc(states,1);
+  state_x_one_step = gsl_matrix_calloc(n,1);
   // formulate the state transition matrix (a)
-  state_a = gsl_matrix_calloc(states,states);
+  state_a = gsl_matrix_calloc(n,n);
   // formulate the state transmition matrix (a')
-  state_a_t = gsl_matrix_calloc(states,states);
+  state_a_t = gsl_matrix_calloc(n,n);
   // formulate the B matrix (b)
-  state_b = gsl_matrix_calloc(states,1);
+  state_b = gsl_matrix_calloc(n,m);
   // formulate the intermediate B matrix (B1)
-  state_b1 = gsl_matrix_calloc(states,1);
+  state_b1 = gsl_matrix_calloc(n,1);
   // formulate the measurement matrix (u)
-  state_u = gsl_matrix_calloc(1,measurements);
+  state_u = gsl_matrix_calloc(m,1);
   // formulate the state covariance matrix (Q)
-  state_Q = gsl_matrix_calloc(states,states);
+  state_Q = gsl_matrix_calloc(n,n);
   // formulate the error covariance matrix (p) (t-1) 
-  state_p_previous = gsl_matrix_calloc(states,states);
+  state_p_previous = gsl_matrix_calloc(n,n);
   // formulate the error covariance matrix (p) one step
-  state_p_one_step = gsl_matrix_calloc(states,states);
-  // formulate the selection matrix (H) -> dimensions PxN (measurement x state)
-  state_H = gsl_matrix_calloc(measurements,states);
-  // formulate the selection matrix (H') -> dimensions NxP (state x measurement)
-  state_H_t = gsl_matrix_calloc(states,measurements);
+  state_p_one_step = gsl_matrix_calloc(n,n);
+  // formulate the selection matrix (H)
+  state_H = gsl_matrix_calloc(m,n);
+  // formulate the selection matrix (H')
+  state_H_t = gsl_matrix_calloc(n,m);
   // formulate the covariance matrix (R)
-  state_R = gsl_matrix_calloc(measurements,measurements);
+  state_R = gsl_matrix_calloc(m,m);
   // formulate the Kalman gain matrix (K)
-  state_K = gsl_matrix_calloc(states,measurements);
-  // formulate the intermediate Kalman gain matrices (K1) -> dimensions PxN (measurement x state)
-  state_K1 = gsl_matrix_calloc(measurements,states);
-  // formulate the intermediate Kalman gain matrices (K2) -> dimensions PxP (measurement x measurement)
-  state_K2 = gsl_matrix_calloc(measurements,measurements);
-  // formulate the intermediate Kalman gain matrices (K3) -> dimensions PxP (measurement x measurement)
-  state_K3 = gsl_matrix_calloc(measurements,measurements);
-  // formulate the intermediate Kalman gain matrices (K4) -> dimensions NxP (state x measurement)
-  state_K4 = gsl_matrix_calloc(states,measurements);
-  // formulate the intermediate Kalman gain matrices (K5) -> dimensions NxP (state x measurement)
-  state_K5 = gsl_matrix_calloc(measurements,measurements);
-  // formulate the intermediate Kalman gain matrices (K6) -> dimensions NxP (state x measurement)
-  state_K6 = gsl_matrix_calloc(states,measurements);
-  // formulate the permutation matrix p for inversion
-  p = gsl_permutation_calloc (measurements);
-  // formulate the measurements matrix (y) -> dimensions PxP (measurements x measurement)
-  state_y = gsl_matrix_calloc(measurements,measurements);
+  state_K = gsl_matrix_calloc(n,m);
+  // formulate the intermediate Kalman gain matrices (K1) -> mxn
+  state_K1 = gsl_matrix_calloc(m,n);
+  // formulate the intermediate Kalman gain matrices (K2) -> mxm
+  state_K2 = gsl_matrix_calloc(m,m);
+  // formulate the intermediate Kalman gain matrices (K3) -> mxm
+  state_K3 = gsl_matrix_calloc(m,m);
+  // formulate the intermediate Kalman gain matrices (K4) -> nxm
+  state_K4 = gsl_matrix_calloc(n,m);
+  // formulate the intermediate Kalman gain matrices (K5) -> mx1
+  state_K5 = gsl_matrix_calloc(m,1);
+  // formulate the intermediate Kalman gain matrices (K6) -> nx1
+  state_K6 = gsl_matrix_calloc(n,1);
+  // formulate the permutation matrix p for inversion -> m
+  p = gsl_permutation_calloc (m);
+  // formulate the measurements matrix (y)
+  state_y = gsl_matrix_calloc(m,1);
   // formulate the predicated matrix (x)
-  state_x = gsl_matrix_calloc(states,1);
-  // formulate the intermediate Kalman gain matrices (K7) -> dimensions PxP (state x state)
-  state_K7 = gsl_matrix_calloc(states,states);
+  state_x = gsl_matrix_calloc(n,1);
+  // formulate the intermediate Kalman gain matrices (K7) -> nxn
+  state_K7 = gsl_matrix_calloc(n,n);
   // formulate the error covariance matrix (p)
-  state_p = gsl_matrix_calloc(states,states);
+  state_p = gsl_matrix_calloc(n,n);
 
   // allocate the state transition matrix (a) values // not requited
-  gsl_matrix_set(state_a,0,0,1);
+  gsl_matrix_set_identity(state_a);
   gsl_matrix_set(state_a,0,1,-1*diffTime);
-  gsl_matrix_set(state_a,1,0,0);
-  gsl_matrix_set(state_a,1,1,1);
+  gsl_matrix_set(state_a,2,3,-1*diffTime);
+  gsl_matrix_set(state_a,4,5,-1*diffTime);
   // allocate the transpose of state transition
   gsl_matrix_memcpy(state_a_t, state_a);
   gsl_matrix_transpose(state_a_t);
   // allocate values for (H)
   gsl_matrix_set(state_H,0,0,1);
-  gsl_matrix_set(state_H,0,1,0);
+  gsl_matrix_set(state_H,1,2,1);
+  gsl_matrix_set(state_H,2,4,1);
   // allocate values for (H')
   gsl_matrix_set(state_H_t,0,0,1);
-  gsl_matrix_set(state_H_t,1,0,0);
+  gsl_matrix_set(state_H_t,2,1,1);
+  gsl_matrix_set(state_H_t,4,2,1);
   // allocate values for (Q)
-  gsl_matrix_set(state_Q,0,0,0.001);
-  gsl_matrix_set(state_Q,0,1,0);
-  gsl_matrix_set(state_Q,1,0,0);
-  gsl_matrix_set(state_Q,1,1,0.003);
+  gsl_matrix_set(state_Q,0,0,0.001); // expected value for phi
+  gsl_matrix_set(state_Q,1,1,0.003); // expected value for phi-bias
+  gsl_matrix_set(state_Q,2,2,0.001); // expected value for theta
+  gsl_matrix_set(state_Q,3,3,0.003); // expected value for theta-bias
+  gsl_matrix_set(state_Q,4,4,0.001); // expected value for psi
+  gsl_matrix_set(state_Q,5,5,0.003); // expected value for psi-bias
   // allocate values for (R)
-  gsl_matrix_set(state_R,0,0,0.1);
+  gsl_matrix_set(state_R,0,0,1); // expected measurement value for phi
+  gsl_matrix_set(state_R,1,1,1); // expected measurement value for theta
+  gsl_matrix_set(state_R,2,2,1); // expected measurement value for psi
   // initial x conditions
   gsl_matrix_set(state_x_previous,0,0,0);
   gsl_matrix_set(state_x_previous,1,0,0);
+  gsl_matrix_set(state_x_previous,2,0,0);
+  gsl_matrix_set(state_x_previous,3,0,0);
+  gsl_matrix_set(state_x_previous,4,0,0);
+  gsl_matrix_set(state_x_previous,5,0,0);
   // initial p conditions
   gsl_matrix_set(state_p_previous,0,0,1);
-  gsl_matrix_set(state_p_previous,0,1,0);
-  gsl_matrix_set(state_p_previous,1,0,0);
   gsl_matrix_set(state_p_previous,1,1,1);
+  gsl_matrix_set(state_p_previous,2,2,1);
+  gsl_matrix_set(state_p_previous,3,3,1);
+  gsl_matrix_set(state_p_previous,4,4,1);
+  gsl_matrix_set(state_p_previous,5,5,1);
  
   return 1;
 }
 
 //fitered values
-int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *rateXf, double *rateYf, double *rateZf)
+int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *phif, double *thetaf, double *psif)
 {
   // signum
   int s = 0;
-  // allocated values for (u) -> this is the rateXd reading
+  // allocated values for (u) -> this is the gyro rates reading
   gsl_matrix_set_zero(state_u);
   gsl_matrix_set(state_u,0,0,*rateXd);
+  gsl_matrix_set(state_u,1,0,*rateYd);
+  gsl_matrix_set(state_u,2,0,*rateZd);
   // allocate values for (y) -> this is the atan2 reading
   gsl_matrix_set_zero(state_y);
-  gsl_matrix_set(state_y,0,0,(atan2(*accYd,*accZd)*180/PI));
+  gsl_matrix_set(state_y,0,0,(atan2(*accYd,*accZd)*180/PI)); // phi measurement
+  gsl_matrix_set(state_y,1,0,(atan2(*accXd,*accZd)*180/PI)); // theta measurement
+  gsl_matrix_set(state_y,2,0,0); // psi measurement
   // allocate values for (a) -> change diff time
-  gsl_matrix_set(state_a,0,0,1);
+  gsl_matrix_set_identity(state_a);
   gsl_matrix_set(state_a,0,1,-1*diffTime);
-  gsl_matrix_set(state_a,1,0,0);
-  gsl_matrix_set(state_a,1,1,1);
+  gsl_matrix_set(state_a,2,3,-1*diffTime);
+  gsl_matrix_set(state_a,4,5,-1*diffTime);
   // allocate the transpose of state transition
   gsl_matrix_memcpy(state_a_t, state_a);
   gsl_matrix_transpose(state_a_t);
   // allocate values for (b) -> change diff time
   gsl_matrix_set_zero(state_b);
   gsl_matrix_set(state_b,0,0,diffTime);
+  gsl_matrix_set(state_b,2,1,diffTime);
+  gsl_matrix_set(state_b,4,2,diffTime);
   // allocate values for (p)
   gsl_matrix_set_identity(state_p);
 
@@ -446,9 +471,11 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   gsl_matrix_memcpy(state_x_previous,state_x);
   gsl_matrix_memcpy(state_p_previous,state_p);
   // allocate filtered state values 
-  *rateXf = gsl_matrix_get(state_x_previous,0,0);
-  *rateYf = gsl_matrix_get(state_x_previous,1,0);
-  *rateZf = 0.0;
+  //*phif = gsl_matrix_get(state_x_previous,0,0)*PI/180;
+  //*thetaf = gsl_matrix_get(state_x_previous,2,0)*PI/180;
+  *thetaf = gsl_matrix_get(state_x_previous,0,0);//*PI/180;
+  *phif = gsl_matrix_get(state_x_previous,2,0);//*PI/180;
+  *psif = gsl_matrix_get(state_x_previous,4,0);//*PI/180;
   return 1;
 }
 
