@@ -227,10 +227,15 @@ int main(int argc, char *argv[])
       //state.vy = state_old.vy + diffTime*((state_old.ay*gravity+state.ay*gravity)/2);
       //state.vz = state_old.vz + diffTime*(((state_old.az*gravity+state.az*gravity)/2)-gravity_offset);
       
-      // calculate the filtered Euler rates
-      state.p = ((state.phi - state_old.phi)/diffTime);//*PI/180;
-      state.q = ((state.theta - state_old.theta)/diffTime);//*PI/180;
-      state.r = ((state.psi - state_old.psi)/diffTime);//*PI/180;
+      // calculate the filtered Euler rates (degrees)
+      //state.p = ((state.phi - state_old.phi)/diffTime);
+      //state.q = ((state.theta - state_old.theta)/diffTime);
+      //state.r = ((state.psi - state_old.psi)/diffTime);
+
+      // calculate the filtered Euler rates (radians)
+      state.p = ((state.phi - state_old.phi)/diffTime) * PI/180;
+      state.q = ((state.theta - state_old.theta)/diffTime) * PI/180;
+      state.r = ((state.psi - state_old.psi)/diffTime) * PI/180;
 
       // calculate the Euler angles
       //state.phi = state_old.phi + diffTime*(state.p);
@@ -240,9 +245,18 @@ int main(int argc, char *argv[])
       state.vx = state_old.vx + diffTime*(raw_IMU.q);
       state.vz = state_old.vz + diffTime*(raw_IMU.r);
       // approx Euler angles estimate
-      state.y = atan2(raw_IMU.ay,raw_IMU.az) * 180/PI;
-      state.x = atan2(raw_IMU.ax,raw_IMU.az) * 180/PI;
-      state.z = atan2(raw_IMU.ax,raw_IMU.ay) * 180/PI;
+      //state.y = atan2(raw_IMU.ay,raw_IMU.az) * 180/PI;
+      //state.x = atan2(raw_IMU.ax,raw_IMU.az) * 180/PI;
+      //state.z = atan2(raw_IMU.ax,raw_IMU.ay) * 180/PI;
+
+      state.y = atan2(raw_IMU.ay,sqrt(raw_IMU.ax * raw_IMU.ax + raw_IMU.az * raw_IMU.az)) * 180/PI;
+      state.x = atan2(-1*raw_IMU.ax,sqrt(raw_IMU.ay * raw_IMU.ay + raw_IMU.az * raw_IMU.az)) * 180/PI;
+      state.z = atan2(sqrt(raw_IMU.ax * raw_IMU.ax + raw_IMU.ay * raw_IMU.ay),raw_IMU.az) * 180/PI;
+
+      // invert theta angle and theta rate
+      state.theta = state.theta * -1;
+      state.q = state.q * -1;
+
       // calculate the frequency (save in voltage)
       state.voltage = 1/(diffTime);
       // save the old state values
@@ -399,9 +413,13 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   gsl_matrix_set(state_u,2,0,*rateZd);
   // allocate values for (y) -> this is the atan2 reading
   gsl_matrix_set_zero(state_y);
-  gsl_matrix_set(state_y,0,0,(atan2(*accYd,*accZd)*180/PI)); // phi measurement
-  gsl_matrix_set(state_y,1,0,(atan2(*accXd,*accZd)*180/PI)); // theta measurement
-  gsl_matrix_set(state_y,2,0,0); // psi measurement
+  //gsl_matrix_set(state_y,0,0,(atan2(*accYd,*accZd)*180/PI)); // phi measurement
+  //gsl_matrix_set(state_y,1,0,(atan2(*accXd,*accZd)*180/PI)); // theta measurement
+  //gsl_matrix_set(state_y,2,0,0); // psi measurement
+  gsl_matrix_set(state_y,0,0,(atan2(*accYd,sqrt(*accXd * *accXd + *accZd * *accZd)) * 180/PI));
+  gsl_matrix_set(state_y,1,0,(-1*atan2(*accXd,sqrt(*accYd* *accYd + *accZd * *accZd)) * 180/PI));
+  gsl_matrix_set(state_y,2,0,(atan2(sqrt(*accXd * *accXd + *accYd * *accYd),*accZd) * 180/PI));
+
   // allocate values for (a) -> change diff time
   gsl_matrix_set_identity(state_a);
   gsl_matrix_set(state_a,0,1,-1*diffTime);
@@ -470,12 +488,16 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   // need to save some variables for the next kalman filter update (state_x and state_p)
   gsl_matrix_memcpy(state_x_previous,state_x);
   gsl_matrix_memcpy(state_p_previous,state_p);
-  // allocate filtered state values 
-  //*phif = gsl_matrix_get(state_x_previous,0,0)*PI/180;
-  //*thetaf = gsl_matrix_get(state_x_previous,2,0)*PI/180;
-  *thetaf = gsl_matrix_get(state_x_previous,0,0);//*PI/180;
-  *phif = gsl_matrix_get(state_x_previous,2,0);//*PI/180;
-  *psif = gsl_matrix_get(state_x_previous,4,0);//*PI/180;
+  
+  // allocate filtered state values (degrees)
+  //*thetaf = gsl_matrix_get(state_x_previous,0,0);//*PI/180;
+  //*phif = gsl_matrix_get(state_x_previous,2,0);//*PI/180;
+  //*psif = gsl_matrix_get(state_x_previous,4,0);//*PI/180;
+
+  // allocate filtered state values (radians)
+  *thetaf = gsl_matrix_get(state_x_previous,0,0) *PI/180;
+  *phif = gsl_matrix_get(state_x_previous,2,0) *PI/180;
+  *psif = gsl_matrix_get(state_x_previous,4,0) *PI/180;
   return 1;
 }
 
