@@ -76,54 +76,61 @@ void USARTtxData(unsigned char txChar)
   return;
 }
 
+
+#define RX_SYNC 1
+#define RX_MODE 2
+#define RX_THROTTLE 3
+#define RX_ROLL 4
+#define RX_PITCH 5
+#define RX_YAW 6
+#define RX_COMPLETE 7
 /**
  * @brief USART Receive and Parse Data
  */
 ISR(USART_RX_vect)
 {
   // States of Machine
-  enum {SYNC, MODE, THROTTLE, ROLL, PITCH, YAW, COMPLETE} rxState = SYNC;
-  
-  
-  static int8_t tempMode = 0, tempThrottle = 0, tempRoll = 0, tempPitch = 0, tempYaw = 0;
+  static uint8_t rxState = RX_SYNC;
+  static enum FlightModes tempMode = MANUAL_DEBUG;
+  static int8_t tempThrottle = 0, tempRoll = 0, tempPitch = 0, tempYaw = 0;
   uint8_t tempData = UDR0;
 
   switch (rxState)
   {
-    case SYNC:
+    case RX_SYNC:
       if (tempData == '#')
       {
-        rxState = MODE;
+        rxState = RX_MODE;
       }
       break;
-    case MODE:
+    case RX_MODE:
       if ((tempData == MANUAL_DEBUG) || (tempData == AUGMENTED) || (tempData == AUTOPILOT))
       {
-        rxState = THROTTLE;
-	tempMode = tempData;
+        rxState = RX_THROTTLE;
+	tempMode = AUTOPILOT;
       }
       else
       {
-        rxState = SYNC;
+        rxState = RX_SYNC;
       }
       break;
-    case THROTTLE:
+    case RX_THROTTLE:
       tempThrottle = tempData;
-      rxState = ROLL;
+      rxState = RX_ROLL;
       break;
-    case ROLL:
+    case RX_ROLL:
       tempRoll = tempData;
-      rxState = PITCH;
+      rxState = RX_PITCH;
       break;
-    case PITCH:
+    case RX_PITCH:
       tempPitch = tempData;
-      rxState = YAW;
+      rxState = RX_YAW;
       break;
-    case YAW:
+    case RX_YAW:
       tempYaw = tempData;
-      rxState = COMPLETE;
+      rxState = RX_COMPLETE;
       break;
-    case COMPLETE:      
+    case RX_COMPLETE:      
       if (tempData == '#')
       {
         newAPCommands = 1;
@@ -133,10 +140,10 @@ ISR(USART_RX_vect)
         apThrottle = tempThrottle;
 	apRoll = tempRoll;
 	apPitch = tempPitch;
-	apYaw = tempYaw;	
+	apYaw = tempYaw;
       }
-      rxState = SYNC;
+      rxState = RX_SYNC;
   }
-
+  printf("%i",tempMode);
 }
 

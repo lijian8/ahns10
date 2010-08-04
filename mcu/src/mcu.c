@@ -155,8 +155,8 @@ inline void init()
 inline void CombineCommands()
 {
   // Flight Mode Choice limited to RC
-  flightMode = rcMode;
-  
+  flightMode = apMode;
+
   switch (flightMode)
   {
     case MANUAL_DEBUG:
