@@ -31,7 +31,7 @@ const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
 volatile uint8_t newRC = 0;
 volatile uint8_t failSafe = 0;
 
-uint16_t zeroThrottle = 1200;
+uint16_t zeroThrottle = 1250;
 uint16_t zeroRoll = 1500;
 uint16_t zeroPitch = 1500; 
 uint16_t zeroYaw = 1500;
@@ -128,7 +128,7 @@ inline void UpdateRC()
   }
 
   rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
-  if (rcThrottle < 10)
+  if (rcThrottle < 5)
   {
     rcRoll = 0;
     rcPitch = 0;
