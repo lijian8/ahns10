@@ -45,7 +45,7 @@ void CombineCommands();
 
 void main (void)
 {
-  uint8_t i = 0;
+  uint8_t inputsInitialised = 0;
   StopPWM();
   
   init();
@@ -74,19 +74,6 @@ void main (void)
 
   // Calibrate Neutral Pulse Widths
   _delay_ms(1000);
-  inputsInitialised = 0;
-  do 
-  {
-    ToggleGreen(TOGGLE);
-    _delay_ms(200);
-    UpdateRC();
-  } while (inputsInitialised < 10);
-  
-  // Average Reads
-  zeroThrottle /= inputsInitialised;
-  zeroRoll /= inputsInitialised;
-  zeroPitch /= inputsInitialised;
-  zeroYaw /= inputsInitialised;
   
   // Minimum Output
   ESC1_COUNTER = escLimits[0][0];

@@ -31,11 +31,10 @@ const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
 volatile uint8_t newRC = 0;
 volatile uint8_t failSafe = 0;
 
-uint16_t zeroThrottle = 0;
-uint16_t zeroRoll = 0;
-uint16_t zeroPitch = 0; 
-uint16_t zeroYaw = 0;
-uint8_t inputsInitialised = 0;
+uint16_t zeroThrottle = 1200;
+uint16_t zeroRoll = 1500;
+uint16_t zeroPitch = 1500; 
+uint16_t zeroYaw = 1500;
 
 /** @brief Timer 2 Overflow Counter */
 static volatile uint32_t timer2OverflowCount = 0;
@@ -79,23 +78,23 @@ uint8_t InitialisePC()
   return 1;
 }
 
-#define SWITCH_HISTORY_SIZE 4
+#define SWITCH_HISTORY_SIZE 16
 inline void UpdateRC()
 {
-  static int32_t switchHistory[2][SWITCH_HISTORY_SIZE];
+  static int16_t switchHistory[2][SWITCH_HISTORY_SIZE];
   static int8_t index = 0;
   
   // Map Input Channels to RC Channel
-  uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth;
-  uint16_t modePulse = inputChannel[CHANNEL2].measuredPulseWidth;
+  uint16_t armPulse = 0; 
+  uint16_t modePulse = 0; 
   uint16_t yawPulse = inputChannel[CHANNEL3].measuredPulseWidth;
   uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
   uint16_t rollPulse = inputChannel[CHANNEL5].measuredPulseWidth;
   uint16_t throttlePulse = inputChannel[CHANNEL6].measuredPulseWidth;
  
   // Store Arm and Mode Switch Input
-  switchHistory[1][index] = modePulse;
-  switchHistory[2][index] = armPulse;
+  switchHistory[1][index] = inputChannel[CHANNEL2].measuredPulseWidth; // mode pulse
+  switchHistory[2][index] = inputChannel[CHANNEL1].measuredPulseWidth; // arm pulse
   if (++index == SWITCH_HISTORY_SIZE)
   {
     index = 0;
@@ -128,21 +127,18 @@ inline void UpdateRC()
     rcMode = MANUAL_DEBUG;
   }
 
-  // Remove Bias and convert to timer values for mixing
-  if (inputsInitialised > 9) // after initialisation
+  rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
+  if (rcThrottle < 10)
   {
-    rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
-    rcRoll = PWMToCounter(rollPulse - zeroRoll);
-    rcPitch = PWMToCounter(pitchPulse - zeroPitch);
-    rcYaw = PWMToCounter(yawPulse - zeroYaw);
+    rcRoll = 0;
+    rcPitch = 0;
+    rcYaw = 0;
   }
-  else // not initialised yet
+  else 
   {
-    zeroThrottle += throttlePulse;
-    zeroPitch += pitchPulse;
-    zeroRoll += rollPulse;
-    zeroYaw += yawPulse;
-    inputsInitialised++;
+    rcRoll = PWMToCounter(-(rollPulse - zeroRoll));
+    rcPitch = PWMToCounter(-(pitchPulse - zeroPitch));
+    rcYaw = PWMToCounter(-(yawPulse - zeroYaw));
   }
 
   #ifdef DEBUG

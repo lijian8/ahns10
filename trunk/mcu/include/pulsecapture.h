@@ -44,8 +44,6 @@ extern uint16_t zeroRoll;
 extern uint16_t zeroPitch;
 extern uint16_t zeroYaw;
 
-extern uint8_t inputsInitialised;
-
 /** @name Input Channel Data Structure */
 typedef struct
 {
