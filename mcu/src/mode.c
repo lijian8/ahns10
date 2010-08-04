@@ -96,7 +96,7 @@ inline void MixCommands(volatile int8_t* commandedThrottle, volatile int8_t* com
   return;
 }
 
-inline int32_t MovingAverage(int32_t* valueArray, uint8_t arrayLength)
+inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 {
   uint8_t i = 0;
   int32_t sum = 0, average = 0;
