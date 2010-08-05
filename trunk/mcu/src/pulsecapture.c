@@ -81,30 +81,25 @@ uint8_t InitialisePC()
 #define SWITCH_HISTORY_SIZE 16
 inline void UpdateRC()
 {
-  static int16_t switchHistory[2][SWITCH_HISTORY_SIZE];
+  static int16_t modeHistory[SWITCH_HISTORY_SIZE];
+  static int16_t armHistory[SWITCH_HISTORY_SIZE];
   static int8_t index = 0;
   
   // Map Input Channels to RC Channel
-  uint16_t armPulse = 0; 
-  uint16_t modePulse = 0; 
+  uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth; // mode pulse
+  uint16_t modePulse = inputChannel[CHANNEL2].measuredPulseWidth;
   uint16_t yawPulse = inputChannel[CHANNEL3].measuredPulseWidth;
   uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
   uint16_t rollPulse = inputChannel[CHANNEL5].measuredPulseWidth;
   uint16_t throttlePulse = inputChannel[CHANNEL6].measuredPulseWidth;
  
   // Store Arm and Mode Switch Input
-  switchHistory[1][index] = inputChannel[CHANNEL2].measuredPulseWidth; // mode pulse
-  switchHistory[2][index] = inputChannel[CHANNEL1].measuredPulseWidth; // arm pulse
-  if (++index == SWITCH_HISTORY_SIZE)
-  {
-    index = 0;
-  }
-
-  // Average Switches
-  modePulse = MovingAverage(switchHistory[1],SWITCH_HISTORY_SIZE);
-  armPulse = MovingAverage(switchHistory[2],SWITCH_HISTORY_SIZE);
+  armHistory[index] = armPulse;
+  modeHistory[index] = modePulse;
   
-  //printf("%u\n", armPulse);
+  // Average Switches
+  modePulse = MovingAverage(modeHistory,SWITCH_HISTORY_SIZE);
+  armPulse = MovingAverage(armHistory,SWITCH_HISTORY_SIZE);
   
   // Determine AP Mode
   if (throttlePulse < (1100)) // failsafe
@@ -128,7 +123,7 @@ inline void UpdateRC()
   }
 
   rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
-  if (rcThrottle < 5)
+  if (rcThrottle < 2)
   {
     rcRoll = 0;
     rcPitch = 0;
@@ -139,6 +134,11 @@ inline void UpdateRC()
     rcRoll = PWMToCounter(-(rollPulse - zeroRoll));
     rcPitch = PWMToCounter(-(pitchPulse - zeroPitch));
     rcYaw = PWMToCounter(-(yawPulse - zeroYaw));
+  }
+  
+  if (++index == SWITCH_HISTORY_SIZE)
+  {
+    index = 0;
   }
 
   #ifdef DEBUG
