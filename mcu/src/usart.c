@@ -107,7 +107,7 @@ ISR(USART_RX_vect)
       if ((tempData == MANUAL_DEBUG) || (tempData == AUGMENTED) || (tempData == AUTOPILOT))
       {
         rxState = RX_THROTTLE;
-	tempMode = AUTOPILOT;
+	tempMode = tempData;
       }
       else
       {
@@ -131,10 +131,10 @@ ISR(USART_RX_vect)
       rxState = RX_COMPLETE;
       break;
     case RX_COMPLETE:      
-      if (tempData == '#')
+      if (tempData == '!')
       {
         newAPCommands = 1;
-	apLastSec = systemSec;
+	apLastSec = micro();
 
 	apMode = tempMode;
         apThrottle = tempThrottle;
@@ -144,6 +144,6 @@ ISR(USART_RX_vect)
       }
       rxState = RX_SYNC;
   }
-  printf("%i",tempMode);
+  printf("%i",tempData);
 }
 
