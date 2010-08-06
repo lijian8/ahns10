@@ -17,6 +17,7 @@
 
 #include "include/transmitconsole.h"
 #include "ui_transmitconsole.h"
+#include <inttypes.h>
 
 #include "commands.h"
 #include "ahns_logger.h"

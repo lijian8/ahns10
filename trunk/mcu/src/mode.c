@@ -44,7 +44,7 @@ inline void MixCommands(volatile int8_t* commandedThrottle, volatile int8_t* com
   uint8_t i = 0;
  
   // Only Throttle has Full Authority
-  static const double controlFactor = 1;
+  static const double controlFactor = 0.1;
   *commandedRoll *= controlFactor;
   *commandedPitch *= controlFactor;
   *commandedYaw *= controlFactor;

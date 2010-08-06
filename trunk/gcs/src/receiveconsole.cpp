@@ -23,7 +23,6 @@
 ReceiveConsole::ReceiveConsole(QWidget *parent) : QWidget(parent), ui(new Ui::ReceiveConsole)
 {
     ui->setupUi(this);
-    setMinimumSize(440,190);
     m_packetCount = 0;
     m_discardedCount = 0;
 
