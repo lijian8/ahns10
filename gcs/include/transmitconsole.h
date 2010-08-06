@@ -17,6 +17,7 @@
 #define TRANSMITCONSOLE_H
 
 #include <QWidget>
+#include "inttypes.h"
 
 namespace Ui {
     class TransmitConsole;

@@ -123,7 +123,7 @@ inline void UpdateRC()
   }
 
   rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
-  if (rcThrottle < 2)
+  if (rcThrottle < 5)
   {
     rcRoll = 0;
     rcPitch = 0;

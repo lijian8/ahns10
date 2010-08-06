@@ -47,15 +47,14 @@ void main (void)
 {
   uint8_t inputsInitialised = 0;
   StopPWM();
-  
   init();
-  sei();
-  _delay_ms(250);
-
   #ifdef DEBUG
   stdout = &debugOut;
   printf("System Initialised\n");
   #endif
+  sei();
+  _delay_ms(250);
+
 
   // Initialise and detect the Inputs
   do 
@@ -81,7 +80,7 @@ void main (void)
   ESC3_COUNTER = escLimits[2][0];
   ESC4_COUNTER = escLimits[3][0];
   StartPWM();
-
+  
   for ( ; ; )
   {
     // RC Pulse Capture
@@ -155,7 +154,7 @@ inline void init()
 inline void CombineCommands()
 {
   // Flight Mode Choice limited to RC
-  flightMode = apMode;
+  flightMode = rcMode;
 
   switch (flightMode)
   {

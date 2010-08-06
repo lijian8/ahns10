@@ -46,7 +46,7 @@ uint8_t InitialiseUSART()
   // UPM0_10 = 10 for Even Parity
   // USVS0 = 0 for 1 Stop Bit
   // UCSZ0_210 = 011 for 8 bit data
-  UCSR0C = (1 << UPM01) | (0 << UPM00) | (0 << USBS0) | (1 << UCSZ01) | (1 << UCSZ00);
+  UCSR0C = (0 << UPM01) | (0 << UPM00) | (0 << USBS0) | (1 << UCSZ01) | (1 << UCSZ00);
 
   // Usart Baud Rate Register
   UBRR0H = (unsigned char) (baudRateRegister >> 8);
@@ -95,6 +95,15 @@ ISR(USART_RX_vect)
   static int8_t tempThrottle = 0, tempRoll = 0, tempPitch = 0, tempYaw = 0;
   uint8_t tempData = UDR0;
 
+  /*static uint8_t i = 0;
+  static char buffer[5];
+
+  buffer[i++] = tempData;
+  if (i == 5)
+  {
+    printf("%s",buffer);
+  }*/
+  //USARTtxData(tempData);
   switch (rxState)
   {
     case RX_SYNC:
@@ -144,6 +153,5 @@ ISR(USART_RX_vect)
       }
       rxState = RX_SYNC;
   }
-  printf("%i",tempData);
 }
 
