@@ -14,6 +14,7 @@
  */
 
 #include "avrdefines.h"
+#include "MCUCommands.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -29,7 +30,6 @@ volatile Channel inputChannel[NUM_CHANNELS];
 const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
 
 volatile uint8_t newRC = 0;
-volatile uint8_t failSafe = 0;
 
 uint16_t zeroThrottle = 1250;
 uint16_t zeroRoll = 1500;

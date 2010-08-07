@@ -65,4 +65,9 @@ extern volatile uint32_t systemSec;
  */
 #define PWMToCounter(pulseHighTime) ((pulseHighTime) / (2.0 * PWM_DT_US));
 
+/**
+ * @brief Convert timer 8 bit range to micro-seconds
+ */
+#define CounterToPWM(n) (2.0 * PWM_DT_US * (n));
+
 #endif // PWM_H

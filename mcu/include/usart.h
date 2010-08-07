@@ -25,11 +25,28 @@
 /** USART FC Baud Rate */
 #define BAUD_RATE 57600
 
-/** Time of Last Received AP Packet */
-extern volatile uint16_t apLastSec;
+/** Time of Last Received AP Command Packet */
+extern volatile uint32_t apLastCommands;
  
 /** New Autopilot Commands Received */
 extern volatile uint8_t newAPCommands;
+
+/** @name USART RX State */
+enum {
+	HEADER_SYNC,
+	HEADER_TYPE,
+	HEADER_COMPLETE,
+	RX_MODE,
+	RX_THROTTLE, 
+	RX_ROLL,
+	RX_PITCH,
+	RX_YAW,
+	RX_COMPLETE
+};
+
+/** @name USART TX Flags */
+extern volatile uint8_t txCommands; /**< Flag if Commands need to be sent */
+extern volatile uint8_t txPeriodic; /**< Flag if Engine and Mode need to be sent*/
 
 /**
  * @brief Output File for debugging
@@ -42,7 +59,7 @@ extern FILE debugOut;
 extern uint8_t InitialiseUSART();
 
 /**
- * @brif Transmit 8 bit Data on USART
+ * @brief Transmit 8 bit Data on USART
  */
 extern void USARTtxData(unsigned char txData);
 
@@ -51,5 +68,22 @@ extern void USARTtxData(unsigned char txData);
  */
 extern void USARTtxChar(char txChar, FILE *outStream);
 
+/**
+ * @brief Transmit MCU Commands to FC
+ * The data to be sent is
+ *   - Commanded Throttle
+ *   - Commanded Roll
+ *   - Commanded Pitch
+ *   - Commanded Yaw
+ */
+extern void USARTtxCommands();
+
+/**
+ * @brief Transmit MCU Periodic Data to FC
+ * The data to be sent is 
+ *   - Flight Mode
+ *   - Commanded Engine Pulse Widths in us
+ */
+extern void USARTtxPeriodic();
 
 #endif // USART_H

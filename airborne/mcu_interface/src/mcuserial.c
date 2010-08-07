@@ -17,6 +17,7 @@
  */
 
 #include "mcuserial.h"
+#include "MCUCommands.h"
 
 // struct to save the port settings
 static struct termios currentSerialPort, previousSerialPort;
@@ -26,10 +27,20 @@ static int fd = 0;
 const int tempOffset = 80;
 
 /**
+  * @brief Close the serial connection to the IMU
+  */
+inline int mcuCloseSerial()
+{  
+  close(fd);
+  tcsetattr(fd, TCSANOW, &previousSerialPort);
+  return 1;
+}
+
+/**
   * @brief Open the serial connection to the IMU
   * @return 0 for fail, 1 for success
   */
-inline int mcuOpenSerial(char* serialPort, int baudRate)
+inline int mcuOpenSerial(const char* serialPort, const int baudRate)
 {
   // open the specified serial port
   fd = open(serialPort,O_RDWR | O_NOCTTY | O_NDELAY);
@@ -75,31 +86,45 @@ inline int mcuOpenSerial(char* serialPort, int baudRate)
   return 1;
 }
 
-/**
-  * @brief Close the serial connection to the IMU
-  */
-inline int mcuCloseSerial()
-{  
-  close(fd);
-  tcsetattr(fd, TCSANOW, &previousSerialPort);
-  return 1;
-}
 
 /**
  * @brief Query MCU for Flight mode and Commanded Engine Data
  * @param flightMode Location of flightMode
  * @param commandedEngine Location of array of Commanded Engine Pulses
- * @return 0 for success, 1 for failure
+ * @return 1 for success, 0 for failure
  */
 inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
 {
   int returnValue = 0;
+  unsigned char buffer[11];
+
   // Query MCU
-  
-  // Receive Flight Mode
-  
-  // Receive Commanded Engine Pulses
-  
+  buffer[0] = FRAME_CHAR;
+  buffer[1] = GET_MCU_PERIODIC;  
+  buffer[2] = FRAME_CHAR;
+
+  if (write(fd,buffer,3)) //write success
+  {
+    // Read Periodic
+    usleep(MCU_DELAYRDWR);
+    if(!read(fd,buffer,11)) // read fail
+    {
+      printf("Read failed\n");
+      mcuCloseSerial();
+    }
+    else
+    {
+      if ((buffer[0] == buffer[10]) && (buffer[0] == FRAME_CHAR)) // read success
+      {
+	*flightMode = buffer[1];
+        commandedEngine[0] = (uint16_t) (buffer[2] << 8) | (uint16_t) buffer[3];
+        commandedEngine[1] = (uint16_t) (buffer[4] << 8) | (uint16_t) buffer[5];
+        commandedEngine[2] = (uint16_t) (buffer[6] << 8) | (uint16_t) buffer[7];
+        commandedEngine[3] = (uint16_t) (buffer[8] << 8) | (uint16_t) buffer[9];
+        returnValue = 1;
+      }
+    }
+  }
   return returnValue;
 }
 
@@ -110,32 +135,58 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
  * @param commandedRoll Location to store Commanded Roll
  * @param commandedPitch Location to store Commanded Pitch
  * @param commandedYaw Location to store Commanded Yaw
- * @return 0 for success, 1 for failure
+ * @return 1 for success, 0 for failure
  */
 inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8_t *commandedPitch, int8_t *commandedYaw)
 {
   int returnValue = 0;
+  unsigned char buffer[6];
 
   // Query MCU
+  buffer[0] = FRAME_CHAR;
+  buffer[1] = GET_MCU_COMMANDS;  
+  buffer[2] = FRAME_CHAR;
 
-  // Receive Throttle
-
-  // Receive Roll
-
-  // Receive Pitch
-
-  // Receive Yaw
+  if (write(fd,buffer,3)) //write success
+  {
+    usleep(MCU_DELAYRDWR);
+    if(!read(fd,buffer,6)) // read fail
+    {
+      printf("Read failed\n");
+      mcuCloseSerial();
+    }
+    else
+    {
+      if ((buffer[0] == buffer[5]) && (buffer[0] == FRAME_CHAR)) // read success
+      {
+        *commandedThrottle = buffer[1];
+        *commandedRoll = buffer[2];
+        *commandedPitch = buffer[3];
+        *commandedYaw = buffer[4];
+        returnValue = 1;
+      }
+    }
+  }
 
   return returnValue;
 }
 
-int sendMCUCommands(uint8_t *flightMode, int8_t *commandedThrottle, int8_t *commandedRoll, int8_t *commandedPitch, int8_t *commandedYaw)
+int sendMCUCommands(const uint8_t *flightMode, const int8_t *commandedThrottle, const int8_t *commandedRoll, const int8_t *commandedPitch, const int8_t *commandedYaw)
 {
   int returnValue = 0;
-  unsigned char buffer[] = {'#','2','0','0','0','0','#'};
-  int dataLength = sizeof(buffer);
+  unsigned char buffer[9];
 
-  if (write(fd,buffer,dataLength)) // success
+  buffer[0] = FRAME_CHAR;
+  buffer[1] = SEND_MCU_COMMANDS;
+  buffer[2] = FRAME_CHAR;
+  buffer[3] = *flightMode;
+  buffer[4] = *commandedThrottle;
+  buffer[5] = *commandedRoll;
+  buffer[6] = *commandedPitch;
+  buffer[7] = *commandedYaw;
+  buffer[8] = FRAME_CHAR;
+  
+  if (write(fd,buffer,9)) // write success
   {
     returnValue = 1;
   }

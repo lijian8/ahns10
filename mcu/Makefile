@@ -37,7 +37,7 @@ HEX_EEPROM_FLAGS += --change-section-lma .eeprom=0 --no-change-warnings
 
 
 ## Include Directories
-INCLUDES = -I include/
+INCLUDES = -I include/ -I $(MCU_INTERFACE)/include 
 
 ## Objects that must be built in order to link
 OBJECTS = obj/mcu.o obj/pwm.o obj/pulsecapture.o obj/modeindicator.o obj/usart.o obj/mode.o 

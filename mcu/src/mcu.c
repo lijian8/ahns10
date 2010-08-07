@@ -14,6 +14,7 @@
  */
 
 #include "avrdefines.h"
+#include "MCUCommands.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -43,7 +44,7 @@ void init();
 void CombineCommands();
 
 
-void main (void)
+int main (void)
 {
   uint8_t inputsInitialised = 0;
   StopPWM();
@@ -98,22 +99,19 @@ void main (void)
 	ESC3_COUNTER = escLimits[2][0];
         ESC4_COUNTER = escLimits[3][0];
   
-        // Toggle Yellow Error at 10Hz
-        if (!toggleEnabled)
+        if (!toggleEnabled) // prepare to go into failsafe
         {
           toggleEnabled = 1;
           ToggleRed(OFF);
           ToggleGreen(OFF);
+	  flightMode = FAIL_SAFE;
 	}
-        else
+        else  // Toggle Yellow Error at 10Hz
         {
 	  _delay_ms(100);
           ToggleGreen(TOGGLE);
           ToggleRed(TOGGLE);
         }
-        
-        /** TODO: Tell Flight Computer */
-        
       }
       else
       {	      
@@ -128,8 +126,21 @@ void main (void)
       newAPCommands = 0;
       CombineCommands();
     }
+
+    // Communicate with Flight Computer
+    if (txCommands)
+    {
+      txCommands = 0;
+      USARTtxCommands();
+    }
+
+    if (txPeriodic)
+    {
+      txPeriodic = 0;
+      USARTtxPeriodic();
+    }
   }
-  return;
+  return 0;
 }
 
 
@@ -151,24 +162,3 @@ inline void init()
   return;
 }
 
-inline void CombineCommands()
-{
-  // Flight Mode Choice limited to RC
-  flightMode = rcMode;
-
-  switch (flightMode)
-  {
-    case MANUAL_DEBUG:
-      IndicateManual();
-      MixCommands(&rcThrottle, &rcRoll, &rcPitch, &rcYaw);
-      break;
-    case AUGMENTED: // Combine AP and RC Commands
-      IndicateAugmented();
-      /** TODO IMPELEMENT THE AUGMENTATION */
-      break;
-    case AUTOPILOT: // Pass AP unaltered
-      IndicateAutopilot();
-      MixCommands(&apThrottle, &apRoll, &apPitch, &apYaw);
-  }
-  return;
-}

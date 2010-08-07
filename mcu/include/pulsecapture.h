@@ -57,7 +57,6 @@ extern volatile Channel inputChannel[NUM_CHANNELS];
 
 /** @name Flag for new RC pulses */
 extern volatile uint8_t newRC;
-extern volatile uint8_t failSafe;
 
 /**
  * @ brief Initialise Port C and the required Pin Change Interrupts

@@ -9,7 +9,7 @@
 CC = gcc 
 LD = $(CC)
 
-CFLAGS = 
+CFLAGS = -Os
 LDFLAGS =  -L./ -lstate -lm
 INCDIR = -I $(HELICONNECT) 
 
