@@ -14,6 +14,7 @@
  */
 
 #include "avrdefines.h"
+#include "MCUCommands.h"
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
@@ -22,8 +23,11 @@
 #include "mode.h"
 #include "pulsecapture.h"
 
-volatile uint16_t apLastSec;
+volatile uint32_t apLastCommands;
 volatile uint8_t newAPCommands;
+volatile uint8_t txCommands;
+volatile uint8_t txPeriodic;
+
 
 FILE debugOut = FDEV_SETUP_STREAM(USARTtxChar, NULL,_FDEV_SETUP_WRITE);
 
@@ -76,51 +80,76 @@ void USARTtxData(unsigned char txChar)
   return;
 }
 
-
-#define RX_SYNC 1
-#define RX_MODE 2
-#define RX_THROTTLE 3
-#define RX_ROLL 4
-#define RX_PITCH 5
-#define RX_YAW 6
-#define RX_COMPLETE 7
 /**
  * @brief USART Receive and Parse Data
  */
 ISR(USART_RX_vect)
 {
-  // States of Machine
-  static uint8_t rxState = RX_SYNC;
-  static enum FlightModes tempMode = MANUAL_DEBUG;
-  static int8_t tempThrottle = 0, tempRoll = 0, tempPitch = 0, tempYaw = 0;
+  // State of Machine
+  static uint8_t rxState = HEADER_SYNC;
   uint8_t tempData = UDR0;
+  
+  // Temp Variables for SEND_MCU_COMMANDS
+  static enum FlightModes tempMode = MANUAL_DEBUG;
+  static uint8_t tempHeader = 255;
+  static int8_t tempThrottle = 0, tempRoll = 0, tempPitch = 0, tempYaw = 0;
 
-  /*static uint8_t i = 0;
-  static char buffer[5];
-
-  buffer[i++] = tempData;
-  if (i == 5)
-  {
-    printf("%s",buffer);
-  }*/
-  //USARTtxData(tempData);
   switch (rxState)
   {
-    case RX_SYNC:
-      if (tempData == '#')
+    case HEADER_SYNC: // wait for header sync char
+      if (tempData == FRAME_CHAR)
       {
-        rxState = RX_MODE;
+        rxState = HEADER_TYPE;
+      }
+      break;
+    case HEADER_TYPE: // got first char, see if the header is here
+      if ((tempData == GET_MCU_COMMANDS) || (tempData == GET_MCU_PERIODIC) || (tempData == SEND_MCU_COMMANDS))
+      {
+	tempHeader = tempData;
+        rxState = HEADER_COMPLETE;
+      }
+      else
+      {
+        rxState = HEADER_SYNC;
+      }
+      break;
+    case HEADER_COMPLETE:
+      if (tempData == FRAME_CHAR) // header was valid
+      {
+	if (tempHeader == GET_MCU_COMMANDS)// Request sent for Commands
+	{
+          txCommands = 1;
+	  rxState = HEADER_SYNC;
+	}
+	else if (tempHeader == GET_MCU_PERIODIC) // request for mode and engine data
+	{
+          txPeriodic = 1;
+	  rxState = HEADER_SYNC;
+	}
+	else if (tempHeader == SEND_MCU_COMMANDS) // incoming parameters
+	{
+          rxState = RX_MODE;
+	}
+	else // unknown
+	{
+          rxState = HEADER_SYNC;
+	}
+      }
+      else // header not valid
+      {
+	tempHeader = 255;
+        rxState = HEADER_SYNC;
       }
       break;
     case RX_MODE:
       if ((tempData == MANUAL_DEBUG) || (tempData == AUGMENTED) || (tempData == AUTOPILOT))
       {
-        rxState = RX_THROTTLE;
 	tempMode = tempData;
+        rxState = RX_THROTTLE;
       }
       else
       {
-        rxState = RX_SYNC;
+        rxState = HEADER_SYNC;
       }
       break;
     case RX_THROTTLE:
@@ -139,11 +168,11 @@ ISR(USART_RX_vect)
       tempYaw = tempData;
       rxState = RX_COMPLETE;
       break;
-    case RX_COMPLETE:      
-      if (tempData == '!')
+    case RX_COMPLETE:
+      if (tempData == FRAME_CHAR)
       {
         newAPCommands = 1;
-	apLastSec = micro();
+	apLastCommands = micro();
 
 	apMode = tempMode;
         apThrottle = tempThrottle;
@@ -151,7 +180,55 @@ ISR(USART_RX_vect)
 	apPitch = tempPitch;
 	apYaw = tempYaw;
       }
-      rxState = RX_SYNC;
+      rxState = HEADER_SYNC;
   }
 }
 
+inline void USARTtxCommands()
+{
+  // Frame
+  USARTtxData(FRAME_CHAR);
+
+  // Throttle
+  USARTtxData(commandedThrottle);
+  
+  // Roll
+  USARTtxData(commandedRoll);
+
+  // Pitch
+  USARTtxData(commandedPitch);
+
+  // Yaw
+  USARTtxData(commandedYaw);
+
+  // End Frame
+  USARTtxData(FRAME_CHAR);
+  return;
+}
+
+inline void USARTtxPeriodic()
+{
+  uint16_t tempEngine = 0;
+
+  USARTtxData(FRAME_CHAR);
+
+  USARTtxData(flightMode);
+  tempEngine = CounterToPWM(ESC1_COUNTER);
+  USARTtxData((unsigned char) tempEngine >> 8); // MSB first
+  USARTtxData((unsigned char) tempEngine);
+
+  tempEngine = CounterToPWM(ESC2_COUNTER);
+  USARTtxData((unsigned char) tempEngine >> 8); // MSB first
+  USARTtxData((unsigned char) tempEngine);
+
+  tempEngine = CounterToPWM(ESC3_COUNTER);
+  USARTtxData((unsigned char) tempEngine >> 8); // MSB first
+  USARTtxData((unsigned char) tempEngine);
+
+  tempEngine = CounterToPWM(ESC4_COUNTER);
+  USARTtxData((unsigned char) tempEngine >> 8); // MSB first
+  USARTtxData((unsigned char) tempEngine);
+
+  USARTtxData(FRAME_CHAR);
+  return;
+}

@@ -34,7 +34,7 @@ LD = $(CC)
 
 LIBDIR = ../udp/
 
-CFLAGS = -O2  
+CFLAGS = -Os  
 LDFLAGS = -L./ -L$(LIBDIR) -lstate -lm 
 LIB = libstate.a
 
