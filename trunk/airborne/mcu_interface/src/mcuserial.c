@@ -165,43 +165,59 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
  */
 inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8_t *commandedPitch, int8_t *commandedYaw)
 {
-  int bytesAvailable = 0;
+  const int bufferSize = 7;
+  int bytesReceived = 0, packetEnd = 0, packetStart = 0;
   int returnValue = 0;
-  unsigned char buffer[6];
+  int i = 0;
+  unsigned char buffer[bufferSize];
 
-  // Buffer to Query the MCU
+  // Query MCU
   buffer[0] = FRAME_CHAR;
   buffer[1] = GET_MCU_COMMANDS;  
   buffer[2] = FRAME_CHAR;
 
-  if (write(fd,buffer,3)) // write success
+  if (write(fd,buffer,3)) //write success
   {
-    
-    if(!read(fd,buffer,6)) // read fail
+    // Read Periodic
+    /*do
+    {
+      ioctl(fd, FIONREAD, &packetStart);
+    } while(packetStart < sizeof(buffer));
+   */
+    usleep(MCU_DELAYRDWR);
+    bytesReceived = read(fd,buffer,sizeof(buffer));  
+    if(!bytesReceived)
     {
       fprintf(stderr,"MCU get commands read failed\n");
     }
     else
     {
-      if ((buffer[0] == buffer[5]) && (buffer[0] == FRAME_CHAR)) // read success
+      // Find the frame chars in the buffer
+      for (i = bytesReceived - 1; i >= 0; --i)
       {
-        *commandedThrottle = buffer[1];
-        *commandedRoll = buffer[2];
-        *commandedPitch = buffer[3];
-        *commandedYaw = buffer[4];
+        if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0))
+        {
+          packetEnd = i;
+        }
+        else if (buffer[i] == FRAME_CHAR)
+        {
+          packetStart = i;
+        }
+      }
+      if (buffer[packetStart] == buffer[packetEnd])
+      {
+	*commandedThrottle = buffer[packetStart + 1];
+	*commandedRoll = buffer[packetStart + 2];
+	*commandedPitch = buffer[packetStart + 3];
+	*commandedYaw = buffer[packetStart + 4];
         returnValue = 1;
       }
       else
       {
-        fprintf(stderr,"MCU get commands buffer failed\n%i,%i\n",buffer[0],buffer[5]);
+        fprintf(stderr,"MCU get commands buffer failed\n%i,%i\n",buffer[0],buffer[6]);
       }
     }
   }
-  else
-  {
-    fprintf(stderr,"MCU get commands write failed\n");
-  } 
-
   return returnValue;
 }
 
