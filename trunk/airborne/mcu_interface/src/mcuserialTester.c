@@ -55,21 +55,85 @@ int main(int argc, char* argv[])
     fprintf(stderr,"Test 1: Pass - Connected\n");
   }
   
+  uint8_t i = 0;
   while(1)
-  {
-    commandedThrottle = (commandedThrottle + 1) % 127;
-    if (!sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+  { 
+    flightMode = 1;
+    
+    for (i = 0; i < 25; ++i)
     {
-      fprintf(stderr,"Test 2: Fail - Send High Level Commands\n");
-    }
-    else
-    {
+      commandedThrottle = (commandedThrottle + 1) % 25;
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      {
       fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
       fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      if (getMCUCommands(&commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 4: Rx High Level Commands
+      {
+        fprintf(stderr,"  Results: %u \t %u \t %u \t %u\n",commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      else
+      {
+        fprintf(stderr,"Test 4: Fail - Get High Level Commands\n");
+      }
+    }
+    
+    for (i = 0; i < 25; ++i)
+    {
+      commandedRoll = (commandedRoll + 1) % 25;
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      {
+      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
+      fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      if (getMCUCommands(&commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 4: Rx High Level Commands
+      {
+	fprintf(stderr,"  Results: %u \t %u \t %u \t %u\n",commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      else
+      {
+	fprintf(stderr,"Test 4: Fail - Get High Level Commands\n");
+      }
+    }
+    
+    for (i = 0; i < 25; ++i)
+    {
+      commandedPitch = (commandedPitch + 1) % 25;
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      {
+      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
+      fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      if (getMCUCommands(&commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 4: Rx High Level Commands
+      {
+	fprintf(stderr,"  Results: %u \t %u \t %u \t %u\n",commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      else
+      {
+	fprintf(stderr,"Test 4: Fail - Get High Level Commands\n");
+      }
+    }
+
+    for (i = 0; i < 25; ++i)
+    {
+      commandedYaw = (commandedYaw + 1) % 25;
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      {
+      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
+      fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      if (getMCUCommands(&commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 4: Rx High Level Commands
+      {
+	fprintf(stderr,"  Results: %u \t %u \t %u \t %u\n",commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      else
+      {
+	fprintf(stderr,"Test 4: Fail - Get High Level Commands\n");
+      }
     }
   }
-/*
-  while (1)
+
+  /*while (1)
   {
     if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
     {
@@ -83,7 +147,7 @@ int main(int argc, char* argv[])
   usleep(0.5e6);
   }
   
-  /*if (!getMCUCommands(&commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 4: Rx High Level Commands
+  if (!getMCUCommands(&commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 4: Rx High Level Commands
   {
     fprintf(stderr,"Test 4: Fail - Get High Level Commands\n");
   }
