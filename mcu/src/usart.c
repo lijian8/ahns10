@@ -53,6 +53,9 @@ uint8_t InitialiseUSART()
   UCSR0C = (0 << UPM01) | (0 << UPM00) | (0 << USBS0) | (1 << UCSZ01) | (1 << UCSZ00);
 
   // Usart Baud Rate Register
+  // 8 for 57600 @ 8 MHz
+  // 3 for 115.2k @ 8 MHz
+  // 1 for 250k @ 8MHz
   UBRR0H = (unsigned char) (baudRateRegister >> 8);
   UBRR0L =  (unsigned char) (baudRateRegister);
 

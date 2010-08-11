@@ -23,7 +23,8 @@
 #define USART_H
 
 /** USART FC Baud Rate */
-#define BAUD_RATE 57600
+//#define BAUD_RATE 57600
+#define BAUD_RATE 115200
 
 /** Time of Last Received AP Command Packet */
 extern volatile uint32_t apLastCommands;
