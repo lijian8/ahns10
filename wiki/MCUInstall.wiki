@@ -1,0 +1,11 @@
+#summary Required Installs for installation of MCU software.
+#labels Phase-Implementation
+
+= Required Environmental Variables =
+These need to be added the .profile or .dashrc profile.
+Logout to apply or use {{{ source .profile }}}
+
+* Heliconnect Path *
+  {{{
+    export MCU_INTERFACE="${HOME}/ahns/trunk/airborne/mcu_interface"
+  }}}
