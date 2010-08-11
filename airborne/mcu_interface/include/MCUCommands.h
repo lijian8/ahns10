@@ -34,4 +34,25 @@ enum FlightModes {
        FAIL_SAFE      /**< MCU Failsafe Engaged*/ 
 };
 
+/** CPU Clock Speed in Hz */
+#define F_CPU 8000000UL // 16MHz scaled to 8 MHz
+
+/** @name PWM Defines */
+#define PWM_PRESCALAR 64.0
+#define F_PWM ((double) F_CPU/(PWM_PRESCALAR*510.0)) /**< Pre-scalar of 64 */
+#define PWM_DT_US ((double) (1e6 * PWM_PRESCALAR / F_CPU)) /**< Time Resolution of generated PWM signals */
+
+/**
+ * @brief Convert micro-seconds of high to timer 8 bit range
+ */
+#define PWMToCounter(pulseHighTime) ((pulseHighTime) / (2.0 * PWM_DT_US));
+
+/**
+ * @brief Convert timer 8 bit range to micro-seconds
+ */
+#define CounterToPWM(n) (2.0 * PWM_DT_US * (n));
+
+
+
+
 #endif // MCU_COMMANDS_H
