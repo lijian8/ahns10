@@ -116,7 +116,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
       ioctl(fd, FIONREAD, &packetStart);
     } while(packetStart < sizeof(buffer));
    */
-    usleep(1500);
+    usleep(MCU_DELAYRDWR);
     bytesReceived = read(fd,buffer,sizeof(buffer));  
     if(!bytesReceived)
     {
@@ -124,7 +124,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
     }
     else
     {
-      // Find the Frame Chars
+      // Find the frame chars in the buffer
       for (i = bytesReceived - 1; i >= 0; --i)
       {
         if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0))
@@ -169,12 +169,12 @@ inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8
   int returnValue = 0;
   unsigned char buffer[6];
 
-  // Query MCU
+  // Buffer to Query the MCU
   buffer[0] = FRAME_CHAR;
   buffer[1] = GET_MCU_COMMANDS;  
   buffer[2] = FRAME_CHAR;
 
-  if (write(fd,buffer,3)) //write success
+  if (write(fd,buffer,3)) // write success
   {
     
     if(!read(fd,buffer,6)) // read fail
@@ -210,6 +210,7 @@ int sendMCUCommands(const uint8_t *flightMode, const int8_t *commandedThrottle, 
   int returnValue = 0;
   unsigned char buffer[9];
 
+  // Fill the buffer
   buffer[0] = FRAME_CHAR;
   buffer[1] = SEND_MCU_COMMANDS;
   buffer[2] = FRAME_CHAR;

@@ -133,7 +133,7 @@ inline void UpdateRC()
   {
     rcRoll = PWMToCounter(-(rollPulse - zeroRoll));
     rcPitch = PWMToCounter(-(pitchPulse - zeroPitch));
-    rcYaw = PWMToCounter(-(yawPulse - zeroYaw));
+    rcYaw = PWMToCounter(yawPulse - zeroYaw);
   }
   
   if (++index == SWITCH_HISTORY_SIZE)

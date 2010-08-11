@@ -19,9 +19,6 @@
 /** Build in debug Mode */
 #define DEBUG 
 
-/** CPU Clock Speed in Hz */
-#define F_CPU 8000000UL // 16MHz scaled to 8 MHz
-
 /** Boolian Defines */
 #define TRUE 1
 #define true 1

@@ -88,7 +88,6 @@ ISR(USART_RX_vect)
   // State of Machine
   static uint8_t rxState = HEADER_SYNC;
   uint8_t tempData = UDR0;
-  
   // Temp Variables for SEND_MCU_COMMANDS
   static enum FlightModes tempMode = MANUAL_DEBUG;
   static uint8_t tempHeader = 255;
@@ -208,26 +207,22 @@ inline void USARTtxCommands()
 
 inline void USARTtxPeriodic()
 {
-  uint16_t tempEngine = 0;
+  volatile unsigned char tempEngine = 0;
 
   USARTtxData(FRAME_CHAR);
 
   USARTtxData(flightMode);
-  tempEngine = CounterToPWM(ESC1_COUNTER);
-  USARTtxData((unsigned char) tempEngine >> 8); // MSB first
-  USARTtxData((unsigned char) tempEngine);
+  tempEngine = ESC1_COUNTER;
+  USARTtxData(tempEngine);
 
-  tempEngine = CounterToPWM(ESC2_COUNTER);
-  USARTtxData((unsigned char) tempEngine >> 8); // MSB first
-  USARTtxData((unsigned char) tempEngine);
+  tempEngine = ESC2_COUNTER;
+  USARTtxData(tempEngine);
 
-  tempEngine = CounterToPWM(ESC3_COUNTER);
-  USARTtxData((unsigned char) tempEngine >> 8); // MSB first
-  USARTtxData((unsigned char) tempEngine);
+  tempEngine = ESC3_COUNTER;
+  USARTtxData(tempEngine);
 
-  tempEngine = CounterToPWM(ESC4_COUNTER);
-  USARTtxData((unsigned char) tempEngine >> 8); // MSB first
-  USARTtxData((unsigned char) tempEngine);
+  tempEngine = ESC4_COUNTER;
+  USARTtxData(tempEngine);
 
   USARTtxData(FRAME_CHAR);
   return;
