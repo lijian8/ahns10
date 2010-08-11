@@ -19,6 +19,8 @@
 #include "mcuserial.h"
 #include "MCUCommands.h"
 
+#include <sys/ioctl.h>
+
 // struct to save the port settings
 static struct termios currentSerialPort, previousSerialPort;
 // specified serial port
@@ -95,8 +97,11 @@ inline int mcuOpenSerial(const char* serialPort, const int baudRate)
  */
 inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
 {
+  const int bufferSize = 8;
+  int bytesReceived = 0, packetEnd = 0, packetStart = 0;
   int returnValue = 0;
-  unsigned char buffer[11];
+  int i = 0;
+  unsigned char buffer[bufferSize];
 
   // Query MCU
   buffer[0] = FRAME_CHAR;
@@ -106,22 +111,43 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
   if (write(fd,buffer,3)) //write success
   {
     // Read Periodic
-    usleep(MCU_DELAYRDWR);
-    if(!read(fd,buffer,11)) // read fail
+    /*do
     {
-      printf("Read failed\n");
-      mcuCloseSerial();
+      ioctl(fd, FIONREAD, &packetStart);
+    } while(packetStart < sizeof(buffer));
+   */
+    usleep(1500);
+    bytesReceived = read(fd,buffer,sizeof(buffer));  
+    if(!bytesReceived)
+    {
+      fprintf(stderr,"MCU get periodic read failed\n");
     }
     else
     {
-      if ((buffer[0] == buffer[10]) && (buffer[0] == FRAME_CHAR)) // read success
+      // Find the Frame Chars
+      for (i = bytesReceived - 1; i >= 0; --i)
       {
-	*flightMode = buffer[1];
-        commandedEngine[0] = (uint16_t) (buffer[2] << 8) | (uint16_t) buffer[3];
-        commandedEngine[1] = (uint16_t) (buffer[4] << 8) | (uint16_t) buffer[5];
-        commandedEngine[2] = (uint16_t) (buffer[6] << 8) | (uint16_t) buffer[7];
-        commandedEngine[3] = (uint16_t) (buffer[8] << 8) | (uint16_t) buffer[9];
+        if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0))
+        {
+          packetEnd = i;
+        }
+        else if (buffer[i] == FRAME_CHAR)
+        {
+          packetStart = i;
+        }
+      }
+      if (buffer[packetStart] == buffer[packetEnd])
+      {
+	*flightMode = buffer[packetStart + 1];
+        commandedEngine[0] = CounterToPWM(buffer[packetStart + 2]);
+        commandedEngine[1] = CounterToPWM(buffer[packetStart + 3]);
+        commandedEngine[2] = CounterToPWM(buffer[packetStart + 4]);
+        commandedEngine[3] = CounterToPWM(buffer[packetStart + 5]);
         returnValue = 1;
+      }
+      else
+      {
+        fprintf(stderr,"MCU periodic buffer failed\n%i,%i\n",buffer[0],buffer[6]);
       }
     }
   }
@@ -139,6 +165,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
  */
 inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8_t *commandedPitch, int8_t *commandedYaw)
 {
+  int bytesAvailable = 0;
   int returnValue = 0;
   unsigned char buffer[6];
 
@@ -149,11 +176,10 @@ inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8
 
   if (write(fd,buffer,3)) //write success
   {
-    usleep(MCU_DELAYRDWR);
+    
     if(!read(fd,buffer,6)) // read fail
     {
-      printf("Read failed\n");
-      mcuCloseSerial();
+      fprintf(stderr,"MCU get commands read failed\n");
     }
     else
     {
@@ -165,8 +191,16 @@ inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8
         *commandedYaw = buffer[4];
         returnValue = 1;
       }
+      else
+      {
+        fprintf(stderr,"MCU get commands buffer failed\n%i,%i\n",buffer[0],buffer[5]);
+      }
     }
   }
+  else
+  {
+    fprintf(stderr,"MCU get commands write failed\n");
+  } 
 
   return returnValue;
 }
