@@ -14,6 +14,7 @@
  */
 
 #include "avrdefines.h"
+#include "MCUCommands.h"
 
 #include <avr/io.h>
 #include <util/delay.h>

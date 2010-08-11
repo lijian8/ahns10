@@ -119,7 +119,7 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 inline void CombineCommands()
 {
   // Only Throttle has Full Authority
-  const double controlFactor = 0.1;
+  const double controlFactor = 0.25;
   
   // Flight Mode Choice limited to RC
   flightMode = rcMode;
@@ -138,23 +138,23 @@ inline void CombineCommands()
       break;
     case AUGMENTED: // Combine AP and RC Commands
       IndicateAugmented();
-      CheckAPFailSafe();
+      //CheckAPFailSafe();
  
       commandedThrottle = 0.5*rcThrottle + 0.5*apThrottle;
-      commandedRoll = 0.5*controlFactor*rcRoll + 0.5*apRoll;
-      commandedPitch = 0.5*controlFactor*rcPitch + 0.5*apPitch;
-      commandedYaw = 0.5*controlFactor*rcYaw + 0.5*apYaw; 
+      commandedRoll = 0.5*controlFactor*rcRoll + 0.5*controlFactor*apRoll;
+      commandedPitch = 0.5*controlFactor*rcPitch + 0.5*controlFactor*apPitch;
+      commandedYaw = 0.5*controlFactor*rcYaw + 0.5*controlFactor*apYaw; 
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
 
       break;
     case AUTOPILOT: // Pass AP unaltered
       IndicateAutopilot();
-      CheckAPFailSafe();
+      //CheckAPFailSafe();
 
       commandedThrottle = apThrottle;
-      commandedRoll = apRoll;
-      commandedPitch = apPitch;
-      commandedYaw = apYaw;
+      commandedRoll = controlFactor*apRoll;
+      commandedPitch = controlFactor*apPitch;
+      commandedYaw = controlFactor*apYaw;
 
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
       break;

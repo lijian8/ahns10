@@ -58,17 +58,20 @@ int main (void)
 
 
   // Initialise and detect the Inputs
+  uint8_t loopCount = 0;
   do 
   {
+    loopCount++;
+    ToggleRed(TOGGLE);
+    _delay_ms(250);
     if (inputChannel[inputsInitialised].measuredPulseWidth < (PC_PWM_MIN + PULSE_TOLERANCE))
     {
-      //printf("%u\n",inputChannel[inputsInitialised].measuredPulseWidth);
       inputsInitialised++;
     }
-    else
+    if (loopCount > 6)
     {
-      ToggleRed(TOGGLE);
-      _delay_ms(250);
+      loopCount = 0;
+      inputsInitialised = 0;
     }
   } while (inputsInitialised < NUM_CHANNELS);
 
@@ -76,10 +79,6 @@ int main (void)
   _delay_ms(1000);
   
   // Minimum Output
-  ESC1_COUNTER = escLimits[0][0];
-  ESC2_COUNTER = escLimits[1][0];
-  ESC3_COUNTER = escLimits[2][0];
-  ESC4_COUNTER = escLimits[3][0];
   StartPWM();
   
   for ( ; ; )
@@ -94,16 +93,17 @@ int main (void)
         static uint8_t toggleEnabled = 0;
         
         // Minimum Commands
-  	ESC1_COUNTER = escLimits[0][0];
-	ESC2_COUNTER = escLimits[1][0];
-	ESC3_COUNTER = escLimits[2][0];
-        ESC4_COUNTER = escLimits[3][0];
+  	ESC1_COUNTER = escLimits[0][ESC_MIN];
+	ESC2_COUNTER = escLimits[1][ESC_MIN];
+	ESC3_COUNTER = escLimits[2][ESC_MIN];
+        ESC4_COUNTER = escLimits[3][ESC_MIN];
   
         if (!toggleEnabled) // prepare to go into failsafe
         {
           toggleEnabled = 1;
           ToggleRed(OFF);
           ToggleGreen(OFF);
+          ToggleBlue(OFF);
 	  flightMode = FAIL_SAFE;
 	}
         else  // Toggle Yellow Error at 10Hz
