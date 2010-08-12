@@ -31,7 +31,7 @@ int8_t commandedYaw = 0;
 int main(int argc, char* argv[])
 {
   mcu_serial_port = (char*) malloc(100*sizeof(char));
-  mcu_serial_port = "/dev/ttyS0";
+  mcu_serial_port = "/dev/ttyUSB0";
 
   int c = 0;
   while ((c = getopt(argc, argv, "i:")) != -1)
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
     
     for (i = 0; i < 20; i = i + 4)
     {
-      usleep(1e6);
+      usleep(5000);
       commandedThrottle = i;
       if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
       {

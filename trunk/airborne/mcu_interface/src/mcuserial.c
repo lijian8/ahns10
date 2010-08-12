@@ -69,7 +69,7 @@ inline int mcuOpenSerial(const char* serialPort, const int baudRate)
   memset(&currentSerialPort, 0, sizeof(currentSerialPort));
   
   // set the baud rate, 8N1, enable the receiver, set local mode, no parity
-  currentSerialPort.c_cflag = baudRate | CS8 | CLOCAL | CREAD;
+  currentSerialPort.c_cflag = baudRate | CS8 | CLOCAL | CREAD | CSTOPB;
   // ignore parity errors
   currentSerialPort.c_iflag = IGNPAR;
   currentSerialPort.c_oflag = 0;
@@ -97,8 +97,8 @@ inline int mcuOpenSerial(const char* serialPort, const int baudRate)
  */
 inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
 {
-  const int bufferSize = 8;
-  int bytesReceived = 0, packetEnd = 0, packetStart = 0;
+  const int bufferSize = 7;
+  int bytesReceived = 0, packetEnd = 6, packetStart = 0;
   int returnValue = 0;
   int i = 0;
   unsigned char buffer[bufferSize];
@@ -116,7 +116,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
       ioctl(fd, FIONREAD, &packetStart);
     } while(packetStart < sizeof(buffer));
    */
-    usleep(MCU_DELAYRDWR);
+    //usleep(500);
     bytesReceived = read(fd,buffer,sizeof(buffer));  
     if(!bytesReceived)
     {
@@ -125,7 +125,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
     else
     {
       // Find the frame chars in the buffer
-      for (i = bytesReceived - 1; i >= 0; --i)
+      /*for (i = bytesReceived - 1; i >= 0; --i)
       {
         if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0))
         {
@@ -135,7 +135,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
         {
           packetStart = i;
         }
-      }
+      }*/
       if (buffer[packetStart] == buffer[packetEnd])
       {
 	*flightMode = buffer[packetStart + 1];

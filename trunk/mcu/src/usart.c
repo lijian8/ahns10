@@ -37,7 +37,8 @@ uint8_t InitialiseUSART()
   uint16_t baudRateRegister = (uint16_t) (F_CPU/(16.0 * BAUD_RATE) - 1.0 + 0.5);
 
   // Control and Status Register A
-  // Nothing to initialise
+  // U2xn = 1 for double speed
+  // UCSR0A = (1 << U2X0);
 
   // Control and Status Register B
   // Rx Interrupt Enabled
@@ -47,10 +48,10 @@ uint8_t InitialiseUSART()
 
   // Control and Status Register C
   // UMSEL0_10 = 00 for Asynchronous
-  // UPM0_10 = 10 for Even Parity
-  // USVS0 = 0 for 1 Stop Bit
+  // UPM0_10 = 00 for No Parity
+  // USBS0 = 1 for 2 Stop Bit
   // UCSZ0_210 = 011 for 8 bit data
-  UCSR0C = (0 << UPM01) | (0 << UPM00) | (0 << USBS0) | (1 << UCSZ01) | (1 << UCSZ00);
+  UCSR0C = (0 << UPM01) | (0 << UPM00) | (0 << USBS0) | (1 << UCSZ01) | (1 << UCSZ00) | (1 << USBS0);
 
   // Usart Baud Rate Register
   // 8 for 57600 @ 8 MHz
