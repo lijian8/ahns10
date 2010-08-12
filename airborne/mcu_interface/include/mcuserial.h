@@ -28,7 +28,7 @@
 #include <stdint.h>
 
 /** MCU baud rate */
-#define MCU_BAUD_RATE B115200
+#define MCU_BAUD_RATE B57600
 
 /** Delay between serial write and serial read (microseconds) */
 #define MCU_DELAYRDWR 1500
