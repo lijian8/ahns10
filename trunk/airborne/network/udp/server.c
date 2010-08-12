@@ -47,7 +47,7 @@ void server_add_client(Server *server,const Host_t *src)
 {
 	unsigned char BUFFER[80];
 	PackUInt32(BUFFER,COMMAND_OPEN);                       
-	fprintf(stderr,"void server_add_client(Server *server,const Host_t *src)");
+	fprintf(stderr,"void server_add_client(Server *server,const Host_t *src)\n");
 	
 	// First make sure the client isn't already in the global list of clients
 	int index;
@@ -82,7 +82,7 @@ void server_add_client(Server *server,const Host_t *src)
 
 void server_del_client(Server *server, const Host_t *src)
 {
-	fprintf(stderr,"void server_del_client(Server *server, const Host_t *src)");
+	fprintf(stderr,"void server_del_client(Server *server, const Host_t *src)\n");
 	int j = 0;
 	int k = 0;
         uint8_t found = 0;
@@ -297,7 +297,7 @@ void serve(Server *server, int port)
 
 
 	udp_self(server->sock, &self );
-	fprintf(stderr, "UDP Server: socket on fd= %d on port %d \n", server->sock, ntohs( self.sin_port ));
+	fprintf(stderr, "UDP server created: socket on fd = %d on port %d \n", server->sock, ntohs( self.sin_port ));
 
 
 
@@ -433,7 +433,7 @@ int server_get_packet(Server *server)
 	&&  when->tv_usec == server->last_packet.tv_usec)
 	{
 		/* Duplicate packet! */
-		printf("Duplicate Packet received!!! (or at least one with the exact same timestamp as the last one)\n");
+		printf("Duplicate Packet received! (or at least one with the exact same timestamp as the last one)\n");
 		return type;
 	}
 
