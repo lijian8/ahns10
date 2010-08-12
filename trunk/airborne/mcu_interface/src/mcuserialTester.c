@@ -1,226 +1,172 @@
 /**
- * @file   mcuserial.c
- * @author Tim Molloy
+ * @file   mcuserialTestApp.c
+ * @author Liam O'Sullivan
  *
- * $Author: tlmolloy@gmail.com $
- * $Date: 2010-08-11 18:52:38 +1000 (Wed, 11 Aug 2010) $
- * $Rev: 293 $
- * $Id: mcuserial.c 293 2010-08-11 08:52:38Z tlmolloy@gmail.com $
+ * $Author: $
+ * $Date: $
+ * $Rev: -1 $
+ * $Id: mcuserialTestApp.c -1   $
  *
  * Queensland University of Technology
  *
  * @section DESCRIPTION
- * MCU serial library header
- * - Open and close serial to MCU
- * - Receive Commanded Engine Pulse Widths
- * - Receive High Level Commands and Flight Mode
+ * MCU Serial Test App for the MCU Serial Library
+ * 
  */
 
+#include <stdlib.h>
 #include "mcuserial.h"
-#include "MCUCommands.h"
 
-#include <sys/ioctl.h>
+char* mcu_serial_port;
 
-// struct to save the port settings
-static struct termios currentSerialPort, previousSerialPort;
-//specified serial port
-static int      fd = 0;
+uint8_t flightMode = 2;
+uint16_t commandedEngine[4];
 
-const int       tempOffset = 80;
+int8_t commandedThrottle = 0;
+int8_t commandedRoll = 0;
+int8_t commandedPitch = 0;
+int8_t commandedYaw = 0;
 
-/**
-  * @brief Close the serial connection to the IMU
-  */
-inline int 
-mcuCloseSerial()
+
+int main(int argc, char* argv[])
 {
-	close(fd);
-	tcsetattr(fd, TCSANOW, &previousSerialPort);
-	return 1;
-}
+  mcu_serial_port = (char*) malloc(100*sizeof(char));
+  mcu_serial_port = "/dev/ttyS0";
 
-/**
-  * @brief Open the serial connection to the IMU
-  * @return 0 for fail, 1 for success
-  */
-inline int 
-mcuOpenSerial(const char *serialPort, const int baudRate)
-{
-	//open the specified serial port
-	fd = open(serialPort, O_RDWR | O_NOCTTY | O_NDELAY);
+  int c = 0;
+  while ((c = getopt(argc, argv, "i:")) != -1)
+  {
+    switch(c)
+    {
+      case 'i':
+        mcu_serial_port = optarg;
+        fprintf(stderr, "Port: %s\n", mcu_serial_port);
+        break;
+    }
+  }
 
-	//check if the serial port has been opened
-			if (fd == -1) {
-			//failed to open the serial port
-				return 0;
-		} else {
-			//fcntl(fd, F_SETFL, 0);
-		}
+  if (!mcuOpenSerial(mcu_serial_port,MCU_BAUD_RATE)) // Test 1: Open
+  {
+    fprintf(stderr,"Test 1: Error - Unable to Open Port\n");
+    return -1;
+  }
+  else
+  {
+    fprintf(stderr,"Test 1: Pass - Connected\n");
+  }
+  
+  int8_t i = 0;
+  while(1)
+  { 
+    flightMode = 2;
+    
+    for (i = 0; i < 20; i = i + 4)
+    {
+      usleep(1e6);
+      commandedThrottle = i;
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      {
+      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
+      fprintf(stderr,"  Results: %d \t %d \t %d \t %d \t %d\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
+      {
+        fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
+      }
+      else
+      {
+        fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
+        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
+      }
+    }
+   
+    for (i = -20; i < 20; ++i)
+    {
+      usleep(1e6);
+      commandedRoll = i; 
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      {
+      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
+      fprintf(stderr,"  Results: %d \t %d \t %d \t %d \t %d\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
+      {
+        fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
+      }
+      else
+      {
+        fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
+        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
+      }
+    }
+    
+    commandedRoll = 0; 
+    for (i = -20; i < 20; ++i)
+    {
+      usleep(1e6);
+      commandedPitch = i;
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      {
+      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
+      fprintf(stderr,"  Results: %d \t %d \t %d \t %d \t %d\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
+      {
+        fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
+      }
+      else
+      {
+        fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
+        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
+      }
+    }
 
-	//get serial port settings
-		if ((tcgetattr(fd, &previousSerialPort) == -1) || (!isatty(fd))) {
-		//failed to read the serial port settings or not serial port
-			mcuCloseSerial();
-		return 0;
-	}
-	//create a new memory structure for the port settings
-			memset(&currentSerialPort, 0, sizeof(currentSerialPort));
+    commandedPitch = 0;
+    for (i = -20; i < 20; ++i)
+    {
+      usleep(1e6);
+      commandedYaw = i;
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      {
+      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
+      fprintf(stderr,"  Results: %d \t %d \t %d \t %d \t %d\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+      }
+      if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
+      {
+        fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
+      }
+      else
+      {
+        fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
+        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
+      }
+    }
+    commandedYaw = 0;
+  }
 
-	//set the baud rate, 8 N1, enable the receiver, set local mode, no parity
-		currentSerialPort.c_cflag = baudRate | CS8 | CLOCAL | CREAD;
-	//ignore parity errors
-		currentSerialPort.c_iflag = IGNPAR;
-	currentSerialPort.c_oflag = 0;
-	currentSerialPort.c_lflag = 0;
-	//block until n bytes have been received
-		currentSerialPort.c_cc[VMIN] = 0;
-	currentSerialPort.c_cc[VTIME] = 0;
-	//apply the settings to the port
-		if ((tcsetattr(fd, TCSANOW, &currentSerialPort)) == -1) {
-		//failed to apply port settings
-			mcuCloseSerial();
-		return 0;
-	}
-	//succesfully opened the port
-		return 1;
-}
-
-
-/**
- * @brief Query MCU for Flight mode and Commanded Engine Data
- * @param flightMode Location of flightMode
- * @param commandedEngine Location of array of Commanded Engine Pulses
- * @return 1 for success, 0 for failure
- */
-inline int 
-getMCUPeriodic(uint8_t * flightMode, uint16_t * commandedEngine)
-{
-	const int       bufferSize = 8;
-	int             bytesReceived = 0, packetEnd = 0, packetStart = 0;
-	int             returnValue = 0;
-	int             i = 0;
-	unsigned char   buffer[bufferSize];
-
-	//Query MCU
-		buffer[0] = FRAME_CHAR;
-	buffer[1] = GET_MCU_PERIODIC;
-	buffer[2] = FRAME_CHAR;
-
-	if (write(fd, buffer, 3))
-		//write success
-	{
-		//Read Periodic
-		/*
-		 * do { ioctl(fd, FIONREAD, &packetStart); }
-		 * while(packetStart < sizeof(buffer));
-		 */
-			usleep(MCU_DELAYRDWR);
-		bytesReceived = read(fd, buffer, sizeof(buffer));
-		if (!bytesReceived) {
-			fprintf(stderr, "MCU get periodic read failed\n");
-		} else {
-			//Find the frame chars in the buffer
-				for (i = bytesReceived - 1; i >= 0; --i) {
-				if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0)) {
-					packetEnd = i;
-				} else if (buffer[i] == FRAME_CHAR) {
-					packetStart = i;
-				}
-			}
-			if (buffer[packetStart] == buffer[packetEnd]) {
-				*flightMode = buffer[packetStart + 1];
-				commandedEngine[0] = CounterToPWM(buffer[packetStart + 2]);
-				commandedEngine[1] = CounterToPWM(buffer[packetStart + 3]);
-				commandedEngine[2] = CounterToPWM(buffer[packetStart + 4]);
-				commandedEngine[3] = CounterToPWM(buffer[packetStart + 5]);
-				returnValue = 1;
-			} else {
-				fprintf(stderr, "MCU periodic buffer failed\n%i,%i\n", buffer[0], buffer[6]);
-			}
-		}
-	}
-	return returnValue;
-}
-
-
-/**
- * @brief Query MCU for High Level Commands
- * @param commandedThrottle Location to store Commanded Throttle
- * @param commandedRoll Location to store Commanded Roll
- * @param commandedPitch Location to store Commanded Pitch
- * @param commandedYaw Location to store Commanded Yaw
- * @return 1 for success, 0 for failure
- */
-inline int 
-getMCUCommands(int8_t * commandedThrottle, int8_t * commandedRoll, int8_t * commandedPitch, int8_t * commandedYaw)
-{
-	const int       bufferSize = 7;
-	int             bytesReceived = 0, packetEnd = 0, packetStart = 0;
-	int             returnValue = 0;
-	int             i = 0;
-	unsigned char   buffer[bufferSize];
-
-	//Query MCU
-		buffer[0] = FRAME_CHAR;
-	buffer[1] = GET_MCU_COMMANDS;
-	buffer[2] = FRAME_CHAR;
-
-	if (write(fd, buffer, 3))
-		//write success
-	{
-		//Read Periodic
-		/*
-		 * do { ioctl(fd, FIONREAD, &packetStart); }
-		 * while(packetStart < sizeof(buffer));
-		 */
-			usleep(MCU_DELAYRDWR);
-		bytesReceived = read(fd, buffer, sizeof(buffer));
-		if (!bytesReceived) {
-			fprintf(stderr, "MCU get commands read failed\n");
-		} else {
-			//Find the frame chars in the buffer
-				for (i = bytesReceived - 1; i >= 0; --i) {
-				if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0)) {
-					packetEnd = i;
-				} else if (buffer[i] == FRAME_CHAR) {
-					packetStart = i;
-				}
-			}
-			if (buffer[packetStart] == buffer[packetEnd]) {
-				*commandedThrottle = buffer[packetStart + 1];
-				*commandedRoll = buffer[packetStart + 2];
-				*commandedPitch = buffer[packetStart + 3];
-				*commandedYaw = buffer[packetStart + 4];
-				returnValue = 1;
-			} else {
-				fprintf(stderr, "MCU get commands buffer failed\n%i,%i\n", buffer[0], buffer[6]);
-			}
-		}
-	}
-	return returnValue;
-}
-
-int 
-sendMCUCommands(const uint8_t * flightMode, const int8_t * commandedThrottle, const int8_t * commandedRoll, const int8_t * commandedPitch, const int8_t * commandedYaw)
-{
-	int             returnValue = 0;
-	unsigned char   buffer[9];
-
-	//Fill the buffer
-        buffer[0] = FRAME_CHAR;
-	buffer[1] = SEND_MCU_COMMANDS;
-	buffer[2] = FRAME_CHAR;
-	buffer[3] = *flightMode;
-	buffer[4] = *commandedThrottle;
-	buffer[5] = *commandedRoll;
-	buffer[6] = *commandedPitch;
-	buffer[7] = *commandedYaw;
-	buffer[8] = FRAME_CHAR;
-
-	if (write(fd, buffer, 9))
-		//write success
-	{
-		returnValue = 1;
-	}
-	return returnValue;
+  /*while (1)
+  {
+    if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
+    {
+      fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
+    }
+    else
+    {
+      fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
+      fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
+    }
+  usleep(0.5e6);
+  }
+  
+  if (!getMCUCommands(&commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 4: Rx High Level Commands
+  {
+    fprintf(stderr,"Test 4: Fail - Get High Level Commands\n");
+  }
+  else
+  {
+    fprintf(stderr,"Test 4: Pass - Get High Level Commands\n");
+    fprintf(stderr,"  Results: %u \t %u \t %u \t %u\n",commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
+  }*/
+  mcuCloseSerial();
+  return 0;
 }
