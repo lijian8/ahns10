@@ -49,8 +49,7 @@ mcuOpenSerial(const char *serialPort, const int baudRate)
 	//open the specified serial port
 	fd = open(serialPort, O_RDWR | O_NOCTTY | O_NDELAY);
 
-	//check if the
-		serial port has been opened
+	//check if the serial port has been opened
 			if (fd == -1) {
 			//failed to open the serial port
 				return 0;
@@ -64,8 +63,7 @@ mcuOpenSerial(const char *serialPort, const int baudRate)
 			mcuCloseSerial();
 		return 0;
 	}
-	//create a new memory structure for the
-		port settings
+	//create a new memory structure for the port settings
 			memset(&currentSerialPort, 0, sizeof(currentSerialPort));
 
 	//set the baud rate, 8 N1, enable the receiver, set local mode, no parity
