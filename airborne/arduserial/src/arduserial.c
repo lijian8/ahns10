@@ -92,7 +92,7 @@ int getCompassHeading(double *compassHeading)
     closeArduSerial();
     return 0;
   }
-  usleep(DELAYRDWR);
+  usleep(ARDU_DELAYRDWR);
   // read the compass heading returned
   unsigned char sResult[6];
   if(!read(arduSerialfd,sResult,5))
