@@ -116,7 +116,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
       ioctl(fd, FIONREAD, &packetStart);
     } while(packetStart < sizeof(buffer));
    */
-    //usleep(500);
+    usleep(MCU_DELAYRDWR);
     bytesReceived = read(fd,buffer,sizeof(buffer));  
     if(!bytesReceived)
     {
@@ -165,8 +165,8 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
  */
 inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8_t *commandedPitch, int8_t *commandedYaw)
 {
-  const int bufferSize = 7;
-  int bytesReceived = 0, packetEnd = 0, packetStart = 0;
+  const int bufferSize = 6;
+  int bytesReceived = 0, packetEnd = 0, packetStart = 5;
   int returnValue = 0;
   int i = 0;
   unsigned char buffer[bufferSize];
@@ -193,7 +193,7 @@ inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8
     else
     {
       // Find the frame chars in the buffer
-      for (i = bytesReceived - 1; i >= 0; --i)
+    /*for (i = bytesReceived - 1; i >= 0; --i)
       {
         if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0))
         {
@@ -203,7 +203,7 @@ inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8
         {
           packetStart = i;
         }
-      }
+      }*/
       if (buffer[packetStart] == buffer[packetEnd])
       {
 	*commandedThrottle = buffer[packetStart + 1];
