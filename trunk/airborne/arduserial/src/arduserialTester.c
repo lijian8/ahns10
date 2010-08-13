@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
     }
   }
   // Test 1: open the arduino serial port
-  if (!openArduSerial(arduino_serial_port, BAUD_RATE))
+  if (!openArduSerial(arduino_serial_port, ARDU_BAUD_RATE))
   {
     fprintf(stderr,"Test 1: Error - Cannot connect to the arduino\n");
     return -1;

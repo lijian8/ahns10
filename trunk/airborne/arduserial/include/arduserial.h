@@ -14,8 +14,8 @@
  *
  */
 
-#ifndef IMUSERIAL_H
-#define IMUSERIAL_H
+#ifndef ARDUSERIAL_H
+#define ARDUSERIAL_H
 
 #include <stdio.h>
 #include <string.h>
@@ -25,9 +25,9 @@
 #include <termios.h>
 
 // Arduino baud rate
-#define BAUD_RATE B115200	
+#define ARDU_BAUD_RATE B115200	
 // Delay between serial write and serial read (microseconds)
-#define DELAYRDWR 10000 // 100hz = 10000
+#define ARDU_DELAYRDWR 10000 // 100hz = 10000
 
 int openArduSerial(char* serialPort, int baudRate);
 int closeArduSerial();
