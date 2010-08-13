@@ -33,14 +33,16 @@ CC = gcc
 LD = $(CC)
 
 LIBDIR = ../network/udp
+ARDUDIR = ../arduserial
+IMUDIR = ../imu
 
 CFLAGS = -O2  
 LDFLAGS = -L./ -L$(LIBDIR) -lstate -lm -pthread
 LIB = libstate.a
 
 SRCS = src/main.c
-OBJS = obj/main.o 
-INC = -I $(HELICONNECT) -I include -I $(LIBDIR)
+OBJS = obj/main.o $(ARDUDIR)/obj/arduserial.o $(IMUDIR)/obj/imuserial.o
+INC = -I $(HELICONNECT) -I include -I $(LIBDIR) -I $(ARDUDIR)/include -I $(IMUDIR)/include
 
 SERVER = main
 
