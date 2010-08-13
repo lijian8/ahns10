@@ -1,5 +1,5 @@
 /**
- * @file   imuserialTester.c
+ * @file   arduserialTester.c
  * @author Liam O'Sullivan
  *
  * $Author$
@@ -10,9 +10,10 @@
  * Queensland University of Technology
  *
  * @section DESCRIPTION
- * IMU serial library tester
+ * arduino serial library tester
  *
  */
+
 #include <stdlib.h>
 #include "arduserial.h"
 
