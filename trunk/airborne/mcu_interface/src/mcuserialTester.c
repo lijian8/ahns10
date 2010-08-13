@@ -16,10 +16,11 @@
 
 #include <stdlib.h>
 #include "mcuserial.h"
+#include "MCUCommands.h"
 
 char* mcu_serial_port;
 
-uint8_t flightMode = 2;
+uint8_t flightMode = RC_NONE;
 uint16_t commandedEngine[4];
 
 int8_t commandedThrottle = 0;
@@ -58,8 +59,6 @@ int main(int argc, char* argv[])
   int8_t i = 0;
   while(1)
   { 
-    flightMode = 2;
-    
     for (i = 0; i < 20; i = i + 4)
     {
       usleep(5000);

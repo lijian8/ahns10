@@ -33,7 +33,7 @@ int8_t rcRoll;
 int8_t rcPitch;       
 int8_t rcYaw;          
 
-volatile enum FlightModes apMode;
+volatile enum FlightModes apMode = RC_NONE;
 volatile int8_t apThrottle;
 volatile int8_t apRoll;       
 volatile int8_t apPitch;
@@ -45,6 +45,7 @@ volatile int8_t commandedPitch;
 volatile int8_t commandedYaw;
 
 static void CheckAPFailSafe();
+static void GiveRC();
 
 #define HISTORY_SIZE 8
 inline void MixCommands()
@@ -116,11 +117,11 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
   return average;
 }
 
+static const double controlFactor = 0.25;
+static const double rcControlSplit = 0.5;
+
 inline void CombineCommands()
 {
-  // Only Throttle has Full Authority
-  const double controlFactor = 0.25;
-  
   // Flight Mode Choice limited to RC
   flightMode = rcMode;
   
@@ -129,23 +130,35 @@ inline void CombineCommands()
     case MANUAL_DEBUG:
       IndicateManual();
 
-      commandedThrottle = rcThrottle;
+      // Pass through for use with gyro
+      ESC1_COUNTER = escLimits[0][ESC_MIN] + rcThrottle;
+      ESC2_COUNTER = escLimits[1][ESC_MIN] + rcRoll;
+      ESC3_COUNTER = escLimits[2][ESC_MIN] + rcPitch;
+      ESC4_COUNTER = escLimits[3][ESC_MIN] + rcYaw;
+
+      /*commandedThrottle = rcThrottle;
       commandedRoll = controlFactor*rcRoll;
       commandedPitch = controlFactor*rcPitch;
       commandedYaw = controlFactor*rcYaw;
-      MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
 
+      MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
+      */
       break;
     case AUGMENTED: // Combine AP and RC Commands
       IndicateAugmented();
       //CheckAPFailSafe();
- 
-      commandedThrottle = 0.5*rcThrottle + 0.5*apThrottle;
-      commandedRoll = 0.5*controlFactor*rcRoll + 0.5*controlFactor*apRoll;
-      commandedPitch = 0.5*controlFactor*rcPitch + 0.5*controlFactor*apPitch;
-      commandedYaw = 0.5*controlFactor*rcYaw + 0.5*controlFactor*apYaw; 
-      MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
 
+      // By default mix the two
+      commandedThrottle = rcControlSplit*rcThrottle + (1-rcControlSplit)*apThrottle;
+      commandedRoll = rcControlSplit*controlFactor*rcRoll + (1-rcControlSplit)*controlFactor*apRoll;
+      commandedPitch = rcControlSplit*controlFactor*rcPitch + (1-rcControlSplit)*controlFactor*apPitch;
+      commandedYaw = rcControlSplit*controlFactor*rcYaw + (1-rcControlSplit)*controlFactor*apYaw;
+   
+      // Give RC Complete Control on some Commands
+      GiveRC(); 
+
+      // AP will select the desired full RC channels
+      MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
       break;
     case AUTOPILOT: // Pass AP unaltered
       IndicateAutopilot();
@@ -155,6 +168,9 @@ inline void CombineCommands()
       commandedRoll = controlFactor*apRoll;
       commandedPitch = controlFactor*apPitch;
       commandedYaw = controlFactor*apYaw;
+      
+      // Give RC Complete Control on some Commands
+      GiveRC(); 
 
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
       break;
@@ -176,4 +192,69 @@ static inline void CheckAPFailSafe()
   }
 
   return;
+}
+
+static inline void GiveRC()
+{
+      switch (apMode)
+      {
+        case RC_THROTTLE:
+          commandedThrottle = rcThrottle;
+          break;
+        case RC_ROLL:
+          commandedRoll = controlFactor*rcRoll;
+          break;
+        case RC_PITCH:
+          commandedPitch = controlFactor*rcPitch;
+          break;
+        case RC_YAW:
+          commandedYaw = controlFactor*rcYaw;
+          break;
+        case RC_THROTTLE_ROLL:
+          commandedThrottle = rcThrottle;
+          commandedRoll = controlFactor*rcRoll;
+          break;
+        case RC_THROTTLE_PITCH:
+          commandedThrottle = rcThrottle;
+          commandedPitch = controlFactor*rcPitch;
+          break;
+        case RC_THROTTLE_YAW:
+          commandedThrottle = rcThrottle;
+          commandedYaw = controlFactor*rcYaw;
+          break;
+        case RC_ROLL_PITCH:
+          commandedRoll = controlFactor*rcRoll;
+          commandedPitch = controlFactor*rcPitch;
+          break;
+        case RC_ROLL_YAW:
+          commandedRoll = controlFactor*rcRoll;
+          commandedYaw = controlFactor*rcYaw;
+          break;
+        case RC_PITCH_YAW:
+          commandedPitch = controlFactor*rcPitch;
+          commandedYaw = controlFactor*rcYaw;
+          break;
+        case RC_THROTTLE_ROLL_PITCH:
+          commandedThrottle = rcThrottle;
+          commandedRoll = controlFactor*rcRoll;
+          commandedPitch = controlFactor*rcPitch;
+          break;
+        case RC_THROTTLE_ROLL_YAW:
+          commandedThrottle = rcThrottle;
+          commandedRoll = controlFactor*rcRoll;
+          commandedYaw = controlFactor*rcYaw;
+          break;
+        case RC_THROTTLE_PITCH_YAW:
+          commandedThrottle = rcThrottle;
+          commandedPitch = controlFactor*rcPitch;
+          commandedYaw = controlFactor*rcYaw;
+          break;
+        case RC_ROLL_PITCH_YAW:
+          commandedRoll = controlFactor*rcRoll;
+          commandedPitch = controlFactor*rcPitch;
+          commandedYaw = controlFactor*rcYaw;
+          break;
+        case RC_NONE:
+          break;
+      }
 }

@@ -30,6 +30,21 @@ enum {
 enum FlightModes {
        MANUAL_DEBUG,  /**< Manual Mode with no AP mixing */
        AUGMENTED,     /**< Manual Mode with additional AP mixing */
+       RC_THROTTLE,   /**< Pass RC Throttle Unaltered */
+       RC_ROLL,       /**< Pass RC Roll Unaltered */
+       RC_PITCH,
+       RC_YAW,
+       RC_THROTTLE_ROLL,
+       RC_THROTTLE_PITCH,
+       RC_THROTTLE_YAW,
+       RC_ROLL_PITCH,
+       RC_ROLL_YAW,
+       RC_PITCH_YAW,
+       RC_THROTTLE_ROLL_PITCH,
+       RC_THROTTLE_ROLL_YAW,
+       RC_THROTTLE_PITCH_YAW,
+       RC_ROLL_PITCH_YAW,
+       RC_NONE,
        AUTOPILOT,     /**< AP Mode only*/
        FAIL_SAFE      /**< MCU Failsafe Engaged*/ 
 };
