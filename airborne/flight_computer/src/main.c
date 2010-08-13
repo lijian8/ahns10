@@ -21,6 +21,8 @@
 #include "main.h"
 #include "server.h"
 #include "state.h"
+#include "imuserial.h"
+#include "arduserial.h"
 
 // udp server
 static Server server;
@@ -35,7 +37,8 @@ int sensorInit();
 int mcuInit();
 // flight computer thread functions
 void * sendUDPData(void *pointer);
-void * updateStateData(void *pointer);
+void * updateIMUdata(void *pointer);
+void * updateCompassHeading(void *pointer);
 
 int main(int argc, char *argv[])
 {
@@ -53,32 +56,49 @@ int main(int argc, char *argv[])
   {
     // create the flight computer threads
     pthread_t udpThread;
-    pthread_t stateThread;
+    pthread_t imuThread;
+    pthread_t arduThread;
     // create the server thread
     pthread_create(&udpThread, NULL, sendUDPData, (int*) 1);
-    // create the state thread
-    pthread_create(&stateThread, NULL, updateStateData, (int*) 2);
+    // create the imu thread
+    pthread_create(&imuThread, NULL, updateIMUdata, (int*) 3);
+    // create the arduino thread
+    pthread_create(&arduThread, NULL, updateCompassHeading, (int*) 3);
     // execute the udp server thread
     pthread_join(udpThread,NULL);
     // execute the state thread
-    pthread_join(stateThread,NULL);
+    pthread_join(imuThread,NULL);
+    // execute the compass thread
+    pthread_join(arduThread,NULL);
   }
   return 0;
 }
 
-// update state data
-void * updateStateData(void *pointer)
+// update the compass heading from the arduino
+void * updateCompassHeading(void *pointer)
 {
-  int factor = 1;
   while(1)
   {
-    usleep(0.5e6);
+    // sleep the thread for updating the compass
+    usleep(COMPASS_DELAY*1e3);
+    // get the compass heading from the arduino
     pthread_mutex_lock(&mut);
-    state.p = factor+2;
-    state.q = factor+5;
-    state.r = factor+3;
-    factor++;
-    pthread_cond_signal(&cond);
+    getCompassHeading(&state.psi);
+    pthread_mutex_unlock(&mut);
+  }
+  return NULL;
+}
+
+// update IMU data
+void * updateIMUdata(void *pointer)
+{
+  while(1)
+  {
+    // sleep the thread for updating the compass
+    usleep(IMU_DELAY*1e3);
+    pthread_mutex_lock(&mut);
+    // get the IMU sensor data
+    getImuSensorData(&state.p, &state.q, &state.r, &state.ax, &state.ay, &state.az);
     pthread_mutex_unlock(&mut);
   }
   return NULL;
@@ -89,9 +109,30 @@ void * updateStateData(void *pointer)
 // 2. Arduino (compass, camera, ultrasonic)
 int sensorInit()
 {
-  printf(">> IMU connected\n");
-  printf(">> Arduino connected\n");
-  return 1;
+  int retSerial = 0;
+  int retValue =0;
+  // connect to the IMU
+  retSerial = openIMUSerial(IMU_SERIAL_PORT, IMU_BAUD_RATE_DEFAULT);
+  if(retSerial)
+  {
+    retValue = 1;
+    printf(">> IMU connected\n");
+  } else
+    {
+      printf(">> Error: Cannot connect to IMU\n");
+    }
+  // connect to the arduino
+  retSerial = openArduSerial(ARDU_SERIAL_PORT, ARDU_BAUD_RATE);
+  if(retSerial)
+  {
+    retValue = 1;
+    printf(">> Arduino connected\n");
+  } else
+    {
+      printf(">> Error: Cannot connect to Arduino\n");
+    }
+
+  return retValue;
 }
 
 // initialise connection to the MCU
@@ -137,22 +178,18 @@ void * sendUDPData(void *pointer)
     }
     if(init)
     {
-      pthread_mutex_lock(&mut);
-      // wait for the states to be ready
-      pthread_cond_wait(&cond, &mut);
       // calculate server delay time
       gettimeofday(&timestamp, NULL); 
       endTime=timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
       diffTime = endTime - startTime;
       // output the sent states  
-      printf(">> state : %f %f %f | %f\n",state.p,state.q,state.r,diffTime);
+      printf(">> state : %f %f %f %f | %f\n",state.p,state.q,state.r,state.psi,(1/diffTime));
       // send the server packet
       server_send_packet(&server, HELI_STATE, &state, sizeof(state_t));
       init = 0;
       // reinitialise startTime
       gettimeofday(&timestamp, NULL); 
       startTime=timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
-      pthread_mutex_unlock(&mut);
     }   
   }
   return NULL;
