@@ -32,7 +32,7 @@
 CC = gcc 
 LD = $(CC)
 
-LIBDIR = ../udp/
+LIBDIR = ../udp
 IMUDIR = ../../imu
 
 CFLAGS = -O2  
@@ -60,3 +60,4 @@ all:  clean $(LIB) $(SERVER)
 
 clean:
 	rm -f obj/* $(LIBDIR)*.a $(SERVER)
+
