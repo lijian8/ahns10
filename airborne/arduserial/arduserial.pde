@@ -1,7 +1,16 @@
-/*
- * arduserial.pde
- * 
- * Description: Arduino code to transmit to the overo the following:
+/**
+ * @file   arduserial.pde
+ * @author Liam O'Sullivan
+ *
+ * $Author$
+ * $Date$
+ * $Rev$
+ * $Id$
+ *
+ * Queensland University of Technology
+ *
+ * @section DESCRIPTION
+ * Arduino code to transmit to the overo the following:
  * 1. connect to compass and extract heading data
  * 2. connect to camera and gather image processing data
  * 3. connect to ultrasonic sensor and request height data
