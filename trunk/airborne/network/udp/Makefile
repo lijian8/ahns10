@@ -11,7 +11,7 @@ LD = $(CC)
 
 CFLAGS = -Os
 LDFLAGS =  -L./ -lstate -lm
-INCDIR = -I $(HELICONNECT) 
+INCDIR = -I $(HELICONNECT) -I $(MCU_INTERFACE)/include
 
 SRCS = control.c client.c server.c $(HELICONNECT)/state.c udp.c $(HELICONNECT)/primitive_serialisation.c
 INCLUDES = control.h server.h $(HELICONNECT)/state.h udp.h commands.h $(HELICONNECT)/primitive_serialisation.h

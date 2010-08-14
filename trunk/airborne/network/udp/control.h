@@ -21,21 +21,26 @@
 #include <pthread.h>
 
 #include "state.h"
+#include "MCUCommands.h"
 
 /** @name Control Loop Type */
 typedef struct { 
-  uint8_t active;   /**< Active Flag */
-  double reference; /**< Commanded Reference */
+  uint8_t active;      /**< Active Flag */
+  double reference;    /**< Commanded Reference */
+  int8_t output;     /**< Current Output*/
+  double referenceDot; /**< Commanded Dot Reference */
+  double integralError;          /**< Integral Variable*/        
   
-  double Kp;        /**< Proportional Gain */
-  double Ki;        /**< Integral Gain */
-  double Kd;        /**< Rate Gain */
+  double Kp;           /**< Proportional Gain */
+  double Ki;           /**< Integral Gain */
+  double Kd;           /**< Rate Gain */
   
-  double maximum;       /**< Maximum Limit */
-  double minimum;       /**< Minimum Limit */
-  double neutral;   /**< Neutral Value */
+  double maximum;      /**< Maximum Limit */
+  double minimum;      /**< Minimum Limit */
+  double neutral;      /**< Neutral Value */
 } control_loop_t;
 
+extern enum FlightModes apMode;
 
 /** @name Roll Control Loop */
 extern control_loop_t rollLoop;
