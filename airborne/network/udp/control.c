@@ -18,29 +18,39 @@
 #include "stdio.h"
 #include "stdint.h"
 
+static inline int8_t updateControlLoop(control_loop_t* controlLoop, double state, double stateDot);
+
+enum FlightModes apMode;
+
 /** @name Roll Control Loop */
 control_loop_t rollLoop;
 pthread_mutex_t rollLoopMutex;
+int8_t apRoll = 0;
 
 /** @name Pitch Control Loop */
 control_loop_t pitchLoop;
 pthread_mutex_t pitchLoopMutex;
+int8_t apPitch = 0;
 
 /** @name Yaw Control Loop */
 control_loop_t yawLoop;
 pthread_mutex_t yawLoopMutex;
+int8_t apYaw = 0;
 
 /** @name X Control Loop */
 control_loop_t xLoop;
 pthread_mutex_t xLoopMutex;
+int8_t apX = 0;
 
 /** @name Y Control Loop */
 control_loop_t yLoop;
 pthread_mutex_t yLoopMutex;
+int8_t apY = 0;
 
 /** @name Z Control Loop */
 control_loop_t zLoop;
 pthread_mutex_t zLoopMutex;
+int8_t apZ = 0;
 
 uint8_t setAPConfig(const ap_config_t* const srcConfig)
 {
@@ -272,3 +282,93 @@ void MutexUnlockGuidanceLoops()
   return;
 }
 
+void* controlThread(void *pointer)
+{
+  while(1)
+  {
+    // Update Guidance Loops
+    updateControlLoop(&xLoop,0,0);
+    updateControlLoop(&yLoop,0,0);
+    updateControlLoop(&zLoop,0,0);
+    
+    // Update Control Loops
+    updateControlLoop(&rollLoop,0,0);
+    updateControlLoop(&pitchLoop,0,0);
+    updateControlLoop(&yawLoop,0,0);
+    
+    // Determine AP Mode for MCU usage
+    if (zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_NONE;
+    }
+    else if (!zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE;
+    }
+    else if (zLoop.active && !rollLoop.active && pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_ROLL;
+    }
+    else if (zLoop.active && rollLoop.active && !pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_PITCH;
+    }
+    else if (zLoop.active && rollLoop.active && pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_YAW;
+    }
+    else if (!zLoop.active && !rollLoop.active && pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL;
+    }
+    else if (!zLoop.active && rollLoop.active && !pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_PITCH;
+    }
+    else if (!zLoop.active && rollLoop.active && pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_YAW;
+    }
+    else if (!zLoop.active && !rollLoop.active && !pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL_PITCH;
+    }
+    else if (!zLoop.active && !rollLoop.active && pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL_YAW;
+    }
+    else if (!zLoop.active && rollLoop.active && !pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_PITCH_YAW;
+    }
+    else if (zLoop.active && !rollLoop.active && !pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_ROLL_PITCH;
+    }
+    else if (zLoop.active && !rollLoop.active && pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_ROLL_YAW;
+    }
+    else if (zLoop.active && rollLoop.active && !pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_PITCH_YAW;
+    }
+    else if (zLoop.active && !rollLoop.active && !pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_ROLL_PITCH_YAW;
+    }
+
+    // Send to MCU
+    usleep(20e3); 
+  }
+  return NULL;
+}
+
+static inline void updateControlLoop(control_loop_t* controlLoop, double state, double stateDot)
+{
+  if (controlLoop->active)
+  {
+    controlLoop->output = controlLoop->Kp*(controlLoop->reference - state) + controlLoop->Kd*(controlLoop->referenceDot - stateDot) + controlLoop->Ki*(controlLoop->integralError);
+  }
+  return;
+}
