@@ -27,7 +27,8 @@
 typedef struct { 
   uint8_t active;      /**< Active Flag */
   double reference;    /**< Commanded Reference */
-  int8_t output;     /**< Current Output*/
+  int8_t output;       /**< Current Output*/
+  
   double referenceDot; /**< Commanded Dot Reference */
   double integralError;          /**< Integral Variable*/        
   
@@ -38,34 +39,41 @@ typedef struct {
   double maximum;      /**< Maximum Limit */
   double minimum;      /**< Minimum Limit */
   double neutral;      /**< Neutral Value */
+
+  double previousTime; /**< Previous time update */
+  double previousReference; /**< Previous reference */
 } control_loop_t;
 
-extern enum FlightModes apMode;
+extern volatile enum FlightModes apMode;
 
 /** @name Roll Control Loop */
-extern control_loop_t rollLoop;
+extern volatile control_loop_t rollLoop;
 extern pthread_mutex_t rollLoopMutex;
 
 /** @name Pitch Control Loop */
-extern control_loop_t pitchLoop;
+extern volatile control_loop_t pitchLoop;
 extern pthread_mutex_t pitchLoopMutex;
 
 /** @name Yaw Control Loop */
-extern control_loop_t yawLoop;
+extern volatile control_loop_t yawLoop;
 extern pthread_mutex_t yawLoopMutex;
 
 /** @name X Control Loop */
-extern control_loop_t xLoop;
+extern volatile control_loop_t xLoop;
 extern pthread_mutex_t xLoopMutex;
 
 /** @name Y Control Loop */
-extern control_loop_t yLoop;
+extern volatile control_loop_t yLoop;
 extern pthread_mutex_t yLoopMutex;
 
 /** @name Z Control Loop */
-extern control_loop_t zLoop;
+extern volatile control_loop_t zLoop;
 extern pthread_mutex_t zLoopMutex;
 
+/** @name Control pthread */
+void* controlThread(void *pointer);
+
+/** @name Telemetry/Control Interface Functions */
 uint8_t setAPConfig(const ap_config_t* const srcConfig);
 uint8_t setGains(const gains_t* const srcGains);
 uint8_t setParameters(const loop_parameters_t* const srcParameters);

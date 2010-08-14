@@ -13,44 +13,40 @@
  * Implementation of the onboard Control.
  */
 
+#include <stdio.h>
+#include <stdint.h>
+#include <sys/time.h>
+
 #include "control.h"
 #include "state.h"
-#include "stdio.h"
-#include "stdint.h"
 
-static inline int8_t updateControlLoop(control_loop_t* controlLoop, double state, double stateDot);
+static inline void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
 
-enum FlightModes apMode;
+volatile enum FlightModes apMode;
 
 /** @name Roll Control Loop */
-control_loop_t rollLoop;
+volatile control_loop_t rollLoop;
 pthread_mutex_t rollLoopMutex;
-int8_t apRoll = 0;
 
 /** @name Pitch Control Loop */
-control_loop_t pitchLoop;
+volatile control_loop_t pitchLoop;
 pthread_mutex_t pitchLoopMutex;
-int8_t apPitch = 0;
 
 /** @name Yaw Control Loop */
-control_loop_t yawLoop;
+volatile control_loop_t yawLoop;
 pthread_mutex_t yawLoopMutex;
-int8_t apYaw = 0;
 
 /** @name X Control Loop */
-control_loop_t xLoop;
+volatile control_loop_t xLoop;
 pthread_mutex_t xLoopMutex;
-int8_t apX = 0;
 
 /** @name Y Control Loop */
-control_loop_t yLoop;
+volatile control_loop_t yLoop;
 pthread_mutex_t yLoopMutex;
-int8_t apY = 0;
 
 /** @name Z Control Loop */
-control_loop_t zLoop;
+volatile control_loop_t zLoop;
 pthread_mutex_t zLoopMutex;
-int8_t apZ = 0;
 
 uint8_t setAPConfig(const ap_config_t* const srcConfig)
 {
@@ -218,7 +214,33 @@ uint8_t setPosition(const position_t* const srcPosition)
 
 uint8_t saveConfig()
 {
-  uint8_t bRet = 1;
+  uint8_t bRet = 0;
+
+   // initialise gains and parameters from files
+  FILE *gainsfd = fopen("gains.ahnsgains","r");
+  FILE *parametersfd =  fopen("parameters.ahnsparameters","r");
+  
+  if (gainsfd && parametersfd)
+  {
+    fprintf(gainsfd,"%lf\t%lf\t%lf\n",rollLoop.Kp,rollLoop.Ki,rollLoop.Kd);
+    fprintf(gainsfd,"%lf\t%lf\t%lf\n",pitchLoop.Kp,pitchLoop.Ki,pitchLoop.Kd);
+    fprintf(gainsfd,"%lf\t%lf\t%lf\n",yawLoop.Kp,yawLoop.Ki,yawLoop.Kd);
+    fprintf(gainsfd,"%lf\t%lf\t%lf\n",xLoop.Kp,xLoop.Ki,xLoop.Kd);
+    fprintf(gainsfd,"%lf\t%lf\t%lf\n",yLoop.Kp,yLoop.Ki,yLoop.Kd);
+    fprintf(gainsfd,"%lf\t%lf\t%lf\n",zLoop.Kp,zLoop.Ki,zLoop.Kd);
+
+    fprintf(parametersfd,"%lf\t%lf\t%lf\n",rollLoop.maximum,rollLoop.neutral,rollLoop.minimum);
+    fprintf(parametersfd,"%lf\t%lf\t%lf\n",pitchLoop.maximum,pitchLoop.neutral,pitchLoop.minimum);
+    fprintf(parametersfd,"%lf\t%lf\t%lf\n",yawLoop.maximum,yawLoop.neutral,yawLoop.minimum);
+    fprintf(parametersfd,"%lf\t%lf\t%lf\n",xLoop.maximum,xLoop.neutral,xLoop.minimum);
+    fprintf(parametersfd,"%lf\t%lf\t%lf\n",yLoop.maximum,yLoop.neutral,yLoop.minimum);
+    fprintf(parametersfd,"%lf\t%lf\t%lf\n",zLoop.maximum,zLoop.neutral,zLoop.minimum);
+
+    bRet = 1;
+    fclose(gainsfd);
+    fclose(parametersfd);
+  }
+
   return bRet;
 }
 
@@ -283,9 +305,93 @@ void MutexUnlockGuidanceLoops()
 }
 
 void* controlThread(void *pointer)
-{
+{ 
+  // initialise gains and parameters from files
+  int i = 0, j = 0;
+  FILE *gainsfd = fopen("gains.ahnsgains","r");
+  double gains[6][3];
+  FILE *parametersfd =  fopen("parameters.ahnsparameters","r");
+  double parameters[6][3];
+  
+  if (gainsfd && parametersfd)
+  { 
+    for (i = 0; i < 6; ++i)
+    {
+      for (j = 0; j < 3; ++j)
+      {
+        fscanf(gainsfd, "%lf", &gains[i][j]);
+        fscanf(parametersfd, "%lf", &parameters[i][j]);
+      }
+    }
+  }
+  else
+  {
+    fprintf(stderr,"void* controlThread(void *pointer) :: FILE OPEN FAILED");
+    for (i = 0; i < 6; ++i)
+    {
+      for (j = 0; j < 3; ++j)
+      {
+        gains[i][j] = 0.0;
+        parameters[i][j] = 0.0;
+      }
+    }
+  }
+  
+  rollLoop.maximum = parameters[0][0];
+  rollLoop.neutral = parameters[0][1];
+  rollLoop.minimum = parameters[0][2];
+
+  pitchLoop.maximum = parameters[1][0];
+  pitchLoop.neutral = parameters[1][1];
+  pitchLoop.minimum = parameters[1][2];
+
+  yawLoop.maximum = parameters[2][0];
+  yawLoop.neutral = parameters[2][1];
+  yawLoop.minimum = parameters[2][2];
+
+  xLoop.maximum = parameters[3][0];
+  xLoop.neutral = parameters[3][1];
+  xLoop.minimum = parameters[3][2];
+
+  yLoop.maximum = parameters[4][0];
+  yLoop.neutral = parameters[4][1];
+  yLoop.minimum = parameters[4][2];
+
+  zLoop.maximum = parameters[5][0];
+  zLoop.neutral = parameters[5][1];
+  zLoop.minimum = parameters[5][2];
+
+  rollLoop.Kp = gains[0][0];
+  rollLoop.Ki = gains[0][1];
+  rollLoop.Kd = gains[0][2];
+
+  pitchLoop.Kp = gains[1][0];
+  pitchLoop.Ki = gains[1][1];
+  pitchLoop.Kd = gains[1][2];
+
+  yawLoop.Kp = gains[2][0];
+  yawLoop.Ki = gains[2][1];
+  yawLoop.Kd = gains[2][2];
+
+  xLoop.Kp = gains[3][0];
+  xLoop.Ki = gains[3][1];
+  xLoop.Kd = gains[3][2];
+
+  yLoop.Kp = gains[4][0];
+  yLoop.Ki = gains[4][1];
+  yLoop.Kd = gains[4][2];
+
+  zLoop.Kp = gains[5][0];
+  zLoop.Ki = gains[5][1];
+  zLoop.Kd = gains[5][2];
+    
+  fclose(gainsfd);
+  fclose(parametersfd); 
+
+  // control thread
   while(1)
   {
+    /** @TODO input actual states*/
     // Update Guidance Loops
     updateControlLoop(&xLoop,0,0);
     updateControlLoop(&yLoop,0,0);
@@ -364,11 +470,58 @@ void* controlThread(void *pointer)
   return NULL;
 }
 
-static inline void updateControlLoop(control_loop_t* controlLoop, double state, double stateDot)
+/**
+ * @brief Function to Update the control loops
+ * @param controlLoop Control Loop to be activated
+ * @param state Current state variable to be controlled by the loop
+ * @param stateDot Current Derivative of the state being controlled by the loop
+ *
+ * @TODO Implement integral anti-windup and control
+ */
+static inline void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot)
 {
+  double tempOutput = 0.0;
+  double tempError = 0.0;
+  struct timeval currentTimeStruct;
+  gettimeofday(&currentTimeStruct,NULL);
+  double currentTime = currentTimeStruct.tv_sec + currentTimeStruct.tv_usec / 1e6;
+  double dt = currentTime - controlLoop->previousTime;
+ 
+  // reset integrators if reference changed 
+  if (controlLoop->previousReference != controlLoop->reference)
+  {
+    controlLoop->integralError = 0.0;
+  }
+
   if (controlLoop->active)
   {
-    controlLoop->output = controlLoop->Kp*(controlLoop->reference - state) + controlLoop->Kd*(controlLoop->referenceDot - stateDot) + controlLoop->Ki*(controlLoop->integralError);
+    tempError = controlLoop->reference - state;
+    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(controlLoop->referenceDot - stateDot) + controlLoop->Ki*(controlLoop->integralError) + controlLoop->neutral;
+
+    // bound the output
+    // only integrate if not in saturation
+    if (tempOutput > controlLoop->maximum)
+    {
+      controlLoop->output = controlLoop->maximum;
+    }
+    else if (tempOutput < controlLoop->minimum)
+    {
+      controlLoop->output = controlLoop->minimum;
+    }
+    else
+    {
+      controlLoop->output = tempOutput; 
+      controlLoop->integralError += dt*tempError;
+    }
+    
+    // Store previous time
+    controlLoop->previousTime = currentTime;
+    controlLoop->previousReference = controlLoop->reference; 
   }
+  else
+  {
+    controlLoop->output = 0.0;
+  }
+  
   return;
 }
