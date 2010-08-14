@@ -40,7 +40,7 @@ LIB = libstate.a
 
 SRCS = src/GCSTestDriver.c
 OBJS = obj/GCSTestDriver.o
-INC = -I $(HELICONNECT) -I include -I ../udp/
+INC = -I $(HELICONNECT) -I include -I ../udp/ -I $(MCU_INTERFACE)/include
 
 SERVER = GCSServerTestDriver
 
