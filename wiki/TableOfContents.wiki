@@ -6,5 +6,6 @@
   * [SoftwareSolution Software Solution]
     * [GCSInstall GCS Install]
     * [AirborneInstall Airborne Install]
+    * [MCUInstall MCU Install]
     * [Wifi_configuration Wifi configuration ]
   * [http://code.google.com/p/ahns10/w/list Full Wiki List]
