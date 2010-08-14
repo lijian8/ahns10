@@ -1,4 +1,4 @@
-CFLAGS= -Os
+CFLAGS= -O2
 
 HEADERS= include/mcuserial.h include/MCUCommands.h
 

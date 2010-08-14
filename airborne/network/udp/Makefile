@@ -9,7 +9,7 @@
 CC = gcc 
 LD = $(CC)
 
-CFLAGS = -Os
+CFLAGS = -O2
 LDFLAGS =  -L./ -lstate -lm
 INCDIR = -I $(HELICONNECT) -I $(MCU_INTERFACE)/include
 
