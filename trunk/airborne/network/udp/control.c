@@ -217,8 +217,8 @@ uint8_t saveConfig()
   uint8_t bRet = 0;
 
    // initialise gains and parameters from files
-  FILE *gainsfd = fopen("gains.ahnsgains","r");
-  FILE *parametersfd =  fopen("parameters.ahnsparameters","r");
+  FILE *gainsfd = fopen("gains.ahnsgains","w");
+  FILE *parametersfd =  fopen("parameters.ahnsparameters","w");
   
   if (gainsfd && parametersfd)
   {
