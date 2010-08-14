@@ -257,12 +257,12 @@ static int save_config(void *priv, const Host_t *src, int type, const struct tim
         unsigned char* BUFFER[sizeof(uint32_t)];
 	PackUInt32(BUFFER, SAVE_CONFIG);
 
-        /** TODO Save the Control Configs */
         if(saveConfig())
         {		         
         	// Responed with command_ack and set_config
         	udp_send(self->sock, src, COMMAND_ACK, BUFFER, sizeof(uint32_t));
      	}
+        fprintf(stderr,"save_config requested"); 
 
 	return 1;
 }
