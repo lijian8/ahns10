@@ -27,7 +27,7 @@
 typedef struct { 
   uint8_t active;      /**< Active Flag */
   double reference;    /**< Commanded Reference */
-  int8_t output;       /**< Current Output*/
+  double output;       /**< Current Output*/
   
   double referenceDot; /**< Commanded Dot Reference */
   double integralError;          /**< Integral Variable*/        
@@ -49,14 +49,17 @@ extern volatile enum FlightModes apMode;
 /** @name Roll Control Loop */
 extern volatile control_loop_t rollLoop;
 extern pthread_mutex_t rollLoopMutex;
+extern volatile int8_t apRoll;
 
 /** @name Pitch Control Loop */
 extern volatile control_loop_t pitchLoop;
 extern pthread_mutex_t pitchLoopMutex;
+extern volatile int8_t apPitch;
 
 /** @name Yaw Control Loop */
 extern volatile control_loop_t yawLoop;
 extern pthread_mutex_t yawLoopMutex;
+extern volatile int8_t apYaw;
 
 /** @name X Control Loop */
 extern volatile control_loop_t xLoop;
@@ -69,6 +72,7 @@ extern pthread_mutex_t yLoopMutex;
 /** @name Z Control Loop */
 extern volatile control_loop_t zLoop;
 extern pthread_mutex_t zLoopMutex;
+extern volatile int8_t apThrottle;
 
 /** @name Control pthread */
 void* controlThread(void *pointer);

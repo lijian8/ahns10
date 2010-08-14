@@ -193,7 +193,7 @@
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Lucida Grande'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-weight:600;&quot;&gt;Max&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-weight:600;&quot;&gt;Max Output&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -217,7 +217,7 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Lucida Grande'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-weight:600;&quot;&gt;Min&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-weight:600;&quot;&gt;Min &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-weight:600;&quot;&gt;Output&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
@@ -241,148 +241,178 @@ p, li { white-space: pre-wrap; }
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Lucida Grande'; font-size:12pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-weight:600;&quot;&gt;Neutral&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+&lt;p align=&quot;center&quot; style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'Sans'; font-weight:600;&quot;&gt;Neutral &lt;/span&gt;&lt;span style=&quot; font-family:'Sans'; font-weight:600;&quot;&gt;Output&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
       </property>
      </widget>
     </item>
     <item row="1" column="1">
      <widget class="QDoubleSpinBox" name="rollMaxBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="1" column="3">
      <widget class="QDoubleSpinBox" name="rollMinBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="2" column="1">
      <widget class="QDoubleSpinBox" name="pitchMaxBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="2" column="2">
      <widget class="QDoubleSpinBox" name="pitchNeutralBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="2" column="3">
      <widget class="QDoubleSpinBox" name="pitchMinBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="3" column="1">
      <widget class="QDoubleSpinBox" name="yawMaxBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="3" column="2">
      <widget class="QDoubleSpinBox" name="yawNeutralBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="3" column="3">
      <widget class="QDoubleSpinBox" name="yawMinBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="4" column="1">
      <widget class="QDoubleSpinBox" name="xMaxBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string> rad</string>
+      </property>
       <property name="decimals">
        <number>4</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-10.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>10.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.010000000000000</double>
@@ -391,14 +421,20 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="4" column="2">
      <widget class="QDoubleSpinBox" name="xNeutralBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string> rad</string>
+      </property>
       <property name="decimals">
        <number>4</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-10.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>10.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.010000000000000</double>
@@ -407,14 +443,20 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="4" column="3">
      <widget class="QDoubleSpinBox" name="xMinBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string> rad</string>
+      </property>
       <property name="decimals">
        <number>4</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-10.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>10.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.010000000000000</double>
@@ -423,14 +465,20 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="5" column="1">
      <widget class="QDoubleSpinBox" name="yMaxBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string> rad</string>
+      </property>
       <property name="decimals">
        <number>4</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-10.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>10.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.010000000000000</double>
@@ -439,14 +487,20 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="5" column="3">
      <widget class="QDoubleSpinBox" name="yMinBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string> rad</string>
+      </property>
       <property name="decimals">
        <number>4</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-10.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>10.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.010000000000000</double>
@@ -455,65 +509,86 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="6" column="1">
      <widget class="QDoubleSpinBox" name="zMaxBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string/>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="6" column="2">
      <widget class="QDoubleSpinBox" name="zNeutralBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string/>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="6" column="3">
      <widget class="QDoubleSpinBox" name="zMinBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string/>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>0.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
     <item row="1" column="2">
      <widget class="QDoubleSpinBox" name="rollNeutralBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
       <property name="decimals">
-       <number>4</number>
+       <number>0</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-128.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>127.000000000000000</double>
       </property>
       <property name="singleStep">
-       <double>0.010000000000000</double>
+       <double>1.000000000000000</double>
       </property>
      </widget>
     </item>
@@ -540,14 +615,20 @@ p, li { white-space: pre-wrap; }
     </item>
     <item row="5" column="2">
      <widget class="QDoubleSpinBox" name="yNeutralBox">
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+      <property name="suffix">
+       <string> rad</string>
+      </property>
       <property name="decimals">
        <number>4</number>
       </property>
       <property name="minimum">
-       <double>-1000.000000000000000</double>
+       <double>-10.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>1000.000000000000000</double>
+       <double>10.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.010000000000000</double>

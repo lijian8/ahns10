@@ -27,14 +27,17 @@ volatile enum FlightModes apMode;
 /** @name Roll Control Loop */
 volatile control_loop_t rollLoop;
 pthread_mutex_t rollLoopMutex;
+volatile int8_t apRoll;
 
 /** @name Pitch Control Loop */
 volatile control_loop_t pitchLoop;
 pthread_mutex_t pitchLoopMutex;
+volatile int8_t apPitch;
 
 /** @name Yaw Control Loop */
 volatile control_loop_t yawLoop;
 pthread_mutex_t yawLoopMutex;
+volatile int8_t apYaw;
 
 /** @name X Control Loop */
 volatile control_loop_t xLoop;
@@ -47,6 +50,7 @@ pthread_mutex_t yLoopMutex;
 /** @name Z Control Loop */
 volatile control_loop_t zLoop;
 pthread_mutex_t zLoopMutex;
+volatile int8_t apThrottle;
 
 uint8_t setAPConfig(const ap_config_t* const srcConfig)
 {
@@ -394,13 +398,29 @@ void* controlThread(void *pointer)
     /** @TODO input actual states*/
     // Update Guidance Loops
     updateControlLoop(&xLoop,0,0);
-    updateControlLoop(&yLoop,0,0);
-    updateControlLoop(&zLoop,0,0);
+    if (xLoop.active)
+    {
+      pitchLoop.reference = xLoop.output;
+    }
     
+    updateControlLoop(&yLoop,0,0);
+    if (yLoop.active)
+    {
+      rollLoop.reference = yLoop.output;
+    }
+
+    updateControlLoop(&zLoop,0,0);
+    apThrottle = zLoop.output;
+
     // Update Control Loops
     updateControlLoop(&rollLoop,0,0);
+    apRoll = rollLoop.output;
+
     updateControlLoop(&pitchLoop,0,0);
+    apPitch = pitchLoop.output;
+
     updateControlLoop(&yawLoop,0,0);
+    apYaw = yawLoop.output;
     
     // Determine AP Mode for MCU usage
     if (zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
