@@ -953,9 +953,9 @@ void TelemetryThread::retrySaveConfig()
 {
     AHNS_DEBUG("void TelemetryThread::retrySaveConfig()");
 
-    if ((!m_saveReceived) && (m_saveReceived < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
+    if ((!m_saveReceived) && (m_saveTryCount < (REPLY_TIMEOUT_MS/RETRY_TIME_MS)))
     {
-        m_saveReceived++;
+        m_saveTryCount++;
 
         // Send the Message
         sendMessage(SAVE_CONFIG);
