@@ -131,6 +131,7 @@ inline void CombineCommands()
       IndicateManual();
 
       // Pass through for use with gyro
+      // In this case gyro will do mixing
       ESC1_COUNTER = escLimits[0][ESC_MIN] + rcThrottle;
       ESC2_COUNTER = escLimits[1][ESC_MIN] + rcRoll;
       ESC3_COUNTER = escLimits[2][ESC_MIN] + rcPitch;
