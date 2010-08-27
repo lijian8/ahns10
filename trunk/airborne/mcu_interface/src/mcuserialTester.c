@@ -20,19 +20,27 @@
 
 char* mcu_serial_port;
 
-uint8_t flightMode = RC_NONE;
-uint16_t commandedEngine[4];
+uint8_t flightMode = AUTOPILOT;
+
 
 int8_t commandedThrottle = 0;
 int8_t commandedRoll = 0;
 int8_t commandedPitch = 0;
 int8_t commandedYaw = 0;
 
+int8_t readThrottle = 0;
+int8_t readRoll = 0;
+int8_t readPitch = 0;
+int8_t readYaw = 0;
+
+uint8_t readFlightMode = RC_NONE;
+uint16_t readEngine[4];
+
 
 int main(int argc, char* argv[])
 {
   mcu_serial_port = (char*) malloc(100*sizeof(char));
-  mcu_serial_port = "/dev/S0";
+  mcu_serial_port = "/dev/ttyUSB0";
 
   int c = 0;
   while ((c = getopt(argc, argv, "i:")) != -1)
@@ -59,113 +67,44 @@ int main(int argc, char* argv[])
   int8_t i = 0;
   while(1)
   { 
-    for (i = 0; i < 20; i = i + 4)
+    for (i = 0; i < 100; i = i + 4)
     {
-      usleep(5000);
+      usleep(5e3);
       commandedThrottle = i;
-      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      commandedRoll = i/5;
+      commandedPitch = i/4;
+      commandedYaw = i/2;
+      
+      // Test 2: Send High Level Commands
+      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) 
       {
       fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
       fprintf(stderr,"  Results: %d \t %d \t %d \t %d \t %d\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
       }
-      if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
-      {
-        fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
-      }
-      else
-      {
-        fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
-        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
-      }
-    }
-   
-    for (i = -20; i < 20; ++i)
-    {
-      usleep(1e6);
-      commandedRoll = i; 
-      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
-      {
-      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
-      fprintf(stderr,"  Results: %d \t %d \t %d \t %d \t %d\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
-      }
-      if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
-      {
-        fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
-      }
-      else
-      {
-        fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
-        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
-      }
-    }
     
-    commandedRoll = 0; 
-    for (i = -20; i < 20; ++i)
-    {
-      usleep(1e6);
-      commandedPitch = i;
-      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      // Test 3: Receive High Level Commands
+      if (!getMCUCommands(&readThrottle, &readRoll, &readPitch, &readYaw)) 
       {
-      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
-      fprintf(stderr,"  Results: %d \t %d \t %d \t %d \t %d\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
-      }
-      if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
-      {
-        fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
+        fprintf(stderr,"Test 3: Error - Get High Level Commands\n");
       }
       else
       {
-        fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
-        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
+        fprintf(stderr,"Test 3: Pass - Got High Level Commands\n");
+        fprintf(stderr,"  Results: %d \t %d \t %d \t %d\n",readThrottle, readRoll, readPitch, readYaw);
       }
-    }
 
-    commandedPitch = 0;
-    for (i = -20; i < 20; ++i)
-    {
-      usleep(1e6);
-      commandedYaw = i;
-      if (sendMCUCommands(&flightMode, &commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 2: High Level Commands
+      // Test 4: Receive Engine and Flight Mode
+      if (!getMCUPeriodic(&readFlightMode, readEngine)) 
       {
-      fprintf(stderr,"Test 2: Pass - Sent High Level Commands\n");
-      fprintf(stderr,"  Results: %d \t %d \t %d \t %d \t %d\n",flightMode,commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
-      }
-      if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
-      {
-        fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
+        fprintf(stderr,"Test 4: Error - Get Engine Commands\n");
       }
       else
       {
-        fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
-        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
+        fprintf(stderr,"Test 4: Pass - Got Engine Commands\n");
+        fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n", readFlightMode, readEngine[0], readEngine[1], readEngine[2], readEngine[3]);
       }
     }
-    commandedYaw = 0;
   }
-
-  /*while (1)
-  {
-    if (!getMCUPeriodic(&flightMode, commandedEngine)) // Test 3: Flight Mode and Engines
-    {
-      fprintf(stderr,"Test 3: Error - Unable to Get Mode and Engine Data\n");
-    }
-    else
-    {
-      fprintf(stderr,"Test 3: Pass - Got Mode and Engine Data\n");
-      fprintf(stderr,"  Results: %d \t %u \t %u \t %u \t %u\n",flightMode,commandedEngine[0],commandedEngine[1],commandedEngine[2], commandedEngine[3]);
-    }
-  usleep(0.5e6);
-  }
-  
-  if (!getMCUCommands(&commandedThrottle, &commandedRoll, &commandedPitch, &commandedYaw)) // Test 4: Rx High Level Commands
-  {
-    fprintf(stderr,"Test 4: Fail - Get High Level Commands\n");
-  }
-  else
-  {
-    fprintf(stderr,"Test 4: Pass - Get High Level Commands\n");
-    fprintf(stderr,"  Results: %u \t %u \t %u \t %u\n",commandedThrottle,commandedRoll,commandedPitch,commandedYaw);
-  }*/
   mcuCloseSerial();
   return 0;
 }

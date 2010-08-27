@@ -62,7 +62,7 @@ extern uint8_t InitialiseUSART();
 /**
  * @brief Transmit 8 bit Data on USART
  */
-extern void USARTtxData(unsigned char txData);
+extern void USARTtxData(volatile unsigned char txData);
 
 /**
  * @brief Transmit char on USART for use with printf
