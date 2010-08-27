@@ -26,30 +26,24 @@
 #define COMPASS_RX 11
 // compass baud rate
 #define COMPASS_BAUDRATE 38400
-// compass message length
-#define COMPASS_MSG_LEN 29
-// compass heading length
-#define COMPASS_HEADING_LEN 5
-// compass heading offset
-#define COMPASS_HEADING_OFFSET 2
 // overo baud rate
 #define OVERO_BAUDRATE 115200
 
 // software serial compass object
 NewSoftSerial compass(COMPASS_RX,COMPASS_TX);
-// compass buffer
-char compass_buffer[29];
-// buffer index
+// compass heading (0.0 - 359.9)
+char compass_heading[10];
+// compass index
 int compass_index = 0;
-// compass heading
-char compass_heading[5];
-// compass for loop variable
-int i = 0;
-// compass while loop variable
-int j = 0;
+// compss heading index
+int compass_heading_index = 0;
 
+// compass character
+char compass_char = 0;
 // overo command
 char overo_com = 0;
+// overo loop counter
+int i=0;
 
 // arduserial functions
 // read the serial compass data
@@ -74,35 +68,37 @@ void loop()
 }
 
 // read serial data transmitted from the compass
+// Compass sentence: $C256.3P-0.7R-178.5T25.5*29
 int readCompass()
 {
   if (compass.available() > 0)
   {
-    // add to character to compass buffer
-    compass_buffer[compass_index] = compass.read();
-    //Serial.print(compass_buffer[compass_index]);
-    compass_index++;
-    if (compass_index == COMPASS_MSG_LEN)
+    // read the compass character
+    compass_char = compass.read();
+    // check if a P has been received, terminate compass reading
+    if (compass_char == 'P')
     {
-      // compass packet has been received, update the heading
-      // search for the heading in the message (need to do this since the message can glitch
-      while (compass_buffer[j] != '$')
-      {
-        j++;
-      }
-      for(i=0; i<COMPASS_HEADING_LEN; i++)
-      {
-        compass_heading[i] = compass_buffer[COMPASS_HEADING_OFFSET+j+i];
-      }
-      // reset the indexes
-      compass_index = 0; 
-      j = 0;
+     compass_heading_index = compass_index-2;
+     compass_index = 0; 
     }
+    // if the index is equal or greater than 2 then receiving compass heading
+    if (compass_index >= 2)
+    {
+      compass_heading[compass_index-2] = compass_char;
+      compass_index++;
+    }
+    // check if a $ has been received
+    if (compass_char == '$')
+    {
+      compass_index++;
+    }
+    // check if a C has been received and that a $ has been received
+    if (compass_char == 'C' && compass_index == 1)
+    {
+      compass_index++;
+    }    
   }
 }
-
-//$C256.3P-0.7R-178.5T25.5*29
-
 
 // read serial data transmitted from the overo and reply with suitable response
 int readOvero()
@@ -112,12 +108,10 @@ int readOvero()
     overo_com = Serial.read();
     if (overo_com == 'C')
     {
-      // print the compass heading
-      for(i=0; i<COMPASS_HEADING_LEN; i++)
+      for(i=0; i<compass_heading_index; i++)
       {
-        Serial.print(compass_heading[i]);
-      }
+        Serial.print(compass_heading[i],BYTE);
+      }     
     }
   } 
-  
 }
