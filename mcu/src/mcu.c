@@ -49,22 +49,16 @@ int main (void)
   uint8_t inputsInitialised = 0;
   StopPWM();
   init();
-  #ifdef DEBUG
-  stdout = &debugOut;
-  printf("System Initialised\n");
-  #endif
   sei();
-  _delay_ms(250);
-
 
   // Initialise and detect the Inputs
   uint8_t loopCount = 0;
-  do 
+  /*do 
   {
     loopCount++;
     ToggleRed(TOGGLE);
     _delay_ms(250);
-    if (inputChannel[inputsInitialised].measuredPulseWidth < (PC_PWM_MIN + PULSE_TOLERANCE))
+    if ((inputChannel[inputsInitialised].measuredPulseWidth < (PC_PWM_MIN + PULSE_TOLERANCE)) && (inputChannel[inputsInitialised].measuredPulseWidth != 0))
     {
       inputsInitialised++;
     }
@@ -74,6 +68,11 @@ int main (void)
       inputsInitialised = 0;
     }
   } while (inputsInitialised < NUM_CHANNELS);
+  */
+  #ifdef DEBUG
+  stdout = &debugOut;
+  //printf("System Initialised\n");
+  #endif
 
   // Calibrate Neutral Pulse Widths
   _delay_ms(1000);

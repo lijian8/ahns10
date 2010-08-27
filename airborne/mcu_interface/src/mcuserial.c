@@ -26,8 +26,6 @@ static struct termios currentSerialPort, previousSerialPort;
 // specified serial port
 static int fd = 0;
 
-const int tempOffset = 80;
-
 /**
   * @brief Close the serial connection to the IMU
   */
@@ -69,7 +67,7 @@ inline int mcuOpenSerial(const char* serialPort, const int baudRate)
   memset(&currentSerialPort, 0, sizeof(currentSerialPort));
   
   // set the baud rate, 8N1, enable the receiver, set local mode, no parity
-  currentSerialPort.c_cflag = baudRate | CS8 | CLOCAL | CREAD | CSTOPB;
+  currentSerialPort.c_cflag = baudRate | CS8 | CLOCAL | CREAD;
   // ignore parity errors
   currentSerialPort.c_iflag = IGNPAR;
   currentSerialPort.c_oflag = 0;
@@ -97,12 +95,10 @@ inline int mcuOpenSerial(const char* serialPort, const int baudRate)
  */
 inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
 {
-  const int bufferSize = 7;
-  int packetEnd = 6, packetStart = 0;
+  const int bufferSize = 5;
   int returnValue = 0;
-  int i = 0;
   unsigned char buffer[bufferSize];
-
+  
   // Query MCU
   buffer[0] = FRAME_CHAR;
   buffer[1] = GET_MCU_PERIODIC;  
@@ -110,12 +106,6 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
 
   if (write(fd,buffer,3)) //write success
   {
-    // Read Periodic
-    /*do
-    {
-      ioctl(fd, FIONREAD, &packetStart);
-    } while(packetStart < sizeof(buffer));
-   */
     usleep(MCU_DELAYRDWR);
     if(!read(fd,buffer,sizeof(buffer)))  
     {
@@ -123,31 +113,12 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
     }
     else
     {
-      // Find the frame chars in the buffer
-      /*for (i = bytesReceived - 1; i >= 0; --i)
-      {
-        if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0))
-        {
-          packetEnd = i;
-        }
-        else if (buffer[i] == FRAME_CHAR)
-        {
-          packetStart = i;
-        }
-      }*/
-      if (buffer[packetStart] == buffer[packetEnd])
-      {
-	*flightMode = buffer[packetStart + 1];
-        commandedEngine[0] = CounterToPWM(buffer[packetStart + 2]);
-        commandedEngine[1] = CounterToPWM(buffer[packetStart + 3]);
-        commandedEngine[2] = CounterToPWM(buffer[packetStart + 4]);
-        commandedEngine[3] = CounterToPWM(buffer[packetStart + 5]);
-        returnValue = 1;
-      }
-      else
-      {
-        fprintf(stderr,"MCU periodic buffer failed\n%i,%i\n",buffer[0],buffer[6]);
-      }
+      *flightMode = buffer[0];
+      commandedEngine[0] = CounterToPWM(buffer[1]);
+      commandedEngine[1] = CounterToPWM(buffer[2]);
+      commandedEngine[2] = CounterToPWM(buffer[3]);
+      commandedEngine[3] = CounterToPWM(buffer[4]);
+      returnValue = 1;
     }
   }
   return returnValue;
@@ -164,8 +135,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
  */
 inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8_t *commandedPitch, int8_t *commandedYaw)
 {
-  const int bufferSize = 6;
-  int bytesReceived = 0, packetEnd = 0, packetStart = 5;
+  const int bufferSize = 4;
   int returnValue = 0;
   int i = 0;
   unsigned char buffer[bufferSize];
@@ -177,44 +147,18 @@ inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8
 
   if (write(fd,buffer,3)) //write success
   {
-    // Read Periodic
-    /*do
-    {
-      ioctl(fd, FIONREAD, &packetStart);
-    } while(packetStart < sizeof(buffer));
-   */
     usleep(MCU_DELAYRDWR);
-    bytesReceived = read(fd,buffer,sizeof(buffer));  
-    if(!bytesReceived)
+    if(!read(fd,buffer,sizeof(buffer))) 
     {
       fprintf(stderr,"MCU get commands read failed\n");
     }
     else
     {
-      // Find the frame chars in the buffer
-    /*for (i = bytesReceived - 1; i >= 0; --i)
-      {
-        if ((buffer[i] == FRAME_CHAR) && (packetEnd == 0))
-        {
-          packetEnd = i;
-        }
-        else if (buffer[i] == FRAME_CHAR)
-        {
-          packetStart = i;
-        }
-      }*/
-      if (buffer[packetStart] == buffer[packetEnd])
-      {
-	*commandedThrottle = buffer[packetStart + 1];
-	*commandedRoll = buffer[packetStart + 2];
-	*commandedPitch = buffer[packetStart + 3];
-	*commandedYaw = buffer[packetStart + 4];
+	*commandedThrottle = buffer[0];
+	*commandedRoll = buffer[1];
+	*commandedPitch = buffer[2];
+	*commandedYaw = buffer[3];
         returnValue = 1;
-      }
-      else
-      {
-        fprintf(stderr,"MCU get commands buffer failed\n%i,%i\n",buffer[0],buffer[6]);
-      }
     }
   }
   return returnValue;

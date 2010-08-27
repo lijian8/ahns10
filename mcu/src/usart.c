@@ -51,7 +51,7 @@ uint8_t InitialiseUSART()
   // UPM0_10 = 00 for No Parity
   // USBS0 = 1 for 2 Stop Bit
   // UCSZ0_210 = 011 for 8 bit data
-  UCSR0C = (0 << UPM01) | (0 << UPM00) | (0 << USBS0) | (1 << UCSZ01) | (1 << UCSZ00) | (1 << USBS0);
+  UCSR0C = (0 << UPM01) | (0 << UPM00) | (1 << UCSZ01) | (1 << UCSZ00) | (0 << USBS0);
 
   // Usart Baud Rate Register
   // 8 for 57600 @ 8 MHz
@@ -76,7 +76,7 @@ void USARTtxChar(char txChar, FILE *outStream)
   return;
 }
 
-void USARTtxData(unsigned char txChar)
+void USARTtxData(volatile unsigned char txChar)
 {
   while (!BRS(UCSR0A,UDRE0)); // TODO wait with interrupt
   UDR0 = txChar;
@@ -100,6 +100,7 @@ ISR(USART_RX_vect)
   switch (rxState)
   {
     case HEADER_SYNC: // wait for header sync char
+      tempHeader = 255;
       if (tempData == FRAME_CHAR)
       {
         rxState = HEADER_TYPE;
@@ -140,20 +141,12 @@ ISR(USART_RX_vect)
       }
       else // header not valid
       {
-	tempHeader = 255;
         rxState = HEADER_SYNC;
       }
       break;
     case RX_MODE:
-      if ((tempData == MANUAL_DEBUG) || (tempData == AUGMENTED) || (tempData == AUTOPILOT))
-      {
-	tempMode = tempData;
-        rxState = RX_THROTTLE;
-      }
-      else
-      {
-        rxState = HEADER_SYNC;
-      }
+      tempMode = tempData;
+      rxState = RX_THROTTLE;
       break;
     case RX_THROTTLE:
       tempThrottle = tempData;
@@ -189,31 +182,15 @@ ISR(USART_RX_vect)
 
 inline void USARTtxCommands()
 {
-  // Frame
-  USARTtxData(FRAME_CHAR);
-
-  // Throttle
   USARTtxData(commandedThrottle);
-  
-  // Roll
   USARTtxData(commandedRoll);
-
-  // Pitch
   USARTtxData(commandedPitch);
-
-  // Yaw
   USARTtxData(commandedYaw);
-
-  // End Frame
-  USARTtxData(FRAME_CHAR);
-  return;
 }
 
 inline void USARTtxPeriodic()
 {
   volatile unsigned char tempEngine = 0;
-
-  USARTtxData(FRAME_CHAR);
 
   USARTtxData(flightMode);
   tempEngine = ESC1_COUNTER;
@@ -228,6 +205,5 @@ inline void USARTtxPeriodic()
   tempEngine = ESC4_COUNTER;
   USARTtxData(tempEngine);
 
-  USARTtxData(FRAME_CHAR);
   return;
 }

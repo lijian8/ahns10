@@ -28,10 +28,10 @@
 #include <stdint.h>
 
 /** MCU baud rate */
-#define MCU_BAUD_RATE B38400
+#define MCU_BAUD_RATE B57600
 
 /** Delay between serial write and serial read (microseconds) */
-#define MCU_DELAYRDWR 1500
+#define MCU_DELAYRDWR 1000
 
 int mcuOpenSerial(const char* serialPort, const int baudRate);
 int mcuCloseSerial();

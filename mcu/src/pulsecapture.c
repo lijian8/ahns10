@@ -86,8 +86,8 @@ inline void UpdateRC()
   static int8_t index = 0;
   
   // Map Input Channels to RC Channel
-  uint16_t armPulse = inputChannel[CHANNEL1].measuredPulseWidth; // mode pulse
-  uint16_t modePulse = inputChannel[CHANNEL2].measuredPulseWidth;
+  uint16_t armPulse = inputChannel[CHANNEL2].measuredPulseWidth; // mode pulse
+  uint16_t modePulse = inputChannel[CHANNEL1].measuredPulseWidth;
   uint16_t yawPulse = inputChannel[CHANNEL3].measuredPulseWidth;
   uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
   uint16_t rollPulse = inputChannel[CHANNEL5].measuredPulseWidth;
@@ -131,9 +131,9 @@ inline void UpdateRC()
   }
   else 
   {
-    rcRoll = PWMToCounter(-(rollPulse - zeroRoll));
-    rcPitch = PWMToCounter(-(pitchPulse - zeroPitch));
-    rcYaw = PWMToCounter(yawPulse - zeroYaw);
+    rcRoll = PWMToCounter((rollPulse - zeroRoll));
+    rcPitch = PWMToCounter((pitchPulse - zeroPitch));
+    rcYaw = PWMToCounter(-(yawPulse - zeroYaw));
   }
   
   if (++index == SWITCH_HISTORY_SIZE)
