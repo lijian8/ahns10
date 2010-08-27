@@ -98,7 +98,7 @@ inline int mcuOpenSerial(const char* serialPort, const int baudRate)
 inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
 {
   const int bufferSize = 7;
-  int bytesReceived = 0, packetEnd = 6, packetStart = 0;
+  int packetEnd = 6, packetStart = 0;
   int returnValue = 0;
   int i = 0;
   unsigned char buffer[bufferSize];
@@ -117,8 +117,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
     } while(packetStart < sizeof(buffer));
    */
     usleep(MCU_DELAYRDWR);
-    bytesReceived = read(fd,buffer,sizeof(buffer));  
-    if(!bytesReceived)
+    if(!read(fd,buffer,sizeof(buffer)))  
     {
       fprintf(stderr,"MCU get periodic read failed\n");
     }
