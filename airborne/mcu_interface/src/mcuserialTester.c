@@ -32,7 +32,7 @@ int8_t commandedYaw = 0;
 int main(int argc, char* argv[])
 {
   mcu_serial_port = (char*) malloc(100*sizeof(char));
-  mcu_serial_port = "/dev/ttyUSB0";
+  mcu_serial_port = "/dev/S0";
 
   int c = 0;
   while ((c = getopt(argc, argv, "i:")) != -1)
