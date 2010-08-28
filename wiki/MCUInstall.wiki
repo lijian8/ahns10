@@ -7,5 +7,5 @@ Logout to apply or use {{{ source .profile }}}
 
 * Shared MCU/FC Interface Path *
   {{{
-    export MCU_INTERFACE="${HOME}/ahns/trunk/airborne/mcu_interface"
+    export MCU_INTERFACE="${HOME}/ahns10/trunk/airborne/mcu_interface"
   }}}
