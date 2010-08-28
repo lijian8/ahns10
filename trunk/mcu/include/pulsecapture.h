@@ -35,8 +35,8 @@ extern const uint8_t PC_DT_US;
 
 /** @name RC Input Pulse Widths */
 #define PC_PWM_MAX 2000
-#define PC_PWM_MIN 900
-#define PULSE_TOLERANCE 600
+#define PC_PWM_MIN 1000
+#define PULSE_TOLERANCE 500
 
 /** @name Pulses corresponding to zero inputs */
 extern uint16_t zeroThrottle;
