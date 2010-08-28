@@ -7,12 +7,12 @@
 #define SERVER_DELAY 10
 
 // arduino serial port
-#define ARDU_SERIAL_PORT "/dev/ttyUSB1"
+#define ARDU_SERIAL_PORT "/dev/ttyUSB0"
 // compass read delay (milliseconds)
 #define COMPASS_DELAY 1
 
 // IMU serial port
-#define IMU_SERIAL_PORT "/dev/ttyUSB0"
+#define IMU_SERIAL_PORT "/dev/ttyS1"
 // IMU read delay(milliseconds)
 #define IMU_DELAY 1
 
