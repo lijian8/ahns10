@@ -35,14 +35,15 @@ LD = $(CC)
 LIBDIR = ../network/udp
 ARDUDIR = ../arduserial
 IMUDIR = ../imu
+KFDIR = ../kf
 
 CFLAGS = -O2  
-LDFLAGS = -L./ -L$(LIBDIR) -lstate -lm -pthread
+LDFLAGS = -L./ -L$(LIBDIR) -lstate -lm -pthread -lgsl -lgslcblas
 LIB = libstate.a
 
 SRCS = src/main.c
-OBJS = obj/main.o $(ARDUDIR)/obj/arduserial.o $(IMUDIR)/obj/imuserial.o
-INC = -I $(HELICONNECT) -I include -I $(LIBDIR) -I $(ARDUDIR)/include -I $(IMUDIR)/include
+OBJS = obj/main.o $(ARDUDIR)/obj/arduserial.o $(IMUDIR)/obj/imuserial.o $(KFDIR)/obj/kf.o
+INC = -I $(HELICONNECT) -I include -I $(LIBDIR) -I $(ARDUDIR)/include -I $(IMUDIR)/include -I $(KFDIR)/include
 
 SERVER = main
 
