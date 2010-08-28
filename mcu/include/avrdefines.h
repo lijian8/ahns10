@@ -17,7 +17,7 @@
 #define AVRDEFINES_H
 
 /** Build in debug Mode */
-#define DEBUG 
+//#define DEBUG 
 
 /** Boolian Defines */
 #define TRUE 1

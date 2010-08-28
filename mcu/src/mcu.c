@@ -53,7 +53,7 @@ int main (void)
 
   // Initialise and detect the Inputs
   uint8_t loopCount = 0;
-  /*do 
+  do 
   {
     loopCount++;
     ToggleRed(TOGGLE);
@@ -68,10 +68,9 @@ int main (void)
       inputsInitialised = 0;
     }
   } while (inputsInitialised < NUM_CHANNELS);
-  */
   #ifdef DEBUG
   stdout = &debugOut;
-  //printf("System Initialised\n");
+  printf("System Initialised\n");
   #endif
 
   // Calibrate Neutral Pulse Widths

@@ -123,7 +123,7 @@ static const double rcControlSplit = 0.5;
 inline void CombineCommands()
 {
   // Flight Mode Choice limited to RC
-  flightMode = apMode;
+  flightMode = rcMode;
   
   switch (flightMode)
   {
@@ -171,7 +171,7 @@ inline void CombineCommands()
       commandedYaw = controlFactor*apYaw;
       
       // Give RC Complete Control on some Commands
-      //GiveRC(); 
+      GiveRC(); 
 
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
       break;
