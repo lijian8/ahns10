@@ -41,7 +41,7 @@ const int tempOffset = 80;
 /**
   * @brief Open the serial connection to the IMU
   */
-int openSerial(char* serialPort, int baudRate)
+int openIMUSerial(char* serialPort, int baudRate)
 {
 
   // open the specified serial port
@@ -59,7 +59,7 @@ int openSerial(char* serialPort, int baudRate)
   if(tcgetattr(fd, &previousSerialPort)==-1)
   {
     // failed to read the serial port settings
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
   // create a new memory structure for the port settings
@@ -77,7 +77,7 @@ int openSerial(char* serialPort, int baudRate)
   if((tcsetattr(fd, TCSANOW, &currentSerialPort))==-1)
   {
     // failed to apply port settings
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
   // succesfully opened the port
@@ -87,7 +87,7 @@ int openSerial(char* serialPort, int baudRate)
 /**
   * @brief Close the serial connection to the IMU
   */
-int closeSerial()
+int closeIMUSerial()
 {  
   close(fd);
   tcsetattr(fd, TCSANOW, &previousSerialPort);
@@ -123,16 +123,16 @@ int setBaudRate(int baudRate)
   if (!write(fd,sCmd,6))
   {
     printf("Write failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
-  usleep(DELAYRDWR);
+  usleep(IMU_DELAYRDWR);
   // read the result
   unsigned char sResult[6];
   if(!read(fd,sResult,5))
   {
     printf("Read failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
   // terminate with null character
@@ -151,16 +151,16 @@ int readCRBData(unsigned char reg)
   if (!write(fd,sCmd,6))
   {
     printf("Write failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
-  usleep(DELAYRDWR);
+  usleep(IMU_DELAYRDWR);
   // read the reg value returned
   unsigned char sResult[5];
   if(!read(fd,sResult,4))
   {
     printf("Read failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
   // terminate with null character
@@ -179,16 +179,16 @@ int setCRBData(unsigned char reg, unsigned char value1, unsigned char value2)
   if (!write(fd,sCmd,8))
   {
     printf("Write failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
-  usleep(DELAYRDWR);
+  usleep(IMU_DELAYRDWR);
   // read the reg value returned
   unsigned char sResult[6];
   if(!read(fd,sResult,5))
   {
     printf("Read failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
   // terminate with null character
@@ -207,16 +207,16 @@ int getImuSensorData(double *rateXd, double *rateYd, double *rateZd, double *acc
   if(!write(fd,sCmd,7))
   {
     printf("Write failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
 
   unsigned char sResult[50];
-  usleep(DELAYRDWR);
+  usleep(IMU_DELAYRDWR);
   if(!read(fd,sResult,49))
   {
     printf("Read failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
   // calculate the CRC value
@@ -270,7 +270,7 @@ int startFreeRunningMode()
   if(!write(fd,sCmd,7))
   {
     printf("Write failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
   return 1;
@@ -286,16 +286,16 @@ int stopFreeRunningMode()
   if(!write(fd,sCmd,7))
   {
     printf("Write failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
-  usleep(DELAYRDWR);
+  usleep(IMU_DELAYRDWR);
   // read the result
   unsigned char sResult[6];
   if(!read(fd,sResult,5))
   {
     printf("Read failed\n");
-    closeSerial();
+    closeIMUSerial();
     return 0;
   }
   // terminate with null character

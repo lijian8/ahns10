@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     }
   }
   // Test 1: open the IMU serial port
-  if (!openSerial(imu_serial_port, BAUD_RATE_DEFAULT))
+  if (!openIMUSerial(imu_serial_port, IMU_BAUD_RATE_DEFAULT))
   {
     fprintf(stderr,"Test 1: Error - Cannot connect to IMU\n");
     return -1;
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
       printf("%f,%f,%f,%f,%f,%f\n", state.p, state.q, state.r, state.ax, state.ay, state.az);
     }
   // Close the IMU serial port
-  closeSerial();
+  closeIMUSerial();
   printf("Disconnected from IMU\n");
   return 0;
 }
