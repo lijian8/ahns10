@@ -40,7 +40,7 @@ unsigned char init = 1;
 struct timeval timestamp, local_time;
 
 char* mcu_serial_port;
-enum FlightModes flightMode = RC_NONE;
+uint8_t flightMode = 0;
 
 
 int
