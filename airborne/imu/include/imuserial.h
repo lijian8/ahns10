@@ -28,8 +28,8 @@
 #define IMU_BAUD_RATE_DEFAULT B38400
 // IMU baud rate
 #define IMU_BAUD_RATE B115200
-// Delay between serial write and serial read (microseconds)
-#define IMU_DELAYRDWR 20000
+// Delay between serial write and serial read (microseconds) (20000 = 38400)
+#define IMU_DELAYRDWR 10000
 
 int openIMUSerial(char* serialPort, int baudRate);
 int closeIMUSerial();

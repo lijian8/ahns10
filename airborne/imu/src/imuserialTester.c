@@ -28,7 +28,7 @@ int main(int argc, char* argv[])
   // allocate state memory
   memset((void *)(&state), 0, sizeof(state_t));
   // default imu serial port
-  imu_serial_port = "/dev/ttyUSB0";
+  imu_serial_port = "/dev/ttyS1";
   // parse the inputs
   int c = 0;
   while((c = getopt(argc, argv, "i:")) != -1)
