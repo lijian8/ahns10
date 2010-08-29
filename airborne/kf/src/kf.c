@@ -168,7 +168,7 @@ int attitudeFilterInitialise()
 }
 
 //filtered values
-int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *phif, double *thetaf, double *psif, double diffTime)
+int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *phif, double *thetaf, double *psif, double compass, double diffTime)
 {
   // signum
   int s = 0;
@@ -176,12 +176,13 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   gsl_matrix_set_zero(state_u);
   gsl_matrix_set(state_u,0,0,*rateXd);
   gsl_matrix_set(state_u,1,0,*rateYd);
-  gsl_matrix_set(state_u,2,0,*rateZd);
+  gsl_matrix_set(state_u,2,0,*rateZd*-1);
   // allocate values for (y) -> this is the atan2 reading
   gsl_matrix_set_zero(state_y);
   gsl_matrix_set(state_y,0,0,(atan2(*accYd,sqrt(*accXd * *accXd + *accZd * *accZd)) * 180/M_PI)); // phi measurement
   gsl_matrix_set(state_y,1,0,(-1*atan2(*accXd,sqrt(*accYd* *accYd + *accZd * *accZd)) * 180/M_PI)); // theta measurement
-  gsl_matrix_set(state_y,2,0,(atan2(sqrt(*accXd * *accXd + *accYd * *accYd),*accZd) * 180/M_PI)); // psi measurement
+  //gsl_matrix_set(state_y,2,0,(atan2(sqrt(*accXd * *accXd + *accYd * *accYd),*accZd) * 180/M_PI)); // psi measurement
+  gsl_matrix_set(state_y,2,0,compass);
 
   // allocate values for (a) -> change diff time
   gsl_matrix_set_identity(state_a);
@@ -255,12 +256,12 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   // allocate filtered state values (degrees)
   //*thetaf = gsl_matrix_get(state_x_previous,0,0);//
   //*phif = gsl_matrix_get(state_x_previous,2,0);//
-  //*psif = gsl_matrix_get(state_x_previous,4,0);//
+  *psif = gsl_matrix_get(state_x_previous,4,0);//
 
   // allocate filtered state values (radians)
-  *thetaf = gsl_matrix_get(state_x_previous,0,0) * M_PI/180;
-  *phif = gsl_matrix_get(state_x_previous,2,0) * M_PI/180;
-  *psif = gsl_matrix_get(state_x_previous,4,0) * M_PI/180;
+  *phif = gsl_matrix_get(state_x_previous,0,0) * M_PI/180;
+  *thetaf = gsl_matrix_get(state_x_previous,2,0) * M_PI/180;
+  //*psif = gsl_matrix_get(state_x_previous,4,0) * M_PI/180;
   return 1;
 }
 

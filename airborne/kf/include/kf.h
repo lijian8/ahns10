@@ -29,6 +29,6 @@
 
 // function defintions
 int attitudeFilterInitialise();
-int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *phif, double *thetaf, double *psif, double diffTime);
+int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *phif, double *thetaf, double *psif, double compass, double diffTime);
 
 #endif
