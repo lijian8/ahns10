@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
   // default server host
   server_host = "127.0.0.1";
   // default imu serial port
-  imu_serial_port = "/dev/ttyUSB0";
+  imu_serial_port = "/dev/ttyS1";
 
   while((c = getopt(argc, argv, "i:s:p:v")) != -1)
   {
@@ -251,7 +251,8 @@ int main(int argc, char *argv[])
 
       state.y = atan2(raw_IMU.ay,sqrt(raw_IMU.ax * raw_IMU.ax + raw_IMU.az * raw_IMU.az)) * 180/PI;
       state.x = atan2(-1*raw_IMU.ax,sqrt(raw_IMU.ay * raw_IMU.ay + raw_IMU.az * raw_IMU.az)) * 180/PI;
-      state.z = atan2(sqrt(raw_IMU.ax * raw_IMU.ax + raw_IMU.ay * raw_IMU.ay),raw_IMU.az) * 180/PI;
+      state.z = 0;
+      //state.z = atan2(sqrt(raw_IMU.ax * raw_IMU.ax + raw_IMU.ay * raw_IMU.ay),raw_IMU.az) * 180/PI;
 
       // invert theta angle and theta rate
       state.theta = state.theta * -1;
@@ -418,8 +419,8 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   //gsl_matrix_set(state_y,2,0,0); // psi measurement
   gsl_matrix_set(state_y,0,0,(atan2(*accYd,sqrt(*accXd * *accXd + *accZd * *accZd)) * 180/PI));
   gsl_matrix_set(state_y,1,0,(-1*atan2(*accXd,sqrt(*accYd* *accYd + *accZd * *accZd)) * 180/PI));
-  gsl_matrix_set(state_y,2,0,(atan2(sqrt(*accXd * *accXd + *accYd * *accYd),*accZd) * 180/PI));
-
+  //gsl_matrix_set(state_y,2,0,(atan2(sqrt(*accXd * *accXd + *accYd * *accYd),*accZd) * 180/PI));
+  gsl_matrix_set(state_y,2,0,0);
   // allocate values for (a) -> change diff time
   gsl_matrix_set_identity(state_a);
   gsl_matrix_set(state_a,0,1,-1*diffTime);
