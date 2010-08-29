@@ -37,6 +37,6 @@ int mcuOpenSerial(const char* serialPort, const int baudRate);
 int mcuCloseSerial();
 int getMCUPeriodic(uint8_t* flightMode, uint16_t* commandedEngine);
 int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8_t *commandedPitch, int8_t *commandedYaw);
-int sendMCUCommands(const uint8_t *flightMode, const int8_t *commandedThrottle, const int8_t *commandedRoll, const int8_t *commandedPitch, const int8_t *commandedYaw);
+int sendMCUCommands(const volatile uint8_t *flightMode, const volatile int8_t *commandedThrottle, const volatile int8_t *commandedRoll, const volatile int8_t *commandedPitch, const volatile int8_t *commandedYaw);
 
 #endif

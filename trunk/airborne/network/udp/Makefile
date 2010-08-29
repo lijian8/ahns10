@@ -9,22 +9,30 @@
 CC = gcc 
 LD = $(CC)
 
+LIBSTATE = libstate.a 
+CONTROLDIR = ../../control
+CONTROL = $(CONTROLDIR)/obj/control.o
+
 CFLAGS = -O2
 LDFLAGS =  -L./ -lstate -lm
-INCDIR = -I $(HELICONNECT) -I $(MCU_INTERFACE)/include
+INCDIR = -I $(CONTROLDIR)/include -I $(HELICONNECT) -I $(MCU_INTERFACE)/include -I include/
 
-SRCS = control.c client.c server.c $(HELICONNECT)/state.c udp.c $(HELICONNECT)/primitive_serialisation.c
-INCLUDES = control.h server.h $(HELICONNECT)/state.h udp.h commands.h $(HELICONNECT)/primitive_serialisation.h
-OBJS = control.o client.o server.o $(HELICONNECT)/state.o udp.o $(HELICONNECT)/primitive_serialisation.o
-LIBSTATE= libstate.a 
-all:  $(LIBSTATE)
+SRCS = control.c src/client.c src/server.c $(HELICONNECT)/state.c src/udp.c $(HELICONNECT)/primitive_serialisation.c
+OBJS = $(CONTROL) obj/client.o obj/server.o $(HELICONNECT)/state.o obj/udp.o $(HELICONNECT)/primitive_serialisation.o
 
-%.o: %.c
+obj/%.o: src/%.c
 	$(CC) -O2 -c $< $(CFLAGS) -o $@ $(INCDIR)
 
 $(LIBSTATE): $(OBJS)
 	ar -cr $(LIBSTATE) $(OBJS)
 	ranlib $(LIBSTATE)
 
+$(CONTROL):
+	cd $(CONTROLDIR); make
+
+.PHONY: all clean
+
+all:  clean $(CONTROL) $(LIBSTATE)
+
 clean:
-	rm -f *.o client server *~ *.a
+	rm -f $(OBJS) client server src/*~ *.a

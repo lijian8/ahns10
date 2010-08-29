@@ -16,9 +16,13 @@
 // IMU read delay(milliseconds)
 #define IMU_DELAY 0.1
 
+// MCU serial port
+#define MCU_SERIAL_PORT "/dev/ttyS0"
+// MCU delay (milliseconds)
+#define MCU_DELAY 5
 
-
-
+// Control delay (milliseconds)
+#define CONTROL_DELAY 2.5
 
 
 

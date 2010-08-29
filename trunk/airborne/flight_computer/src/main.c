@@ -21,6 +21,8 @@
 #include "imuserial.h"
 #include "arduserial.h"
 #include "kf.h"
+#include "control.h"
+#include "mcuserial.h"
 
 // udp server
 static Server server;
@@ -30,6 +32,10 @@ state_t state;
 sensor_data_t raw_IMU;
 // compass heading
 double compass_heading = 0;
+// flight computer + engine state
+fc_state_t fcState;
+
+pthread_mutex_t fcMut = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
@@ -41,6 +47,8 @@ int mcuInit();
 void * sendUDPData(void *pointer);
 void * updateIMUdata(void *pointer);
 void * updateCompassHeading(void *pointer);
+void * updateMCU(void *pointer);
+void * updateControl(void *pointer);
 
 int main(int argc, char *argv[])
 {
@@ -62,18 +70,31 @@ int main(int argc, char *argv[])
     pthread_t udpThread;
     pthread_t imuThread;
     pthread_t arduThread;
+    pthread_t mcuThread;
+    pthread_t controlThread;
+
     // create the server thread
     pthread_create(&udpThread, NULL, sendUDPData, (int*) 1);
     // create the imu thread
     pthread_create(&imuThread, NULL, updateIMUdata, (int*) 3);
     // create the arduino thread
     pthread_create(&arduThread, NULL, updateCompassHeading, (int*) 3);
+    //create the mcu thread
+    pthread_create(&mcuThread, NULL, updateMCU, (int*) 4);
+    //create the control thread
+    pthread_create(&controlThread, NULL, updateControl, (int*) 4);
+
     // execute the udp server thread
     pthread_join(udpThread,NULL);
     // execute the state thread
     pthread_join(imuThread,NULL);
     // execute the compass thread
     pthread_join(arduThread,NULL);
+    // execute the mcu thread
+    pthread_join(mcuThread,NULL);
+    // execute the control thread
+    pthread_join(controlThread,NULL);
+   
   }
   return 0;
 }
@@ -167,8 +188,16 @@ int sensorInit()
 // initialise connection to the MCU
 int mcuInit()
 {
-  printf(">> MCU connected \n");
-  return 1;
+  int retValue = 0;
+  retValue = mcuOpenSerial(MCU_SERIAL_PORT,MCU_BAUD_RATE); 
+  if (retValue)
+  {
+    printf(">> MCU connected \n");
+  } else
+    {
+      printf(">> Error: Cannot connect to MCU on serial port: %s\n",MCU_SERIAL_PORT);
+    }
+  return retValue;
 }
 
 // send the UDP data packets to clients
@@ -220,6 +249,12 @@ void * sendUDPData(void *pointer)
       // send the raw sensor data packet
       dataLength = PackSensorData(buffer, &raw_IMU);
       server_send_packet(&server, SENSOR_DATA, buffer, dataLength);
+      // send the fc state packet
+      pthread_mutex_lock(&fcMut);
+      dataLength = PackFCState(buffer,&fcState);
+      pthread_mutex_unlock(&fcMut);
+      server_send_packet(&server, FC_STATE, buffer, dataLength);
+      
       init = 0;
       // reinitialise startTime
       gettimeofday(&timestamp, NULL); 
@@ -229,3 +264,263 @@ void * sendUDPData(void *pointer)
   return NULL;
 }
 
+void* updateMCU(void *pointer)
+{
+  uint8_t mcuMode = 0;
+  uint16_t readEngine[4];
+  int count = 0;
+  while (1)
+  {
+    // Send Data
+    pthread_mutex_lock(&apMutex);
+    sendMCUCommands(&apMode, &apThrottle, &apRoll, &apPitch, &apYaw);
+    pthread_mutex_unlock(&apMutex);
+    
+    // Receive Data
+    getMCUPeriodic(&mcuMode,readEngine);
+    pthread_mutex_lock(&fcMut);
+    if (mcuMode == FAIL_SAFE)
+    {
+      fcState.rclinkActive = 0;
+    }
+    else
+    {
+      fcState.rclinkActive = 1;
+    }
+    fcState.commandedEngine1 = readEngine[0];
+    fcState.commandedEngine2 = readEngine[1];
+    fcState.commandedEngine3 = readEngine[2];
+    fcState.commandedEngine4 = readEngine[3];
+    pthread_mutex_unlock(&fcMut);
+    
+    count++;
+    usleep(MCU_DELAY*1e3);
+  }
+  
+  return NULL;
+}
+
+void* updateControl(void *pointer)
+{ 
+  // initialise gains and parameters from files
+  int i = 0, j = 0;
+  FILE *gainsfd = fopen("gains.ahnsgains","r");
+  double gains[6][3];
+  FILE *parametersfd =  fopen("parameters.ahnsparameters","r");
+  double parameters[6][3];
+  
+  if (gainsfd && parametersfd)
+  { 
+    for (i = 0; i < 6; ++i)
+    {
+      for (j = 0; j < 3; ++j)
+      {
+        fscanf(gainsfd, "%lf", &gains[i][j]);
+        fscanf(parametersfd, "%lf", &parameters[i][j]);
+      }
+    }
+  }
+  else
+  {
+    fprintf(stderr,"void* controlThread(void *pointer) :: FILE OPEN FAILED");
+    for (i = 0; i < 6; ++i)
+    {
+      for (j = 0; j < 3; ++j)
+      {
+        gains[i][j] = 0.0;
+        parameters[i][j] = 0.0;
+      }
+    }
+  }
+  
+  rollLoop.maximum = parameters[0][0];
+  rollLoop.neutral = parameters[0][1];
+  rollLoop.minimum = parameters[0][2];
+
+  pitchLoop.maximum = parameters[1][0];
+  pitchLoop.neutral = parameters[1][1];
+  pitchLoop.minimum = parameters[1][2];
+
+  yawLoop.maximum = parameters[2][0];
+  yawLoop.neutral = parameters[2][1];
+  yawLoop.minimum = parameters[2][2];
+
+  xLoop.maximum = parameters[3][0];
+  xLoop.neutral = parameters[3][1];
+  xLoop.minimum = parameters[3][2];
+
+  yLoop.maximum = parameters[4][0];
+  yLoop.neutral = parameters[4][1];
+  yLoop.minimum = parameters[4][2];
+
+  zLoop.maximum = parameters[5][0];
+  zLoop.neutral = parameters[5][1];
+  zLoop.minimum = parameters[5][2];
+
+  rollLoop.Kp = gains[0][0];
+  rollLoop.Ki = gains[0][1];
+  rollLoop.Kd = gains[0][2];
+
+  pitchLoop.Kp = gains[1][0];
+  pitchLoop.Ki = gains[1][1];
+  pitchLoop.Kd = gains[1][2];
+
+  yawLoop.Kp = gains[2][0];
+  yawLoop.Ki = gains[2][1];
+  yawLoop.Kd = gains[2][2];
+
+  xLoop.Kp = gains[3][0];
+  xLoop.Ki = gains[3][1];
+  xLoop.Kd = gains[3][2];
+
+  yLoop.Kp = gains[4][0];
+  yLoop.Ki = gains[4][1];
+  yLoop.Kd = gains[4][2];
+
+  zLoop.Kp = gains[5][0];
+  zLoop.Ki = gains[5][1];
+  zLoop.Kd = gains[5][2];
+    
+  fclose(gainsfd);
+  fclose(parametersfd); 
+
+  // control thread states
+  double x = 0, y = 0, z = 0;
+  double vx = 0, vy = 0, vz = 0;
+  double phi = 0, theta = 0, psi = 0;
+  double p = 0, q = 0, r = 0;
+  while(1)
+  {
+    /** @TODO INPUT actual state and state der and rotate the frame */
+    pthread_mutex_lock(&mut);
+    
+    x = state.x;
+    y = state.y;
+    z = state.z;
+
+    vx = state.vx;
+    vy = state.vy;
+    vz = state.vz;
+
+    phi = state.phi;
+    theta = state.theta;
+    psi = state.psi;
+    
+    p = raw_IMU.p;
+    q = raw_IMU.q;
+    r = raw_IMU.r;
+
+    pthread_mutex_unlock(&mut); 
+    
+    // Update Guidance Loops
+    pthread_mutex_lock(&xLoopMutex);
+    updateControlLoop(&xLoop,x,vx); 
+    if (xLoop.active)
+    {
+      pitchLoop.reference = xLoop.output;
+    }
+    pthread_mutex_unlock(&xLoopMutex);
+    
+    pthread_mutex_lock(&yLoopMutex);
+    updateControlLoop(&yLoop,y,vy);
+    if (yLoop.active)
+    {
+      rollLoop.reference = yLoop.output;
+    }
+    pthread_mutex_unlock(&yLoopMutex);
+
+    pthread_mutex_lock(&zLoopMutex);
+    updateControlLoop(&zLoop,z,vz);
+    pthread_mutex_unlock(&zLoopMutex);
+
+    // Update Control Loops
+    pthread_mutex_lock(&rollLoopMutex);
+    updateControlLoop(&rollLoop,phi,p);
+    pthread_mutex_unlock(&rollLoopMutex);
+
+    pthread_mutex_lock(&pitchLoopMutex);
+    updateControlLoop(&pitchLoop,theta,q);
+    pthread_mutex_unlock(&pitchLoopMutex);
+
+    pthread_mutex_lock(&yawLoopMutex);
+    updateControlLoop(&yawLoop,psi,r);
+    pthread_mutex_unlock(&yawLoopMutex);
+    
+    
+    // Determine AP Mode for MCU usage
+    MutexLockAllLoops();
+    pthread_mutex_lock(&apMutex);
+    if (zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_NONE;
+    }
+    else if (!zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE;
+    }
+    else if (zLoop.active && !rollLoop.active && pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_ROLL;
+    }
+    else if (zLoop.active && rollLoop.active && !pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_PITCH;
+    }
+    else if (zLoop.active && rollLoop.active && pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_YAW;
+    }
+    else if (!zLoop.active && !rollLoop.active && pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL;
+    }
+    else if (!zLoop.active && rollLoop.active && !pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_PITCH;
+    }
+    else if (!zLoop.active && rollLoop.active && pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_YAW;
+    }
+    else if (!zLoop.active && !rollLoop.active && !pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL_PITCH;
+    }
+    else if (!zLoop.active && !rollLoop.active && pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL_YAW;
+    }
+    else if (!zLoop.active && rollLoop.active && !pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_PITCH_YAW;
+    }
+    else if (zLoop.active && !rollLoop.active && !pitchLoop.active && yawLoop.active)
+    {
+      apMode = RC_ROLL_PITCH;
+    }
+    else if (zLoop.active && !rollLoop.active && pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_ROLL_YAW;
+    }
+    else if (zLoop.active && rollLoop.active && !pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_PITCH_YAW;
+    }
+    else if (zLoop.active && !rollLoop.active && !pitchLoop.active && !yawLoop.active)
+    {
+      apMode = RC_ROLL_PITCH_YAW;
+    }
+
+    // Send to MCU
+    apThrottle = zLoop.output;
+    apRoll = rollLoop.output;
+    apPitch = pitchLoop.output;
+    apYaw = yawLoop.output;
+    
+    pthread_mutex_unlock(&apMutex);
+    MutexUnlockAllLoops();
+    
+    usleep(CONTROL_DELAY*1e3); 
+  }
+  return NULL;
+}

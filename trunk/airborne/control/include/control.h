@@ -74,8 +74,11 @@ extern volatile control_loop_t zLoop;
 extern pthread_mutex_t zLoopMutex;
 extern volatile int8_t apThrottle;
 
-/** @name Control pthread */
-void* controlThread(void *pointer);
+/** @name Mutex for ap values */
+extern pthread_mutex_t apMutex;
+
+/** @name Calculate Control Loop */
+void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
 
 /** @name Telemetry/Control Interface Functions */
 uint8_t setAPConfig(const ap_config_t* const srcConfig);
