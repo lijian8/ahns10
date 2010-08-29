@@ -20,37 +20,39 @@
 #include "control.h"
 #include "state.h"
 
-static inline void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
 
 volatile enum FlightModes apMode;
 
 /** @name Roll Control Loop */
 volatile control_loop_t rollLoop;
-pthread_mutex_t rollLoopMutex;
+pthread_mutex_t rollLoopMutex = PTHREAD_MUTEX_INITIALIZER;
 volatile int8_t apRoll;
 
 /** @name Pitch Control Loop */
 volatile control_loop_t pitchLoop;
-pthread_mutex_t pitchLoopMutex;
+pthread_mutex_t pitchLoopMutex = PTHREAD_MUTEX_INITIALIZER;
 volatile int8_t apPitch;
 
 /** @name Yaw Control Loop */
 volatile control_loop_t yawLoop;
-pthread_mutex_t yawLoopMutex;
+pthread_mutex_t yawLoopMutex = PTHREAD_MUTEX_INITIALIZER;
 volatile int8_t apYaw;
 
 /** @name X Control Loop */
 volatile control_loop_t xLoop;
-pthread_mutex_t xLoopMutex;
+pthread_mutex_t xLoopMutex = PTHREAD_MUTEX_INITIALIZER;
 
 /** @name Y Control Loop */
 volatile control_loop_t yLoop;
-pthread_mutex_t yLoopMutex;
+pthread_mutex_t yLoopMutex = PTHREAD_MUTEX_INITIALIZER;
 
 /** @name Z Control Loop */
 volatile control_loop_t zLoop;
-pthread_mutex_t zLoopMutex;
+pthread_mutex_t zLoopMutex = PTHREAD_MUTEX_INITIALIZER;
 volatile int8_t apThrottle;
+
+/** @name Mutex for ap values */
+pthread_mutex_t apMutex;
 
 uint8_t setAPConfig(const ap_config_t* const srcConfig)
 {
@@ -308,188 +310,6 @@ void MutexUnlockGuidanceLoops()
   return;
 }
 
-void* controlThread(void *pointer)
-{ 
-  // initialise gains and parameters from files
-  int i = 0, j = 0;
-  FILE *gainsfd = fopen("gains.ahnsgains","r");
-  double gains[6][3];
-  FILE *parametersfd =  fopen("parameters.ahnsparameters","r");
-  double parameters[6][3];
-  
-  if (gainsfd && parametersfd)
-  { 
-    for (i = 0; i < 6; ++i)
-    {
-      for (j = 0; j < 3; ++j)
-      {
-        fscanf(gainsfd, "%lf", &gains[i][j]);
-        fscanf(parametersfd, "%lf", &parameters[i][j]);
-      }
-    }
-  }
-  else
-  {
-    fprintf(stderr,"void* controlThread(void *pointer) :: FILE OPEN FAILED");
-    for (i = 0; i < 6; ++i)
-    {
-      for (j = 0; j < 3; ++j)
-      {
-        gains[i][j] = 0.0;
-        parameters[i][j] = 0.0;
-      }
-    }
-  }
-  
-  rollLoop.maximum = parameters[0][0];
-  rollLoop.neutral = parameters[0][1];
-  rollLoop.minimum = parameters[0][2];
-
-  pitchLoop.maximum = parameters[1][0];
-  pitchLoop.neutral = parameters[1][1];
-  pitchLoop.minimum = parameters[1][2];
-
-  yawLoop.maximum = parameters[2][0];
-  yawLoop.neutral = parameters[2][1];
-  yawLoop.minimum = parameters[2][2];
-
-  xLoop.maximum = parameters[3][0];
-  xLoop.neutral = parameters[3][1];
-  xLoop.minimum = parameters[3][2];
-
-  yLoop.maximum = parameters[4][0];
-  yLoop.neutral = parameters[4][1];
-  yLoop.minimum = parameters[4][2];
-
-  zLoop.maximum = parameters[5][0];
-  zLoop.neutral = parameters[5][1];
-  zLoop.minimum = parameters[5][2];
-
-  rollLoop.Kp = gains[0][0];
-  rollLoop.Ki = gains[0][1];
-  rollLoop.Kd = gains[0][2];
-
-  pitchLoop.Kp = gains[1][0];
-  pitchLoop.Ki = gains[1][1];
-  pitchLoop.Kd = gains[1][2];
-
-  yawLoop.Kp = gains[2][0];
-  yawLoop.Ki = gains[2][1];
-  yawLoop.Kd = gains[2][2];
-
-  xLoop.Kp = gains[3][0];
-  xLoop.Ki = gains[3][1];
-  xLoop.Kd = gains[3][2];
-
-  yLoop.Kp = gains[4][0];
-  yLoop.Ki = gains[4][1];
-  yLoop.Kd = gains[4][2];
-
-  zLoop.Kp = gains[5][0];
-  zLoop.Ki = gains[5][1];
-  zLoop.Kd = gains[5][2];
-    
-  fclose(gainsfd);
-  fclose(parametersfd); 
-
-  // control thread
-  while(1)
-  {
-    /** @TODO input actual states*/
-    // Update Guidance Loops
-    updateControlLoop(&xLoop,0,0);
-    if (xLoop.active)
-    {
-      pitchLoop.reference = xLoop.output;
-    }
-    
-    updateControlLoop(&yLoop,0,0);
-    if (yLoop.active)
-    {
-      rollLoop.reference = yLoop.output;
-    }
-
-    updateControlLoop(&zLoop,0,0);
-    apThrottle = zLoop.output;
-
-    // Update Control Loops
-    updateControlLoop(&rollLoop,0,0);
-    apRoll = rollLoop.output;
-
-    updateControlLoop(&pitchLoop,0,0);
-    apPitch = pitchLoop.output;
-
-    updateControlLoop(&yawLoop,0,0);
-    apYaw = yawLoop.output;
-    
-    // Determine AP Mode for MCU usage
-    if (zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
-    {
-      apMode = RC_NONE;
-    }
-    else if (!zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
-    {
-      apMode = RC_THROTTLE;
-    }
-    else if (zLoop.active && !rollLoop.active && pitchLoop.active && yawLoop.active)
-    {
-      apMode = RC_ROLL;
-    }
-    else if (zLoop.active && rollLoop.active && !pitchLoop.active && yawLoop.active)
-    {
-      apMode = RC_PITCH;
-    }
-    else if (zLoop.active && rollLoop.active && pitchLoop.active && !yawLoop.active)
-    {
-      apMode = RC_YAW;
-    }
-    else if (!zLoop.active && !rollLoop.active && pitchLoop.active && yawLoop.active)
-    {
-      apMode = RC_THROTTLE_ROLL;
-    }
-    else if (!zLoop.active && rollLoop.active && !pitchLoop.active && yawLoop.active)
-    {
-      apMode = RC_THROTTLE_PITCH;
-    }
-    else if (!zLoop.active && rollLoop.active && pitchLoop.active && !yawLoop.active)
-    {
-      apMode = RC_THROTTLE_YAW;
-    }
-    else if (!zLoop.active && !rollLoop.active && !pitchLoop.active && yawLoop.active)
-    {
-      apMode = RC_THROTTLE_ROLL_PITCH;
-    }
-    else if (!zLoop.active && !rollLoop.active && pitchLoop.active && !yawLoop.active)
-    {
-      apMode = RC_THROTTLE_ROLL_YAW;
-    }
-    else if (!zLoop.active && rollLoop.active && !pitchLoop.active && !yawLoop.active)
-    {
-      apMode = RC_THROTTLE_PITCH_YAW;
-    }
-    else if (zLoop.active && !rollLoop.active && !pitchLoop.active && yawLoop.active)
-    {
-      apMode = RC_ROLL_PITCH;
-    }
-    else if (zLoop.active && !rollLoop.active && pitchLoop.active && !yawLoop.active)
-    {
-      apMode = RC_ROLL_YAW;
-    }
-    else if (zLoop.active && rollLoop.active && !pitchLoop.active && !yawLoop.active)
-    {
-      apMode = RC_PITCH_YAW;
-    }
-    else if (zLoop.active && !rollLoop.active && !pitchLoop.active && !yawLoop.active)
-    {
-      apMode = RC_ROLL_PITCH_YAW;
-    }
-
-    // Send to MCU
-    usleep(20e3); 
-  }
-  return NULL;
-}
-
 /**
  * @brief Function to Update the control loops
  * @param controlLoop Control Loop to be activated
@@ -498,7 +318,7 @@ void* controlThread(void *pointer)
  *
  * @TODO Implement integral anti-windup and control
  */
-static inline void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot)
+inline void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot)
 {
   double tempOutput = 0.0;
   double tempError = 0.0;

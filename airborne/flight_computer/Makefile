@@ -1,49 +1,31 @@
 # $Author: luis $
 # $Name:  $
 # $Id: Makefile,v 1.1.1.1 2008-05-05 07:07:57 luis Exp $
-# $Source: /home/luis/cvsroot/net-api/Makefile,v $
-# $Log: Makefile,v $
-# Revision 1.1.1.1  2008-05-05 07:07:57  luis
-# initial import
-#
-# Revision 1.1.1.1  2008-05-05 06:49:35  luis
-# initial import
-#
-# Revision 1.2  2006/01/18 15:47:45  cvs
-# *** empty log message ***
-#
-# Revision 1.1.1.1  2005/11/06 10:56:35  cvs
-# initial creation
-#
-# Revision 1.1.1.1  2005/10/22 16:44:21  cvs
-# initial creation
-#
-# Revision 1.2  2005/10/18 16:30:20  cvs
-# *** empty log message ***
-#
-# Revision 1.1.1.1  2005/10/15 15:14:06  cvs
-# initial project comments
-#
-# Revision 1.1.1.1  2004/03/03 11:03:06  srik
-# Initial Release 0.1
-#
+# $Date$
 # 
 
 CC = gcc 
 LD = $(CC)
 
 LIBDIR = ../network/udp
+LIB = libstate.a
 ARDUDIR = ../arduserial
+ARDU = $(ARDUDIR)/obj/arduserial.o
 IMUDIR = ../imu
+IMU = $(IMUDIR)/obj/imuserial.o
 KFDIR = ../kf
+KF = $(KFDIR)/obj/kf.o
+MCUDIR = ../mcu_interface
+MCU = $(MCUDIR)/obj/mcuserial.o
+CONTROLDIR = ../control
+CONTROL = $(CONTROLDIR)/obj/control.o
 
 CFLAGS = -O2  
 LDFLAGS = -L./ -L$(LIBDIR) -lstate -lm -pthread -lgsl -lgslcblas
-LIB = libstate.a
 
 SRCS = src/main.c
-OBJS = obj/main.o $(ARDUDIR)/obj/arduserial.o $(IMUDIR)/obj/imuserial.o $(KFDIR)/obj/kf.o
-INC = -I $(HELICONNECT) -I include -I $(LIBDIR) -I $(ARDUDIR)/include -I $(IMUDIR)/include -I $(KFDIR)/include
+OBJS = obj/main.o $(ARDU) $(IMU) $(KF) $(MCU) $(CONTROL)
+INC = -I $(HELICONNECT) -I include -I $(LIBDIR)/include -I $(ARDUDIR)/include -I $(IMUDIR)/include -I $(KFDIR)/include -I $(MCUDIR)/include -I $(CONTROLDIR)/include
 
 SERVER = main
 
@@ -54,12 +36,27 @@ $(SERVER): $(OBJS) $(LIB)
 	$(CC) $(OBJS) $(LDFLAGS) -o $@
 
 $(LIB): 
-	cd $(LIBDIR); make $(LIB)
+	cd $(LIBDIR); make
+
+$(ARDU):
+	cd $(ARDUDIR); make
+
+$(IMU):
+	cd $(IMUDIR); make
+
+$(KF):
+	cd $(KFDIR); make
+
+$(MCU):
+	cd $(MCUDIR); make
+
+$(CONTROL):
+	cd $(CONTROLDIR); make
 
 .phony: all clean
 
-all:  clean $(LIB) $(SERVER)
+all:  clean $(ARDU) $(IMU) $(KF) $(MCU) $(CONTROL) $(LIB) $(SERVER)
 
 clean:
-	rm -f obj/* $(LIBDIR)*.a $(SERVER)
+	rm -f obj/* $(LIBDIR)/*.a $(SERVER) $(OBJS)
 

@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
   { 
     for (i = 0; i < 100; i = i + 4)
     {
-      usleep(5e3);
+      usleep(1e6);
       commandedThrottle = i;
       commandedRoll = i/5;
       commandedPitch = i/4;

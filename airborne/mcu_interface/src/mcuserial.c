@@ -164,7 +164,7 @@ inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8
   return returnValue;
 }
 
-int sendMCUCommands(const uint8_t *flightMode, const int8_t *commandedThrottle, const int8_t *commandedRoll, const int8_t *commandedPitch, const int8_t *commandedYaw)
+int sendMCUCommands(const volatile uint8_t *flightMode, const volatile int8_t *commandedThrottle, const volatile int8_t *commandedRoll, const volatile int8_t *commandedPitch, const volatile int8_t *commandedYaw)
 {
   int returnValue = 0;
   unsigned char buffer[9];
