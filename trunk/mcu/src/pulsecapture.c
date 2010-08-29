@@ -31,7 +31,8 @@ const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
 
 volatile uint8_t newRC = 0;
 
-uint16_t zeroThrottle = 1250;
+/** @name Input Commands Zero PWM Signals, us*/
+uint16_t zeroThrottle = 1250; /** TODO: Change to 1000 from 1250*/
 uint16_t zeroRoll = 1500;
 uint16_t zeroPitch = 1500; 
 uint16_t zeroYaw = 1500;
@@ -86,7 +87,7 @@ inline void UpdateRC()
   static int8_t index = 0;
   
   // Map Input Channels to RC Channel
-  uint16_t armPulse = inputChannel[CHANNEL2].measuredPulseWidth; // mode pulse
+  uint16_t armPulse = inputChannel[CHANNEL2].measuredPulseWidth; 
   uint16_t modePulse = inputChannel[CHANNEL1].measuredPulseWidth;
   uint16_t yawPulse = inputChannel[CHANNEL3].measuredPulseWidth;
   uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
@@ -123,7 +124,7 @@ inline void UpdateRC()
   }
 
   rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
-  if (rcThrottle < 5)
+  if (rcThrottle < 5) /**TODO Decrease Throttle to Disable mixing */
   {
     rcRoll = 0;
     rcPitch = 0;
