@@ -58,8 +58,8 @@ int main(int argc, char* argv[])
     {
       printf("%.1lf\nTest 2: Success - Read compass heading\n",compassHeading);
     }
-  // Test 3: read 10 compass heading
-  for(i=0; i<10; i++)
+  // Test 3: read 1000 compass heading
+  for(i=0; i<10000; i++)
   {
     if (!getCompassHeading(&compassHeading))
     {
@@ -70,7 +70,7 @@ int main(int argc, char* argv[])
       printf("%.1lf\n",compassHeading);
     }
   }
-  if (i == 10)
+  if (i == 10000)
   {
     printf("Test 3: Success - Read 10 compass headings\n");
   }
