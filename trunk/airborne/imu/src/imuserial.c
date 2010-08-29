@@ -251,9 +251,9 @@ int getImuSensorData(double *rateXd, double *rateYd, double *rateZd, double *acc
   *rateYd = rateY*mr2g;
   *rateZd = rateZ*mr2g;
   // calculate the acceleration
-  *accXd = accX*mr1a2g;
-  *accYd = accY*mr1a2g;
-  *accZd = accZ*mr1a2g;
+  *accXd = accX*mr2a;
+  *accYd = accY*mr2a;
+  *accZd = accZ*mr2a;
   // calculate the temperature
   temp = temp-tempOffset;
 
