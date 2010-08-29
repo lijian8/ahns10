@@ -1,7 +1,4 @@
 /**
- * @file   main.c
- * @author Liam O'Sullivan
- *
  * $Author: liamosullivan $
  * $Date: 2010-06-21 15:25:25 +1000 (Mon, 21 Jun 2010) $
  * $Rev: 193 $
@@ -31,6 +28,8 @@ static Server server;
 state_t state;
 // sensor data variable
 sensor_data_t raw_IMU;
+// compass heading
+double compass_heading = 0;
 
 pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
@@ -82,13 +81,19 @@ int main(int argc, char *argv[])
 // update the compass heading from the arduino
 void * updateCompassHeading(void *pointer)
 {
+  double previous_compass_heading = 0.0;
   while(1)
   {
     // sleep the thread for updating the compass
     usleep(COMPASS_DELAY*1e3);
     // get the compass heading from the arduino
     pthread_mutex_lock(&mut);
-    getCompassHeading(&state.psi);
+    previous_compass_heading = compass_heading;
+    if (!getCompassHeading(&compass_heading))
+    {
+      compass_heading = previous_compass_heading;
+    }
+    state.x = compass_heading;
     pthread_mutex_unlock(&mut);
   }
   return NULL;
@@ -106,7 +111,7 @@ void * updateIMUdata(void *pointer)
   startFilterTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
   while(1)
   {
-    // sleep the thread for updating the compass
+    // sleep the thread for updating the IMU
     usleep(IMU_DELAY*1e3);
     pthread_mutex_lock(&mut);
     // get the IMU sensor data
@@ -120,7 +125,9 @@ void * updateIMUdata(void *pointer)
     gettimeofday(&timestamp, NULL); 
     startFilterTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
     // perform the attitude filtering using the imu data
-    attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.phi, &state.theta, &state.psi, diffFilterTime);
+    attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.phi, &state.theta, &state.psi, compass_heading, diffFilterTime);
+    printf(">> kf update : %f\n",1/diffFilterTime);
+
     pthread_mutex_unlock(&mut);
   }
   return NULL;
@@ -134,7 +141,7 @@ int sensorInit()
   int retSerial = 0;
   int retValue =0;
   // connect to the IMU
-  retSerial = openIMUSerial(IMU_SERIAL_PORT, IMU_BAUD_RATE_DEFAULT);
+  retSerial = openIMUSerial(IMU_SERIAL_PORT, IMU_BAUD_RATE);
   if(retSerial)
   {
     retValue = 1;
@@ -207,7 +214,7 @@ void * sendUDPData(void *pointer)
       endServerTime=timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
       diffServerTime = endServerTime - startServerTime;
       // output the sent states  
-      printf(">> state : %f %f %f %f | %f\n",state.p,state.q,state.r,state.psi,(1/diffServerTime));
+      printf(">> state : %f %f %f %f | %f\n",raw_IMU.p,raw_IMU.q,raw_IMU.r,state.psi,(1/diffServerTime));
       // send the state packet
       server_send_packet(&server, HELI_STATE, &state, sizeof(state_t));
       // send the raw sensor data packet
