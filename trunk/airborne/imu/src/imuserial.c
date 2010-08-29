@@ -247,13 +247,13 @@ int getImuSensorData(double *rateXd, double *rateYd, double *rateZd, double *acc
   sscanf(sResult, "%hx,%hx,%hx,%hx,%hx,%hx,%hx,%hhx,%hhx,%hhx", &rateX, &rateY, &rateZ, &accX, &accY, &accZ, &temp, &statusL, &statusH, &crc);
 
   // calculate the rates
-  *rateXd = rateX*mr1g;
-  *rateYd = rateY*mr1g;
-  *rateZd = rateZ*mr1g;
+  *rateXd = rateX*mr2g;
+  *rateYd = rateY*mr2g;
+  *rateZd = rateZ*mr2g;
   // calculate the acceleration
-  *accXd = accX*mr1a/g;
-  *accYd = accY*mr1a/g;
-  *accZd = accZ*mr1a/g;
+  *accXd = accX*mr1a2g;
+  *accYd = accY*mr1a2g;
+  *accZd = accZ*mr1a2g;
   // calculate the temperature
   temp = temp-tempOffset;
 
