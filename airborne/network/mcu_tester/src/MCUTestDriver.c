@@ -17,7 +17,6 @@
 #include "commands.h"
 
 #include "udp.h"
-#include "control.h"
 
 #include "mcuserial.h"
 #include "MCUCommands.h"
@@ -27,7 +26,6 @@
 /** Testing Functions */
 void FilteredStateData(int count, state_t* testState);
 void FCStateData(int count, fc_state_t* testState);
-void APStateData(int count, ap_state_t* testState);
 void GainsData(int count, gains_t* testState);
 void LoopParametersData(int count, loop_parameters_t* testState);
 void SensorData(int count, sensor_data_t* sensorData);
@@ -142,10 +140,6 @@ main (int argc, char *argv[])
 	  dataLength = PackFCState(buffer,&fcState);
 	  server_send_packet (&server, FC_STATE, buffer, dataLength);
 
-          // AP Test Structure
-          APStateData(count, &apState);
-	  dataLength = PackAPState(buffer,&apState);	  
-          server_send_packet (&server, AUTOPILOT_STATE, buffer, dataLength);
 	   
           // Sensor Data
           SensorData(count,&sensorData);
@@ -223,32 +217,6 @@ void SensorData(int count, sensor_data_t* sensorData)
   sensorData->ax = 0;
   sensorData->ay = 0;
   sensorData->az = 0;
-
-  return;
-}
-
-void APStateData(int count, ap_state_t* testState)
-{
-  MutexLockAllLoops();
-  
-  testState->referencePhi = rollLoop.reference;
-  testState->referenceTheta = pitchLoop.reference;
-  testState->referencePsi = yawLoop.reference;
-
-  testState->referenceX = xLoop.reference;
-  testState->referenceY = yLoop.reference;
-  testState->referenceZ = zLoop.reference; 
-
-  testState->phiActive = rollLoop.active;
-  testState->thetaActive = pitchLoop.active;
-  testState->psiActive = yawLoop.active;
-
-  
-  testState->xActive = xLoop.active;
-  testState->yActive = yLoop.active;
-  testState->zActive = zLoop.active;
-  
-  MutexUnlockAllLoops();
 
   return;
 }
