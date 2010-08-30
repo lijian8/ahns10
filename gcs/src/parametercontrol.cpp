@@ -201,8 +201,8 @@ void ParameterControl::on_SaveBtn_clicked()
     ofstream saveFile;
 
     // User Choose File Name
-    fileName = QFileDialog::getSaveFileName(this, tr("Save Parameters"),QString(),tr("AHNS Parameters (*.ahnsparam)"));
-    fileName.append(".ahnsparam");
+    //fileName = QFileDialog::getSaveFileName(this, tr("Save Parameters"),QString(),tr("AHNS Parameters (*.ahnsparam)"));
+    fileName = QString("parameters.ahnsparam");
 
     if (!fileName.isEmpty())
     {
