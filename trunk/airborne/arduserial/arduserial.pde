@@ -21,13 +21,19 @@
 #include "NewSoftSerial.h"
 
 // compass transmit pin
-#define COMPASS_TX 10
+#define COMPASS_TX 4
 // compass receive pin
-#define COMPASS_RX 11
+#define COMPASS_RX 5
+// battery voltage adc pin
+#define VOLTAGE_ADC 7
+// altitude sensor adc pin
+#define ALTITUDE_ADC 6
 // compass baud rate
 #define COMPASS_BAUDRATE 38400
 // overo baud rate
 #define OVERO_BAUDRATE 115200
+// battery voltage read time
+#define BATTERY_READ 1000
 
 // software serial compass object
 NewSoftSerial compass(COMPASS_RX,COMPASS_TX);
@@ -44,25 +50,51 @@ char compass_char = 0;
 char overo_com = 0;
 // overo loop counter
 int i=0;
+// battery voltage reading
+int adc_read = 0;
+// battery voltage raw
+double bat_voltage_raw = 0;
+// transmitted battery voltage
+double bat_voltage = 0;
+// transmitted altitude reading
+double altitude = 0;
+// time counter
+unsigned long current_time;
+// previous time
+unsigned long previous_time;
 
 // arduserial functions
 // read the serial compass data
 int readCompass();
+// read the battery voltage
+int readVoltage();
 // read the overo data
 int readOvero();
 
 void setup()   
 {
+  // setup delay time
+  //delay(35000);
   Serial.begin(OVERO_BAUDRATE);
   pinMode(COMPASS_TX, OUTPUT);
   pinMode(COMPASS_RX, INPUT);
   // software serial (receive pin, transmit pin)
   compass.begin(COMPASS_BAUDRATE);
+  // init the time
+  previous_time = millis();
 }
 
 
 void loop()                     
 {
+  // check the time
+  current_time = millis() - previous_time;
+  if (current_time > BATTERY_READ)
+  {
+      readVoltage();
+      readAltitude();
+      previous_time = millis();
+  }
   readCompass();
   readOvero();
 }
@@ -90,14 +122,31 @@ int readCompass()
     // check if a $ has been received
     if (compass_char == '$')
     {
-      compass_index++;
-    }
-    // check if a C has been received and that a $ has been received
-    if (compass_char == 'C' && compass_index == 1)
-    {
-      compass_index++;
-    }    
+      compass_char = compass.read();
+      if (compass_char == 'C')
+      {
+        compass_index = 2; 
+      } else 
+        {
+          compass_index = 0;
+        }
+    }  
   }
+}
+
+// read the battery voltage via ADC
+int readVoltage()
+{
+   adc_read = analogRead(VOLTAGE_ADC);
+   bat_voltage_raw = (adc_read/double(1023))*5;
+   bat_voltage = 2.7964*bat_voltage_raw + 0.103465;  
+}
+
+// read the altitude sensor volrage via ADC
+int readAltitude()
+{
+  adc_read = analogRead(ALTITUDE_ADC); 
+  altitude = 0.0135*adc_read + 0.04155;
 }
 
 // read serial data transmitted from the overo and reply with suitable response
@@ -113,5 +162,13 @@ int readOvero()
         Serial.print(compass_heading[i],BYTE);
       }     
     }
-  } 
+    if (overo_com == 'V')
+    {
+      Serial.print(bat_voltage,3);
+    }
+    if (overo_com == 'A')
+    {
+      Serial.print(altitude,3);
+    }
+  }
 }
