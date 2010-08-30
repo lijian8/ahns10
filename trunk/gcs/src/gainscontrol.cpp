@@ -127,7 +127,8 @@ void GainsControl::on_loadBtn_clicked()
     ifstream openFile;
 
     // User Choose File Name
-    fileName = QFileDialog::getOpenFileName(this, tr("Load Gains"),QString(""),tr("AHNS Gains (*.ahnsgains)"));
+    //fileName = QFileDialog::getOpenFileName(this, tr("Load Gains"),QString(""),tr("AHNS Gains (*.ahnsgains)"));
+    fileName = QString("gains.ahnsgains");
 
     if (!fileName.isEmpty())
     {
