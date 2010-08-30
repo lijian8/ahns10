@@ -78,31 +78,12 @@ int main(int argc, char* argv[])
     {
       printf("%.1lf\nTest 4: Success - Read altitude sensor\n",altitudeReading);
     }
-  // Test 5: read all date
+  // Test 5: read all data
   for(i=0; i<10000; i++)
   {
-    if (!getCompassHeading(&compassHeading))
-    {
-      fprintf(stderr,"Test 5: Error - Cannot get compass heading\n");
-    } else
-    {
-      printf("Heading: %.2lf\n",compassHeading);
-    }
-    if (!getBatteryVoltage(&batteryVoltage))
-    {
-      fprintf(stderr,"Test 5: Error - Cannot get battery voltage\n");
-    } else
-    {
-      printf("Voltage: %.3lf\n",batteryVoltage);
-    }
-    if (!getAltitudeReading(&altitudeReading))
-    {
-      fprintf(stderr,"Test 5: Error - Cannot get altitude reading\n");
-    } else
-    {
-      printf("Altitude: %.3lf\n",altitudeReading);
-    }
-  }
+    getArduinoData(&compassHeading, &batteryVoltage, &altitudeReading);
+    printf("%.2lf,%.3lf,%.3lf\n",compassHeading,batteryVoltage,altitudeReading);
+  } 
   // Close the arduino serial port
   closeArduSerial();
   printf("Disconnected from arduino\n");
