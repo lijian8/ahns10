@@ -32,5 +32,7 @@
 int openArduSerial(char* serialPort, int baudRate);
 int closeArduSerial();
 int getCompassHeading(double *compassHeading);
+int getBatteryVoltage(double *batteryVoltage);
+int getAltitudeReading(double *altitudeReading);
 
 #endif
