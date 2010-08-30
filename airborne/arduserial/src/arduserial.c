@@ -89,7 +89,6 @@ int getCompassHeading(double *compassHeading)
   if (!write(arduSerialfd,sCmd,1))
   {
     printf("Write failed\n");
-    closeArduSerial();
     return 0;
   }
   usleep(ARDU_DELAYRDWR);
@@ -98,7 +97,6 @@ int getCompassHeading(double *compassHeading)
   if(!read(arduSerialfd,sResult,5))
   {
     printf("Read failed\n");
-    closeArduSerial();
     return 0;
   }
   // terminate with null character
@@ -118,7 +116,6 @@ int getBatteryVoltage(double *batteryVoltage)
   if (!write(arduSerialfd,sCmd,1))
   {
     printf("Write failed\n");
-    closeArduSerial();
     return 0;
   }
   usleep(ARDU_DELAYRDWR);
@@ -127,7 +124,6 @@ int getBatteryVoltage(double *batteryVoltage)
   if(!read(arduSerialfd,sResult,6))
   {
     printf("Read failed\n");
-    closeArduSerial();
     return 0;
   }
   // terminate with null character
@@ -147,20 +143,18 @@ int getAltitudeReading(double *altitudeReading)
   if (!write(arduSerialfd,sCmd,1))
   {
     printf("Write failed\n");
-    closeArduSerial();
     return 0;
   }
   usleep(ARDU_DELAYRDWR);
   // read the altitude reading
-  unsigned char sResult[7];
-  if(!read(arduSerialfd,sResult,6))
+  unsigned char sResult[6];
+  if(!read(arduSerialfd,sResult,5))
   {
     printf("Read failed\n");
-    closeArduSerial();
     return 0;
   }
   // terminate with null character
-  sResult[6] = 0x00;
+  sResult[5] = 0x00;
   // save to altitude reading
   sscanf(sResult, "%lf", altitudeReading);
   return 1;
