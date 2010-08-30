@@ -136,3 +136,32 @@ int getBatteryVoltage(double *batteryVoltage)
   sscanf(sResult, "%lf", batteryVoltage);
   return 1;
 }
+
+/**
+  * @brief get the altitude reading
+  */
+int getAltitudeReading(double *altitudeReading)
+{
+  unsigned char sCmd[1] = {'A'};
+  // send the command to the arduino
+  if (!write(arduSerialfd,sCmd,1))
+  {
+    printf("Write failed\n");
+    closeArduSerial();
+    return 0;
+  }
+  usleep(ARDU_DELAYRDWR);
+  // read the altitude reading
+  unsigned char sResult[7];
+  if(!read(arduSerialfd,sResult,6))
+  {
+    printf("Read failed\n");
+    closeArduSerial();
+    return 0;
+  }
+  // terminate with null character
+  sResult[6] = 0x00;
+  // save to altitude reading
+  sscanf(sResult, "%lf", altitudeReading);
+  return 1;
+}
