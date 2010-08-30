@@ -12,8 +12,9 @@
  * @section DESCRIPTION
  * MCU serial library header
  * - Open and close serial to MCU
- * - Receive Commanded Engine Pulse Widths
- * - Receive High Level Commands and Flight Mode
+ * - Transmit Autopilot Mode and Commands
+ * - Receive Flight Mode and Commanded Engine Pulse Widths
+ * - Receive Flight Mode and High Level Commands
  */
 
 #include "mcuserial.h"
