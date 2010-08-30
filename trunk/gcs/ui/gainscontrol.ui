@@ -647,5 +647,294 @@ p, li { white-space: pre-wrap; }
   <tabstop>loadBtn</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>rollPBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>135</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rollIBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>270</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>114</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>rollDBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>403</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>98</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pitchPBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>152</x>
+     <y>82</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pitchIBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>85</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>117</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pitchDBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>406</x>
+     <y>83</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>114</x>
+     <y>252</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yawPBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>78</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>65</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yawIBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>219</x>
+     <y>112</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>78</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yawDBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>380</x>
+     <y>120</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>156</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xPBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>175</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>147</x>
+     <y>258</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xIBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>155</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>160</x>
+     <y>255</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xDBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>360</x>
+     <y>151</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>106</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yPBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>170</x>
+     <y>188</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>178</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yIBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>253</x>
+     <y>181</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>138</x>
+     <y>260</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>yDBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>410</x>
+     <y>192</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>143</x>
+     <y>248</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zPBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>68</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>71</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zIBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>239</x>
+     <y>223</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>165</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>zDBox</sender>
+   <signal>editingFinished()</signal>
+   <receiver>SendBtn</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>350</x>
+     <y>218</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>111</x>
+     <y>259</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

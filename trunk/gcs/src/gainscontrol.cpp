@@ -34,6 +34,7 @@ GainsControl::GainsControl(QWidget *parent) :
     ui(new Ui::GainsControl)
 {
     ui->setupUi(this);
+    on_loadBtn_clicked();
 }
 
 GainsControl::~GainsControl()
@@ -206,8 +207,8 @@ void GainsControl::on_SaveBtn_clicked()
     ofstream saveFile;
 
     // User Choose File Name
-    fileName = QFileDialog::getSaveFileName(this, tr("Save Gains"),QString(),tr("AHNS Gains (*.ahnsgains)"));
-    fileName.append(".ahnsgains");
+    //fileName = QFileDialog::getSaveFileName(this, tr("Save Gains"),QString(),tr("AHNS Gains (*.ahnsgains)"));
+    fileName.append("gains.ahnsgains");
 
     if (!fileName.isEmpty())
     {

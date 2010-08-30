@@ -31,6 +31,7 @@ ParameterControl::ParameterControl(QWidget *parent) :
         ui(new Ui::ParameterControl)
 {
     ui->setupUi(this);
+    on_loadBtn_clicked();
 }
 
 ParameterControl::~ParameterControl()
@@ -123,7 +124,8 @@ void ParameterControl::on_loadBtn_clicked()
     ifstream openFile;
 
     // User Choose File Name
-    fileName = QFileDialog::getOpenFileName(this, tr("Load Parameters"),QString(""),tr("AHNS Parameters (*.ahnsparam)"));
+    //fileName = QFileDialog::getOpenFileName(this, tr("Load Parameters"),QString(""),tr("AHNS Parameters (*.ahnsparam)"));
+    fileName = QString("parameters.ahnsparam");
 
     if (!fileName.isEmpty())
     {

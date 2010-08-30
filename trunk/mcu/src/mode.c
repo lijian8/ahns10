@@ -50,7 +50,7 @@ static void GiveRC();
 #define HISTORY_SIZE 8
 inline void MixCommands()
 {
-  static int32_t escHistory[4][HISTORY_SIZE];
+  static int16_t escHistory[4][HISTORY_SIZE];
   static uint8_t index = 0;
   int8_t setPoint = 0;
   uint8_t i = 0;
@@ -66,18 +66,20 @@ inline void MixCommands()
     // Bound and Output
     for (i = 0; i < 4; ++i)
     {
+      // Bound
       if(escHistory[i][index] > escLimits[i][1])
       {
-        setPoint = escLimits[i][1];
+        //setPoint = escLimits[i][1];
+        escHistory[i][index] = escLimits[i][1];
       }
       else if(escHistory[i][index] < escLimits[i][0])
       {
-        setPoint = escLimits[i][0];
+        //setPoint = escLimits[i][0];
+        escHistory[i][index] = escLimits[i][0];
       }
-      else
-      {
-        setPoint = escHistory[i][index];
-      }
+      //setPoint = escHistory[i][index];
+      // Moving Average
+      setPoint = MovingAverage(escHistory[i],HISTORY_SIZE);
       
       switch (i)
       {
@@ -105,7 +107,8 @@ inline void MixCommands()
 inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 {
   uint8_t i = 0;
-  int32_t sum = 0, average = 0;
+  int32_t sum = 0;
+  int16_t average = 0;
   
   for (i = 0; i < arrayLength; ++i)
   {
@@ -118,7 +121,7 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 }
 
 static const double controlFactor = 1;
-static const double rcControlSplit = 0.25;
+static const double rcControlSplit = 0.1;
 
 inline void CombineCommands()
 {

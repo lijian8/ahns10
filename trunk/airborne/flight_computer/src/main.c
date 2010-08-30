@@ -311,11 +311,13 @@ void* updateControl(void *pointer)
 { 
   // initialise gains and parameters from files
   int i = 0, j = 0;
-  FILE *gainsfd = fopen("gains.ahnsgains","r");
+  FILE *gainsfd = NULL;
   double gains[6][3];
-  FILE *parametersfd =  fopen("parameters.ahnsparameters","r");
+  FILE *parametersfd = NULL; 
   double parameters[6][3];
   
+  gainsfd = fopen("gains.ahnsgains","r");
+  parametersfd = fopen("parameters.ahnsparameters","r"); 
   if (gainsfd && parametersfd)
   { 
     for (i = 0; i < 6; ++i)
@@ -326,6 +328,8 @@ void* updateControl(void *pointer)
         fscanf(parametersfd, "%lf", &parameters[i][j]);
       }
     }
+    fclose(gainsfd);
+    fclose(parametersfd); 
   }
   else
   {
@@ -388,8 +392,6 @@ void* updateControl(void *pointer)
   zLoop.Ki = gains[5][1];
   zLoop.Kd = gains[5][2];
     
-  fclose(gainsfd);
-  fclose(parametersfd); 
 
   // control thread states
   double x = 0, y = 0, z = 0;
@@ -398,7 +400,6 @@ void* updateControl(void *pointer)
   double p = 0, q = 0, r = 0;
   while(1)
   {
-    /** @TODO INPUT actual state and state der and rotate the frame */
     pthread_mutex_lock(&mut);
     
     x = state.x;
