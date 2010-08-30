@@ -335,11 +335,18 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
 
   if (controlLoop->active)
   {
+    // calculate error
     tempError = controlLoop->reference - state;
+    
+    // integrate error
+    // only integrate if not in saturation
+    if (controlLoop->output < controlLoop->maximum)
+    {
+      controlLoop->integralError += dt*tempError;
+    }
     tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(controlLoop->referenceDot - stateDot) + controlLoop->Ki*(controlLoop->integralError) + controlLoop->neutral;
 
     // bound the output
-    // only integrate if not in saturation
     if (tempOutput > controlLoop->maximum)
     {
       controlLoop->output = controlLoop->maximum;
@@ -351,7 +358,6 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
     else
     {
       controlLoop->output = tempOutput; 
-      controlLoop->integralError += dt*tempError;
     }
     
     // Store previous time

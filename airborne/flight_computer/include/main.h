@@ -19,7 +19,7 @@
 // MCU serial port
 #define MCU_SERIAL_PORT "/dev/ttyS0"
 // MCU delay (milliseconds)
-#define MCU_DELAY 5
+#define MCU_DELAY 3
 
 // Control delay (milliseconds)
 #define CONTROL_DELAY 2.5
