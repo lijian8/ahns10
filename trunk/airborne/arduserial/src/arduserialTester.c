@@ -19,6 +19,7 @@
 
 char* arduino_serial_port;
 double compassHeading = 0.0;
+double batteryVoltage = 0.0;
 
 int main(int argc, char* argv[])
 {
@@ -58,21 +59,30 @@ int main(int argc, char* argv[])
     {
       printf("%.1lf\nTest 2: Success - Read compass heading\n",compassHeading);
     }
-  // Test 3: read 1000 compass heading
-  for(i=0; i<10000; i++)
+  // Test 3: read compass heading
+  if (!getBatteryVoltage(&batteryVoltage))
+  {
+    fprintf(stderr,"Test 3: Error - Cannot get battery voltage\n");
+    return -1;
+  } else
+    {
+      printf("%.1lf\nTest 3: Success - Read battery voltage\n",batteryVoltage);
+    }
+  // Test 4: read 10 compass heading
+  for(i=0; i<10; i++)
   {
     if (!getCompassHeading(&compassHeading))
     {
-      fprintf(stderr,"Test 3: Error - Cannot get compass heading\n");
+      fprintf(stderr,"Test 4: Error - Cannot get compass heading\n");
       return -1;
     } else
     {
       printf("%.1lf\n",compassHeading);
     }
   }
-  if (i == 10000)
+  if (i == 10)
   {
-    printf("Test 3: Success - Read 10 compass headings\n");
+    printf("Test 4: Success - Read 10 compass headings\n");
   }
   // Close the arduino serial port
   closeArduSerial();

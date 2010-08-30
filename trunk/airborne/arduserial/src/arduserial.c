@@ -103,9 +103,36 @@ int getCompassHeading(double *compassHeading)
   }
   // terminate with null character
   sResult[5] = 0x00;
-  //printf("%s\n", sResult);
   // save to compass heading
   sscanf(sResult, "%lf", compassHeading);
   return 1;
 }
 
+/**
+  * @brief get the battery voltage from the arduino
+  */
+int getBatteryVoltage(double *batteryVoltage)
+{
+  unsigned char sCmd[1] = {'V'};
+  // send the command to the arduino
+  if (!write(arduSerialfd,sCmd,1))
+  {
+    printf("Write failed\n");
+    closeArduSerial();
+    return 0;
+  }
+  usleep(ARDU_DELAYRDWR);
+  // read the battery voltage
+  unsigned char sResult[7];
+  if(!read(arduSerialfd,sResult,6))
+  {
+    printf("Read failed\n");
+    closeArduSerial();
+    return 0;
+  }
+  // terminate with null character
+  sResult[6] = 0x00;
+  // save to battery voltage
+  sscanf(sResult, "%lf", batteryVoltage);
+  return 1;
+}
