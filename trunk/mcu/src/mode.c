@@ -117,8 +117,8 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
   return average;
 }
 
-static const double controlFactor = 0.25;
-static const double rcControlSplit = 0.5;
+static const double controlFactor = 1;
+static const double rcControlSplit = 0.25;
 
 inline void CombineCommands()
 {
@@ -132,18 +132,18 @@ inline void CombineCommands()
 
       // Pass through for use with gyro
       // In this case gyro will do mixing
-      ESC1_COUNTER = escLimits[0][ESC_MIN] + rcThrottle;
+      /*ESC1_COUNTER = escLimits[0][ESC_MIN] + rcThrottle;
       ESC2_COUNTER = escLimits[1][ESC_MIN] + rcRoll;
       ESC3_COUNTER = escLimits[2][ESC_MIN] + rcPitch;
       ESC4_COUNTER = escLimits[3][ESC_MIN] + rcYaw;
-
-      /*commandedThrottle = rcThrottle;
+      */
+      commandedThrottle = rcThrottle;
       commandedRoll = controlFactor*rcRoll;
       commandedPitch = controlFactor*rcPitch;
       commandedYaw = controlFactor*rcYaw;
 
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
-      */
+      
       break;
     case AUGMENTED: // Combine AP and RC Commands
       IndicateAugmented();
