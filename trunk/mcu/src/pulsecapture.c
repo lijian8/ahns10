@@ -120,7 +120,7 @@ inline void UpdateRC()
       rcMode = AUGMENTED;
     }
   }
-  else if (throttlePulse < 1150)/**TODO normally 5 Decrease Throttle to Disable mixing */
+  else if (throttlePulse < 1275)/**TODO normally 5 Decrease Throttle to Disable mixing */
   {
     zeroAll = 1;
   }
