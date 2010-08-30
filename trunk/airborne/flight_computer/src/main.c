@@ -34,8 +34,11 @@ sensor_data_t raw_IMU;
 double compass_heading = 0;
 // flight computer + engine state
 fc_state_t fcState;
+// autopilot state
+ap_state_t apState;
 
 pthread_mutex_t fcMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t apMut = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
@@ -254,7 +257,11 @@ void * sendUDPData(void *pointer)
       dataLength = PackFCState(buffer,&fcState);
       pthread_mutex_unlock(&fcMut);
       server_send_packet(&server, FC_STATE, buffer, dataLength);
-      
+      // send ap state packet
+      pthread_mutex_lock(&apMut);
+      dataLength = PackAPState(buffer,&apState);
+      server_send_packet(&server, AUTOPILOT_STATE, buffer, dataLength);
+      pthread_mutex_unlock(&apMut);
       init = 0;
       // reinitialise startTime
       gettimeofday(&timestamp, NULL); 
@@ -518,6 +525,24 @@ void* updateControl(void *pointer)
     apYaw = yawLoop.output;
     
     pthread_mutex_unlock(&apMutex);
+    
+    // Update AP State
+    pthread_mutex_lock(&apMut);
+    apState.referencePhi = rollLoop.reference;
+    apState.referenceTheta = pitchLoop.reference;
+    apState.referencePsi = yawLoop.reference;
+    apState.referenceX = xLoop.reference;
+    apState.referenceY = yLoop.reference;
+    apState.referenceZ = zLoop.reference;
+    
+    apState.phiActive = rollLoop.active;
+    apState.thetaActive = pitchLoop.active;
+    apState.psiActive = yawLoop.active;
+    apState.xActive = xLoop.active;
+    apState.yActive = yLoop.active;
+    apState.zActive = zLoop.active;
+    pthread_mutex_unlock(&apMut);
+
     MutexUnlockAllLoops();
     
     usleep(CONTROL_DELAY*1e3); 
