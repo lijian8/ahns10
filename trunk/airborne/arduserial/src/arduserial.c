@@ -159,3 +159,30 @@ int getAltitudeReading(double *altitudeReading)
   sscanf(sResult, "%lf", altitudeReading);
   return 1;
 }
+
+/**
+  * @brief get arduino data
+  */
+int getArduinoData(double *compassHeading, double *batteryVoltage, double *altitudeReading)
+{
+unsigned char sCmd[1] = {'O'};
+  // send the command to the arduino
+  if (!write(arduSerialfd,sCmd,1))
+  {
+    printf("Write failed\n");
+    return 0;
+  }
+  usleep(ARDU_DELAYRDWR);
+  // read the altitude reading
+  unsigned char sResult[20];
+  if(!read(arduSerialfd,sResult,19))
+  {
+    printf("Read failed\n");
+    return 0;
+  }
+  // terminate with null character
+  sResult[19] = 0x00;
+  // save to altitude reading
+  sscanf(sResult, "%lf,%lf,%lf\n", compassHeading, batteryVoltage, altitudeReading);
+  return 1;
+}
