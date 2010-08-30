@@ -34,5 +34,6 @@ int closeArduSerial();
 int getCompassHeading(double *compassHeading);
 int getBatteryVoltage(double *batteryVoltage);
 int getAltitudeReading(double *altitudeReading);
+int getArduinoData(double *compassHeading, double *batteryVoltage, double *altitudeReading);
 
 #endif
