@@ -181,17 +181,17 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
 
     m_plotCurves[F_AZ].setTitle(QwtText("z Accelertaion [m]"));
     tempPen.setStyle(Qt::SolidLine);
-    tempPen.setColor(QColor(0,51,51));
+    tempPen.setColor(QColor(153,0,102));
     m_plotCurves[F_AZ].setPen(tempPen);
 
     m_plotCurves[VOLTAGE].setTitle(QwtText("Voltage [V]"));
     tempPen.setStyle(Qt::SolidLine);
-    tempPen.setColor(QColor(0,51,102));
+    tempPen.setColor(QColor(102,0,153));
     m_plotCurves[F_AZ].setPen(tempPen);
 
     m_plotCurves[TRACE].setTitle(QwtText("Trace"));
     tempPen.setStyle(Qt::SolidLine);
-    tempPen.setColor(QColor(0,0,85));
+    tempPen.setColor(QColor(153,102,0));
     m_plotCurves[F_AZ].setPen(tempPen);
 
     m_plotCurves[IMU_ROLL_DOT].setTitle(QwtText("IMU Roll Rate [deg/s]"));
@@ -256,12 +256,12 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
 
     m_plotCurves[FC_CPU].setTitle(QwtText("CPU Usage [%]"));
     tempPen.setStyle(Qt::DashLine);
-    tempPen.setColor(QColor(0,0,0));
+    tempPen.setColor(QColor(255,255,255));
     m_plotCurves[RC_LINK].setPen(tempPen);
 
     m_plotCurves[RC_LINK].setTitle(QwtText("RC Link [1/0]"));
     tempPen.setStyle(Qt::SolidLine);
-    tempPen.setColor(QColor(0,0,0));
+    tempPen.setColor(QColor(255,255,255));
     m_plotCurves[RC_LINK].setPen(tempPen);
 
     m_plotCurves[REF_PHI].setTitle(QwtText("Reference Roll Angle [rad]"));
@@ -306,7 +306,7 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
 
     m_plotCurves[PSI_ACTIVE].setTitle(QwtText("Yaw Active [1/0]"));
     tempPen.setStyle(Qt::DashDotLine);
-    tempPen.setColor(QColor(153,102,102));
+    tempPen.setColor(QColor(102,204,255));
     m_plotCurves[PHI_ACTIVE].setPen(tempPen);
 
     m_plotCurves[X_ACTIVE].setTitle(QwtText("X Active [1/0]"));
@@ -321,7 +321,7 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
 
     m_plotCurves[Z_ACTIVE].setTitle(QwtText("Z Active [1/0]"));
     tempPen.setStyle(Qt::DashDotLine);
-    tempPen.setColor(QColor(51,0,0));
+    tempPen.setColor(QColor(255,200,150));
     m_plotCurves[PHI_ACTIVE].setPen(tempPen);
 
     // Legend
