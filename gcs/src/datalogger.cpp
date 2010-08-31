@@ -83,7 +83,7 @@ void DataLogger::initialiseLogs()
     {
         sensorDataOutputFile << "AHNS SENSOR MESSAGES LOG FOR " << logFileName << std::endl;
         sensorDataOutputFile << "TIME, IMU_ROLL_DOT, IMU_PITCH_DOT, IMU_YAW_DOT";
-        sensorDataOutputFile << "IMU_AX, IMU_AY, IMU_AZ" << std::endl;
+        sensorDataOutputFile << "IMU_AX, IMU_AY, IMU_AZ, SENSOR_Z, COMPASS_PSI" << std::endl;
     }
 
     // State File
@@ -293,12 +293,18 @@ void DataLogger::setSensorData(const timeval* timeStamp, const sensor_data_t* co
     m_DataVector[IMU_AY].push_back(sensorData->ay);
     m_DataVector[IMU_AZ].push_back(sensorData->az);
 
+    // Altitude Sensor
+    m_DataVector[SENSOR_Z].push_back(sensorData->z);
+
+    // Compass
+    m_DataVector[COMPASS_PSI].push_back(sensorData->psi);
+
     // Log the Sensor Data
     if (m_loggingOn)
     {
         sensorDataOutputFile << m_DataVector[SENSOR_RAW_TIME].last()-m_DataVector[SENSOR_RAW_TIME].front() << "," << sensorData->p << ",";
         sensorDataOutputFile << sensorData->q << "," << sensorData->r << "," << sensorData->ax << ",";
-        sensorDataOutputFile << sensorData->ay << "," << sensorData->az << std::endl;
+        sensorDataOutputFile << sensorData->ay << "," << sensorData->az << "," << sensorData->z << "," << sensorData->psi << std::endl;
     }
     return;
 }

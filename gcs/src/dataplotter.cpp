@@ -56,6 +56,8 @@ ui->filteredRollchkbox, \
         ui->imuAXchkbox, \
         ui->imuAYchkbox, \
         ui->imuAZchkbox, \
+        ui->sensorZchkbox, \
+        ui->compassPSIchkbox, \
         ui->engine1chkbox, \
         ui->engine2chkbox, \
         ui->engine3chkbox, \
@@ -100,6 +102,7 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
 
     connect(ui->Clearbtn,SIGNAL(clicked()),this,SLOT(ClearPlots()));
 
+    ui->dataPlotqwtPlot->setCanvasBackground(QColor(255,255,255));
     QPen tempPen(QColor(0,0,0));
 
     tempPen.setStyle(Qt::DashLine);
@@ -220,6 +223,16 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(51,102,102));
     m_plotCurves[IMU_AZ].setPen(tempPen);
+
+    m_plotCurves[SENSOR_Z].setTitle(QwtText("Ultrasonic Sensor Z [m]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(255,51,102));
+    m_plotCurves[SENSOR_Z].setPen(tempPen);
+
+    m_plotCurves[COMPASS_PSI].setTitle(QwtText("Compass Heading [deg]"));
+    tempPen.setStyle(Qt::DashLine);
+    tempPen.setColor(QColor(0,255,102));
+    m_plotCurves[COMPASS_PSI].setPen(tempPen);
 
     m_plotCurves[ENGINE1].setTitle(QwtText("Engine 1 Commanded [us]"));
     tempPen.setStyle(Qt::SolidLine);
@@ -388,7 +401,7 @@ void DataPlotter::replot()
     int i = 0;
     int j = 0;
 
-    const int pointLimit = 1500;
+    const int pointLimit = 3000;
     double timePoints[pointLimit];
     double dataPoints[pointLimit];
 
