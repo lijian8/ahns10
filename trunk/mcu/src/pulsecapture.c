@@ -93,8 +93,6 @@ inline void UpdateRC()
   uint16_t pitchPulse = inputChannel[CHANNEL4].measuredPulseWidth;
   uint16_t rollPulse = inputChannel[CHANNEL5].measuredPulseWidth;
   uint16_t throttlePulse = inputChannel[CHANNEL6].measuredPulseWidth;
- 
-  uint8_t zeroAll = 0;
 
   // Store Arm and Mode Switch Input
   armHistory[index] = armPulse;
@@ -104,12 +102,28 @@ inline void UpdateRC()
   modePulse = MovingAverage(modeHistory,SWITCH_HISTORY_SIZE);
   armPulse = MovingAverage(armHistory,SWITCH_HISTORY_SIZE);
   
-  // Determine AP Mode
+  // Throttle Fail safe and turn off engines on throttle
   if (throttlePulse < 1100) // failsafe; was 1100
   {
     failSafe = 1;
   }
-  else if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
+  else if (throttlePulse < 1275)/**TODO normally 5 Decrease Throttle to Disable mixing */
+  {
+    rcThrottle = -120;
+    rcRoll = 0;
+    rcPitch = 0;
+    rcYaw = 0;
+  }
+  else
+  {
+    rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
+    rcRoll = PWMToCounter((rollPulse - zeroRoll));
+    rcPitch = PWMToCounter((pitchPulse - zeroPitch));
+    rcYaw = PWMToCounter(-(yawPulse - zeroYaw));
+  }
+  
+  // Determine AP Mode
+  if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
   {
     if (modePulse > (PC_PWM_MAX - PULSE_TOLERANCE))
     {
@@ -120,29 +134,9 @@ inline void UpdateRC()
       rcMode = AUGMENTED;
     }
   }
-  else if (throttlePulse < 1275)/**TODO normally 5 Decrease Throttle to Disable mixing */
-  {
-    zeroAll = 1;
-  }
   else
   {
     rcMode = MANUAL_DEBUG;
-  }
-
-  if (zeroAll == 1)
-  {
-    rcThrottle = -120;
-    rcRoll = 0;
-    rcPitch = 0;
-    rcYaw = 0;
-    zeroAll = 0;
-  }
-  else
-  {
-    rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
-    rcRoll = PWMToCounter((rollPulse - zeroRoll));
-    rcPitch = PWMToCounter((pitchPulse - zeroPitch));
-    rcYaw = PWMToCounter(-(yawPulse - zeroYaw));
   }
   
   if (++index == SWITCH_HISTORY_SIZE)

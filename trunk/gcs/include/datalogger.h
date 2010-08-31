@@ -47,6 +47,8 @@ enum PlotData {
     IMU_AX,
     IMU_AY,
     IMU_AZ,
+    SENSOR_Z,
+    COMPASS_PSI,
     ENGINE1,
     ENGINE2,
     ENGINE3,

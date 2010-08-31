@@ -381,13 +381,15 @@ QString gcsMainWindow::gainsToString(const gains_t& loopGains)
 
 QString gcsMainWindow::sensorDataToString(const sensor_data_t& sensorData)
 {
-    QString consoleText = QString(" [ SENSOR_DATA ]\n%1 %2 %3\n%4 %5 %6\n")
+    QString consoleText = QString(" [ SENSOR_DATA ]\n%1 %2 %3\n%4 %5 %6\n%7 %8\n")
                           .arg(QString::number(sensorData.p))
                           .arg(QString::number(sensorData.q))
                           .arg(QString::number(sensorData.r))
                           .arg(QString::number(sensorData.ax))
                           .arg(QString::number(sensorData.ay))
-                          .arg(QString::number(sensorData.az));
+                          .arg(QString::number(sensorData.az))
+                          .arg(QString::number(sensorData.z))
+                          .arg(QString::number(sensorData.psi));
     return consoleText;
 }
 
