@@ -82,7 +82,7 @@ void DataLogger::initialiseLogs()
     else
     {
         sensorDataOutputFile << "AHNS SENSOR MESSAGES LOG FOR " << logFileName << std::endl;
-        sensorDataOutputFile << "TIME, IMU_ROLL_DOT, IMU_PITCH_DOT, IMU_YAW_DOT";
+        sensorDataOutputFile << "TIME, IMU_ROLL_DOT, IMU_PITCH_DOT, IMU_YAW_DOT, ";
         sensorDataOutputFile << "IMU_AX, IMU_AY, IMU_AZ, SENSOR_Z, COMPASS_PSI" << std::endl;
     }
 
@@ -97,7 +97,7 @@ void DataLogger::initialiseLogs()
     else
     {
         stateOutputFile << "AHNS STATE MESSAGES LOG FOR " << logFileName << std::endl;
-        stateOutputFile << "TIME, F_PHI, F_PHI_DOT, F_THETA, F_THETA_DOT, F_PSI, F_PSI_DOT, F_X, F_X_DOT,";
+        stateOutputFile << "TIME, F_PHI, F_PHI_DOT, F_THETA, F_THETA_DOT, F_PSI, F_PSI_DOT, F_X, F_X_DOT, ";
         stateOutputFile << "F_AX, F_Y, F_Y_DOT, F_AY, F_Z, F_Z_DOT, F_AZ, VOLTAGE" << std::endl;
     }
 
@@ -127,7 +127,7 @@ void DataLogger::initialiseLogs()
     else
     {
         apStateOutputFile << "AHNS AP STATE MESSAGES LOG FOR " << logFileName << std::endl;
-        apStateOutputFile << "TIME, REF_PHI, REF_THETA, REF_PSI, REF_X, REF_Y, REF_Z, PHI_ACTIVE, THETA_ACTIVE,";
+        apStateOutputFile << "TIME, REF_PHI, REF_THETA, REF_PSI, REF_X, REF_Y, REF_Z, PHI_ACTIVE, THETA_ACTIVE, ";
         apStateOutputFile << "PSI_ACTIVE, X_ACTIVE, Y_ACTIVE, Z_ACTIVE" << std::endl;
     }
 
@@ -223,7 +223,7 @@ void DataLogger::setFCStateData(const timeval* const timeStamp, const fc_state_t
     {
         fcStateOutputFile << m_DataVector[FC_STATE_RAW_TIME].last()-m_DataVector[FC_STATE_RAW_TIME].front() << "," << fcState->commandedEngine1 << ",";
         fcStateOutputFile << fcState->commandedEngine2 << "," << fcState->commandedEngine3 << "," << fcState->commandedEngine4 << ",";
-        fcStateOutputFile << fcState->rclinkActive << "," << fcState->fcUptime << "," << fcState->fcCPUusage << std::endl;
+        fcStateOutputFile << (int) fcState->rclinkActive << "," << fcState->fcUptime << "," << (int) fcState->fcCPUusage << std::endl;
     }
 
     return;
@@ -264,9 +264,9 @@ void DataLogger::setAPStateData(const timeval* const timeStamp, const ap_state_t
     {
         apStateOutputFile << m_DataVector[AP_STATE_RAW_TIME].last()-m_DataVector[AP_STATE_RAW_TIME].front() << "," << apState->referencePhi << ",";
         apStateOutputFile << apState->referenceTheta << "," << apState->referencePsi << "," << apState->referenceX << ",";
-        apStateOutputFile << apState->referenceY << "," << apState->referenceZ << "," << apState->phiActive << ",";
-        apStateOutputFile << apState->thetaActive << "," << apState->psiActive << "," << apState->xActive << ",";
-        apStateOutputFile << apState->yActive <<"," << apState->zActive << std::endl;
+        apStateOutputFile << apState->referenceY << "," << apState->referenceZ << "," << (int) apState->phiActive << ",";
+        apStateOutputFile << (int) apState->thetaActive << "," << (int) apState->psiActive << "," << (int) apState->xActive << ",";
+        apStateOutputFile << (int) apState->yActive <<"," << (int) apState->zActive << std::endl;
     }
 
     return;
