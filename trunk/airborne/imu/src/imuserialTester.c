@@ -69,6 +69,10 @@ int main(int argc, char* argv[])
       printf("Test 3: Success - One shot mode data:\n");
       printf("%f,%f,%f,%f,%f,%f\n", state.p, state.q, state.r, state.ax, state.ay, state.az);
     }
+  // Test 4: set the IMU configuration
+  setIMUconfig();
+  closeIMUSerial();
+  openIMUSerial(imu_serial_port, IMU_BAUD_RATE);
   // Close the IMU serial port
   closeIMUSerial();
   printf("Disconnected from IMU\n");

@@ -313,5 +313,5 @@ int setIMUconfig()
   setCRBData('C', 'C', '0');
   setCRBData('D', '7', '4');
   // set the baudrate to BAUD_RATE (results in a disconnect)
-  setBaudRate(BAUD_RATE);
+  setBaudRate(IMU_BAUD_RATE);
 }
