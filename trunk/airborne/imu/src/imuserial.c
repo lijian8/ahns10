@@ -128,15 +128,15 @@ int setBaudRate(int baudRate)
   }
   usleep(IMU_DELAYRDWR);
   // read the result
-  unsigned char sResult[6];
-  if(!read(fd,sResult,5))
+  unsigned char sResult[5];
+  if(!read(fd,sResult,4))
   {
     printf("Read failed\n");
     closeIMUSerial();
     return 0;
   }
   // terminate with null character
-  sResult[6] = 0x00;
+  sResult[4] = 0x00;
   printf("%s", sResult);
   return 1;
 }
@@ -184,15 +184,15 @@ int setCRBData(unsigned char reg, unsigned char value1, unsigned char value2)
   }
   usleep(IMU_DELAYRDWR);
   // read the reg value returned
-  unsigned char sResult[6];
-  if(!read(fd,sResult,5))
+  unsigned char sResult[5];
+  if(!read(fd,sResult,4))
   {
     printf("Read failed\n");
     closeIMUSerial();
     return 0;
   }
   // terminate with null character
-  sResult[6] = 0x00;
+  sResult[4] = 0x00;
   printf("%s", sResult);
   return 1;
 }
@@ -302,4 +302,16 @@ int stopFreeRunningMode()
   sResult[6] = 0x00;
   printf("%s", sResult);
   return 1;
+}
+
+/**
+  * @brief set IMU configuration for BAUD_RATE baudrate and the rate2/acc2 values
+  */
+int setIMUconfig()
+{
+  // set the rate 2 and acc2 values (C=C0,D=74)
+  setCRBData('C', 'C', '0');
+  setCRBData('D', '7', '4');
+  // set the baudrate to BAUD_RATE (results in a disconnect)
+  setBaudRate(BAUD_RATE);
 }
