@@ -231,7 +231,7 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
 
     m_plotCurves[COMPASS_PSI].setTitle(QwtText("Compass Heading [deg]"));
     tempPen.setStyle(Qt::DashLine);
-    tempPen.setColor(QColor(0,255,102));
+    tempPen.setColor(QColor(0,150,102));
     m_plotCurves[COMPASS_PSI].setPen(tempPen);
 
     m_plotCurves[ENGINE1].setTitle(QwtText("Engine 1 Commanded [us]"));
@@ -446,6 +446,8 @@ void DataPlotter::replot()
                 case IMU_AX:
                 case IMU_AY:
                 case IMU_AZ:
+                case SENSOR_Z:
+                case COMPASS_PSI:
                     j = 0;
                     while ((j < pointLimit) && (j < m_DataVector[i].size()))
                     {
