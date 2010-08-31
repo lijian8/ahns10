@@ -58,7 +58,8 @@ int main (void)
     loopCount++;
     ToggleRed(TOGGLE);
     _delay_ms(250);
-    if ((inputChannel[inputsInitialised].measuredPulseWidth < (1500)) && (inputChannel[inputsInitialised].measuredPulseWidth != 0))
+    // dual rates need to be off
+    if ((inputChannel[inputsInitialised].measuredPulseWidth < (1300)) && (inputChannel[inputsInitialised].measuredPulseWidth != 0))
     {
       inputsInitialised++;
     }
@@ -98,10 +99,12 @@ int main (void)
   
         if (!toggleEnabled) // prepare to go into failsafe
         {
+	  _delay_ms(100);
           toggleEnabled = 1;
           ToggleRed(OFF);
           ToggleGreen(OFF);
           ToggleBlue(OFF);
+	  _delay_ms(100);
 	  flightMode = FAIL_SAFE;
 	}
         else  // Toggle Yellow Error at 10Hz
