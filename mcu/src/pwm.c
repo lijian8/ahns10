@@ -101,13 +101,13 @@ inline uint8_t StartPWM()
   escLimits[3][1] = ESC4_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
   
   ESC1_COUNTER = escLimits[0][ESC_MIN];
-  _delay_ms(750);
+  _delay_ms(1000);
   ESC2_COUNTER = escLimits[1][ESC_MIN];
-  _delay_ms(750);
+  _delay_ms(1000);
   ESC3_COUNTER = escLimits[2][ESC_MIN];
-  _delay_ms(750);
+  _delay_ms(1000);
   ESC4_COUNTER = escLimits[3][ESC_MIN];
-  _delay_ms(750); 
+  _delay_ms(1000); 
   
   return 1;
 }
