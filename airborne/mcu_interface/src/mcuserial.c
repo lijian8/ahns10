@@ -110,7 +110,7 @@ inline int getMCUPeriodic(uint8_t *flightMode, uint16_t *commandedEngine)
     usleep(MCU_DELAYRDWR);
     if(!read(fd,buffer,sizeof(buffer)))  
     {
-      fprintf(stderr,"MCU get periodic read failed\n");
+      //fprintf(stderr,"MCU get periodic read failed\n");
     }
     else
     {
@@ -151,7 +151,7 @@ inline int getMCUCommands(int8_t *commandedThrottle, int8_t *commandedRoll, int8
     usleep(MCU_DELAYRDWR);
     if(!read(fd,buffer,sizeof(buffer))) 
     {
-      fprintf(stderr,"MCU get commands read failed\n");
+     //fprintf(stderr,"MCU get commands read failed\n");
     }
     else
     {
