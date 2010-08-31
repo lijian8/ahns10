@@ -100,24 +100,11 @@ int closeIMUSerial()
 int setBaudRate(int baudRate)
 { 
   // command to change baudrate
-  unsigned char sCmd[6] = {'C','H','B','R',0x00,0x0D};
-  switch (baudRate) {
-    case 19200:
-      sCmd[4] = 0;
-    break;
-    case 38400:
-      sCmd[4] = 1;
-    break;
-    case 57600:
-      sCmd[4] = 2;
-    break;
-    case 115200:
-      sCmd[4] = 3;
-    break;
-    default:
-      printf("Incorrect baudrate!\n");
-      return 0;
-    break;
+  unsigned char sCmd[6] = {'C','H','B','R', (char)baudRate,0x0D};
+  if (baudRate > 3)
+  {
+    printf("Incorrect baudrate!\n");
+    return 0;
   }
   // send the request to change the baud rate
   if (!write(fd,sCmd,6))
@@ -193,7 +180,7 @@ int setCRBData(unsigned char reg, unsigned char value1, unsigned char value2)
   }
   // terminate with null character
   sResult[4] = 0x00;
-  printf("%s", sResult);
+  printf("%s\n", sResult);
   return 1;
 }
 
@@ -311,7 +298,9 @@ int setIMUconfig()
 {
   // set the rate 2 and acc2 values (C=C0,D=74)
   setCRBData('C', 'C', '0');
+  usleep(IMU_DELAYRDWR); 
   setCRBData('D', '7', '4');
-  // set the baudrate to BAUD_RATE (results in a disconnect)
-  setBaudRate(IMU_BAUD_RATE);
+  // set the baudrate to 115200 (results in a disconnect)
+  // 0 = 19200, 1 = 38400, 2 = 57600, 3 = 115200
+  setBaudRate(3);
 }

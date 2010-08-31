@@ -50,7 +50,7 @@ int main(int argc, char* argv[])
     {
       printf("Test 1: Success - Connected to IMU\n");
     }
-  // Test 2: read CBR register value
+  /*// Test 2: read CBR register value
   if (!readCRBData(reg))
   {
     fprintf(stderr,"Test 2: Error - Cannot read CBR %c value\n", reg);
@@ -68,7 +68,7 @@ int main(int argc, char* argv[])
     {
       printf("Test 3: Success - One shot mode data:\n");
       printf("%f,%f,%f,%f,%f,%f\n", state.p, state.q, state.r, state.ax, state.ay, state.az);
-    }
+    }*/
   // Test 4: set the IMU configuration
   setIMUconfig();
   closeIMUSerial();
