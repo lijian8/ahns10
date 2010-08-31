@@ -50,6 +50,7 @@ int mcuInit();
 void * sendUDPData(void *pointer);
 void * updateIMUdata(void *pointer);
 void * updateCompassHeading(void *pointer);
+void * updateArduinoData(void *pointer);
 void * updateMCU(void *pointer);
 void * updateControl(void *pointer);
 
@@ -81,7 +82,8 @@ int main(int argc, char *argv[])
     // create the imu thread
     pthread_create(&imuThread, NULL, updateIMUdata, (int*) 3);
     // create the arduino thread
-    pthread_create(&arduThread, NULL, updateCompassHeading, (int*) 3);
+    //pthread_create(&arduThread, NULL, updateCompassHeading, (int*) 3);i
+    pthread_create(&arduThread, NULL, updateArduinoData, (int*) 3);
     //create the mcu thread
     pthread_create(&mcuThread, NULL, updateMCU, (int*) 4);
     //create the control thread
@@ -117,7 +119,23 @@ void * updateCompassHeading(void *pointer)
     {
       compass_heading = previous_compass_heading;
     }
-    state.x = compass_heading;
+    raw_IMU.psi = compass_heading;
+    pthread_mutex_unlock(&mut);
+  }
+  return NULL;
+}
+
+// update the arduino data
+void * updateArduinoData(void *pointer)
+{
+  while(1)
+  {
+    // sleep the thread for updating the arduino
+    usleep(COMPASS_DELAY*1e3);
+    // get the data arduino
+    pthread_mutex_lock(&mut);
+    getArduinoData(&compass_heading, &state.voltage, &raw_IMU.z);
+    raw_IMU.psi = compass_heading;
     pthread_mutex_unlock(&mut);
   }
   return NULL;
@@ -149,7 +167,7 @@ void * updateIMUdata(void *pointer)
     gettimeofday(&timestamp, NULL); 
     startFilterTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
     // perform the attitude filtering using the imu data
-    attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.phi, &state.theta, &state.psi, compass_heading, diffFilterTime);
+    attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, compass_heading, diffFilterTime);
     printf(">> kf update : %f\n",1/diffFilterTime);
 
     pthread_mutex_unlock(&mut);
@@ -404,8 +422,8 @@ void* updateControl(void *pointer)
     
     x = state.x;
     y = state.y;
-    z = state.z;
-
+    //z = state.z;
+    z = raw_IMU.z;
     vx = state.vx;
     vy = state.vy;
     vz = state.vz;
@@ -414,10 +432,13 @@ void* updateControl(void *pointer)
     theta = state.theta;
     psi = state.psi;
     
-    p = raw_IMU.p;
-    q = raw_IMU.q;
-    r = raw_IMU.r;
+    //p = raw_IMU.p;
+    //q = raw_IMU.q;
+    //r = raw_IMU.r;
 
+    p = state.p;
+    q = state.q;
+    r = state.r;
     pthread_mutex_unlock(&mut); 
     
     // Update Guidance Loops
