@@ -199,6 +199,8 @@ inline void gcsMainWindow::createDockWindows()
         ui->menuView->insertAction(0,dockBF->toggleViewAction());
         ui->menuView->insertAction(0,dockFCtrl->toggleViewAction());
         ui->menuView->insertAction(0,dockTC->toggleViewAction());
+        ui->menuView->insertAction(0,dockPCtrl->toggleViewAction());
+        ui->menuView->insertAction(0,dockGCtrl->toggleViewAction());
 
         AHNS_DEBUG("gcsMainWindow::createDockWindows() [ Connect Slots ]");
         connect(m_wifiCommsWidget,SIGNAL(ConnectionClose()),this,SLOT(CloseTelemetry()));

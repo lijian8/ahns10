@@ -186,7 +186,7 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
 
     m_plotCurves[VOLTAGE].setTitle(QwtText("Voltage [V]"));
     tempPen.setStyle(Qt::SolidLine);
-    tempPen.setColor(QColor(102,0,153));
+    tempPen.setColor(QColor(102,102,153));
     m_plotCurves[F_AZ].setPen(tempPen);
 
     m_plotCurves[TRACE].setTitle(QwtText("Trace"));
