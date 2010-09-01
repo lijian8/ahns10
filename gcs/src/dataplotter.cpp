@@ -187,12 +187,12 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     m_plotCurves[VOLTAGE].setTitle(QwtText("Voltage [V]"));
     tempPen.setStyle(Qt::SolidLine);
     tempPen.setColor(QColor(102,102,153));
-    m_plotCurves[F_AZ].setPen(tempPen);
+    m_plotCurves[VOLTAGE].setPen(tempPen);
 
     m_plotCurves[TRACE].setTitle(QwtText("Trace"));
     tempPen.setStyle(Qt::SolidLine);
     tempPen.setColor(QColor(153,102,0));
-    m_plotCurves[F_AZ].setPen(tempPen);
+    m_plotCurves[TRACE].setPen(tempPen);
 
     m_plotCurves[IMU_ROLL_DOT].setTitle(QwtText("IMU Roll Rate [deg/s]"));
     tempPen.setStyle(Qt::DashLine);
@@ -257,11 +257,11 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     m_plotCurves[FC_CPU].setTitle(QwtText("CPU Usage [%]"));
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(255,255,255));
-    m_plotCurves[RC_LINK].setPen(tempPen);
+    m_plotCurves[FC_CPU].setPen(tempPen);
 
     m_plotCurves[RC_LINK].setTitle(QwtText("RC Link [1/0]"));
     tempPen.setStyle(Qt::SolidLine);
-    tempPen.setColor(QColor(255,255,255));
+    tempPen.setColor(QColor(255,120,255));
     m_plotCurves[RC_LINK].setPen(tempPen);
 
     m_plotCurves[REF_PHI].setTitle(QwtText("Reference Roll Angle [rad]"));
@@ -302,12 +302,12 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     m_plotCurves[THETA_ACTIVE].setTitle(QwtText("Pitch Active [1/0]"));
     tempPen.setStyle(Qt::DashDotLine);
     tempPen.setColor(QColor(255,102,0));
-    m_plotCurves[PHI_ACTIVE].setPen(tempPen);
+    m_plotCurves[THETA_ACTIVE].setPen(tempPen);
 
     m_plotCurves[PSI_ACTIVE].setTitle(QwtText("Yaw Active [1/0]"));
     tempPen.setStyle(Qt::DashDotLine);
     tempPen.setColor(QColor(102,204,255));
-    m_plotCurves[PHI_ACTIVE].setPen(tempPen);
+    m_plotCurves[PSI_ACTIVE].setPen(tempPen);
 
     m_plotCurves[X_ACTIVE].setTitle(QwtText("X Active [1/0]"));
     tempPen.setStyle(Qt::DashDotLine);
@@ -322,7 +322,7 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     m_plotCurves[Z_ACTIVE].setTitle(QwtText("Z Active [1/0]"));
     tempPen.setStyle(Qt::DashDotLine);
     tempPen.setColor(QColor(255,200,150));
-    m_plotCurves[PHI_ACTIVE].setPen(tempPen);
+    m_plotCurves[Z_ACTIVE].setPen(tempPen);
 
     // Legend
     ui->dataPlotqwtPlot->insertLegend(&m_legend,QwtPlot::BottomLegend);
