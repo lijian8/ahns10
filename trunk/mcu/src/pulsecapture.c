@@ -107,7 +107,7 @@ inline void UpdateRC()
   {
     failSafe = 1;
   }
-  else if (throttlePulse < 1275)/**TODO normally 5 Decrease Throttle to Disable mixing */
+  else if (throttlePulse < 1260)/* 1275*/
   {
     rcThrottle = -120;
     rcRoll = 0;
@@ -117,22 +117,22 @@ inline void UpdateRC()
   else
   {
     rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
-    rcRoll = PWMToCounter((rollPulse - zeroRoll));
-    rcPitch = PWMToCounter((pitchPulse - zeroPitch));
-    rcYaw = PWMToCounter(-(yawPulse - zeroYaw));
+    rcRoll = PWMToCounter(-(rollPulse - zeroRoll));
+    rcPitch = PWMToCounter(-(pitchPulse - zeroPitch));
+    rcYaw = PWMToCounter((yawPulse - zeroYaw));
   }
   
   // Determine AP Mode
   if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
   {
-    //if (modePulse > (PC_PWM_MAX - PULSE_TOLERANCE))
-    //{
+    if (modePulse > (PC_PWM_MAX - PULSE_TOLERANCE))
+    {
+      rcMode = AUGMENTED;
+    }
+    else if (modePulse > (PC_PWM_MIN - PULSE_TOLERANCE))
+    {
       rcMode = AUTOPILOT;
-    //}
-    //else if (modePulse > (PC_PWM_MIN - PULSE_TOLERANCE))
-    //{
-    //  rcMode = AUGMENTED;
-    //}
+    }
   }
   else
   {

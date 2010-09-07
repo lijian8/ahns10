@@ -121,7 +121,7 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 }
 
 static const double controlFactor = 1;
-static const double rcControlSplit = 0.1;
+static const double rcControlSplit = 0.5;
 
 inline void CombineCommands()
 {
