@@ -159,7 +159,7 @@ uint8_t setParameters(const loop_parameters_t* const srcParameters)
     bRet = 1;
     rollLoop.maximum = srcParameters->rollMaximum;
     rollLoop.minimum = srcParameters->rollMinimum;
-    rollLoop.neutral = srcParameters->pitchNeutral;
+    rollLoop.neutral = srcParameters->rollNeutral;
     
     pitchLoop.maximum = srcParameters->pitchMaximum;
     pitchLoop.minimum = srcParameters->pitchMinimum;
