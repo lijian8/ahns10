@@ -59,7 +59,7 @@ int main (void)
     ToggleRed(TOGGLE);
     _delay_ms(250);
     // dual rates need to be off
-    if ((inputChannel[inputsInitialised].measuredPulseWidth < (1300)) && (inputChannel[inputsInitialised].measuredPulseWidth != 0))
+    if ((inputChannel[inputsInitialised].measuredPulseWidth < (1275)) && (inputChannel[inputsInitialised].measuredPulseWidth != 0))
     {
       inputsInitialised++;
     }
