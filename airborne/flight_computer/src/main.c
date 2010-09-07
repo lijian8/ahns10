@@ -302,6 +302,8 @@ void* updateMCU(void *pointer)
     pthread_mutex_unlock(&apMutex);
     
     // Receive Data
+    if ((count % 500) == 0)
+    {
     getMCUPeriodic(&mcuMode,readEngine);
     pthread_mutex_lock(&fcMut);
     if (mcuMode == FAIL_SAFE)
@@ -317,8 +319,8 @@ void* updateMCU(void *pointer)
     fcState.commandedEngine3 = readEngine[2];
     fcState.commandedEngine4 = readEngine[3];
     pthread_mutex_unlock(&fcMut);
-    
-    count++;
+    }
+    count = (count + 1) % 10000;
     usleep(MCU_DELAY*1e3);
   }
   
