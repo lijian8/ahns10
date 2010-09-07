@@ -168,19 +168,20 @@ int attitudeFilterInitialise()
 }
 
 //filtered values
-int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *phif, double *thetaf, double *psif, double compass, double diffTime)
+int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double compass, double diffTime)
+
 {
   // signum
   int s = 0;
   // allocated values for (u) -> this is the gyro rates reading
   gsl_matrix_set_zero(state_u);
   gsl_matrix_set(state_u,0,0,*rateXd);
-  gsl_matrix_set(state_u,1,0,*rateYd);
+  gsl_matrix_set(state_u,1,0,*rateYd*-1);
   gsl_matrix_set(state_u,2,0,*rateZd*-1);
   // allocate values for (y) -> this is the atan2 reading
   gsl_matrix_set_zero(state_y);
   gsl_matrix_set(state_y,0,0,(atan2(*accYd,sqrt(*accXd * *accXd + *accZd * *accZd)) * 180/M_PI)); // phi measurement
-  gsl_matrix_set(state_y,1,0,(-1*atan2(*accXd,sqrt(*accYd* *accYd + *accZd * *accZd)) * 180/M_PI)); // theta measurement
+  gsl_matrix_set(state_y,1,0,(atan2(*accXd,sqrt(*accYd* *accYd + *accZd * *accZd)) * 180/M_PI)); // theta measurement
   //gsl_matrix_set(state_y,2,0,(atan2(sqrt(*accXd * *accXd + *accYd * *accYd),*accZd) * 180/M_PI)); // psi measurement
   gsl_matrix_set(state_y,2,0,compass);
 
@@ -249,6 +250,13 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   gsl_matrix_mul_elements(state_p, state_p_one_step);
   
   // done with time and measurement update
+  // update the euler rates (radians)
+  //*rateXf = ((gsl_matrix_get(state_x,0,0) - gsl_matrix_get(state_x_previous,0,0))/diffTime) * M_PI/180;
+  //*rateXf = gsl_matrix_get(state_u,0,0) * M_PI/180;
+  //*rateYf = ((gsl_matrix_get(state_x,2,0) - gsl_matrix_get(state_x_previous,2,0))/diffTime) * M_PI/180;
+  //*rateYf = gsl_matrix_get(state_u,1,0) * M_PI/180;
+  //*rateZf = ((gsl_matrix_get(state_x,4,0) - gsl_matrix_get(state_x_previous,4,0))/diffTime) * M_PI/180;
+  //*rateZf = gsl_matrix_get(state_u,2,0) * M_PI/180;
   // need to save some variables for the next kalman filter update (state_x and state_p)
   gsl_matrix_memcpy(state_x_previous,state_x);
   gsl_matrix_memcpy(state_p_previous,state_p);
