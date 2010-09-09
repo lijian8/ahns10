@@ -79,7 +79,7 @@ int main(int argc, char* argv[])
       printf("%.1lf\nTest 4: Success - Read altitude sensor\n",altitudeReading);
     }
   // Test 5: read all data
-  for(i=0; i<10000; i++)
+  for(i=0; i<100000; i++)
   {
     getArduinoData(&compassHeading, &batteryVoltage, &altitudeReading);
     printf("%.2lf,%.3lf,%.3lf\n",compassHeading,batteryVoltage,altitudeReading);

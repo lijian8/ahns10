@@ -174,15 +174,15 @@ unsigned char sCmd[1] = {'O'};
   }
   usleep(ARDU_DELAYRDWR);
   // read the altitude reading
-  unsigned char sResult[20];
-  if(!read(arduSerialfd,sResult,19))
+  unsigned char sResult[23];
+  if(!read(arduSerialfd,sResult,22))
   {
     printf("Read failed\n");
     return 0;
   }
   // terminate with null character
-  sResult[19] = 0x00;
+  sResult[22] = 0x00;
   // save to altitude reading
-  sscanf(sResult, "%lf,%lf,%lf\n", compassHeading, batteryVoltage, altitudeReading);
+  sscanf(sResult, "C%lf,V%lf,A%lf\n", compassHeading, batteryVoltage, altitudeReading);
   return 1;
 }
