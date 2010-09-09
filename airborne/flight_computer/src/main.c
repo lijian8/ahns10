@@ -293,7 +293,7 @@ void* updateMCU(void *pointer)
 {
   uint8_t mcuMode = 0;
   uint16_t readEngine[4];
-  int count = 0;
+  static int mcuDelayCount = 0;
   while (1)
   {
     // Send Data
@@ -301,27 +301,28 @@ void* updateMCU(void *pointer)
     sendMCUCommands(&apMode, &apThrottle, &apRoll, &apPitch, &apYaw);
     pthread_mutex_unlock(&apMutex);
     
-    // Receive Data
-    if ((count % 500) == 0)
+    // Query and Receive Data ate slower rate
+    if (mcuDelayCount > (double) MCU_QUERY_DELAY/(double) MCU_UPDATE_DELAY)
     {
-    getMCUPeriodic(&mcuMode,readEngine);
-    pthread_mutex_lock(&fcMut);
-    if (mcuMode == FAIL_SAFE)
-    {
-      fcState.rclinkActive = 0;
+      mcuDelayCount = 0;
+      getMCUPeriodic(&mcuMode,readEngine);
+      pthread_mutex_lock(&fcMut);
+      if (mcuMode == FAIL_SAFE)
+      {
+        fcState.rclinkActive = 0;
+      }
+      else
+      {
+        fcState.rclinkActive = 1;
+      }
+      fcState.commandedEngine1 = readEngine[0];
+      fcState.commandedEngine2 = readEngine[1];
+      fcState.commandedEngine3 = readEngine[2];
+      fcState.commandedEngine4 = readEngine[3];
+      pthread_mutex_unlock(&fcMut);
     }
-    else
-    {
-      fcState.rclinkActive = 1;
-    }
-    fcState.commandedEngine1 = readEngine[0];
-    fcState.commandedEngine2 = readEngine[1];
-    fcState.commandedEngine3 = readEngine[2];
-    fcState.commandedEngine4 = readEngine[3];
-    pthread_mutex_unlock(&fcMut);
-    }
-    count = (count + 1) % 10000;
-    usleep(MCU_DELAY*1e3);
+    mcuDelayCount++;
+    usleep(MCU_UPDATE_DELAY*1e3);
   }
   
   return NULL;
