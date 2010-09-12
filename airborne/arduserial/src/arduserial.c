@@ -200,7 +200,7 @@ unsigned char sCmd[1] = {'O'};
 int openArduSerialCan(char* serialPort, int baudRate)
 {
   // open the specified serial port
-  arduSerialfd = open(serialPort,O_RDWR | O_NOCTTY | O_NDELAY);
+  arduSerialfd = open(serialPort,O_RDWR | O_NOCTTY );
   // check if the serial port has been opened
   if (arduSerialfd == -1) 
   {
@@ -250,13 +250,14 @@ int openArduSerialCan(char* serialPort, int baudRate)
 
 int getArduinoDataCan(double *compassHeading, double *batteryVoltage, double *altitudeReading)
 {
-  usleep(ARDU_DELAYRDWR);
-  // read the arduino data
   unsigned char sResult[255];
   int res = 0;
+  usleep(ARDU_DELAYRDWR);
+  // read the arduino data
   res = read(arduSerialfd,sResult,255);
   // terminate with null character
   sResult[res] = 0x00;
+  printf("%d|%s|",res,sResult);
   // save to altitude reading
   sscanf(sResult, "C%lf,V%lf,A%lf\n", compassHeading, batteryVoltage, altitudeReading);
   return 1;
