@@ -33,7 +33,7 @@
 // overo baud rate
 #define OVERO_BAUDRATE 115200
 // battery voltage read time
-#define BATTERY_READ 1000
+#define ADC_READ 20
 
 // software serial compass object
 NewSoftSerial compass(COMPASS_RX,COMPASS_TX);
@@ -43,6 +43,8 @@ char compass_heading[10];
 int compass_index = 0;
 // compss heading index
 int compass_heading_index = 0;
+// compass index difference
+int compass_index_diff = 0;
 
 // compass character
 char compass_char = 0;
@@ -62,6 +64,16 @@ double altitude = 0;
 unsigned long current_time;
 // previous time
 unsigned long previous_time;
+// battery voltage array
+double bat_voltage_avg[5];
+// battery voltage avg counter
+int bat_voltage_avg_count = 0;
+// altitude sensor array
+double altitude_avg[5];
+// altitude voltage
+int altitude_avg_count = 0;
+// moving average counter
+double average = 0.0;
 
 // arduserial functions
 // read the serial compass data
@@ -89,7 +101,7 @@ void loop()
 {
   // check the time
   current_time = millis() - previous_time;
-  if (current_time > BATTERY_READ)
+  if (current_time > ADC_READ)
   {
       readVoltage();
       readAltitude();
@@ -139,7 +151,22 @@ int readVoltage()
 {
    adc_read = analogRead(VOLTAGE_ADC);
    bat_voltage_raw = (adc_read/double(1023))*5;
-   bat_voltage = 2.7964*bat_voltage_raw + 0.103465;  
+   bat_voltage = 2.7964*bat_voltage_raw + 0.103465;
+   // store the voltage data in an array
+   bat_voltage_avg[bat_voltage_avg_count] = bat_voltage;
+   bat_voltage_avg_count++;
+   if (bat_voltage_avg_count > 4)
+   {
+    bat_voltage_avg_count = 0; 
+   }
+   average = 0;
+   // compute the moving avg
+   for(i=0; i<5; i++)
+   {
+     average = average + bat_voltage_avg[i];
+   }
+   // store the filter battery voltage
+   bat_voltage = average/5.0;
 }
 
 // read the altitude sensor volrage via ADC
@@ -147,28 +174,75 @@ int readAltitude()
 {
   adc_read = analogRead(ALTITUDE_ADC); 
   altitude = 0.0135*adc_read + 0.04155;
+  // store the voltage data in an array
+  altitude_avg[altitude_avg_count] = altitude;
+  altitude_avg_count++;
+  if (altitude_avg_count > 4)
+  {
+   altitude_avg_count = 0; 
+  }
+  average = 0;
+  // compute the moving avg
+  for(i=0; i<5; i++)
+  {     
+    average = average + altitude_avg[i];
+  }
+  // store the filter battery voltage
+  altitude = average/5.0;
 }
 
 // read serial data transmitted from the overo and reply with suitable response
 int readOvero()
 {
-  if (Serial.available() > 0)
-  {
+  //if (Serial.available() > 0)
+  //{
     overo_com = Serial.read();
+    // print the compass data
     if (overo_com == 'C')
     {
       for(i=0; i<compass_heading_index; i++)
       {
         Serial.print(compass_heading[i],BYTE);
-      }     
+      }
+      Serial.print('\n');     
     }
+    // print the voltage data
     if (overo_com == 'V')
     {
       Serial.print(bat_voltage,3);
+      Serial.print('\n'); 
     }
+    // print the altitude data
     if (overo_com == 'A')
     {
       Serial.print(altitude,3);
+      Serial.print('\n');
     }
-  }
+    // print all arduino data
+    //if (overo_com == 'O')
+    //{
+      // print the compass data
+      Serial.print('C');
+      // format the compass data
+      // less than 10
+      if (compass_heading[1] == '.')
+      {
+        Serial.print('0'); 
+      }
+      // less than 100
+      if (compass_heading[2] == '.')
+      {
+        Serial.print('0'); 
+      }
+      for(i=0; i<compass_heading_index; i++)
+      {
+        Serial.print(compass_heading[i],BYTE);
+      }
+      Serial.print(",V");
+      Serial.print(bat_voltage,3);
+      Serial.print(",A");
+      Serial.print(altitude,3);
+      Serial.print('\n');      
+    //}
+  //}
 }

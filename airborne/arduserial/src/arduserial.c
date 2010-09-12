@@ -55,9 +55,19 @@ int openArduSerial(char* serialPort, int baudRate)
   currentSerialPort.c_iflag = IGNPAR;
   currentSerialPort.c_oflag = 0;
   currentSerialPort.c_lflag = 0;
+
+  // no flow control
+  currentSerialPort.c_cflag &= ~CRTSCTS;
+  currentSerialPort.c_iflag &= ~(IXON | IXOFF | IXANY); // turn off s/w flow ctrl
+
+  currentSerialPort.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG); // make raw
+  currentSerialPort.c_oflag &= ~OPOST; // make raw
+
   // block until n bytes have been received
   currentSerialPort.c_cc[VMIN] = 0;
   currentSerialPort.c_cc[VTIME] = 0;
+  // flush the serial port
+  tcflush(arduSerialfd, TCIFLUSH);
   // apply the settings to the port
   if((tcsetattr(arduSerialfd, TCSANOW, &currentSerialPort))==-1)
   {
@@ -186,3 +196,69 @@ unsigned char sCmd[1] = {'O'};
   sscanf(sResult, "C%lf,V%lf,A%lf\n", compassHeading, batteryVoltage, altitudeReading);
   return 1;
 }
+
+int openArduSerialCan(char* serialPort, int baudRate)
+{
+  // open the specified serial port
+  arduSerialfd = open(serialPort,O_RDWR | O_NOCTTY | O_NDELAY);
+  // check if the serial port has been opened
+  if (arduSerialfd == -1) 
+  {
+    // failed to open the serial port
+    return 0; 
+  } else
+    {
+      //fcntl(arduSerialfd, F_SETFL, 0);
+    }
+  // get serial port settings
+  if(tcgetattr(arduSerialfd, &previousSerialPort)==-1)
+  {
+    // failed to read the serial port settings
+    closeArduSerial();
+    return 0;
+  }
+  // create a new memory structure for the port settings
+  memset(&currentSerialPort, 0, sizeof(currentSerialPort));
+  // set the baud rate, 8N1, enable the receiver, set local mode
+  currentSerialPort.c_cflag = baudRate | CS8 | CLOCAL | CREAD;
+  // ignore parity errors
+  currentSerialPort.c_iflag = IGNPAR;
+  currentSerialPort.c_oflag = 0;
+  currentSerialPort.c_lflag = 0;
+
+  // no flow control
+  currentSerialPort.c_cflag &= ~CRTSCTS;
+  currentSerialPort.c_iflag &= ~(IXON | IXOFF | IXANY); // turn off s/w flow ctrl
+
+  currentSerialPort.c_lflag &= ICANON;
+
+  // block until n bytes have been received
+  currentSerialPort.c_cc[VMIN] = 22;
+  currentSerialPort.c_cc[VTIME] = 0;
+  // flush the serial port
+  tcflush(arduSerialfd, TCIFLUSH);
+  // apply the settings to the port
+  if((tcsetattr(arduSerialfd, TCSANOW, &currentSerialPort))==-1)
+  {
+    // failed to apply port settings
+    closeArduSerial();
+    return 0;
+  }
+  // succesfully opened the port
+  return 1;
+}
+
+int getArduinoDataCan(double *compassHeading, double *batteryVoltage, double *altitudeReading)
+{
+  usleep(ARDU_DELAYRDWR);
+  // read the arduino data
+  unsigned char sResult[255];
+  int res = 0;
+  res = read(arduSerialfd,sResult,255);
+  // terminate with null character
+  sResult[res] = 0x00;
+  // save to altitude reading
+  sscanf(sResult, "C%lf,V%lf,A%lf\n", compassHeading, batteryVoltage, altitudeReading);
+  return 1;
+}
+
