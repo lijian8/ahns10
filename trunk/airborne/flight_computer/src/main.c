@@ -80,14 +80,14 @@ int main(int argc, char *argv[])
     // create the server thread
     pthread_create(&udpThread, NULL, sendUDPData, (int*) 1);
     // create the imu thread
-    pthread_create(&imuThread, NULL, updateIMUdata, (int*) 3);
+    pthread_create(&imuThread, NULL, updateIMUdata, (int*) 2);
     // create the arduino thread
     //pthread_create(&arduThread, NULL, updateCompassHeading, (int*) 3);i
     pthread_create(&arduThread, NULL, updateArduinoData, (int*) 3);
     //create the mcu thread
     pthread_create(&mcuThread, NULL, updateMCU, (int*) 4);
     //create the control thread
-    pthread_create(&controlThread, NULL, updateControl, (int*) 4);
+    pthread_create(&controlThread, NULL, updateControl, (int*) 5);
 
     // execute the udp server thread
     pthread_join(udpThread,NULL);
@@ -128,13 +128,25 @@ void * updateCompassHeading(void *pointer)
 // update the arduino data
 void * updateArduinoData(void *pointer)
 {
+  double compass_heading_old = 0.0;
+  double voltage_old = 0.0;
+  double z_old = 0.0;
   while(1)
   {
     // sleep the thread for updating the arduino
     usleep(COMPASS_DELAY*1e3);
     // get the data arduino
     pthread_mutex_lock(&mut);
-    getArduinoData(&compass_heading, &state.voltage, &raw_IMU.z);
+    compass_heading_old = compass_heading;
+    voltage_old = state.voltage;
+    z_old = raw_IMU.z;
+    if (!getArduinoDataCan(&compass_heading, &state.voltage, &raw_IMU.z))
+    {
+      compass_heading = compass_heading_old;
+      state.voltage = voltage_old;
+      raw_IMU.z = z_old;
+    }
+    //printf(">> Ard: %f %f %f\n",compass_heading,state.voltage,raw_IMU.z);
     raw_IMU.psi = compass_heading;
     pthread_mutex_unlock(&mut);
   }
@@ -168,7 +180,7 @@ void * updateIMUdata(void *pointer)
     startFilterTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
     // perform the attitude filtering using the imu data
     attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, compass_heading, diffFilterTime);
-    printf(">> kf update : %f\n",1/diffFilterTime);
+    //printf(">> kf update : %f\n",1/diffFilterTime);
 
     pthread_mutex_unlock(&mut);
   }
@@ -264,7 +276,7 @@ void * sendUDPData(void *pointer)
       endServerTime=timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
       diffServerTime = endServerTime - startServerTime;
       // output the sent states  
-      printf(">> state : %f %f %f %f | %f\n",raw_IMU.p,raw_IMU.q,raw_IMU.r,state.psi,(1/diffServerTime));
+      //printf(">> state : %f %f %f %f | %f\n",raw_IMU.p,raw_IMU.q,raw_IMU.r,state.psi,(1/diffServerTime));
       // send the state packet
       server_send_packet(&server, HELI_STATE, &state, sizeof(state_t));
       // send the raw sensor data packet
