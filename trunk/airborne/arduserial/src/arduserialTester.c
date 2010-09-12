@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
     }
   }
   // Test 1: open the arduino serial port
-  if (!openArduSerial(arduino_serial_port, ARDU_BAUD_RATE))
+  if (!openArduSerialCan(arduino_serial_port, ARDU_BAUD_RATE))
   {
     fprintf(stderr,"Test 1: Error - Cannot connect to the arduino\n");
     return -1;
@@ -51,6 +51,7 @@ int main(int argc, char* argv[])
     {
       printf("Test 1: Success - Connected to arduino\n");
     }
+  /*
   // Test 2: read compass heading
   if (!getCompassHeading(&compassHeading))
   {
@@ -77,11 +78,11 @@ int main(int argc, char* argv[])
   } else
     {
       printf("%.1lf\nTest 4: Success - Read altitude sensor\n",altitudeReading);
-    }
+    }*/
   // Test 5: read all data
   for(i=0; i<100000; i++)
   {
-    getArduinoData(&compassHeading, &batteryVoltage, &altitudeReading);
+    getArduinoDataCan(&compassHeading, &batteryVoltage, &altitudeReading);
     printf("%.2lf,%.3lf,%.3lf\n",compassHeading,batteryVoltage,altitudeReading);
   } 
   // Close the arduino serial port

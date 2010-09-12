@@ -27,13 +27,15 @@
 // Arduino baud rate
 #define ARDU_BAUD_RATE B115200	
 // Delay between serial write and serial read (microseconds)
-#define ARDU_DELAYRDWR 20000 // 100hz = 10000
+#define ARDU_DELAYRDWR 5000 // 100hz = 10000
 
 int openArduSerial(char* serialPort, int baudRate);
+int openArduSerialCan(char* serialPort, int baudRate);
 int closeArduSerial();
 int getCompassHeading(double *compassHeading);
 int getBatteryVoltage(double *batteryVoltage);
 int getAltitudeReading(double *altitudeReading);
 int getArduinoData(double *compassHeading, double *batteryVoltage, double *altitudeReading);
+int getArduinoDataCan(double *compassHeading, double *batteryVoltage, double *altitudeReading);
 
 #endif
