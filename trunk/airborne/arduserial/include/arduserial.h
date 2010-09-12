@@ -27,7 +27,7 @@
 // Arduino baud rate
 #define ARDU_BAUD_RATE B115200	
 // Delay between serial write and serial read (microseconds)
-#define ARDU_DELAYRDWR 5000 // 100hz = 10000
+#define ARDU_DELAYRDWR 0
 
 int openArduSerial(char* serialPort, int baudRate);
 int openArduSerialCan(char* serialPort, int baudRate);

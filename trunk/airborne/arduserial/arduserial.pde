@@ -101,14 +101,14 @@ void loop()
 {
   // check the time
   current_time = millis() - previous_time;
+  readCompass();
   if (current_time > ADC_READ)
   {
       readVoltage();
       readAltitude();
+      readOvero();
       previous_time = millis();
   }
-  readCompass();
-  readOvero();
 }
 
 // read serial data transmitted from the compass
