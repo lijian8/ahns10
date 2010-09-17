@@ -3,8 +3,8 @@
 CCFLAGS = -O2
 LDFLAGS = 
 
-imuserialTester: obj/imuserial.o
-	gcc $(LDFLAGS) -I $(HELICONNECT) -I include/ obj/imuserial.o -o imuserialTester src/imuserialTester.c
+imuserialRecon: obj/imuserial.o
+	gcc $(LDFLAGS) -I $(HELICONNECT) -I include/ obj/imuserial.o -o imuserialRecon src/imuserialRecon.c
 
 obj/imuserial.o: src/imuserial.c include/imuserial.h
 	gcc $(CCFLAGS) -c -I include/ src/imuserial.c -o obj/imuserial.o
