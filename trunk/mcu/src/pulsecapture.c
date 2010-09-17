@@ -32,7 +32,7 @@ const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
 volatile uint8_t newRC = 0;
 
 /** @name Input Commands Zero PWM Signals, us*/
-uint16_t zeroThrottle = 1000; /** TODO: Change to 1000 from 1250*/
+uint16_t zeroThrottle = 1100; /** 1000 too aggressive, 1250 too slow*/
 uint16_t zeroRoll = 1500;
 uint16_t zeroPitch = 1500; 
 uint16_t zeroYaw = 1500;
