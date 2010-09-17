@@ -255,9 +255,13 @@ int getArduinoDataCan(double *compassHeading, double *batteryVoltage, double *al
   usleep(ARDU_DELAYRDWR);
   // read the arduino data
   res = read(arduSerialfd,sResult,255);
+  if(res!=22)
+  {
+    return 0;
+  }
   // terminate with null character
   sResult[res] = 0x00;
-  printf("%d|%s|",res,sResult);
+  //printf("%d|%s|",res,sResult);
   // save to altitude reading
   sscanf(sResult, "C%lf,V%lf,A%lf\n", compassHeading, batteryVoltage, altitudeReading);
   return 1;
