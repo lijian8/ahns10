@@ -33,7 +33,7 @@
 // overo baud rate
 #define OVERO_BAUDRATE 115200
 // battery voltage read time
-#define ADC_READ 20
+#define ADC_READ 5
 
 // software serial compass object
 NewSoftSerial compass(COMPASS_RX,COMPASS_TX);
@@ -60,10 +60,10 @@ double bat_voltage_raw = 0;
 double bat_voltage = 0;
 // transmitted altitude reading
 double altitude = 0;
-// time counter
-unsigned long current_time;
-// previous time
-unsigned long previous_time;
+// time counter adc
+unsigned long current_time_adc;
+// previous time 
+unsigned long previous_time_adc;
 // battery voltage array
 double bat_voltage_avg[5];
 // battery voltage avg counter
@@ -102,7 +102,7 @@ void loop()
   // check the time
   current_time = millis() - previous_time;
   readCompass();
-  if (current_time > ADC_READ)
+  if (current_time_adc > ADC_READ)
   {
       readVoltage();
       readAltitude();
