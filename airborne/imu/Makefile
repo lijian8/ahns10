@@ -9,5 +9,5 @@ imuserialRecon: obj/imuserial.o
 obj/imuserial.o: src/imuserial.c include/imuserial.h
 	gcc $(CCFLAGS) -c -I include/ src/imuserial.c -o obj/imuserial.o
 clean:
-	rm -f obj/* imuserialTester
+	rm -f obj/* imuserialRecon
 
