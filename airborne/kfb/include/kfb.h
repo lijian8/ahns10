@@ -26,11 +26,13 @@
 #define PHI_ANGLE_Q 0.001;
 #define PHI_GYRO_Q 0.003;
 #define PHI_R 0.03;
+#define PHI_DIRECTION 1.0;
 
 // Kalman filter constant (theta/radians)
 #define THETA_ANGLE_Q 0.001;
 #define THETA_GYRO_Q 0.003;
 #define THETA_R 0.03;
+#define THETA_DIRECTION -1.0;
 
 // struct definition for each axis
 typedef struct _axis {
@@ -50,11 +52,13 @@ typedef struct _axis {
   double Q[2];
   // R measurement noise term
   double R;
+  // direction of axis
+  double direction;
 } axis;
 
 // function defintions
-int attitudeFilterInitialise(double *accXr, double *accYr, double *accZr);
-int attitudeFilter(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double dT);
+int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr);
+int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double dT);
 int kFilterTimeUpdate(axis *axis_t, double *gyroRate, double dT);
 int kFilterMeasureUpdate (axis *axis_t);
 double coarsePitchAngle(double *accXr, double *accYr, double *accZr);

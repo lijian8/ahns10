@@ -24,7 +24,7 @@ axis phi_axis;
 axis theta_axis;
 
 // function to initialise the values in the axis structures
-int attitudeFilterInitialise(double *accXr, double *accYr, double *accZr)
+int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
 {
   /* phi axis */
   // initialise phi angle to coarse roll angle
@@ -50,6 +50,9 @@ int attitudeFilterInitialise(double *accXr, double *accYr, double *accZr)
   phi_axis.Q[1] = PHI_GYRO_Q;
   // initialise the R term
   phi_axis.R = PHI_R;
+  // initialise the direction term
+  phi_axis.direction = PHI_DIRECTION;
+
 
   /* theta axis */
   // initialise theta angle to coarse pitch angle
@@ -75,10 +78,12 @@ int attitudeFilterInitialise(double *accXr, double *accYr, double *accZr)
   theta_axis.Q[1] = THETA_GYRO_Q;
   // initialise the R term
   theta_axis.R = THETA_R;
+  // initialise the direction term
+  theta_axis.direction = THETA_DIRECTION;
 
   return 1;
 }
-int attitudeFilter(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double dT)
+int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double dT)
 {
   // time update for phi axis
   kFilterTimeUpdate(&phi_axis,rateXr,dT);
@@ -104,7 +109,7 @@ int attitudeFilter(double *rateXr, double *rateYr, double *rateZr, double *accXr
 int kFilterTimeUpdate(axis *axis_t, double *gyroRate, double dT)
 {
   // compute the axis angle by unbiasing the gyro reading and integrating
-  axis_t->X[0] += (*gyroRate - axis_t->X[1])*dT;
+  axis_t->X[0] += ((*gyroRate*axis_t->direction) - axis_t->X[1])*dT;
   // calculate the covariance matrix and integrate (discrete)
   axis_t->P[0][0] += (axis_t->Q[0] - axis_t->P[0][1] - axis_t->P[1][0])*dT;
   axis_t->P[0][1] += -axis_t->P[1][1]*dT;
