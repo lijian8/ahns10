@@ -25,8 +25,6 @@
 #include <gsl/gsl_linalg.h>
 #include <gsl/gsl_blas.h>
 
-#define PI 3.14159265 // find the cmat implementation for this
-
 // function defintions
 int attitudeFilterInitialise();
 int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd, double *accYd, double *accZd, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double compass, double diffTime);

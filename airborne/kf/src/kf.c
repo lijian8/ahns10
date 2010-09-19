@@ -249,7 +249,7 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   // 3c: (I-K*H)*P_one_step -> state_p * p_one_step -> store in state_p
   gsl_matrix_mul_elements(state_p, state_p_one_step);
   
-  // done with time and measurement update
+  // done with time and measurement update (still really noisy) 
   // update the euler rates (radians)
   //*rateXf = ((gsl_matrix_get(state_x,0,0) - gsl_matrix_get(state_x_previous,0,0))/diffTime) * M_PI/180;
   //*rateXf = gsl_matrix_get(state_u,0,0) * M_PI/180;
@@ -257,26 +257,15 @@ int attitudeFilter(double *rateXd, double *rateYd, double *rateZd, double *accXd
   //*rateYf = gsl_matrix_get(state_u,1,0) * M_PI/180;
   //*rateZf = ((gsl_matrix_get(state_x,4,0) - gsl_matrix_get(state_x_previous,4,0))/diffTime) * M_PI/180;
   //*rateZf = gsl_matrix_get(state_u,2,0) * M_PI/180;
+  
   // need to save some variables for the next kalman filter update (state_x and state_p)
   gsl_matrix_memcpy(state_x_previous,state_x);
   gsl_matrix_memcpy(state_p_previous,state_p);
   
-  // allocate filtered state values (degrees)
-  //*thetaf = gsl_matrix_get(state_x_previous,0,0);//
-  //*phif = gsl_matrix_get(state_x_previous,2,0);//
-  *psif = gsl_matrix_get(state_x_previous,4,0);//
-
-  // allocate filtered state values (radians)
+  // allocate filtered state values (radians for roll/pitch and degrees for compass)
   *phif = gsl_matrix_get(state_x_previous,0,0) * M_PI/180;
   *thetaf = gsl_matrix_get(state_x_previous,2,0) * M_PI/180;
-  //*psif = gsl_matrix_get(state_x_previous,4,0) * M_PI/180;
+  *psif = gsl_matrix_get(state_x_previous,4,0);
   return 1;
 }
-
-
-
-
-
-
-
 
