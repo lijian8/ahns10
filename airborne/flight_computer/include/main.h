@@ -4,7 +4,7 @@
 // server port
 #define SERVER_PORT 2002
 // server delay (milliseconds)
-#define SERVER_DELAY 10
+#define SERVER_DELAY 100
 
 // arduino serial port
 #define ARDU_SERIAL_PORT "/dev/ttyUSB0"

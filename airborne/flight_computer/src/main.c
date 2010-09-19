@@ -169,7 +169,6 @@ void * updateIMUdata(void *pointer)
     usleep(IMU_DELAY*1e3);
     pthread_mutex_lock(&mut);
     // get the IMU sensor data
-    //getImuSensorData(&state.p, &state.q, &state.r, &state.ax, &state.ay, &state.az);
     getImuSensorData(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az);
     // calculate the time elapsed since last update
     gettimeofday(&timestamp, NULL); 
@@ -181,6 +180,7 @@ void * updateIMUdata(void *pointer)
     // perform the attitude filtering using the imu data
     attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, compass_heading, diffFilterTime);
     //printf(">> kf update : %f\n",1/diffFilterTime);
+    state.trace = (1/diffFilterTime);
 
     pthread_mutex_unlock(&mut);
   }
@@ -431,6 +431,13 @@ void* updateControl(void *pointer)
   double vx = 0, vy = 0, vz = 0;
   double phi = 0, theta = 0, psi = 0;
   double p = 0, q = 0, r = 0;
+  // time stamp
+  struct timeval timestamp1;
+  // time between updates
+  double startControlTime, endControlTime, diffControlTime;
+  // calculate filter start time
+  gettimeofday(&timestamp1, NULL);
+  startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
   while(1)
   {
     pthread_mutex_lock(&mut);
@@ -560,7 +567,11 @@ void* updateControl(void *pointer)
     apRoll = rollLoop.output;
     apPitch = pitchLoop.output;
     apYaw = yawLoop.output;
-    
+    /*fprintf(stderr,"DEBUG:: Roll Output %d\n",apRoll);
+    fprintf(stderr,"DEBUG:: Pitch Output %d\n",apPitch);
+    fprintf(stderr,"DEBUG:: Yaw Output %d\n",apYaw);
+    fprintf(stderr,"DEBUG:: Throttle Output %d\n",apThrottle);
+   */
     pthread_mutex_unlock(&apMutex);
     
     // Update AP State
@@ -581,6 +592,12 @@ void* updateControl(void *pointer)
     pthread_mutex_unlock(&apMut);
 
     MutexUnlockAllLoops();
+    // calculate the control thread update time
+    gettimeofday(&timestamp1, NULL);
+    endControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
+    diffControlTime = endControlTime - startControlTime;
+    startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
+    //printf(">> Control update: %lf\n",1/diffControlTime);
     
     usleep(CONTROL_DELAY*1e3); 
   }
