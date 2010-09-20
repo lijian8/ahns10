@@ -20,8 +20,13 @@
 
 // phi axis struct
 axis phi_axis;
-// theta axis strcut
+// theta axis struct
 axis theta_axis;
+// accelerometer value storage (used for filtering)
+double acc_previous[3];
+double acc_current[3];
+// euler agnle storage (calculation of filtered rate)
+double angle_previous[3];
 
 // function to initialise the values in the axis structures
 int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
@@ -81,10 +86,21 @@ int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
   // initialise the direction term
   theta_axis.direction = THETA_DIRECTION;
 
+  /* accelerometer previous values */
+  acc_previous[0] = *accXr;
+  acc_previous[1] = *accYr;
+  acc_previous[2] = *accZr;
+
+  /* euler angle previous values */
+  angle_previous[0] = phi_axis.X[0]*M_PI/180;
+  angle_previous[1] = theta_axis.X[0]*M_PI/180;
+
   return 1;
 }
 int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double dT)
 {
+  // LPF the accelerometer values
+  accLPF(accXr,accYr,accZr,dT); 
   // time update for phi axis
   kFilterTimeUpdate(&phi_axis,rateXr,dT);
   // time update for theta axis
@@ -97,10 +113,17 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   theta_axis.Y = coarsePitchAngle(accXr,accYr,accZr);
   // measurement update for phi axis
   kFilterMeasureUpdate(&theta_axis);
-  // assign new phi angle
-  *phif = phi_axis.X[0];
-  // assign new theta angle
-  *thetaf = theta_axis.X[0];
+  // assign new phi angle (radians)
+  *phif = phi_axis.X[0]*M_PI/180;
+  // assign new theta angle (radians)
+  *thetaf = theta_axis.X[0]*M_PI/180;
+  // assign new phi rate
+  *rateXf = (*phif - angle_previous[0])/dT;
+  // assign new theta rate
+  *rateYf = (*thetaf - angle_previous[1])/dT;
+  // update the previous angles
+  angle_previous[0] = *phif;
+  angle_previous[1] = *thetaf;
 
   return 1;
 }
@@ -141,15 +164,32 @@ int kFilterMeasureUpdate (axis *axis_t)
   return 1;
 }
 
-// function to return the coarse pitch angle based on the accelerometer values (radians)
+// function to return the coarse pitch angle based on the accelerometer values (degrees)
 double coarsePitchAngle(double *accXr, double *accYr, double *accZr)
 {
-  return atan2(*accXr,sqrt(*accYr * *accYr + *accZr * *accZr));
+  return atan2(*accXr,sqrt(*accYr * *accYr + *accZr * *accZr))*180/M_PI;
 }
 
-// function to return the coarse roll angle based on the accelerometer values (radians)
+// function to return the coarse roll angle based on the accelerometer values (degrees)
 double coarseRollAngle(double *accXr, double *accYr, double *accZr)
 {
-  return atan2(*accYr,sqrt(*accXr * *accXr + *accZr * *accZr));
+  return atan2(*accYr,sqrt(*accXr * *accXr + *accZr * *accZr))*180/M_PI;
+}
+
+double accLPF (double *accXr, double *accYr, double *accZr, double dT)
+{
+  acc_current[0] = *accXr;
+  acc_current[1] = *accYr;
+  acc_current[2] = *accZr;
+  // LPF the X accelerometer value
+  *accXr = acc_previous[0]*(1-ACCX_ALPHA) + (acc_current[0]*ACCX_ALPHA);
+  // LPF the Y accelerometer value
+  *accYr = acc_previous[1]*(1-ACCY_ALPHA) + (acc_current[1]*ACCY_ALPHA);  
+  // LPF the Z accelerometer value
+  *accZr = acc_previous[2]*(1-ACCZ_ALPHA) + (acc_current[2]*ACCZ_ALPHA);
+  // store the filtered values
+  acc_previous[0] = *accXr;
+  acc_previous[1] = *accYr;
+  acc_previous[2] = *accZr;
 }
 
