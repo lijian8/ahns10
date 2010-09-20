@@ -153,11 +153,17 @@ inline void CombineCommands()
       //CheckAPFailSafe();
 
       // By default mix the two
-      commandedThrottle = rcControlSplit*rcThrottle + (1-rcControlSplit)*apThrottle;
+      /*commandedThrottle = rcControlSplit*rcThrottle + (1-rcControlSplit)*apThrottle;
       commandedRoll = rcControlSplit*controlFactor*rcRoll + (1-rcControlSplit)*controlFactor*apRoll;
       commandedPitch = rcControlSplit*controlFactor*rcPitch + (1-rcControlSplit)*controlFactor*apPitch;
       commandedYaw = rcControlSplit*controlFactor*rcYaw + (1-rcControlSplit)*controlFactor*apYaw;
-   
+      */
+
+      commandedThrottle = rcThrottle + apThrottle;
+      commandedRoll = controlFactor*rcRoll + controlFactor*apRoll;
+      commandedPitch = controlFactor*rcPitch + controlFactor*apPitch;
+      commandedYaw = controlFactor*rcYaw + controlFactor*apYaw;
+
       // Give RC Complete Control on some Commands
       GiveRC(); 
 
