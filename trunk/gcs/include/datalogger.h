@@ -49,6 +49,15 @@ enum PlotData {
     IMU_AZ,
     SENSOR_Z,
     COMPASS_PSI,
+    VICON_X,
+    VICON_Y,
+    VICON_Z,
+    VICON_VX,
+    VICON_VY,
+    VICON_VZ,
+    VICON_PHI,
+    VICON_THETA,
+    VICON_PSI,
     ENGINE1,
     ENGINE2,
     ENGINE3,
@@ -76,6 +85,8 @@ enum PlotData {
     AP_STATE_TIME,
     SENSOR_RAW_TIME,
     SENSOR_TIME,
+    VICON_RAW_TIME,
+    VICON_TIME,
     DATA_COUNT
 };
 
@@ -86,6 +97,7 @@ public:
     void setFCStateData(const timeval* const timeStamp, const fc_state_t* const fcState);
     void setAPStateData(const timeval* const timeStamp, const ap_state_t* const apState);
     void setSensorData(const timeval* const timeStamp, const sensor_data_t* const sensorData);
+    void setViconData(const timeval* const timeStamp, const vicon_state_t* const viconData);
     void initialiseLogs();
     void clearData();
 
@@ -105,6 +117,7 @@ private:
     std::ofstream fcStateOutputFile;
     std::ofstream apStateOutputFile;
     std::ofstream sensorDataOutputFile;
+    std::ofstream viconDataOutpitFile;
 };
 
 #endif // DATALOGGER_H

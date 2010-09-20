@@ -49,6 +49,7 @@ Q_DECLARE_METATYPE(attitude_t)
 Q_DECLARE_METATYPE(position_t)
 Q_DECLARE_METATYPE(ap_config_t)
 Q_DECLARE_METATYPE(sensor_data_t)
+Q_DECLARE_METATYPE(vicon_state_t)
 
 gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::gcsMainWindow)
 {
@@ -66,6 +67,7 @@ gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
     qRegisterMetaType<position_t>("position_t");
     qRegisterMetaType<ap_config_t>("ap_config_t");
     qRegisterMetaType<sensor_data_t>("sensor_data_t");
+    qRegisterMetaType<vicon_state_t>("vicon_state_t");
 
     createDockWindows();
 
@@ -172,23 +174,24 @@ inline void gcsMainWindow::createDockWindows()
         dockTC->setWidget(m_transmitConsoleWidget);
 
         addDockWidget(Qt::RightDockWidgetArea,dockAH);
-        addDockWidget(Qt::RightDockWidgetArea,dockSS);
-        addDockWidget(Qt::RightDockWidgetArea,dockRC);
-        addDockWidget(Qt::RightDockWidgetArea,dockWC);
-        addDockWidget(Qt::LeftDockWidgetArea,dockDP);
         addDockWidget(Qt::RightDockWidgetArea,dockBF);
-        addDockWidget(Qt::LeftDockWidgetArea,dockFCtrl);
-        addDockWidget(Qt::LeftDockWidgetArea,dockGCtrl);
-        addDockWidget(Qt::LeftDockWidgetArea,dockPCtrl);
-        addDockWidget(Qt::RightDockWidgetArea, dockTC);
+        tabifyDockWidget(dockAH,dockBF);
 
-        //setTabPosition(Qt::RightDockWidgetArea,QTabWidget::South);
-        //tabifyDockWidget(dockWC,dockSS);
+        addDockWidget(Qt::RightDockWidgetArea,dockSS);
+
+        addDockWidget(Qt::RightDockWidgetArea,dockRC);
+        addDockWidget(Qt::RightDockWidgetArea,dockTC);
+        addDockWidget(Qt::RightDockWidgetArea,dockWC);
         tabifyDockWidget(dockWC,dockRC);
         tabifyDockWidget(dockWC,dockTC);
+
+
+        addDockWidget(Qt::LeftDockWidgetArea,dockDP);
+        addDockWidget(Qt::LeftDockWidgetArea,dockGCtrl);
+        addDockWidget(Qt::LeftDockWidgetArea,dockPCtrl);
+        addDockWidget(Qt::LeftDockWidgetArea,dockFCtrl);
+        tabifyDockWidget(dockFCtrl,dockPCtrl);
         tabifyDockWidget(dockFCtrl,dockGCtrl);
-        tabifyDockWidget(dockAH,dockBF);
-        tabifyDockWidget(dockGCtrl,dockPCtrl);
 
 
         ui->menuView->insertAction(0,dockAH->toggleViewAction());
@@ -552,11 +555,11 @@ void gcsMainWindow::on_actionLoad_Config_triggered()
                 readSuccess  = layout_data.size() > 0;
             }
 
-            if (readSuccess )
+            if (readSuccess)
             {
                 readSuccess  = restoreGeometry(geo_data);
             }
-            if (readSuccess )
+            if (readSuccess)
             {
                 readSuccess  = restoreState(layout_data);
             }

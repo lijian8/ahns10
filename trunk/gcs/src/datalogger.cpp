@@ -26,6 +26,13 @@ DataLogger::DataLogger()
 {
     // By Default Logging
     initialiseLogs();
+
+    // Preallocate some memory
+    int i = 0;
+    for (i = 0; i < DATA_COUNT; ++i)
+    {
+        m_DataVector[i].reserve(50*60*15);
+    }
 }
 
 DataLogger::~DataLogger()
@@ -47,6 +54,11 @@ DataLogger::~DataLogger()
     if (apStateOutputFile.is_open())
     {
         apStateOutputFile.close();
+    }
+
+    if (viconDataOutpitFile.is_open())
+    {
+        viconDataOutpitFile.close();
     }
 }
 
@@ -130,6 +142,21 @@ void DataLogger::initialiseLogs()
         apStateOutputFile << "TIME, REF_PHI, REF_THETA, REF_PSI, REF_X, REF_Y, REF_Z, PHI_ACTIVE, THETA_ACTIVE, ";
         apStateOutputFile << "PSI_ACTIVE, X_ACTIVE, Y_ACTIVE, Z_ACTIVE" << std::endl;
     }
+
+    // Vicon Data File
+    strftime(logFileName, 80, "logs/Vicon_State_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
+    viconDataOutpitFile.open(logFileName);
+    if (viconDataOutpitFile.fail())
+    {
+        AHNS_DEBUG("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
+        throw std::runtime_error("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
+    }
+    else
+    {
+        viconDataOutpitFile << "AHNS VICON STATE MESSAGES LOG FOR " << logFileName << std::endl;
+        viconDataOutpitFile << "TIME, VICON_X, VICON_Y, VICON_Z, VICON_VX, VICON_VY, VICON_VZ, VICON_PHI, VICON_PSI" << std::endl;
+    }
+
 
     // Set Common Zero Time
     struct timeval time0;
@@ -305,6 +332,42 @@ void DataLogger::setSensorData(const timeval* timeStamp, const sensor_data_t* co
         sensorDataOutputFile << m_DataVector[SENSOR_RAW_TIME].last()-m_DataVector[SENSOR_RAW_TIME].front() << "," << sensorData->p << ",";
         sensorDataOutputFile << sensorData->q << "," << sensorData->r << "," << sensorData->ax << ",";
         sensorDataOutputFile << sensorData->ay << "," << sensorData->az << "," << sensorData->z << "," << sensorData->psi << std::endl;
+    }
+    return;
+}
+
+/**
+  * @brief Log new Vicon Data for plotting and file output
+  */
+void DataLogger::setViconData(const timeval* const timeStamp, const vicon_state_t* const viconData)
+{
+    AHNS_DEBUG("void DataLogger::setViconData(const timeval* const timeStamp, const vicon_state_t* const viconData)");
+
+    // Time
+    m_DataVector[VICON_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
+    m_DataVector[VICON_TIME].push_back(m_DataVector[VICON_TIME].last()-m_zeroTime);
+
+    // Position
+    m_DataVector[VICON_X].push_back(viconData->x);
+    m_DataVector[VICON_Y].push_back(viconData->y);
+    m_DataVector[VICON_Z].push_back(viconData->z);
+
+    // Velocity
+    m_DataVector[VICON_VX].push_back(viconData->vx);
+    m_DataVector[VICON_VY].push_back(viconData->vy);
+    m_DataVector[VICON_VZ].push_back(viconData->vz);
+
+    // Angles
+    m_DataVector[VICON_PHI].push_back(viconData->phi);
+    m_DataVector[VICON_THETA].push_back(viconData->theta);
+    m_DataVector[VICON_PSI].push_back(viconData->psi);
+
+    // Log the Sensor Data
+    if (m_loggingOn)
+    {
+        viconDataOutpitFile << m_DataVector[VICON_RAW_TIME].last()-m_DataVector[VICON_RAW_TIME].front() << "," << viconData->x << ",";
+        viconDataOutpitFile << viconData->y << "," << viconData->z << "," << viconData->vx << ",";
+        viconDataOutpitFile << viconData->vy << "," << viconData->vz << "," << viconData->phi << "," << viconData->theta << "," << viconData->psi << std::endl;
     }
     return;
 }

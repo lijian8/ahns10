@@ -33,16 +33,27 @@ public:
     QSize sizeHint() const;
 
 public slots:
+    /** @brief Slots for Telemetry*/
     void buttonBoxChanged(QAbstractButton* btnAbstract);
     void lcdUpdate(const quint32& hourCounter, const quint8& minCounter, const quint8& secCounter);
+
+    /** @brief Slots for Vicon */
+    void buttonBoxChangedVicon(QAbstractButton* btnAbstract);
+    void lcdUpdateVicon(const quint32& hourCounter, const quint8& minCounter, const quint8& secCounter);
 
 private slots:
 
 
 signals:
+    /** @brief Signals for Telemetry Threading*/
     void ConnectionRetry(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
     void ConnectionClose();
     void ConnectionStart(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
+
+    /** @brief Signals for Vicon Threading*/
+    void ViconConnectionRetry(quint16& serverPort, QString& serverIP);
+    void ViconConnectionClose();
+    void ViconConnectionStart(quint16& serverPort, QString& serverIP);
 
 protected:
     void changeEvent(QEvent *e);

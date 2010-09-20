@@ -54,7 +54,9 @@ QSize FlightControl::sizeHint() const
 
 void FlightControl::resizeEvent (QResizeEvent* e)
 {
+    // resize internal tab widgets
     ui->layoutWidget->resize(e->size());
+    ui->tabWidget->resize(e->size());
     return;
 }
 
@@ -115,36 +117,36 @@ void FlightControl::on_attitudeBtn_clicked()
     // enable user to change active loops
     ui->rollChkbox->setEnabled(true);
     ui->pitchChkbox->setEnabled(true);
-    ui->yawChkbox->setEnabled(true);
-    ui->zChkbox->setEnabled(true);
+    ui->yawChkbox->setEnabled(false);
+    ui->zChkbox->setEnabled(false);
 
     // enable loop setpoints
     ui->rollCmdBox->setEnabled(true);
     ui->pitchCmdBox->setEnabled(true);
-    ui->yawCmdBox->setEnabled(true);
+    ui->yawCmdBox->setEnabled(false);
     ui->xCmdBox->setEnabled(false);
     ui->yCmdBox->setEnabled(false);
-    ui->zCmdBox->setEnabled(true);
+    ui->zCmdBox->setEnabled(false);
 
     ui->rollCmdResetBtn->setEnabled(true);
     ui->pitchCmdResetBtn->setEnabled(true);
-    ui->yawCmdResetBtn->setEnabled(true);
+    ui->yawCmdResetBtn->setEnabled(false);
     ui->xCmdResetBtn->setEnabled(false);
     ui->yCmdResetBtn->setEnabled(false);
-    ui->zCmdResetBtn->setEnabled(true);
+    ui->zCmdResetBtn->setEnabled(false);
 
     // select angle loops
     ui->rollChkbox->setChecked(true);
     ui->pitchChkbox->setChecked(true);
-    ui->yawChkbox->setChecked(true);
+    ui->yawChkbox->setChecked(false);
 
     ui->xChkbox->setChecked(false);
     ui->yChkbox->setChecked(false);
     ui->zChkbox->setChecked(false);
 
-    // enable all command buttons
+    // enable attitude command buttons
     ui->sendAttitudeBtn->setEnabled(true);
-    ui->sendPositionBtn->setEnabled(true);
+    ui->sendPositionBtn->setEnabled(false);
 
     // Force Upload
     ui->sendSetConfigBtn->click();
@@ -307,7 +309,7 @@ void FlightControl::on_yCmdResetBtn_clicked()
 void FlightControl::on_zCmdResetBtn_clicked()
 {
     AHNS_DEBUG("void FlightControl::on_zCmdResetBtn_clicked()");
-    ui->zCmdBox->setValue(1.50);
+    ui->zCmdBox->setValue(ui->zCmdResetBtn->text().toDouble());
 
     return;
 }
@@ -417,12 +419,19 @@ void FlightControl::on_sendSetConfigBtn_clicked()
 
     ap_config_t txConfig;
 
+    // Active Control Loops
     txConfig.phiActive = ui->rollChkbox->isChecked();
     txConfig.thetaActive = ui->pitchChkbox->isChecked();
     txConfig.psiActive = ui->yawChkbox->isChecked();
     txConfig.xActive = ui->xChkbox->isChecked();
     txConfig.yActive = ui->yChkbox->isChecked();
     txConfig.zActive = ui->zChkbox->isChecked();
+
+    // Active Sensors
+    txConfig.viconRoll = ui->rollAngleViconChkbox->isChecked();
+    txConfig.viconPitch = ui->pitchAngleViconChkbox->isChecked();
+    txConfig.viconYaw = ui->yawAngleViconChkbox->isChecked();
+    txConfig.viconZ = ui->zViconChkbox->isChecked();
 
     emit sendSetAPConfig(txConfig);
 
