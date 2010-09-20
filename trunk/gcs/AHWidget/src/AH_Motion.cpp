@@ -33,7 +33,7 @@ void AHclass::keyPressEvent(QKeyEvent *keyPressed)
 void AHclass::UpdateRoll()
 {
         updating = true;
-	angRoll += angRollRate;
+        angRoll += angRollRate*DEG2RAD;
 	if ((angPitch <= 90.0f*DEG2RAD) && (angPitch >= -90.0f*DEG2RAD))	angPitch += angPitchRate*DEG2RAD;
 	else if ((angPitch <= 90.0f*DEG2RAD) && (angPitchRate > 0))		angPitch += angPitchRate*DEG2RAD;
 	else if ((angPitch >= 90.0f*DEG2RAD) && (angPitchRate < 0))		angPitch += angPitchRate*DEG2RAD;
