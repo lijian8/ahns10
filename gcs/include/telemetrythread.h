@@ -30,7 +30,7 @@
 #include "state.h"
 #include "commands.h"
 
-#define REPLY_TIMEOUT_MS 500 /** Timeout Limit on ACK Replies */
+#define REPLY_TIMEOUT_MS 250 /** Timeout Limit on ACK Replies */
 #define RETRY_TIME_MS 50     /** Time between Attempts */
 
 /**

@@ -45,12 +45,15 @@
 #define DEFAULT_SERVER_PORT "2002"
 #define DEFAULT_CLIENT_PORT "45455"
 
+// Default Vicon Settings
+#define DEFAULT_VICON_IP "192.168.1.122"
+#define DEFAULT_VICON_PORT "2002"
+
 
 wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
 {
 
     ui->setupUi(this);
-    setMinimumSize(345, 100);
 
 //    // 2009 HMI code to find the interface and IP in use
 //    using namespace std;
@@ -95,12 +98,15 @@ wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
 
     // Initialise the Box text
     ui->serverIPlineEdit->setText(DEFAULT_SERVER_IP);
+    ui->serverIPlineEdit_vicon->setText(DEFAULT_VICON_IP);
     ui->serverPortlineEdit->setText(DEFAULT_SERVER_PORT);
+    ui->serverPortlineEdit_vicon->setText(DEFAULT_VICON_PORT);
 
     ui->clientIPlineEdit->setText(DEFAULT_CLIENT_IP);
     ui->clientPortlineEdit->setText(DEFAULT_CLIENT_PORT);
 
     ui->uptimelcdNumber->display(AHNS_HMS(0,0,0));
+    ui->uptimelcdNumber_vicon->display(AHNS_HMS(0,0,0));
 }
 
 wifiComms::~wifiComms()
@@ -114,7 +120,9 @@ wifiComms::~wifiComms()
 void wifiComms::resizeEvent(QResizeEvent* e)
 {
     //AHNS_DEBUG("wifiComms::resizeEvent(QResizeEvent* e)");
-    ui->horizontalLayoutWidget->resize(e->size());
+    ui->tabWidget->resize(e->size());
+    ui->horizontalLayoutWidget->resize(e->size().width(),e->size().height()-30);
+    ui->horizontalLayoutWidget_2->resize(e->size().width(),e->size().height()-30);
     return;
 }
 
@@ -136,7 +144,7 @@ void wifiComms::changeEvent(QEvent *e)
   */
 QSize wifiComms::sizeHint() const
 {
-    return QSize(345, 100);
+    return QSize(360, 180);
 }
 
 
@@ -193,5 +201,58 @@ void wifiComms::buttonBoxChanged(QAbstractButton* btnAbstract)
 void wifiComms::lcdUpdate(const quint32& hourCounter, const quint8& minCounter, const quint8& secCounter)
 {
     ui->uptimelcdNumber->display(AHNS_HMS(hourCounter,minCounter,secCounter));
+    return;
+}
+
+/**
+  * \brief Slot for the main window to update the Vicon LCD
+  */
+void wifiComms::lcdUpdateVicon(const quint32& hourCounter, const quint8& minCounter, const quint8& secCounter)
+{
+    ui->uptimelcdNumber_vicon->display(AHNS_HMS(hourCounter,minCounter,secCounter));
+    return;
+}
+
+/**
+ * @brief Slot to emit signals used by the mainwindow to start the vicon thread
+ * @param Pointer to button from the dialogue box
+ */
+void wifiComms::buttonBoxChangedVicon(QAbstractButton* btnAbstract)
+{
+    // Take strings and numbers from the dialogue boxes
+    quint16 serverPort = ui->serverPortlineEdit_vicon->text().toUInt();
+    QString serverIP = ui->serverIPlineEdit_vicon->text();
+
+    AHNS_DEBUG("wifiComms::buttonBoxChangedVicon()");
+
+    if ((btnAbstract->text() == "Close") || (btnAbstract->text() == "&Close"))
+    {
+        AHNS_DEBUG("wifiComms::buttonBoxChangedVicon() [ Close ]");
+
+        emit ViconConnectionClose();
+    }
+    else if (btnAbstract->text() == "Open")
+    {
+        AHNS_DEBUG("wifiComms::buttonBoxChangedVicon() [ Open ]");
+
+        emit ViconConnectionStart(serverPort, serverIP);
+    }
+    else if (btnAbstract->text() == "Retry")
+    {
+        AHNS_DEBUG("wifiComms::buttonBoxChangedVicon() [ Retry ]");
+
+        emit ViconConnectionRetry(serverPort, serverIP);
+    }
+    else if (btnAbstract->text() == "Restore Defaults")
+    {
+        AHNS_DEBUG("wifiComms::buttonBoxChangedVicon() [ Restore Defaults ]");
+
+        ui->serverIPlineEdit_vicon->setText(DEFAULT_VICON_IP);
+        ui->serverPortlineEdit_vicon->setText(DEFAULT_VICON_PORT);
+    }
+    else // ui is wrong
+    {
+        AHNS_DEBUG("wifiComms::buttonBoxChangedVicon() [ UNDEFINED BUTTON ]");
+    }
     return;
 }

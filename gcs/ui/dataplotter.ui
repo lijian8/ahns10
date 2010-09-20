@@ -121,7 +121,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -138,6 +138,164 @@
       <property name="movable">
        <bool>false</bool>
       </property>
+      <widget class="QWidget" name="tab_8">
+       <attribute name="title">
+        <string>Vicon</string>
+       </attribute>
+       <widget class="QWidget" name="gridLayoutWidget_8">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>661</width>
+          <height>87</height>
+         </rect>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_8">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="viconXchkbox">
+           <property name="text">
+            <string>Vicon x Position [m]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="viconVXchkbox">
+           <property name="text">
+            <string>Vicon x Velocity [m/s]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="4">
+          <widget class="QCheckBox" name="viconRollchkbox">
+           <property name="text">
+            <string>Vicon Roll Angle [deg]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="viconYchkbox">
+           <property name="text">
+            <string>Vicon y Position [m]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QCheckBox" name="viconVYchkbox">
+           <property name="text">
+            <string>Vicon y Velocity [m/s]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QCheckBox" name="viconPitchchkbox">
+           <property name="text">
+            <string>Vicon Pitch Angle [deg]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <spacer name="horizontalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="1">
+          <spacer name="horizontalSpacer_17">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="3">
+          <spacer name="horizontalSpacer_18">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="3">
+          <spacer name="horizontalSpacer_27">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="viconZchkbox">
+           <property name="text">
+            <string>Vicon z Position [m]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QCheckBox" name="viconVZchkbox">
+           <property name="text">
+            <string>Vicon z Velocity [m/s]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <widget class="QCheckBox" name="viconYawchkbox">
+           <property name="text">
+            <string>Vicon Yaw Angle [deg]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <spacer name="horizontalSpacer_28">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="2" column="3">
+          <spacer name="horizontalSpacer_29">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </widget>
       <widget class="QWidget" name="tab">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -154,7 +312,7 @@
           <x>0</x>
           <y>0</y>
           <width>661</width>
-          <height>140</height>
+          <height>81</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout">
@@ -179,21 +337,21 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="0">
+         <item row="1" column="0">
           <widget class="QCheckBox" name="imuAXchkbox">
            <property name="text">
             <string>IMU x Acceleration [g's]</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
+         <item row="1" column="2">
           <widget class="QCheckBox" name="imuAYchkbox">
            <property name="text">
             <string>IMU y Acceleration [g's]</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="4">
+         <item row="1" column="4">
           <widget class="QCheckBox" name="imuAZchkbox">
            <property name="text">
             <string>IMU z Acceleration [g's]</string>
@@ -213,7 +371,7 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="1">
+         <item row="1" column="1">
           <spacer name="horizontalSpacer_2">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -239,7 +397,7 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="3">
+         <item row="1" column="3">
           <spacer name="horizontalSpacer_5">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
@@ -252,8 +410,22 @@
            </property>
           </spacer>
          </item>
-         <item row="4" column="3">
-          <spacer name="horizontalSpacer_6">
+         <item row="2" column="0">
+          <widget class="QCheckBox" name="sensorZchkbox">
+           <property name="text">
+            <string>Ultrasonic Sensor [m]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QCheckBox" name="compassPSIchkbox">
+           <property name="text">
+            <string>Compass [deg]</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <spacer name="horizontalSpacer_30">
            <property name="orientation">
             <enum>Qt::Horizontal</enum>
            </property>
@@ -265,19 +437,18 @@
            </property>
           </spacer>
          </item>
-         <item row="3" column="0">
-          <widget class="QCheckBox" name="sensorZchkbox">
-           <property name="text">
-            <string>Ultrasonic Sensor [m]</string>
+         <item row="2" column="3">
+          <spacer name="horizontalSpacer_31">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
            </property>
-          </widget>
-         </item>
-         <item row="3" column="2">
-          <widget class="QCheckBox" name="compassPSIchkbox">
-           <property name="text">
-            <string>Compass [deg]</string>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
            </property>
-          </widget>
+          </spacer>
          </item>
         </layout>
        </widget>
@@ -305,42 +476,42 @@
          <item row="0" column="2">
           <widget class="QCheckBox" name="filteredPitchchkbox">
            <property name="text">
-            <string>Pitch Angle [rad]</string>
+            <string>Pitch Angle [deg]</string>
            </property>
           </widget>
          </item>
          <item row="0" column="4">
           <widget class="QCheckBox" name="filteredYawchkbox">
            <property name="text">
-            <string>Yaw Angle [rad]</string>
+            <string>Yaw Angle [deg]</string>
            </property>
           </widget>
          </item>
          <item row="0" column="0">
           <widget class="QCheckBox" name="filteredRollchkbox">
            <property name="text">
-            <string>Roll Angle [rad]</string>
+            <string>Roll Angle [deg]</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QCheckBox" name="filteredRolldchkbox">
            <property name="text">
-            <string>Roll Rate [rad/s]</string>
+            <string>Roll Rate [deg/s]</string>
            </property>
           </widget>
          </item>
          <item row="1" column="2">
           <widget class="QCheckBox" name="filteredPitchdchkbox">
            <property name="text">
-            <string>Pitch Rate [rad/s]</string>
+            <string>Pitch Rate [deg/s]</string>
            </property>
           </widget>
          </item>
          <item row="1" column="4">
           <widget class="QCheckBox" name="filteredYawdchkbox">
            <property name="text">
-            <string>Yaw Rate [rad/s]</string>
+            <string>Yaw Rate [deg/s]</string>
            </property>
           </widget>
          </item>
@@ -415,7 +586,7 @@
           <x>0</x>
           <y>0</y>
           <width>661</width>
-          <height>92</height>
+          <height>107</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
@@ -664,21 +835,21 @@
          <item row="0" column="2">
           <widget class="QCheckBox" name="refPitchchkbox">
            <property name="text">
-            <string>Reference Pitch [rad]</string>
+            <string>Reference Pitch [deg]</string>
            </property>
           </widget>
          </item>
          <item row="0" column="4">
           <widget class="QCheckBox" name="refYawchkbox">
            <property name="text">
-            <string>Reference Yaw [rad]</string>
+            <string>Reference Yaw [deg]</string>
            </property>
           </widget>
          </item>
          <item row="0" column="0">
           <widget class="QCheckBox" name="refRollchkbox">
            <property name="text">
-            <string>Reference Roll [rad]</string>
+            <string>Reference Roll [deg]</string>
            </property>
           </widget>
          </item>
@@ -981,6 +1152,7 @@
    <class>QwtPlot</class>
    <extends>QFrame</extends>
    <header>qwt_plot.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

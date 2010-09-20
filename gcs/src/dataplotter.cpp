@@ -58,6 +58,15 @@ ui->filteredRollchkbox, \
         ui->imuAZchkbox, \
         ui->sensorZchkbox, \
         ui->compassPSIchkbox, \
+        ui->viconXchkbox, \
+        ui->viconYchkbox, \
+        ui->viconZchkbox, \
+        ui->viconVXchkbox, \
+        ui->viconVYchkbox, \
+        ui->viconVZchkbox, \
+        ui->viconRollchkbox, \
+        ui->viconPitchchkbox, \
+        ui->viconYawchkbox, \
         ui->engine1chkbox, \
         ui->engine2chkbox, \
         ui->engine3chkbox, \
@@ -79,7 +88,7 @@ ui->filteredRollchkbox, \
     };
 
 /**
-  * @brief Constructor
+  * @brief DataPlotter Constructor
   */
 DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(parent), ui(new Ui::DataPlotter)
 {
@@ -109,32 +118,32 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     tempPen.setStyle(Qt::DashDotLine);
     tempPen.setStyle(Qt::DashDotDotLine);
 
-    m_plotCurves[F_PHI].setTitle(QwtText("Roll Angle [rad]"));
+    m_plotCurves[F_PHI].setTitle(QwtText(ui->filteredRollchkbox->text()));
     tempPen.setStyle(Qt::SolidLine);
     tempPen.setColor(QColor(0,0,255));
     m_plotCurves[F_PHI].setPen(tempPen);
 
-    m_plotCurves[F_PHI_DOT].setTitle(QwtText("Roll Rate [rad/s]"));
+    m_plotCurves[F_PHI_DOT].setTitle(QwtText(ui->filteredRolldchkbox->text()));
     tempPen.setStyle(Qt::SolidLine);
     tempPen.setColor(QColor(0,0,119));
     m_plotCurves[F_PHI_DOT].setPen(tempPen);
 
-    m_plotCurves[F_THETA].setTitle(QwtText("Pitch Angle [rad]"));
+    m_plotCurves[F_THETA].setTitle(QwtText(ui->filteredPitchchkbox->text()));
     tempPen.setStyle(Qt::SolidLine);
     tempPen.setColor(QColor(0,153,0));
     m_plotCurves[F_THETA].setPen(tempPen);
 
-    m_plotCurves[F_THETA_DOT].setTitle(QwtText("Pitch Rate [rad/s]"));
+    m_plotCurves[F_THETA_DOT].setTitle(QwtText(ui->filteredPitchdchkbox->text()));
     tempPen.setStyle(Qt::SolidLine);
     tempPen.setColor(QColor(0,85,0));
     m_plotCurves[F_THETA_DOT].setPen(tempPen);
 
-    m_plotCurves[F_PSI].setTitle(QwtText("Yaw Angle [rad]"));
+    m_plotCurves[F_PSI].setTitle(QwtText(ui->filteredYawchkbox->text()));
     tempPen.setStyle(Qt::SolidLine);
     tempPen.setColor(QColor(255,0,0));
     m_plotCurves[F_PSI].setPen(tempPen);
 
-    m_plotCurves[F_PSI_DOT].setTitle(QwtText("Yaw Rate [rad/s]"));
+    m_plotCurves[F_PSI_DOT].setTitle(QwtText(ui->filteredYawdchkbox->text()));
     tempPen.setStyle(Qt::SolidLine);
     tempPen.setColor(QColor(119,0,0));
     m_plotCurves[F_PSI_DOT].setPen(tempPen);
@@ -194,17 +203,17 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     tempPen.setColor(QColor(153,102,0));
     m_plotCurves[TRACE].setPen(tempPen);
 
-    m_plotCurves[IMU_ROLL_DOT].setTitle(QwtText("IMU Roll Rate [deg/s]"));
+    m_plotCurves[IMU_ROLL_DOT].setTitle(QwtText(ui->imuRollchkbox->text()));
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(153,102,0));
     m_plotCurves[IMU_ROLL_DOT].setPen(tempPen);
 
-    m_plotCurves[IMU_PITCH_DOT].setTitle(QwtText("IMU Pitch Rate [deg/s]"));
+    m_plotCurves[IMU_PITCH_DOT].setTitle(QwtText(ui->imuPitchchkbox->text()));
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(0,102,102));
     m_plotCurves[IMU_PITCH_DOT].setPen(tempPen);
 
-    m_plotCurves[IMU_YAW_DOT].setTitle(QwtText("IMU Yaw Rate [deg/s]"));
+    m_plotCurves[IMU_YAW_DOT].setTitle(QwtText(ui->imuYawchkbox->text()));
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(102,102,51));
     m_plotCurves[IMU_YAW_DOT].setPen(tempPen);
@@ -233,6 +242,51 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(0,150,102));
     m_plotCurves[COMPASS_PSI].setPen(tempPen);
+
+    m_plotCurves[VICON_X].setTitle(QwtText(ui->viconXchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(102,150,0));
+    m_plotCurves[VICON_X].setPen(tempPen);
+
+    m_plotCurves[VICON_Y].setTitle(QwtText(ui->viconYchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,0,255));
+    m_plotCurves[VICON_Y].setPen(tempPen);
+
+    m_plotCurves[VICON_Z].setTitle(QwtText(ui->viconZchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,255,255));
+    m_plotCurves[VICON_Z].setPen(tempPen);
+
+    m_plotCurves[VICON_VX].setTitle(QwtText(ui->viconVXchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(255,0,255));
+    m_plotCurves[VICON_VX].setPen(tempPen);
+
+    m_plotCurves[VICON_VY].setTitle(QwtText(ui->viconVYchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(50,10,255));
+    m_plotCurves[VICON_VY].setPen(tempPen);
+
+    m_plotCurves[VICON_VZ].setTitle(QwtText(ui->viconVZchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(5,50,255));
+    m_plotCurves[VICON_VZ].setPen(tempPen);
+
+    m_plotCurves[VICON_PHI].setTitle(QwtText(ui->viconRollchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(0,255,0));
+    m_plotCurves[VICON_PHI].setPen(tempPen);
+
+    m_plotCurves[VICON_THETA].setTitle(QwtText(ui->viconPitchchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(50,255,100));
+    m_plotCurves[VICON_THETA].setPen(tempPen);
+
+    m_plotCurves[VICON_PSI].setTitle(QwtText(ui->viconYawchkbox->text()));
+    tempPen.setStyle(Qt::SolidLine);
+    tempPen.setColor(QColor(25,150,100));
+    m_plotCurves[VICON_PSI].setPen(tempPen);
 
     m_plotCurves[ENGINE1].setTitle(QwtText("Engine 1 Commanded [us]"));
     tempPen.setStyle(Qt::SolidLine);
@@ -420,6 +474,15 @@ void DataPlotter::replot()
                 case F_THETA_DOT:
                 case F_PSI:
                 case F_PSI_DOT:
+                    j = 0;
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[HELI_STATE_TIME][m_DataVector[HELI_STATE_TIME].size()-j-1];
+                        dataPoints[j] = 180.0/M_PI*m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
                 case F_X:
                 case F_X_DOT:
                 case F_AX:
@@ -443,6 +506,15 @@ void DataPlotter::replot()
                 case IMU_ROLL_DOT:
                 case IMU_PITCH_DOT:
                 case IMU_YAW_DOT:
+                    j = 0;
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[SENSOR_TIME][m_DataVector[SENSOR_TIME].size()-j-1];
+                        dataPoints[j] = 180.0/M_PI*m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
                 case IMU_AX:
                 case IMU_AY:
                 case IMU_AZ:
@@ -475,6 +547,15 @@ void DataPlotter::replot()
                 case REF_PHI:
                 case REF_THETA:
                 case REF_PSI:
+                    j = 0;
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[AP_STATE_TIME][m_DataVector[AP_STATE_TIME].size()-j-1];
+                        dataPoints[j] = 180.0/M_PI*m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
                 case REF_X:
                 case REF_Y:
                 case REF_Z:
