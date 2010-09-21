@@ -30,6 +30,7 @@
 #include <ctime>
 
 #include "state.h"
+#include "Client.h"
 
 /**
   * @brief Default constructor
