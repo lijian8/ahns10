@@ -13,6 +13,7 @@
  * Implementation of the Data Logging Class.
  */
 
+#include <QObject>
 #include <QVector>
 
 #include <ctime>
@@ -73,6 +74,7 @@ void DataLogger::initialiseLogs()
         stateOutputFile.close();
         fcStateOutputFile.close();
         apStateOutputFile.close();
+        viconDataOutpitFile.close();
     }
 
     // Ensure Logging is on
@@ -133,7 +135,7 @@ void DataLogger::initialiseLogs()
     apStateOutputFile.open(logFileName);
     if (apStateOutputFile.fail())
     {
-        AHNS_DEBUG("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
+        AHNS_DEBUG("DataLogger::DataLogger(QWidget *parent) [ AP STATE FAILED FILE OPEN ]");
         throw std::runtime_error("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
     }
     else
@@ -144,11 +146,11 @@ void DataLogger::initialiseLogs()
     }
 
     // Vicon Data File
-    strftime(logFileName, 80, "logs/Vicon_State_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
+    strftime(logFileName, 80, "logs/Vicon_%A-%d-%m-%G-%H%M%S.log", localtime(&logFileTime));
     viconDataOutpitFile.open(logFileName);
     if (viconDataOutpitFile.fail())
     {
-        AHNS_DEBUG("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
+        AHNS_DEBUG("DataLogger::DataLogger(QWidget *parent) [ VICON FAILED FILE OPEN ]");
         throw std::runtime_error("DataLogger::DataLogger(QWidget *parent) [ FAILED FILE OPEN ]");
     }
     else
@@ -339,35 +341,37 @@ void DataLogger::setSensorData(const timeval* timeStamp, const sensor_data_t* co
 /**
   * @brief Log new Vicon Data for plotting and file output
   */
-void DataLogger::setViconData(const timeval* const timeStamp, const vicon_state_t* const viconData)
+void DataLogger::setViconData(const vicon_state_t viconData)
 {
     AHNS_DEBUG("void DataLogger::setViconData(const timeval* const timeStamp, const vicon_state_t* const viconData)");
 
     // Time
-    m_DataVector[VICON_RAW_TIME].push_back(timeStamp->tv_sec + timeStamp->tv_usec*1.0e-6);
+    timeval timeStamp;
+    gettimeofday(&timeStamp,NULL);
+    m_DataVector[VICON_RAW_TIME].push_back(timeStamp.tv_sec + timeStamp.tv_usec*1.0e-6);
     m_DataVector[VICON_TIME].push_back(m_DataVector[VICON_TIME].last()-m_zeroTime);
 
     // Position
-    m_DataVector[VICON_X].push_back(viconData->x);
-    m_DataVector[VICON_Y].push_back(viconData->y);
-    m_DataVector[VICON_Z].push_back(viconData->z);
+    m_DataVector[VICON_X].push_back(viconData.x);
+    m_DataVector[VICON_Y].push_back(viconData.y);
+    m_DataVector[VICON_Z].push_back(viconData.z);
 
     // Velocity
-    m_DataVector[VICON_VX].push_back(viconData->vx);
-    m_DataVector[VICON_VY].push_back(viconData->vy);
-    m_DataVector[VICON_VZ].push_back(viconData->vz);
+    m_DataVector[VICON_VX].push_back(viconData.vx);
+    m_DataVector[VICON_VY].push_back(viconData.vy);
+    m_DataVector[VICON_VZ].push_back(viconData.vz);
 
     // Angles
-    m_DataVector[VICON_PHI].push_back(viconData->phi);
-    m_DataVector[VICON_THETA].push_back(viconData->theta);
-    m_DataVector[VICON_PSI].push_back(viconData->psi);
+    m_DataVector[VICON_PHI].push_back(viconData.phi);
+    m_DataVector[VICON_THETA].push_back(viconData.theta);
+    m_DataVector[VICON_PSI].push_back(viconData.psi);
 
     // Log the Sensor Data
     if (m_loggingOn)
     {
-        viconDataOutpitFile << m_DataVector[VICON_RAW_TIME].last()-m_DataVector[VICON_RAW_TIME].front() << "," << viconData->x << ",";
-        viconDataOutpitFile << viconData->y << "," << viconData->z << "," << viconData->vx << ",";
-        viconDataOutpitFile << viconData->vy << "," << viconData->vz << "," << viconData->phi << "," << viconData->theta << "," << viconData->psi << std::endl;
+        viconDataOutpitFile << m_DataVector[VICON_RAW_TIME].last()-m_DataVector[VICON_RAW_TIME].front() << "," << viconData.x << ",";
+        viconDataOutpitFile << viconData.y << "," << viconData.z << "," << viconData.vx << ",";
+        viconDataOutpitFile << viconData.vy << "," << viconData.vz << "," << viconData.phi << "," << viconData.theta << "," << viconData.psi << std::endl;
     }
     return;
 }

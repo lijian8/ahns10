@@ -37,6 +37,7 @@
 #include "flightcontrol.h"
 #include "gainscontrol.h"
 #include "parametercontrol.h"
+#include "viconthread.h"
 
 
 namespace Ui {
@@ -59,7 +60,7 @@ signals:
 
     // Timers
     void NewTelemetryStatus(const quint32& hourCount, const quint8& minCount, const quint8& secCount);
-
+    void NewViconStatus(const quint32& hourCount, const quint8& minCount, const quint8& secCount);
 protected:
     void changeEvent(QEvent *e);
 
@@ -77,6 +78,12 @@ private slots:
     void CloseTelemetry();
     void RetryTelemetry(quint16& serverPort, QString& serverIP, quint16& clientPort, QString& clientIP);
     void TelemetryMonitor();
+
+    // Vicon Buttons
+    void StartVicon(quint16& serverPort, QString& serverIP);
+    void CloseVicon();
+    void RetryVicon(quint16& serverPort, QString& serverIP);
+    void ViconMonitor();
 
     // Update Telemetry Slots
    void ProcessHeliState(const timeval timeStamp, const state_t heliState, const int discarded = 0);
@@ -114,12 +121,19 @@ private:
 
     // Threads
     TelemetryThread* m_TelemetryThread;
+    ViconThread* m_ViconThread;
 
     /** @name Telemetry Timer */
     QTimer m_oTelUptimer;
     quint8 m_TelSecCount;
     quint8 m_TelMinCount;
     quint32 m_TelHourCount;
+
+    /** @name Vicon Timer */
+    QTimer m_oViconUptimer;
+    quint8 m_ViconSecCount;
+    quint8 m_ViconMinCount;
+    quint32 m_ViconHourCount;
 
     /** @name GUI Update Timer */
     QTimer m_updateTimer;

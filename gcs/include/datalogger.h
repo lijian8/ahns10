@@ -16,6 +16,7 @@
 #ifndef DATALOGGER_H
 #define DATALOGGER_H
 
+#include <QObject>
 #include <QVector>
 #include <fstream>
 
@@ -90,21 +91,23 @@ enum PlotData {
     DATA_COUNT
 };
 
-class DataLogger
+class DataLogger : public QObject
 {
+    Q_OBJECT
 public:
     void setHeliStateData(const timeval* const timeStamp, const state_t* const heliState);
     void setFCStateData(const timeval* const timeStamp, const fc_state_t* const fcState);
     void setAPStateData(const timeval* const timeStamp, const ap_state_t* const apState);
     void setSensorData(const timeval* const timeStamp, const sensor_data_t* const sensorData);
-    void setViconData(const timeval* const timeStamp, const vicon_state_t* const viconData);
     void initialiseLogs();
     void clearData();
 
     QVector<double>* getData();
-
     DataLogger();
     ~DataLogger();
+
+public slots:
+    void setViconData(const vicon_state_t viconData);
 
 private:
     /** Vector of Data Vectors */

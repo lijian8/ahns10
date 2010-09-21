@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Wifi Communications Link</string>
+   <string>Communications</string>
   </property>
   <widget class="QTabWidget" name="tabWidget">
    <property name="geometry">
@@ -57,7 +57,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>358</width>
+       <width>388</width>
        <height>176</height>
       </rect>
      </property>
@@ -302,7 +302,7 @@
       <rect>
        <x>0</x>
        <y>0</y>
-       <width>351</width>
+       <width>369</width>
        <height>151</height>
       </rect>
      </property>
@@ -487,8 +487,8 @@
    <slot>buttonBoxChanged(QAbstractButton*)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>102</x>
-     <y>55</y>
+     <x>380</x>
+     <y>85</y>
     </hint>
     <hint type="destinationlabel">
      <x>402</x>

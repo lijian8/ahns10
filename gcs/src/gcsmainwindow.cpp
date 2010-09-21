@@ -51,7 +51,8 @@ Q_DECLARE_METATYPE(ap_config_t)
 Q_DECLARE_METATYPE(sensor_data_t)
 Q_DECLARE_METATYPE(vicon_state_t)
 
-gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::gcsMainWindow)
+gcsMainWindow::gcsMainWindow(QWidget *parent)
+    : QMainWindow(parent), ui(new Ui::gcsMainWindow)
 {
     ui->setupUi(this);
 
@@ -77,6 +78,8 @@ gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
 
     // TelemetryThread not started yet
     m_TelemetryThread = NULL;
+    // Vicon Thread not yet started
+    m_ViconThread = NULL;
 
     // Telemetry Timer
     connect(&m_oTelUptimer,SIGNAL(timeout()),this,SLOT(TelemetryMonitor()));
@@ -84,6 +87,14 @@ gcsMainWindow::gcsMainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::
     m_TelSecCount = 0;
     m_TelMinCount = 0;
     m_TelHourCount = 0;
+
+    // Vicon Timer
+    connect(&m_oViconUptimer,SIGNAL(timeout()),this,SLOT(ViconMonitor()));
+    m_oViconUptimer.setInterval(1000);
+    m_ViconSecCount = 0;
+    m_ViconMinCount = 0;
+    m_ViconHourCount = 0;
+
 
     // Redraw Timer
     connect(&m_updateTimer,SIGNAL(timeout()),this,SLOT(UpdateWidgets()));
@@ -136,8 +147,8 @@ inline void gcsMainWindow::createDockWindows()
         dockRC->setObjectName("Received Packets");
         QDockWidget* dockTC = new QDockWidget(tr("Transmitted Packets"),this);
         dockTC->setObjectName("Transmitted Packets");
-        QDockWidget* dockWC = new QDockWidget(tr("Wi-Fi Communications"),this);
-        dockWC->setObjectName("Wi-Fi Communications");
+        QDockWidget* dockWC = new QDockWidget(tr("Communications"),this);
+        dockWC->setObjectName("Communications");
         QDockWidget* dockDP = new QDockWidget(tr("Data Plotter"),this);
         dockDP->setObjectName("Data Plotter");
         QDockWidget* dockBF = new QDockWidget(tr("Blackfin"),this);
@@ -209,7 +220,13 @@ inline void gcsMainWindow::createDockWindows()
         connect(m_wifiCommsWidget,SIGNAL(ConnectionClose()),this,SLOT(CloseTelemetry()));
         connect(m_wifiCommsWidget,SIGNAL(ConnectionStart(quint16&,QString&,quint16&,QString&)),this,SLOT(StartTelemetry(quint16&,QString&,quint16&,QString&)));
         connect(m_wifiCommsWidget,SIGNAL(ConnectionRetry(quint16&,QString&,quint16&,QString&)),this,SLOT(RetryTelemetry(quint16&,QString&,quint16&,QString&)));
+
+        connect(m_wifiCommsWidget,SIGNAL(ViconConnectionClose()),this,SLOT(CloseVicon()));
+        connect(m_wifiCommsWidget,SIGNAL(ViconConnectionStart(quint16&,QString&)),this,SLOT(StartVicon(quint16&,QString&)));
+        connect(m_wifiCommsWidget,SIGNAL(ViconConnectionRetry(quint16&,QString&)),this,SLOT(RetryVicon(quint16&,QString&)));
+
         connect(this,SIGNAL(NewTelemetryStatus(quint32,quint8,quint8)),m_wifiCommsWidget,SLOT(lcdUpdate(quint32,quint8,quint8)));
+        connect(this,SIGNAL(NewViconStatus(quint32,quint8,quint8)),m_wifiCommsWidget,SLOT(lcdUpdateVicon(quint32,quint8,quint8)));
     }
     catch (std::exception& e)
     {
@@ -340,7 +357,15 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             connect(m_parameterControlWidget,SIGNAL(sendParameters(loop_parameters_t)),m_TelemetryThread,SLOT(sendParameters(loop_parameters_t)));
             // Gains Control -> Gains
             connect(m_gainsControlWidget,SIGNAL(sendGains(gains_t)),m_TelemetryThread,SLOT(sendGains(gains_t)));
+
+            // Sent Message
             connect(m_TelemetryThread,SIGNAL(SentMessage(uint32_t,bool)),m_transmitConsoleWidget,SLOT(SentItem(uint32_t, bool)));
+
+            // Vicon Data
+            if(m_ViconThread != NULL)
+            {
+                connect(m_ViconThread,SIGNAL(NewViconState(const vicon_state_t)),m_TelemetryThread,SLOT(sendViconState(const vicon_state_t)));
+            }
 
             // Start the timer
             m_TelSecCount = 0;
@@ -372,7 +397,7 @@ void gcsMainWindow::CloseTelemetry()
 {
     AHNS_DEBUG("gcsMainWindow::CloseTelemetry()");
 
-    m_updateTimer.stop();
+    //m_updateTimer.stop();
 
     if (m_TelemetryThread != NULL)
     {
@@ -461,6 +486,151 @@ void gcsMainWindow::TelemetryMonitor()
         AHNS_ALERT("gcsMainWindow::TelemetryMonitor() [ TELEMETRY THREAD DELETED EARLY ]");
         QMessageBox::critical(this,tr("Failed Telemetry Thread"),tr("Thread Deleted"),QMessageBox::Ok);
         m_oTelUptimer.stop();
+    }
+    return;
+}
+
+/**
+  * @brief Slot to Connect to the wifiComms widget signal to start the vicon thread
+  */
+void gcsMainWindow::StartVicon(quint16& serverPort, QString& serverIP)
+{
+    AHNS_DEBUG("gcsMainWindow::StartVicon()");
+    AHNS_DEBUG("gcsMainWindow::StartVicon() [ MAIN THREAD ID " << (int) QThread::currentThreadId() << " ]");
+
+    if (m_ViconThread == NULL)
+    {
+        try
+        {
+            // Allocate the Thread
+            m_ViconThread = new ViconThread(serverPort,serverIP);
+            m_receiveConsoleWidget->clearConsole();
+
+            if (m_TelemetryThread != NULL)
+            {
+              connect(m_ViconThread,SIGNAL(NewViconState(const vicon_state_t)),m_TelemetryThread,SLOT(sendViconState(const vicon_state_t)));
+            }
+            connect(m_ViconThread,SIGNAL(NewViconState(const vicon_state_t)),&m_Data,SLOT(setViconData(const vicon_state_t)));
+
+            // Start the timer
+            m_ViconSecCount = 0;
+            m_ViconMinCount = 0;
+            m_ViconHourCount = 0;
+            m_oViconUptimer.start();
+
+            m_updateTimer.start();
+        }
+        catch (const std::exception &e)
+        {
+            AHNS_ALERT("gcsMainWindow::StartVicon() [ THREAD START FAILED " << e.what() << " ]");
+            m_ViconThread = NULL;
+            QMessageBox::warning(this,tr("Failed Vicon Launch"),e.what(),QMessageBox::Ok);
+        }
+    }
+    else
+    {
+        AHNS_DEBUG("gcsMainWindow::StartVicon() [ FALSE OPEN BUTTON PRESS ]");
+        QMessageBox::information(this,tr("Vicon"),tr("Vicon Already Running"),QMessageBox::Ok);
+    }
+    return;
+}
+
+/**
+  * @brief Slot to connect to the wifiComms widget signal to close down the vicon thread
+  */
+void gcsMainWindow::CloseVicon()
+{
+    AHNS_DEBUG("gcsMainWindow::CloseVicon()");
+
+    //m_updateTimer.stop();
+
+    if (m_ViconThread != NULL)
+    {
+        m_ViconThread->stop();
+        m_ViconThread->wait();
+
+        delete m_ViconThread;
+        m_ViconThread = NULL;
+
+        m_oViconUptimer.stop();
+    }
+    else
+    {
+        AHNS_DEBUG("gcsMainWindow::CloseVicon() [ FALSE CLOSE BUTTON PRESS ]");
+        QMessageBox::information(this,tr("Vicon"),tr("Vicon Already Stopped"),QMessageBox::Ok);
+    }
+    return;
+}
+
+/**
+  * @brief Slot to connect to the wifiComms widget signal to restart the vicon thread
+  */
+void gcsMainWindow::RetryVicon(quint16& serverPort, QString& serverIP)
+{
+    AHNS_DEBUG("gcsMainWindow::RetryVicon()");
+
+    if (m_ViconThread != NULL)
+    {
+        // Stop Thread
+        CloseVicon();
+
+        // Recreate Thread
+        try
+        {
+            StartVicon(serverPort, serverIP);
+        }
+        catch (const std::exception &e)
+        {
+            AHNS_ALERT("gcsMainWindow::RetryVicon() [ THREAD RESET FAILED " << e.what() << " ]");
+            m_ViconThread = NULL;
+            QMessageBox::warning(this,tr("Failed Vicon Restart"),e.what(),QMessageBox::Ok);
+        }
+    }
+    else
+    {
+        // Create Thread
+        StartVicon(serverPort, serverIP);
+    }
+
+    return;
+}
+
+/**
+  * @brief Vicon Thread Monitor
+  */
+void gcsMainWindow::ViconMonitor()
+{
+    if (m_ViconThread != NULL)
+    {
+        if ((m_ViconThread->isRunning()) && (m_ViconThread->isConnected()))
+        {
+            m_ViconSecCount++;
+            if (m_ViconSecCount == 60)
+            {
+                m_ViconSecCount = 0;
+                m_ViconMinCount++;
+                if (m_ViconMinCount > 60)
+                {
+                    m_ViconMinCount = 0;
+                    m_ViconHourCount++;
+                }
+            }
+            emit NewViconStatus(m_ViconHourCount,m_ViconMinCount,m_ViconSecCount);
+        }
+        else
+        {
+            AHNS_ALERT("gcsMainWindow::ViconMonitor() [ Vicon THREAD DROPPED ]");
+            QMessageBox::critical(this,tr("Vicon Thread Dropped"),tr("Thread Timed Out or Stopped"),QMessageBox::Ok);
+
+            // Not Connected so don't run
+            CloseVicon();
+        }
+    }
+    else
+    {
+        AHNS_ALERT("gcsMainWindow::ViconMonitor() [ VICON THREAD DELETED EARLY ]");
+        QMessageBox::critical(this,tr("Failed VICON Thread"),tr("Thread Deleted"),QMessageBox::Ok);
+        m_oViconUptimer.stop();
     }
     return;
 }

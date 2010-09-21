@@ -84,6 +84,7 @@ public slots:
     void sendSetAPConfig(ap_config_t apConfig);
     void sendGains(gains_t desiredGains);
     void sendParameters(loop_parameters_t desiredParameters);
+    void sendViconState(const vicon_state_t viconState);
     void sendGetConfig();
     void sendSaveConfig();
 
