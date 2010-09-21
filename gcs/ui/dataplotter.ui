@@ -121,7 +121,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex">
-       <number>1</number>
+       <number>0</number>
       </property>
       <property name="elideMode">
        <enum>Qt::ElideNone</enum>
@@ -148,7 +148,7 @@
           <x>0</x>
           <y>0</y>
           <width>661</width>
-          <height>87</height>
+          <height>71</height>
          </rect>
         </property>
         <layout class="QGridLayout" name="gridLayout_8">

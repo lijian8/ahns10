@@ -31,7 +31,7 @@
      <x>0</x>
      <y>0</y>
      <width>531</width>
-     <height>320</height>
+     <height>321</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -50,7 +50,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab">
     <property name="sizePolicy">
@@ -74,12 +74,12 @@
        <x>0</x>
        <y>0</y>
        <width>519</width>
-       <height>272</height>
+       <height>313</height>
       </rect>
      </property>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <property name="spacing">
-       <number>-1</number>
+       <number>6</number>
       </property>
       <property name="sizeConstraint">
        <enum>QLayout::SetDefaultConstraint</enum>
