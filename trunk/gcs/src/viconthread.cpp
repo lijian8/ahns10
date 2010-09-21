@@ -32,6 +32,13 @@
 #include "state.h"
 #include "Client.h"
 
+using namespace ViconDataStreamSDK::CPP;
+
+/** Vicon client */
+Client myClient;
+/** Vicon unit conversions */
+#define mm2M                0.01
+
 /**
   * @brief Default constructor
   * @param parent The object to be set as the parent of the thread, default 0
@@ -85,11 +92,101 @@ ViconThread::~ViconThread()
 {
     AHNS_DEBUG("ViconThread::~ViconThread()");
     QMutexLocker locker(&m_mutex);
+}
 
-    if (m_socket != NULL)
+int ViconThread::ViconServerConnect()
+{
+    int retValue = 0;
+
+    std::string Hostname;
+    Hostname = m_serverIP.toString().toStdString()+":"+ QString("%1").arg(m_serverPort).toStdString();
+
+    //std::cout << "Trying to connect" << std::endl;
+    myClient.Connect(Hostname);
+    if (myClient.IsConnected().Connected)
     {
-        m_socket->close();
+        // connection success, enable data types
+        myClient.EnableSegmentData();
+        myClient.EnableMarkerData();
+        myClient.EnableUnlabeledMarkerData();
+        myClient.EnableDeviceData();
+        // set the streaming mode from the server
+        myClient.SetStreamMode(ViconDataStreamSDK::CPP::StreamMode::ClientPull);
+        // set the global axis
+        myClient.SetAxisMapping(Direction::Forward, Direction::Left, Direction::Up);
+        retValue = 1;
+        //emit ViconProcessReady();
     }
+    return retValue;
+}
+
+void ViconThread::ProcessViconState()
+{
+    // position of the vicon object
+    double X,Y,Z;
+    // orientation of the vicon object
+    double phi,theta,psi;
+    // velocity of the vicon object
+    double vx,vy,vz;
+
+    std::string SegmentName;
+    std::string SubjectName;
+    unsigned int SubjectCount;
+    unsigned int SegmentCount;
+    while(myClient.GetFrame().Result != Result::Success)
+      {
+        sleep(1);
+        std::cout << ".";
+      }
+    //number of objects currently represented/tracked by the vicon system
+    SubjectCount = myClient.GetSubjectCount().SubjectCount;
+    unsigned int SubjectIndex = 0;
+    SubjectName = myClient.GetSubjectName(SubjectIndex).SubjectName;
+    // Get the root segment
+    //std::string RootSegment = myClient.GetSubjectRootSegmentName( SubjectName ).SegmentName;
+    //Get the number of Segments
+    SegmentCount = myClient.GetSegmentCount(SubjectName).SegmentCount;
+    unsigned int SegmentIndex = 0;
+    //Get the name of Segment
+    SegmentName = myClient.GetSegmentName(SubjectName, SegmentIndex).SegmentName;
+    //Get the name of subject
+    SubjectName = myClient.GetSubjectName(SubjectIndex).SubjectName;
+
+    // Get the global segment translation
+    Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation = myClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
+
+    //store locally X,Y,Z. data comes by defauls in mm and radians
+    X = _Output_GetSegmentGlobalTranslation.Translation[ 0 ]*mm2M;
+    Y = _Output_GetSegmentGlobalTranslation.Translation[ 1 ]*mm2M;
+    Z = -1.0 * (_Output_GetSegmentGlobalTranslation.Translation[ 2 ])*mm2M;
+
+    // Get the global segment orientation
+    Output_GetSegmentGlobalRotationEulerXYZ _Output_GetSegmentGlobalRotationEulerXYZ = myClient.GetSegmentGlobalRotationEulerXYZ(SubjectName,SegmentName);
+
+    //store locally roll, pitch, yaw
+    phi = _Output_GetSegmentGlobalRotationEulerXYZ.Rotation[ 0 ];
+    theta = _Output_GetSegmentGlobalRotationEulerXYZ.Rotation[ 1 ];
+    psi =  _Output_GetSegmentGlobalRotationEulerXYZ.Rotation[ 2 ];
+
+    //print in console current position and attitude
+    std::cout << "Global Translation: (" << X << ", " << Y << ", " << Z << ") " << std::endl;
+    std::cout << "Global Orientation(" << phi << ", " << theta << ", " << psi << ") " << std::endl;
+
+    // allocate vicon data to vicon_state_t
+    vicon_state_t viconState;
+    viconState.phi = phi;
+    viconState.theta = theta;
+    viconState.psi = psi;
+    viconState.x = X;
+    viconState.y = Y;
+    viconState.z = Z;
+    viconState.vx = vx;
+    viconState.vy = vy;
+    viconState.vz = vz;
+
+    emit NewViconState(viconState);
+
+    // all vicon data received, get the next frame
 }
 
 /**
@@ -102,9 +199,19 @@ void ViconThread::run()
     AHNS_DEBUG("ViconThread::run() [ STARTED ]");
     AHNS_DEBUG("ViconThread::run() [ VICON THREAD ID " << (int) QThread::currentThreadId() << " ]");
 
-    while (!m_stopped)
+    if (ViconServerConnect())
     {
-        //exec();
+        m_connected = true;
+        while (!m_stopped)
+        {
+            ProcessViconState();
+            //exec();
+        }
+        myClient.Disconnect();
+    }
+    else
+    {
+        m_connected = false;
     }
 
     AHNS_DEBUG("ViconThread::run() [ COMPLETED ] ");

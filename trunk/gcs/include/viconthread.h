@@ -55,7 +55,7 @@ public:
 
 signals:
     /** @name Signals for Received Messages */
-    void NewViconState(const timeval timeStamp, const vicon_state_t receivedState, const int discarded = 0);
+    void NewViconState(const vicon_state_t receivedState);
 
 protected:
 
@@ -67,10 +67,13 @@ private:
     /** Last Vicon Packet rx Time*/
     struct timeval lastPacket;
 
+    /** Vicon Specific Code */
+    int ViconServerConnect();
+    void ProcessViconState();
+
      /** @name Members to configure the sockets*/
     quint16 m_serverPort;
     QHostAddress m_serverIP;
-    QUdpSocket* m_socket;
 
     /** @name Thread Management */
     QMutex m_mutex;

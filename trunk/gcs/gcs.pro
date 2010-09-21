@@ -26,7 +26,7 @@ linux-g++ {
         -lglut \
         -lGLU \
         -lqwt \
-        -Llib \
+        -L/usr/lib \
         -lViconDataStreamSDK_CPP
 }
 macx-g++ { 

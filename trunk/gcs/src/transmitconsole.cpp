@@ -103,6 +103,9 @@ void TransmitConsole::SentItem(uint32_t messageType, bool success)
         case SAVE_CONFIG:
             item.append("[ SAVE_CONFIG ]");
             break;
+        case VICON_STATE:
+            item.append("[ VICON_STATE ]");
+            break;
         default:
             AHNS_DEBUG("void TransmitConsole::SentItem(uint32_t messageType, bool success) [ UNKNOWN ]");
         }

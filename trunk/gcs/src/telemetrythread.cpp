@@ -190,11 +190,11 @@ void TelemetryThread::clientInitialise()
         // Send Connect Request to Server
         quint8 tryCounter = 0;
         m_openReceived = false;
-        while ((!m_openReceived) && (tryCounter < 10) && (!m_stopped))
+        while ((!m_openReceived) && (tryCounter < 4) && (!m_stopped))
         {
             tryCounter++;
             sendMessage(COMMAND_OPEN);
-            msleep(1000); // wait for reply
+            msleep(250); // wait for reply
             DataPending();
         }
         if (!m_openReceived)
@@ -982,3 +982,19 @@ void TelemetryThread::retrySaveConfig()
     return;
 }
 
+/**
+  * @brief Send the Vicon Data
+  * Data will be sent fast enough to ensure a lost packet
+  * will not affect controller performance.
+  */
+void TelemetryThread::sendViconState(const vicon_state_t viconState)
+{
+  AHNS_DEBUG("void TelemetryThread::sendViconState()");
+
+  unsigned char buffer[sizeof(vicon_state_t)];
+
+  // Send the Message
+  PackViconState(buffer, &viconState);
+  sendMessage(VICON_STATE, buffer, sizeof(vicon_state_t));
+  emit SentMessage(VICON_STATE);
+}
