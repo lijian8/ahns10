@@ -55,8 +55,8 @@ QSize FlightControl::sizeHint() const
 void FlightControl::resizeEvent (QResizeEvent* e)
 {
     // resize internal tab widgets
-    ui->layoutWidget->resize(e->size());
-    ui->tabWidget->resize(e->size());
+    ui->layoutWidget->resize(e->size().width(),e->size().height()-20);
+    ui->tabWidget->resize(e->size().width(),e->size().height());
     return;
 }
 

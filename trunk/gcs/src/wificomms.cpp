@@ -46,8 +46,8 @@
 #define DEFAULT_CLIENT_PORT "45455"
 
 // Default Vicon Settings
-#define DEFAULT_VICON_IP "192.168.1.122"
-#define DEFAULT_VICON_PORT "2002"
+#define DEFAULT_VICON_IP "131.181.87.177"
+#define DEFAULT_VICON_PORT "801"
 
 
 wifiComms::wifiComms(QWidget *parent) : QWidget(parent), ui(new Ui::wifiComms)
