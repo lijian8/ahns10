@@ -506,15 +506,6 @@ void DataPlotter::replot()
                 case IMU_ROLL_DOT:
                 case IMU_PITCH_DOT:
                 case IMU_YAW_DOT:
-                    j = 0;
-                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
-                    {
-                        timePoints[j] = m_DataVector[SENSOR_TIME][m_DataVector[SENSOR_TIME].size()-j-1];
-                        dataPoints[j] = 180.0/M_PI*m_DataVector[i][m_DataVector[i].size()-j-1];
-                        j++;
-                    }
-                    m_plotCurves[i].setData(timePoints, dataPoints, j);
-                    break;
                 case IMU_AX:
                 case IMU_AY:
                 case IMU_AZ:

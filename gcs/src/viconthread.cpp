@@ -44,7 +44,7 @@ Client myClient;
   * @param parent The object to be set as the parent of the thread, default 0
   */
 ViconThread::ViconThread(QObject * parent)
-    : QThread(parent), m_stopped(false), m_connected(true)
+    : QThread(parent)
 {
     AHNS_DEBUG("ViconThread::ViconThread(QObject)");
 
@@ -55,11 +55,11 @@ ViconThread::ViconThread(QObject * parent)
 /**
   * @brief Constructor to start a new UDP Telemetry Thread from ints
   * @param serverPort The port of the server that the connection will be to
-  * @param serverIP The IP of the server; gumstix heliconnect 192.168.2.2
+  * @param serverIP The IP of the server
   * @param parent The object to be set as the parent of the thread, default 0
   */
 ViconThread::ViconThread(quint16& serverPort, QString& serverIP, QObject * parent)
-    : QThread(parent), m_stopped(false), m_connected(true),  m_serverIP(serverIP), m_serverPort(serverPort)
+    : m_serverPort(serverPort), m_serverIP(serverIP), m_connected(true), m_stopped(false), QThread(parent)
 {
     AHNS_DEBUG("ViconThread::ViconThread(server,client)");
     QMutexLocker lock(&m_mutex);
@@ -75,7 +75,7 @@ ViconThread::ViconThread(quint16& serverPort, QString& serverIP, QObject * paren
   * @param parent The object to be set as the parent of the thread, default 0
   */
 ViconThread::ViconThread(quint16& serverPort, QHostAddress& serverIP, QObject * parent)
-    : QThread(parent), m_stopped(false), m_connected(true),  m_serverIP(serverIP), m_serverPort(serverPort)
+    : m_serverPort(serverPort), m_serverIP(serverIP), m_connected(true), m_stopped(false), QThread(parent)
 {
     AHNS_DEBUG("ViconThread::ViconThread(server,client QHostAddress)");
     QMutexLocker lock(&m_mutex);
@@ -204,10 +204,13 @@ void ViconThread::run()
         m_connected = true;
         while (!m_stopped)
         {
-            ProcessViconState();
+            std::cerr << "Vicon Thread running.." <<endl;
+            //ProcessViconState();
+            msleep(5);
             //exec();
         }
         myClient.Disconnect();
+        m_connected = false;
     }
     else
     {
@@ -229,7 +232,7 @@ void ViconThread::stop()
 
     QMutexLocker locker (&m_mutex);
     m_stopped = true;
-    quit();
+    //quit();
 
     return;
 }

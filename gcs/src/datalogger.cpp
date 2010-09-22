@@ -349,7 +349,7 @@ void DataLogger::setViconData(const vicon_state_t viconData)
     timeval timeStamp;
     gettimeofday(&timeStamp,NULL);
     m_DataVector[VICON_RAW_TIME].push_back(timeStamp.tv_sec + timeStamp.tv_usec*1.0e-6);
-    m_DataVector[VICON_TIME].push_back(m_DataVector[VICON_TIME].last()-m_zeroTime);
+    m_DataVector[VICON_TIME].push_back(m_DataVector[VICON_RAW_TIME].last()-m_zeroTime);
 
     // Position
     m_DataVector[VICON_X].push_back(viconData.x);
