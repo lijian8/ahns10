@@ -13,15 +13,15 @@ ARDUDIR = ../arduserial
 ARDU = $(ARDUDIR)/obj/arduserial.o
 IMUDIR = ../imu
 IMU = $(IMUDIR)/obj/imuserial.o
-KFDIR = ../kf
-KF = $(KFDIR)/obj/kf.o
+KFDIR = ../kfb
+KF = $(KFDIR)/obj/kfb.o
 MCUDIR = ../mcu_interface
 MCU = $(MCUDIR)/obj/mcuserial.o
 CONTROLDIR = ../control
 CONTROL = $(CONTROLDIR)/obj/control.o
 
-CFLAGS = -O2  
-LDFLAGS = -L./ -L$(LIBDIR) -lstate -lm -pthread -lgsl -lgslcblas
+CFLAGS = -Os  
+LDFLAGS = -L./ -L$(LIBDIR) -lstate -lm -pthread
 
 SRCS = src/main.c
 OBJS = obj/main.o $(ARDU) $(IMU) $(KF) $(MCU) $(CONTROL)
