@@ -362,7 +362,7 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
     {
       controlLoop->integralError += dt*tempError;
     }
-    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(controlLoop->referenceDot - controlLoop->previousReference) + controlLoop->Ki*(controlLoop->integralError) + controlLoop->neutral;
+    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(state - controlLoop->previousState) + controlLoop->Ki*(controlLoop->integralError) + controlLoop->neutral;
 
     // bound the output
     if (tempOutput > controlLoop->maximum)
@@ -381,6 +381,7 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
     // Store previous time
     controlLoop->previousTime = currentTime;
     controlLoop->previousReference = controlLoop->reference; 
+    controlLoop->previousState = state;
   }
   else
   {
