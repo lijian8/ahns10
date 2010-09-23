@@ -140,6 +140,12 @@ int main (void)
       txPeriodic = 0;
       USARTtxPeriodic();
     }
+
+    if (txRCCommands)
+    {
+      txRCCommands = 0;
+      USARTtxRCCommands();
+    }
   }
   return 0;
 }

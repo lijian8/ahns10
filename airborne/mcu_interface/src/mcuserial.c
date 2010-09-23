@@ -187,3 +187,41 @@ int sendMCUCommands(const volatile uint8_t *flightMode, const volatile int8_t *c
   }
   return returnValue;
 }
+
+/**
+ * @brief Query MCU for RC Commanded Data
+ * @param rcThrottle commanded RC Throttle
+ * @param rcRoll commanded RC Roll
+ * @param rcPitch commanded RC Pitch
+ * @param rcYaw commanded RC Yaw
+ * @return 1 for success, 0 for failure
+ */
+int getRCCommands(int8_t *rcThrottle, int8_t *rcRoll, int8_t *rcPitch, int8_t *rcYaw)
+{
+  const int bufferSize = 4;
+  int returnValue = 0;
+  unsigned char buffer[bufferSize];
+  
+  // Query MCU
+  buffer[0] = FRAME_CHAR;
+  buffer[1] = GET_MCU_RC_COMMANDS;  
+  buffer[2] = FRAME_CHAR;
+
+  if (write(fd,buffer,3)) //write success
+  {
+    usleep(MCU_DELAYRDWR);
+    if(!read(fd,buffer,sizeof(buffer)))  
+    {
+      //fprintf(stderr,"MCU get periodic read failed\n");
+    }
+    else
+    {
+      *rcThrottle = buffer[0];
+      *rcRoll = buffer[1];
+      *rcPitch = buffer[2];
+      *rcYaw = buffer[3];
+      returnValue = 1;
+    }
+  }
+  return returnValue;
+}

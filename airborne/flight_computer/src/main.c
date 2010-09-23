@@ -317,8 +317,13 @@ void* updateMCU(void *pointer)
     pthread_mutex_lock(&apMutex);
     sendMCUCommands(&apMode, &apThrottle, &apRoll, &apPitch, &apYaw);
     pthread_mutex_unlock(&apMutex);
-    
-    // Query and Receive Data ate slower rate
+
+    // Query and Receive RC Commands
+    pthread_mutex_lock(&rcMutex);
+    getRCCommands(&rcThrottle,&rcRoll,&rcPitch,&rcYaw);    
+    pthread_mutex_unlock(&rcMutex);
+
+    // Query and Receive Engine Data at slower rate
     if (mcuDelayCount > (double) MCU_QUERY_DELAY/(double) MCU_UPDATE_DELAY)
     {
       mcuDelayCount = 0;
@@ -446,31 +451,78 @@ void* updateControl(void *pointer)
   while(1)
   {
     pthread_mutex_lock(&mut);
+    pthread_mutex_lock(&viconMutex);
+    if (xLoop.vicon)
+    {
+      x = viconState.x;
+      vx = viconState.vx;
+    }
+    else
+    {
+      x = state.x;
+      vx = state.vx;
+    }
+ 
+    if (yLoop.vicon)
+    {
+      y = viconState.y;
+      vy = viconState.vy;
+    }
+    else
+    {
+      y = state.y;
+      vy = state.vy;
+    }
+ 
+    if (zLoop.vicon)
+    {
+      z = viconState.z;
+      vz = viconState.vz;
+    }
+    else
+    {
+      z = state.z;
+      vz = state.vz;
+    }
     
-    x = state.x;
-    y = state.y;
-    //z = state.z;
-    z = raw_IMU.z;
-    vx = state.vx;
-    vy = state.vy;
-    vz = state.vz;
-
-    phi = state.phi;
-    theta = state.theta;
-    psi = state.psi;
+    if (rollLoop.vicon)
+    {
+      phi = viconState.phi;
+      p = state.p;
+    }
+    else
+    {
+      phi = state.phi;
+      p = state.p;
+    }
     
-    //p = raw_IMU.p;
-    //q = raw_IMU.q;
-    //r = raw_IMU.r;
-
-    p = state.p;
-    q = state.q;
-    r = state.r;
+    if (pitchLoop.vicon)
+    {
+      theta = viconState.theta;
+      q = state.q;
+    }
+    else
+    {
+      theta = state.theta;
+      q = state.q;
+    }
+   
+    if (yawLoop.vicon)
+    {
+      psi = viconState.psi;
+      r = state.r;
+    }
+    else
+    { 
+      psi = state.psi;
+      r = state.r;
+    }
+    pthread_mutex_unlock(&viconMutex);
     pthread_mutex_unlock(&mut); 
     
     // Update Guidance Loops
     pthread_mutex_lock(&xLoopMutex);
-    updateControlLoop(&xLoop,x,vx); 
+    updateGuidanceLoop(&xLoop,x,vx); 
     if (xLoop.active)
     {
       pitchLoop.reference = xLoop.output;
@@ -478,7 +530,7 @@ void* updateControl(void *pointer)
     pthread_mutex_unlock(&xLoopMutex);
     
     pthread_mutex_lock(&yLoopMutex);
-    updateControlLoop(&yLoop,y,vy);
+    updateGuidanceLoop(&yLoop,y,vy);
     if (yLoop.active)
     {
       rollLoop.reference = yLoop.output;
@@ -486,22 +538,24 @@ void* updateControl(void *pointer)
     pthread_mutex_unlock(&yLoopMutex);
 
     pthread_mutex_lock(&zLoopMutex);
-    updateControlLoop(&zLoop,z,vz);
+    updateGuidanceLoop(&zLoop,z,vz);
     pthread_mutex_unlock(&zLoopMutex);
 
     // Update Control Loops
     pthread_mutex_lock(&rollLoopMutex);
-    updateControlLoop(&rollLoop,phi,p);
+    rollLoop.reference = rcRoll;
+    updateControlLoop(&rollLoop,p);
     pthread_mutex_unlock(&rollLoopMutex);
 
     pthread_mutex_lock(&pitchLoopMutex);
-    updateControlLoop(&pitchLoop,theta,q);
+    pitchLoop.reference = rcPitch;
+    updateControlLoop(&pitchLoop,q);
     pthread_mutex_unlock(&pitchLoopMutex);
 
     pthread_mutex_lock(&yawLoopMutex);
-    updateControlLoop(&yawLoop,psi,r);
+    yawLoop.reference = rcYaw;
+    updateYawLoop(&yawLoop,psi,r);
     pthread_mutex_unlock(&yawLoopMutex);
-    
     
     // Determine AP Mode for MCU usage
     MutexLockAllLoops();

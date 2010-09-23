@@ -23,6 +23,13 @@
 
 volatile enum FlightModes apMode;
 
+/** @name RC Commands */
+pthread_mutex_t rcMutex = PTHREAD_MUTEX_INITIALIZER;
+int8_t rcThrottle;
+int8_t rcRoll;
+int8_t rcPitch;
+int8_t rcYaw;
+
 /** @name Roll Control Loop */
 volatile control_loop_t rollLoop;
 pthread_mutex_t rollLoopMutex = PTHREAD_MUTEX_INITIALIZER;
@@ -51,6 +58,10 @@ volatile control_loop_t zLoop;
 pthread_mutex_t zLoopMutex = PTHREAD_MUTEX_INITIALIZER;
 volatile int8_t apThrottle;
 
+/** @name Vicon State */
+volatile vicon_state_t viconState;
+pthread_mutex_t viconMutex = PTHREAD_MUTEX_INITIALIZER;
+
 /** @name Mutex for ap values */
 pthread_mutex_t apMutex;
 
@@ -77,11 +88,17 @@ uint8_t setAPConfig(const ap_config_t* const srcConfig)
   MutexLockAllLoops();
 
   rollLoop.active = srcConfig->phiActive;
+  rollLoop.vicon = srcConfig->viconRoll;
   pitchLoop.active = srcConfig->thetaActive;
+  pitchLoop.vicon = srcConfig->viconPitch;
   yawLoop.active = srcConfig->psiActive;
+  yawLoop.vicon = srcConfig->viconYaw;
   xLoop.active = srcConfig->xActive;
+  xLoop.vicon = 1;
   yLoop.active = srcConfig->yActive;
+  yLoop.vicon = 1;
   zLoop.active = srcConfig->zActive;
+  zLoop.vicon = srcConfig->viconZ;
 
   MutexUnlockAllLoops();
 
@@ -314,11 +331,8 @@ void MutexUnlockGuidanceLoops()
  * @brief Function to Update the control loops
  * @param controlLoop Control Loop to be activated
  * @param state Current state variable to be controlled by the loop
- * @param stateDot Current Derivative of the state being controlled by the loop
- *
- * @TODO Implement integral anti-windup and control
  */
-inline void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot)
+inline void updateControlLoop(volatile control_loop_t* controlLoop, double state)
 {
   double tempOutput = 0.0;
   double tempError = 0.0;
@@ -327,17 +341,153 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
   double currentTime = currentTimeStruct.tv_sec + currentTimeStruct.tv_usec / 1e6;
   double dt = currentTime - controlLoop->previousTime;
  
-  // reset integrators if reference changed 
-  if (controlLoop->previousReference != controlLoop->reference)
-  {
-    controlLoop->integralError = 0.0;
-  }
 
   if (controlLoop->active)
   {
+    // scale the IMU rates from 300 deg to -300 deg to 1000 to 2000 then convert to PWM Timer values
+    state = PWMToCounter((state + 300) * (300 + 300) / (1000 + 2000) - 2000);
+    
+    // reset integrators if reference changed 
+    if (controlLoop->previousReference != controlLoop->reference)
+    {
+      controlLoop->integralError = 0.0;
+    }
+  
     // calculate error
     tempError = controlLoop->reference - state;
     
+    // integrate error
+    // only integrate if not in saturation
+    if (controlLoop->output < controlLoop->maximum)
+    {
+      controlLoop->integralError += dt*tempError;
+    }
+    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(controlLoop->referenceDot - controlLoop->previousReference) + controlLoop->Ki*(controlLoop->integralError) + controlLoop->neutral;
+
+    // bound the output
+    if (tempOutput > controlLoop->maximum)
+    {
+      controlLoop->output = controlLoop->maximum;
+    }
+    else if (tempOutput < controlLoop->minimum)
+    {
+      controlLoop->output = controlLoop->minimum;
+    }
+    else
+    {
+      controlLoop->output = tempOutput; 
+    }
+    
+    // Store previous time
+    controlLoop->previousTime = currentTime;
+    controlLoop->previousReference = controlLoop->reference; 
+  }
+  else
+  {
+    controlLoop->output = 0.0;
+  }
+  
+  return;
+}
+
+/**
+ * @brief Function to Update the guidance loops
+ * @param controlLoop Guidance Loop to be activated
+ * @param state Current state variable to be controlled by the loop
+ * @param stateDot Current Derivative of the state being controlled by the loop
+ */
+inline void updateGuidanceLoop(volatile control_loop_t* controlLoop, double state, double stateDot)
+{
+  double tempOutput = 0.0;
+  double tempError = 0.0;
+  struct timeval currentTimeStruct;
+  gettimeofday(&currentTimeStruct,NULL);
+  double currentTime = currentTimeStruct.tv_sec + currentTimeStruct.tv_usec / 1e6;
+  double dt = currentTime - controlLoop->previousTime;
+
+  if (controlLoop->active)
+  {
+    // reset integrators if reference changed 
+    if (controlLoop->previousReference != controlLoop->reference)
+    {
+      controlLoop->integralError = 0.0;
+    }
+ 
+    // calculate error
+    tempError = controlLoop->reference - state;
+    
+    // integrate error
+    // only integrate if not in saturation
+    if (controlLoop->output < controlLoop->maximum)
+    {
+      controlLoop->integralError += dt*tempError;
+    }
+    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(controlLoop->referenceDot - stateDot) + controlLoop->Ki*(controlLoop->integralError) + controlLoop->neutral;
+
+    // bound the output
+    if (tempOutput > controlLoop->maximum)
+    {
+      controlLoop->output = controlLoop->maximum;
+    }
+    else if (tempOutput < controlLoop->minimum)
+    {
+      controlLoop->output = controlLoop->minimum;
+    }
+    else
+    {
+      controlLoop->output = tempOutput; 
+    }
+    
+    // Store previous time
+    controlLoop->previousTime = currentTime;
+    controlLoop->previousReference = controlLoop->reference; 
+  }
+  else
+  {
+    controlLoop->output = 0.0;
+  }
+  
+  return;
+}
+
+/**
+ * @brief Function to Update the guidance loops
+ * @param controlLoop Yaw Loop to be activated
+ * @param state Current state variable to be controlled by the loop
+ * @param stateDot Current Derivative of the state being controlled by the loop
+ */
+inline void updateYawLoop(volatile control_loop_t* controlLoop, double state, double stateDot)
+{
+  double tempOutput = 0.0;
+  double tempError = 0.0;
+  struct timeval currentTimeStruct;
+  gettimeofday(&currentTimeStruct,NULL);
+  double currentTime = currentTimeStruct.tv_sec + currentTimeStruct.tv_usec / 1e6;
+  double dt = currentTime - controlLoop->previousTime;
+
+  if (controlLoop->active)
+  {
+    // reset integrators if reference changed 
+    if (controlLoop->previousReference != controlLoop->reference)
+    {
+      controlLoop->integralError = 0.0;
+    }
+ 
+    // calculate error
+    tempError = controlLoop->reference - state;
+    // bound the error between -pi and pi
+    while (abs(tempError) > M_PI)
+    {
+      if (tempError > 0)
+      {
+        tempError = tempError - M_PI;
+      }
+      else
+      {
+        tempError = tempError + M_PI;
+      }
+    }
+
     // integrate error
     // only integrate if not in saturation
     if (controlLoop->output < controlLoop->maximum)

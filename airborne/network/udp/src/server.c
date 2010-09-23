@@ -272,6 +272,19 @@ static int get_config(void *priv, const Host_t *src, int type, const struct time
 	return 1;
 }
 
+static int vicon_state(void *priv, const Host_t *src, int type, const struct timeval *when, const void *data, size_t len)
+{
+	Server *self = (Server*) priv;
+
+        // Unpack vicon_state_t structure
+        pthread_mutex_lock(&viconMutex);
+        UnpackViconState((unsigned char*) data, &viconState);
+        pthread_mutex_unlock(&viconMutex);
+
+	return 1;
+}
+
+
 void serve(Server *server, int port)
 {
 	//port = 0;
@@ -321,7 +334,8 @@ void serve(Server *server, int port)
         server_handle(server, DESIRED_POSITION, desired_position, (void*) server );
         server_handle(server, DESIRED_ATTITUDE, desired_attitude, (void*) server );
         server_handle(server, SAVE_CONFIG, save_config, (void*) server );
-        server_handle(server, GET_CONFIG , get_config, (void*) server );
+        server_handle(server, GET_CONFIG, get_config, (void*) server );
+        server_handle(server, VICON_STATE, vicon_state, (void*) server );
 
 }
 
