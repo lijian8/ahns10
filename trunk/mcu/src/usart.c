@@ -26,10 +26,11 @@
 volatile uint32_t apLastCommands;
 volatile uint8_t newAPCommands;
 volatile uint8_t txCommands;
+volatile uint8_t txRCCommands;
 volatile uint8_t txPeriodic;
 
 
-FILE debugOut = FDEV_SETUP_STREAM(USARTtxChar, NULL,_FDEV_SETUP_WRITE);
+//FILE debugOut = FDEV_SETUP_STREAM(USARTtxChar, NULL,_FDEV_SETUP_WRITE);
 
 uint8_t InitialiseUSART()
 {
@@ -134,6 +135,11 @@ ISR(USART_RX_vect)
 	{
           rxState = RX_MODE;
 	}
+        else if (tempHeader == GET_MCU_RC_COMMANDS) // send RC Commands
+        {
+          txRCCommands = 1;
+          rxState = HEADER_SYNC;
+        }
 	else // unknown
 	{
           rxState = HEADER_SYNC;
@@ -186,6 +192,14 @@ inline void USARTtxCommands()
   USARTtxData(commandedRoll);
   USARTtxData(commandedPitch);
   USARTtxData(commandedYaw);
+}
+
+inline void USARTtxRCCommands()
+{
+  USARTtxData(rcThrottle);
+  USARTtxData(rcRoll);
+  USARTtxData(rcPitch);
+  USARTtxData(rcYaw);
 }
 
 inline void USARTtxPeriodic()

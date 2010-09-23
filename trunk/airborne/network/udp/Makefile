@@ -13,7 +13,7 @@ LIBSTATE = libstate.a
 CONTROLDIR = ../../control
 CONTROL = $(CONTROLDIR)/obj/control.o
 
-CFLAGS = -O2
+CFLAGS = -Os
 LDFLAGS =  -L./ -lstate -lm
 INCDIR = -I $(CONTROLDIR)/include -I $(HELICONNECT) -I $(MCU_INTERFACE)/include -I include/
 

@@ -47,6 +47,7 @@ enum {
 
 /** @name USART TX Flags */
 extern volatile uint8_t txCommands; /**< Flag if Commands need to be sent */
+extern volatile uint8_t txRCCommands; /**< Flag if RC Commands need to be sent */
 extern volatile uint8_t txPeriodic; /**< Flag if Engine and Mode need to be sent*/
 
 /**
@@ -78,6 +79,16 @@ extern void USARTtxChar(char txChar, FILE *outStream);
  *   - Commanded Yaw
  */
 extern void USARTtxCommands();
+
+/**
+ * @brief Transmit RC Commands to FC
+ * The data to be sent is
+ *   - RC Throttle
+ *   - RC Roll
+ *   - RC Pitch
+ *   - RC Yaw
+ */
+extern void USARTtxRCCommands();
 
 /**
  * @brief Transmit MCU Periodic Data to FC

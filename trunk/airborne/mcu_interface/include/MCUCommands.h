@@ -23,8 +23,9 @@
 
 enum {
 	GET_MCU_COMMANDS = 0,
-	GET_MCU_PERIODIC = 1,
-	SEND_MCU_COMMANDS = 2
+        GET_MCU_RC_COMMANDS = 1,
+	GET_MCU_PERIODIC = 2,
+	SEND_MCU_COMMANDS = 3
 };
 
 enum FlightModes {

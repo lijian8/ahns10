@@ -26,6 +26,7 @@
 /** @name Control Loop Type */
 typedef struct { 
   uint8_t active;      /**< Active Flag */
+  uint8_t vicon;       /**< Flag to Choose Vicon */
   double reference;    /**< Commanded Reference */
   double output;       /**< Current Output*/
   
@@ -45,6 +46,13 @@ typedef struct {
 } control_loop_t;
 
 extern volatile enum FlightModes apMode;
+
+/** @name RC Commands */
+extern pthread_mutex_t rcMutex;
+extern int8_t rcThrottle;
+extern int8_t rcRoll;
+extern int8_t rcPitch;
+extern int8_t rcYaw;
 
 /** @name Roll Control Loop */
 extern volatile control_loop_t rollLoop;
@@ -78,7 +86,13 @@ extern volatile int8_t apThrottle;
 extern pthread_mutex_t apMutex;
 
 /** @name Calculate Control Loop */
-void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
+void updateControlLoop(volatile control_loop_t* controlLoop, double state);
+
+/** @name Calculate Guidance Loop */
+void updateGuidanceLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
+
+/** @name Calculate Yaw Loop */
+void updateYawLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
 
 /** @name Telemetry/Control Interface Functions */
 uint8_t setAPConfig(const ap_config_t* const srcConfig);
@@ -87,6 +101,10 @@ uint8_t setParameters(const loop_parameters_t* const srcParameters);
 uint8_t setAttitude(const attitude_t* const srcAttitude);
 uint8_t setPosition(const position_t* const srcPosition);
 uint8_t saveConfig();
+
+/** @name Vicon State */
+extern volatile vicon_state_t viconState;
+extern pthread_mutex_t viconMutex;
 
 extern void MutexLockAllLoops();
 extern void MutexUnlockAllLoops();

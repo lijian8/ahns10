@@ -121,7 +121,6 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 }
 
 static const double controlFactor = 1;
-static const double rcControlSplit = 0.08;
 
 inline void CombineCommands()
 {
@@ -132,57 +131,31 @@ inline void CombineCommands()
   {
     case MANUAL_DEBUG:
       IndicateManual();
-
       // Pass through for use with gyro
       // In this case gyro will do mixing
-      /*ESC1_COUNTER = escLimits[0][ESC_MIN] + rcThrottle;
+      ESC1_COUNTER = escLimits[0][ESC_MIN] + rcThrottle;
       ESC2_COUNTER = escLimits[1][ESC_MIN] + rcRoll;
       ESC3_COUNTER = escLimits[2][ESC_MIN] + rcPitch;
       ESC4_COUNTER = escLimits[3][ESC_MIN] + rcYaw;
-      */
-      commandedThrottle = rcThrottle;
-      commandedRoll = controlFactor*rcRoll;
-      commandedPitch = controlFactor*rcPitch;
-      commandedYaw = controlFactor*rcYaw;
-
-      MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
-      
       break;
     case AUGMENTED: // Combine AP and RC Commands
-      IndicateAugmented();
+      // Use the RC Commands as setpoints and combine these in the FC
       //CheckAPFailSafe();
-
-      // By default mix the two
-      /*commandedThrottle = rcControlSplit*rcThrottle + (1-rcControlSplit)*apThrottle;
-      commandedRoll = rcControlSplit*controlFactor*rcRoll + (1-rcControlSplit)*controlFactor*apRoll;
-      commandedPitch = rcControlSplit*controlFactor*rcPitch + (1-rcControlSplit)*controlFactor*apPitch;
-      commandedYaw = rcControlSplit*controlFactor*rcYaw + (1-rcControlSplit)*controlFactor*apYaw;
-      */
-
-      
-      commandedThrottle = rcThrottle + apThrottle;
-      commandedRoll = rcControlSplit*controlFactor*rcRoll + controlFactor*apRoll;
-      commandedPitch = rcControlSplit*controlFactor*rcPitch + controlFactor*apPitch;
-      commandedYaw = rcControlSplit*controlFactor*rcYaw + controlFactor*apYaw;
-
-      // Give RC Complete Control on some Commands
-      GiveRC(); 
-
-      // AP will select the desired full RC channels
+      IndicateAugmented();
+      commandedThrottle = apThrottle;
+      commandedRoll = apRoll;
+      commandedPitch = apPitch;
+      commandedYaw = apYaw;
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
       break;
     case AUTOPILOT: // Pass AP unaltered
-      IndicateAutopilot();
+      // RC Commands still sent to FC but not used
       //CheckAPFailSafe();
-
+      IndicateAutopilot();
       commandedThrottle = apThrottle;
-      commandedRoll = controlFactor*apRoll;
-      commandedPitch = controlFactor*apPitch;
-      commandedYaw = controlFactor*apYaw;
-      
-      // Give RC Complete Control on some Commands
-      GiveRC(); 
-
+      commandedRoll = apRoll;
+      commandedPitch = apPitch;
+      commandedYaw = apYaw;
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
       break;
     default:
@@ -190,6 +163,7 @@ inline void CombineCommands()
       commandedRoll = 0;
       commandedPitch = 0;
       commandedYaw = 0;
+      MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
       break;
   }
   return;
