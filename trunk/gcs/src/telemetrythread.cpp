@@ -194,7 +194,7 @@ void TelemetryThread::clientInitialise()
         {
             tryCounter++;
             sendMessage(COMMAND_OPEN);
-            msleep(250); // wait for reply
+            msleep(500); // wait for reply
             DataPending();
         }
         if (!m_openReceived)

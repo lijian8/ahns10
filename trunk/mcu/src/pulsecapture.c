@@ -103,7 +103,7 @@ inline void UpdateRC()
   armPulse = MovingAverage(armHistory,SWITCH_HISTORY_SIZE);
   
   // Throttle Fail safe and turn off engines on throttle
-  if (throttlePulse < 1100) // failsafe; was 1100
+  if (throttlePulse < 1180) // failsafe; was 1100
   {
     failSafe = 1;
   }

@@ -77,9 +77,9 @@ inline void MixCommands()
         //setPoint = escLimits[i][0];
         escHistory[i][index] = escLimits[i][0];
       }
-      //setPoint = escHistory[i][index];
+      setPoint = escHistory[i][index];
       // Moving Average
-      setPoint = MovingAverage(escHistory[i],HISTORY_SIZE);
+      //setPoint = MovingAverage(escHistory[i],HISTORY_SIZE);
       
       switch (i)
       {
@@ -121,7 +121,7 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 }
 
 static const double controlFactor = 1;
-static const double rcControlSplit = 0.5;
+static const double rcControlSplit = 0.08;
 
 inline void CombineCommands()
 {
@@ -159,10 +159,11 @@ inline void CombineCommands()
       commandedYaw = rcControlSplit*controlFactor*rcYaw + (1-rcControlSplit)*controlFactor*apYaw;
       */
 
+      
       commandedThrottle = rcThrottle + apThrottle;
-      commandedRoll = controlFactor*rcRoll + controlFactor*apRoll;
-      commandedPitch = controlFactor*rcPitch + controlFactor*apPitch;
-      commandedYaw = controlFactor*rcYaw + controlFactor*apYaw;
+      commandedRoll = rcControlSplit*controlFactor*rcRoll + controlFactor*apRoll;
+      commandedPitch = rcControlSplit*controlFactor*rcPitch + controlFactor*apPitch;
+      commandedYaw = rcControlSplit*controlFactor*rcYaw + controlFactor*apYaw;
 
       // Give RC Complete Control on some Commands
       GiveRC(); 

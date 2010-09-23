@@ -625,23 +625,23 @@ p, li { white-space: pre-wrap; }
  </widget>
  <tabstops>
   <tabstop>rollPBox</tabstop>
-  <tabstop>rollIBox</tabstop>
-  <tabstop>rollDBox</tabstop>
   <tabstop>pitchPBox</tabstop>
-  <tabstop>pitchIBox</tabstop>
+  <tabstop>rollDBox</tabstop>
   <tabstop>pitchDBox</tabstop>
+  <tabstop>rollIBox</tabstop>
+  <tabstop>pitchIBox</tabstop>
+  <tabstop>xPBox</tabstop>
+  <tabstop>yPBox</tabstop>
+  <tabstop>zPBox</tabstop>
+  <tabstop>xIBox</tabstop>
+  <tabstop>yIBox</tabstop>
+  <tabstop>zIBox</tabstop>
+  <tabstop>xDBox</tabstop>
+  <tabstop>yDBox</tabstop>
+  <tabstop>zDBox</tabstop>
   <tabstop>yawPBox</tabstop>
   <tabstop>yawIBox</tabstop>
   <tabstop>yawDBox</tabstop>
-  <tabstop>xPBox</tabstop>
-  <tabstop>xIBox</tabstop>
-  <tabstop>xDBox</tabstop>
-  <tabstop>yPBox</tabstop>
-  <tabstop>yIBox</tabstop>
-  <tabstop>yDBox</tabstop>
-  <tabstop>zPBox</tabstop>
-  <tabstop>zIBox</tabstop>
-  <tabstop>zDBox</tabstop>
   <tabstop>SendBtn</tabstop>
   <tabstop>SaveBtn</tabstop>
   <tabstop>loadBtn</tabstop>
