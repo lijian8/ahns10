@@ -25,19 +25,19 @@
 // Kalman filter constants for phi
 #define PHI_ANGLE_Q 0.001
 #define PHI_GYRO_Q 0.003
-#define PHI_R 0.03
+#define PHI_R 1.7
 #define PHI_DIRECTION 1.0
 
 // Kalman filter constants for theta
 #define THETA_ANGLE_Q 0.001
 #define THETA_GYRO_Q 0.003
-#define THETA_R 0.03
+#define THETA_R 1.7
 #define THETA_DIRECTION -1.0
 
 // LPF alpha constants
-#define ACCX_ALPHA 1.0
-#define ACCY_ALPHA 1.0
-#define ACCZ_ALPHA 1.0
+#define ACCX_ALPHA 0.1
+#define ACCY_ALPHA 0.1
+#define ACCZ_ALPHA 0.1
 
 // struct definition for each axis
 typedef struct _axis {

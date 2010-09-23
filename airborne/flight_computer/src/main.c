@@ -20,7 +20,7 @@
 #include "state.h"
 #include "imuserial.h"
 #include "arduserial.h"
-#include "kf.h"
+#include "kfb.h"
 #include "control.h"
 #include "mcuserial.h"
 
@@ -66,7 +66,7 @@ int main(int argc, char *argv[])
   // initialise the MCU
   mcuReady = mcuInit();
   // initialise the Kalman filter
-  attitudeFilterInitialise();
+  //attitudeFilterInitialise();
   // all systems operational - begin the flight computer
   if (sensorReady && mcuReady)
   {
@@ -160,6 +160,10 @@ void * updateIMUdata(void *pointer)
   struct timeval timestamp;
   // time between filter updates
   double startFilterTime, endFilterTime, diffFilterTime;
+  // get IMU data to calculate initial state
+  getImuSensorData(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az);
+  // initialise the Kalman filter
+  attitudeFilterInitialiseB(&raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az);
   // calculate filter start time
   gettimeofday(&timestamp, NULL); 
   startFilterTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
@@ -178,7 +182,8 @@ void * updateIMUdata(void *pointer)
     gettimeofday(&timestamp, NULL); 
     startFilterTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
     // perform the attitude filtering using the imu data
-    attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, compass_heading, diffFilterTime);
+    //attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, compass_heading, diffFilterTime);
+    attitudeFilterB(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, diffFilterTime);
     //printf(">> kf update : %f\n",1/diffFilterTime);
     state.trace = (1/diffFilterTime);
 

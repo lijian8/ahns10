@@ -1,6 +1,6 @@
 # Make file to create the control library
 
-CFLAGS= -O2
+CFLAGS= -Os
 HEADERS= include/control.h
 
 MCUDIR = ../mcu_interface/

@@ -1,6 +1,6 @@
 # Make file to create the arduino serial library
 
-CCFLAGS = -O2
+CCFLAGS = -Os
 
 arduserialTester: obj/arduserial.o
 	gcc -I include/ obj/arduserial.o -o arduserialTester src/arduserialTester.c

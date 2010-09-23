@@ -1,6 +1,6 @@
 # Make file to create the IMU serail library
 
-CCFLAGS = -O2
+CCFLAGS = -Os
 LDFLAGS = 
 
 imuserialRecon: obj/imuserial.o
