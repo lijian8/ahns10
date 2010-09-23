@@ -6,7 +6,7 @@
 
 HEX=obj/mcu.hex:i  # :i for intel hex - only important for read
 
-PORT=/dev/ttys000
+PORT=/dev/ttyUSB0
 MCU_TARGET=m328p    # Atmega328p
 PROGRAMMER=stk500v2 #avrispmkII #stk500v2 
 BAUD=115200
