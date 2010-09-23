@@ -28,6 +28,9 @@ enum {
 	SEND_MCU_COMMANDS = 3
 };
 
+/** RC Hardware Rate Gyro in use */
+#define _GYRO_
+
 enum FlightModes {
        MANUAL_DEBUG,  /**< Manual Mode with no AP mixing */
        AUGMENTED,     /**< Manual Mode with additional AP mixing */

@@ -23,6 +23,7 @@
 #include "kfb.h"
 #include "control.h"
 #include "mcuserial.h"
+#include "MCUCommands.h"
 
 // udp server
 static Server server;
@@ -542,6 +543,8 @@ void* updateControl(void *pointer)
     pthread_mutex_unlock(&zLoopMutex);
 
     // Update Control Loops
+    pthread_mutex_lock(&rcMutex);
+
     pthread_mutex_lock(&rollLoopMutex);
     rollLoop.reference = rcRoll;
     updateControlLoop(&rollLoop,p);
@@ -557,9 +560,81 @@ void* updateControl(void *pointer)
     updateYawLoop(&yawLoop,psi,r);
     pthread_mutex_unlock(&yawLoopMutex);
     
-    // Determine AP Mode for MCU usage
+    pthread_mutex_unlock(&rcMutex);
+   
+    // Generate Commands for the MCU 
     MutexLockAllLoops();
     pthread_mutex_lock(&apMutex);
+#ifdef _GYRO_
+    // Gyro will do the mixing so roll and pitch loops will not be active
+    if (zLoop.active && xLoop.active && yLoop.active && yawLoop.active)
+    {
+      apMode = RC_NONE;
+    }
+    else if (!zLoop.active && xLoop.active && yLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE;
+    }
+    else if (zLoop.active && !yLoop.active && xLoop.active && yawLoop.active)
+    {
+      apMode = RC_ROLL;
+    }
+    else if (zLoop.active && yLoop.active && !xLoop.active && yawLoop.active)
+    {
+      apMode = RC_PITCH;
+    }
+    else if (zLoop.active && yLoop.active && xLoop.active && !yawLoop.active)
+    {
+      apMode = RC_YAW;
+    }
+    else if (!zLoop.active && !yLoop.active && xLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL;
+    }
+    else if (!zLoop.active && yLoop.active && !xLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_PITCH;
+    }
+    else if (!zLoop.active && yLoop.active && xLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_YAW;
+    }
+    else if (!zLoop.active && !yLoop.active && !xLoop.active && yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL_PITCH;
+    }
+    else if (!zLoop.active && !yLoop.active && xLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_ROLL_YAW;
+    }
+    else if (!zLoop.active && yLoop.active && !xLoop.active && !yawLoop.active)
+    {
+      apMode = RC_THROTTLE_PITCH_YAW;
+    }
+    else if (zLoop.active && !yLoop.active && !xLoop.active && yawLoop.active)
+    {
+      apMode = RC_ROLL_PITCH;
+    }
+    else if (zLoop.active && !yLoop.active && xLoop.active && !yawLoop.active)
+    {
+      apMode = RC_ROLL_YAW;
+    }
+    else if (zLoop.active && yLoop.active && !xLoop.active && !yawLoop.active)
+    {
+      apMode = RC_PITCH_YAW;
+    }
+    else if (zLoop.active && !yLoop.active && !xLoop.active && !yawLoop.active)
+    {
+      apMode = RC_ROLL_PITCH_YAW;
+    }
+
+    // Gyro will handle the inner loops
+    apThrottle = zLoop.output;
+    apRoll = yLoop.output;
+    apPitch = xLoop.output;
+    apYaw = yawLoop.output;
+#else
+    // No Gyro thus roll and pitch control loops in use
     if (zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
     {
       apMode = RC_NONE;
@@ -620,21 +695,15 @@ void* updateControl(void *pointer)
     {
       apMode = RC_ROLL_PITCH_YAW;
     }
-
-    // Send to MCU
+    
+    // AP Handles the Inner Loop
     apThrottle = zLoop.output;
     apRoll = rollLoop.output;
     apPitch = pitchLoop.output;
     apYaw = yawLoop.output;
-    /*fprintf(stderr,"DEBUG:: Roll Output %d\n",apRoll);
-    fprintf(stderr,"DEBUG:: Pitch Output %d\n",apPitch);
-    fprintf(stderr,"DEBUG:: Yaw Output %d\n",apYaw);
-    fprintf(stderr,"DEBUG:: Throttle Output %d\n",apThrottle);
-   */
-    pthread_mutex_unlock(&apMutex);
+#endif
     
     // Update AP State
-    pthread_mutex_lock(&apMut);
     apState.referencePhi = rollLoop.reference;
     apState.referenceTheta = pitchLoop.reference;
     apState.referencePsi = yawLoop.reference;
@@ -648,8 +717,8 @@ void* updateControl(void *pointer)
     apState.xActive = xLoop.active;
     apState.yActive = yLoop.active;
     apState.zActive = zLoop.active;
+    
     pthread_mutex_unlock(&apMut);
-
     MutexUnlockAllLoops();
     // calculate the control thread update time
     gettimeofday(&timestamp1, NULL);
