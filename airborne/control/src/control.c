@@ -344,8 +344,8 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
 
   if (controlLoop->active)
   {
-    // scale the IMU rates from 300 deg to -300 deg to 1000 to 2000 then convert to PWM Timer values
-    state = PWMToCounter((state + 300) * (300 + 300) / (1000 + 2000) - 2000);
+    // scale the IMU rates from 300 deg to -300 deg to  to 2000 then convert to PWM Timer values
+    state = PWMToCounter((state + 300) * (500 + 500) / (300 + 300) - 500);
     
     // reset integrators if reference changed 
     if (controlLoop->previousReference != controlLoop->reference)
@@ -475,17 +475,23 @@ inline void updateYawLoop(volatile control_loop_t* controlLoop, double state, do
  
     // calculate error
     tempError = controlLoop->reference - state;
-    // bound the error between -pi and pi
-    while (abs(tempError) > M_PI)
+    // bound the error between 0 and 2pi
+    while (abs(tempError) > 2*M_PI)
     {
       if (tempError > 0)
       {
-        tempError = tempError - M_PI;
+        tempError = tempError - 2*M_PI;
       }
       else
       {
-        tempError = tempError + M_PI;
+        tempError = tempError + 2*M_PI;
       }
+    }
+
+    // express in range -pi to pi
+    if (tempError > M_PI)
+    {
+      tempError = tempError - 2*M_PI;
     }
 
     // integrate error

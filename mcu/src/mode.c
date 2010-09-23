@@ -122,6 +122,7 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 
 static const double controlFactor = 1;
 
+
 inline void CombineCommands()
 {
   // Flight Mode Choice limited to RC
@@ -131,32 +132,68 @@ inline void CombineCommands()
   {
     case MANUAL_DEBUG:
       IndicateManual();
+#ifdef _GYRO_
       // Pass through for use with gyro
       // In this case gyro will do mixing
       ESC1_COUNTER = escLimits[0][ESC_MIN] + rcThrottle;
       ESC2_COUNTER = escLimits[1][ESC_MIN] + rcRoll;
       ESC3_COUNTER = escLimits[2][ESC_MIN] + rcPitch;
       ESC4_COUNTER = escLimits[3][ESC_MIN] + rcYaw;
+#else
+      commandedThrottle = rcThrottle;
+      commandedRoll = rcRoll;
+      commandedPitch = rcPitch;
+      commandedYaw = rcYaw;
+      MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
+#endif
       break;
     case AUGMENTED: // Combine AP and RC Commands
-      // Use the RC Commands as setpoints and combine these in the FC
       //CheckAPFailSafe();
-      IndicateAugmented();
+      IndicateAugmented(); 
+#ifdef _GYRO_ 
+      // Combine AP Guidance Loop and RC pulses then let gyro mix
+      commandedThrottle = apThrottle + rcThrottle;
+      commandedRoll = apRoll + rcRoll;
+      commandedPitch = apPitch + rcPitch;
+      commandedYaw = apYaw + rcYaw;
+      GiveRC();
+      ESC1_COUNTER = escLimits[0][ESC_MIN] + commandedThrottle;
+      ESC2_COUNTER = escLimits[1][ESC_MIN] + commandedRoll;
+      ESC3_COUNTER = escLimits[2][ESC_MIN] + commandedPitch;
+      ESC4_COUNTER = escLimits[3][ESC_MIN] + commandedYaw;
+#else
+      // Use the RC Commands as setpoints and combine these in the FC
       commandedThrottle = apThrottle;
       commandedRoll = apRoll;
       commandedPitch = apPitch;
       commandedYaw = apYaw;
+      GiveRC();
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
+#endif
       break;
     case AUTOPILOT: // Pass AP unaltered
-      // RC Commands still sent to FC but not used
       //CheckAPFailSafe();
       IndicateAutopilot();
+#ifdef _GYRO_ 
+      // Let Gyro Mix the AP Guidance Commands 
       commandedThrottle = apThrottle;
       commandedRoll = apRoll;
       commandedPitch = apPitch;
       commandedYaw = apYaw;
+      GiveRC();
+      ESC1_COUNTER = escLimits[0][ESC_MIN] + commandedThrottle;
+      ESC2_COUNTER = escLimits[1][ESC_MIN] + commandedRoll;
+      ESC3_COUNTER = escLimits[2][ESC_MIN] + commandedPitch;
+      ESC4_COUNTER = escLimits[3][ESC_MIN] + commandedYaw;
+#else
+      // RC Commands still sent to FC but not used
+      commandedThrottle = apThrottle;
+      commandedRoll = apRoll;
+      commandedPitch = apPitch;
+      commandedYaw = apYaw;
+      GiveRC();
       MixCommands(commandedThrottle, commandedRoll, commandedPitch, commandedYaw);
+#endif
       break;
     default:
       commandedThrottle = 0;
