@@ -43,6 +43,7 @@ typedef struct {
 
   double previousTime; /**< Previous time update */
   double previousReference; /**< Previous reference */
+  double previousState;     /**< Previous Control State */
 } control_loop_t;
 
 extern volatile enum FlightModes apMode;
