@@ -1,5 +1,5 @@
 /**
- * @file   telemetrythread.cpp
+ * @file   viconthread.cpp
  * @author Tim Molloy
  *
  * $Author: tlmolloy $
@@ -10,7 +10,7 @@
  * Queensland University of Technology
  *
  * @section DESCRIPTION
- * TelemetryThread class implementation
+ * Vicon Thread class implementation
  */
 
 #include <QThread>
@@ -38,6 +38,8 @@ using namespace ViconDataStreamSDK::CPP;
 Client myClient;
 /** Vicon unit conversions */
 #define mm2M                0.01
+/** previous positiona values from the vicon */
+double prevX,prevY,prevZ;
 
 /**
   * @brief Default constructor
@@ -53,9 +55,9 @@ ViconThread::ViconThread(QObject * parent)
 }
 
 /**
-  * @brief Constructor to start a new UDP Telemetry Thread from ints
+  * @brief Constructor to start a new Vicon thread
   * @param serverPort The port of the server that the connection will be to
-  * @param serverIP The IP of the server
+  * @param serverIP The IP of the Vicon server
   * @param parent The object to be set as the parent of the thread, default 0
   */
 ViconThread::ViconThread(quint16& serverPort, QString& serverIP, QObject * parent)
@@ -114,8 +116,14 @@ int ViconThread::ViconServerConnect()
         myClient.SetStreamMode(ViconDataStreamSDK::CPP::StreamMode::ClientPull);
         // set the global axis
         myClient.SetAxisMapping(Direction::Forward, Direction::Left, Direction::Up);
+        // start the timer
+        viconTimer.start();
+        viconTimeElapsed = 0;
+        // initialise values
+        prevX = 0.0;
+        prevY = 0.0;
+        prevZ = 0.0;
         retValue = 1;
-        //emit ViconProcessReady();
     }
     return retValue;
 }
@@ -155,10 +163,10 @@ void ViconThread::ProcessViconState()
     // Get the global segment translation
     Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation = myClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
 
-    //store locally X,Y,Z. data comes by defauls in mm and radians
+    //store locally X,Y,Z. data comes by defaults in mm and radians
     X = _Output_GetSegmentGlobalTranslation.Translation[ 0 ]*mm2M;
     Y = _Output_GetSegmentGlobalTranslation.Translation[ 1 ]*mm2M;
-    Z = -1.0 * (_Output_GetSegmentGlobalTranslation.Translation[ 2 ])*mm2M;
+    Z = _Output_GetSegmentGlobalTranslation.Translation[ 2 ]*mm2M;
 
     // Get the global segment orientation
     Output_GetSegmentGlobalRotationEulerXYZ _Output_GetSegmentGlobalRotationEulerXYZ = myClient.GetSegmentGlobalRotationEulerXYZ(SubjectName,SegmentName);
@@ -168,9 +176,25 @@ void ViconThread::ProcessViconState()
     theta = _Output_GetSegmentGlobalRotationEulerXYZ.Rotation[ 1 ];
     psi =  _Output_GetSegmentGlobalRotationEulerXYZ.Rotation[ 2 ];
 
+    // take a time stamp
+    viconTimeElapsed = viconTimer.elapsed();
+    // restart the timer
+    viconTimer.restart();
+
+    // calculate the velocity from previous position measurements
+    vx = (X-prevX)/((qreal)viconTimeElapsed/1000);
+    vy = (Y-prevY)/((qreal)viconTimeElapsed/1000);
+    vz = (Z-prevZ)/((qreal)viconTimeElapsed/1000);
+
+    // store the position values
+    prevX = X;
+    prevY = Y;
+    prevZ = Z;
+
     //print in console current position and attitude
-    std::cout << "Global Translation: (" << X << ", " << Y << ", " << Z << ") " << std::endl;
-    std::cout << "Global Orientation(" << phi << ", " << theta << ", " << psi << ") " << std::endl;
+    //std::cout << "Global Translation: (" << X << ", " << Y << ", " << Z << ") " << std::endl;
+    //std::cout << "Global Orientation(" << phi << ", " << theta << ", " << psi << ") " << std::endl;
+    //std::cout << ">> Elapsed: " << 1/((qreal)viconTimeElapsed/1000) << std::endl;
 
     // allocate vicon data to vicon_state_t
     vicon_state_t viconState;
@@ -204,10 +228,10 @@ void ViconThread::run()
         m_connected = true;
         while (!m_stopped)
         {
-            //std::cerr << "Vicon Thread running.." <<endl;
+            //std::cerr << "Vicon Thread running.." << std::endl;
             ProcessViconState();
-            msleep(5);
-            //exec();
+            msleep(1);
+            //exec(); this line is bad, stops the vicon data from coming in
         }
         myClient.Disconnect();
         m_connected = false;
@@ -238,7 +262,7 @@ void ViconThread::stop()
 }
 
 /**
-  * @brief Accessort function for m_serverPort
+  * @brief Accessor function for m_serverPort
   */
 quint16 ViconThread::readServerPort() const
 {
