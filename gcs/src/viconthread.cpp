@@ -37,7 +37,7 @@ using namespace ViconDataStreamSDK::CPP;
 /** Vicon client */
 Client myClient;
 /** Vicon unit conversions */
-#define mm2M                0.01
+#define mm2M                0.001
 /** previous positiona values from the vicon */
 double prevX,prevY,prevZ;
 
