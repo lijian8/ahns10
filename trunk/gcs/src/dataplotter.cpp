@@ -520,6 +520,33 @@ void DataPlotter::replot()
                     }
                     m_plotCurves[i].setData(timePoints, dataPoints, j);
                     break;
+                case VICON_X:
+                case VICON_Y:
+                case VICON_Z:
+                case VICON_VX:
+                case VICON_VY:
+                case VICON_VZ:
+                    j = 0;
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[VICON_TIME][m_DataVector[VICON_TIME].size()-j-1];
+                        dataPoints[j] = m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
+                case VICON_PHI:
+                case VICON_THETA:
+                case VICON_PSI:
+                    j = 0;
+                    while ((j < pointLimit) && (j < m_DataVector[i].size()))
+                    {
+                        timePoints[j] = m_DataVector[VICON_TIME][m_DataVector[VICON_TIME].size()-j-1];
+                        dataPoints[j] = 180.0/M_PI*m_DataVector[i][m_DataVector[i].size()-j-1];
+                        j++;
+                    }
+                    m_plotCurves[i].setData(timePoints, dataPoints, j);
+                    break;
                 case ENGINE1:
                 case ENGINE2:
                 case ENGINE3:

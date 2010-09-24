@@ -204,8 +204,8 @@ void ViconThread::run()
         m_connected = true;
         while (!m_stopped)
         {
-            std::cerr << "Vicon Thread running.." <<endl;
-            //ProcessViconState();
+            //std::cerr << "Vicon Thread running.." <<endl;
+            ProcessViconState();
             msleep(5);
             //exec();
         }
