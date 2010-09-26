@@ -31,6 +31,13 @@ enum {
 /** RC Hardware Rate Gyro in use */
 #define _GYRO_
 
+/** PWM Output Prescalar */
+//#ifdef _GYRO_
+//  #define PWM_PRESCALAR 256.0
+//#else
+  #define PWM_PRESCALAR 64.0
+//#endif
+
 enum FlightModes {
        MANUAL_DEBUG,  /**< Manual Mode with no AP mixing */
        AUGMENTED,     /**< Manual Mode with additional AP mixing */
@@ -57,21 +64,17 @@ enum FlightModes {
 #define F_CPU 8000000UL // 16MHz scaled to 8 MHz
 
 /** @name PWM Defines */
-#define PWM_PRESCALAR 64.0
-#define F_PWM ((double) F_CPU/(PWM_PRESCALAR*510.0)) /**< Pre-scalar of 64 */
+#define F_PWM ((double) F_CPU/(PWM_PRESCALAR*510.0)) 
 #define PWM_DT_US ((double) (1e6 * PWM_PRESCALAR / F_CPU)) /**< Time Resolution of generated PWM signals */
 
 /**
  * @brief Convert micro-seconds of high to timer 8 bit range
  */
-#define PWMToCounter(pulseHighTime) ((pulseHighTime) / (2.0 * PWM_DT_US));
+#define PWMToCounter(pulseHighTime) ((pulseHighTime) / (2.0 * PWM_DT_US))
 
 /**
  * @brief Convert timer 8 bit range to micro-seconds
  */
 #define CounterToPWM(n) (2.0 * PWM_DT_US * (n));
-
-
-
 
 #endif // MCU_COMMANDS_H

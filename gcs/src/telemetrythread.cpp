@@ -993,6 +993,10 @@ void TelemetryThread::sendViconState(const vicon_state_t viconState)
 
   unsigned char buffer[sizeof(vicon_state_t)];
 
+  AHNS_ALERT("Vicon Position: " << viconState.x << " " << viconState.y << " " << viconState.z);
+  AHNS_ALERT("Vicon Velocity: " << viconState.vx << " " << viconState.vy << " " << viconState.vz);
+  AHNS_ALERT("Vicon Angles: " << viconState.phi << " " << viconState.theta << " " << viconState.psi);
+
   // Send the Message
   PackViconState(buffer, &viconState);
   sendMessage(VICON_STATE, buffer, sizeof(vicon_state_t));

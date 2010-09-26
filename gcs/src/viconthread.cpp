@@ -229,6 +229,17 @@ void ViconThread::run()
         while (!m_stopped)
         {
             //std::cerr << "Vicon Thread running.." << std::endl;
+//            vicon_state_t viconState;
+//            viconState.phi = 8;
+//            viconState.theta = 7;
+//            viconState.psi = 6;
+//            viconState.x = 6;
+//            viconState.y = 5;
+//            viconState.z = 4;
+//            viconState.vx = 3;
+//            viconState.vy = 2;
+//            viconState.vz = 1;
+//            emit NewViconState(viconState);
             ProcessViconState();
             msleep(1);
             //exec(); this line is bad, stops the vicon data from coming in
