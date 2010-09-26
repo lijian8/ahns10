@@ -250,6 +250,12 @@ p, li { white-space: pre-wrap; }
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
+      </property>
       <property name="decimals">
        <number>2</number>
       </property>
@@ -268,6 +274,12 @@ p, li { white-space: pre-wrap; }
      <widget class="QDoubleSpinBox" name="rollMinBox">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -288,6 +300,12 @@ p, li { white-space: pre-wrap; }
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
+      </property>
       <property name="decimals">
        <number>2</number>
       </property>
@@ -306,6 +324,12 @@ p, li { white-space: pre-wrap; }
      <widget class="QDoubleSpinBox" name="pitchNeutralBox">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -326,6 +350,12 @@ p, li { white-space: pre-wrap; }
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
+      </property>
       <property name="decimals">
        <number>2</number>
       </property>
@@ -344,6 +374,12 @@ p, li { white-space: pre-wrap; }
      <widget class="QDoubleSpinBox" name="yawMaxBox">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -364,6 +400,12 @@ p, li { white-space: pre-wrap; }
       <property name="alignment">
        <set>Qt::AlignCenter</set>
       </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
+      </property>
       <property name="decimals">
        <number>2</number>
       </property>
@@ -382,6 +424,12 @@ p, li { white-space: pre-wrap; }
      <widget class="QDoubleSpinBox" name="yawMinBox">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -577,6 +625,12 @@ p, li { white-space: pre-wrap; }
      <widget class="QDoubleSpinBox" name="rollNeutralBox">
       <property name="alignment">
        <set>Qt::AlignCenter</set>
+      </property>
+      <property name="prefix">
+       <string/>
+      </property>
+      <property name="suffix">
+       <string> deg</string>
       </property>
       <property name="decimals">
        <number>2</number>
