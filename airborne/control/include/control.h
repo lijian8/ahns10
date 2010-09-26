@@ -27,11 +27,15 @@
 typedef struct { 
   uint8_t active;      /**< Active Flag */
   uint8_t vicon;       /**< Flag to Choose Vicon */
+  
+  int8_t rcReference;  /**< Commanded RC Reference */
   double reference;    /**< Commanded Reference */
+  double referenceDot; /**< Commanded Dot Reference */
+  
   double output;       /**< Current Output*/
   
-  double referenceDot; /**< Commanded Dot Reference */
-  double integralError;          /**< Integral Variable*/        
+  double integralError;          /**< Integral Variable*/
+  double windup;        
   
   double Kp;           /**< Proportional Gain */
   double Ki;           /**< Integral Gain */
@@ -41,7 +45,7 @@ typedef struct {
   double minimum;      /**< Minimum Limit */
   double neutral;      /**< Neutral Value */
 
-  double previousTime; /**< Previous time update */
+  double previousTime;      /**< Previous time update */
   double previousReference; /**< Previous reference */
   double previousState;     /**< Previous Control State */
 } control_loop_t;
@@ -87,7 +91,7 @@ extern volatile int8_t apThrottle;
 extern pthread_mutex_t apMutex;
 
 /** @name Calculate Control Loop */
-void updateControlLoop(volatile control_loop_t* controlLoop, double state);
+void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
 
 /** @name Calculate Guidance Loop */
 void updateGuidanceLoop(volatile control_loop_t* controlLoop, double state, double stateDot);

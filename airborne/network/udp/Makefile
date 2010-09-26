@@ -23,7 +23,7 @@ OBJS = $(CONTROL) obj/client.o obj/server.o $(HELICONNECT)/state.o obj/udp.o $(H
 obj/%.o: src/%.c
 	$(CC) -O2 -c $< $(CFLAGS) -o $@ $(INCDIR)
 
-$(LIBSTATE): $(OBJS)
+$(LIBSTATE): clean $(OBJS)
 	ar -cr $(LIBSTATE) $(OBJS)
 	ranlib $(LIBSTATE)
 

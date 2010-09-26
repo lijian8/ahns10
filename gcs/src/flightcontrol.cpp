@@ -432,6 +432,7 @@ void FlightControl::on_sendSetConfigBtn_clicked()
     txConfig.viconPitch = ui->pitchAngleViconChkbox->isChecked();
     txConfig.viconYaw = ui->yawAngleViconChkbox->isChecked();
     txConfig.viconZ = ui->zViconChkbox->isChecked();
+    txConfig.failSafe = 0;
 
     emit sendSetAPConfig(txConfig);
 
@@ -481,5 +482,28 @@ void FlightControl::on_saveBtn_clicked()
 {
     AHNS_DEBUG("void FlightControl::on_saveBtn_clicked()");
     emit sendSaveConfig();
+    return;
+}
+
+void FlightControl::on_failsafeBtn_clicked()
+{
+    AHNS_DEBUG("void FlightControl::on_failsafeBtn_clicked()");
+
+    ap_config_t txConfig;
+    txConfig.phiActive = ui->rollChkbox->isChecked();
+    txConfig.thetaActive = ui->pitchChkbox->isChecked();
+    txConfig.psiActive = ui->yawChkbox->isChecked();
+    txConfig.xActive = ui->xChkbox->isChecked();
+    txConfig.yActive = ui->yChkbox->isChecked();
+    txConfig.zActive = ui->zChkbox->isChecked();
+
+    // Active Sensors
+    txConfig.viconRoll = ui->rollAngleViconChkbox->isChecked();
+    txConfig.viconPitch = ui->pitchAngleViconChkbox->isChecked();
+    txConfig.viconYaw = ui->yawAngleViconChkbox->isChecked();
+    txConfig.viconZ = ui->zViconChkbox->isChecked();
+    txConfig.failSafe = (uint8_t) 1;
+
+    emit sendSetAPConfig(txConfig);
     return;
 }

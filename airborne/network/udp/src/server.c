@@ -151,7 +151,7 @@ static int set_config(void *priv, const Host_t *src, int type, const struct time
      	}
 
         fprintf(stderr,"receivedConfig \nRoll Active = %u \tPitch Active = %u \tYaw Active = %u\n", receivedConfig.phiActive, receivedConfig.thetaActive, receivedConfig.psiActive);
-        fprintf(stderr,"x Active = %u \ty Active = %u \tz Active = %u\n", receivedConfig.xActive, receivedConfig.yActive, receivedConfig.zActive);
+        fprintf(stderr,"x Active = %u \ty Active = %u \tz Active = %u\t Failsafe = %u\n", receivedConfig.xActive, receivedConfig.yActive, receivedConfig.zActive, receivedConfig.failSafe);
         
 	return 1;
 }
