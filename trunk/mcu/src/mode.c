@@ -58,24 +58,24 @@ inline void MixCommands()
   // Mix the Signals
   if (commandedThrottle)
   {
-    escHistory[0][index] = escLimits[0][0] + commandedThrottle + commandedPitch - commandedYaw;
-    escHistory[1][index] = escLimits[1][0] + commandedThrottle - commandedRoll + commandedYaw;
-    escHistory[2][index] = escLimits[2][0] + commandedThrottle - commandedPitch - commandedYaw;
-    escHistory[3][index] = escLimits[3][0] + commandedThrottle + commandedRoll + commandedYaw;
+    escHistory[0][index] = commandedThrottle + commandedPitch - commandedYaw;
+    escHistory[1][index] = commandedThrottle - commandedRoll + commandedYaw;
+    escHistory[2][index] = commandedThrottle - commandedPitch - commandedYaw;
+    escHistory[3][index] = commandedThrottle + commandedRoll + commandedYaw;
 
     // Bound and Output
     for (i = 0; i < 4; ++i)
     {
       // Bound
-      if(escHistory[i][index] > escLimits[i][1])
+      if(escHistory[i][index] > PWMToCounter(2000))
       {
         //setPoint = escLimits[i][1];
-        escHistory[i][index] = escLimits[i][1];
+        escHistory[i][index] = PWMToCounter(2000);
       }
-      else if(escHistory[i][index] < escLimits[i][0])
+      else if(escHistory[i][index] < PWMToCounter(1000))
       {
         //setPoint = escLimits[i][0];
-        escHistory[i][index] = escLimits[i][0];
+        escHistory[i][index] = PWMToCounter(1000);
       }
       setPoint = escHistory[i][index];
       // Moving Average
@@ -120,9 +120,6 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
   return average;
 }
 
-static const double controlFactor = 1;
-
-
 inline void CombineCommands()
 {
   // Flight Mode Choice limited to RC
@@ -135,12 +132,12 @@ inline void CombineCommands()
 #ifdef _GYRO_
       // Pass through for use with gyro
       // In this case gyro will do mixing
-      ESC1_COUNTER = escLimits[0][ESC_MIN] + rcThrottle;
-      ESC2_COUNTER = escLimits[1][ESC_MIN] + rcRoll;
-      ESC3_COUNTER = escLimits[2][ESC_MIN] + rcPitch;
-      ESC4_COUNTER = escLimits[3][ESC_MIN] + rcYaw;
+      ESC1_COUNTER = PWMToCounter(zeroThrottle) + rcThrottle;
+      ESC2_COUNTER = PWMToCounter(zeroRoll) + rcRoll;
+      ESC3_COUNTER = PWMToCounter(zeroPitch) + rcPitch;
+      ESC4_COUNTER = PWMToCounter(zeroYaw) - rcYaw;
 #else
-      commandedThrottle = rcThrottle;
+      commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
       commandedRoll = rcRoll;
       commandedPitch = rcPitch;
       commandedYaw = rcYaw;
@@ -152,18 +149,18 @@ inline void CombineCommands()
       IndicateAugmented(); 
 #ifdef _GYRO_ 
       // Combine AP Guidance Loop and RC pulses then let gyro mix
-      commandedThrottle = apThrottle + rcThrottle;
-      commandedRoll = apRoll + rcRoll;
-      commandedPitch = apPitch + rcPitch;
-      commandedYaw = apYaw + rcYaw;
+      commandedThrottle = PWMToCounter(zeroThrottle) + apThrottle + rcThrottle;
+      commandedRoll = PWMToCounter(zeroRoll) + apRoll + rcRoll;
+      commandedPitch = PWMToCounter(zeroPitch) + apPitch + rcPitch;
+      commandedYaw = PWMToCounter(zeroYaw) - apYaw - rcYaw;
       GiveRC();
-      ESC1_COUNTER = escLimits[0][ESC_MIN] + commandedThrottle;
-      ESC2_COUNTER = escLimits[1][ESC_MIN] + commandedRoll;
-      ESC3_COUNTER = escLimits[2][ESC_MIN] + commandedPitch;
-      ESC4_COUNTER = escLimits[3][ESC_MIN] + commandedYaw;
+      ESC1_COUNTER = commandedThrottle;
+      ESC2_COUNTER = commandedRoll;
+      ESC3_COUNTER = commandedPitch;
+      ESC4_COUNTER = commandedYaw;
 #else
       // Use the RC Commands as setpoints and combine these in the FC
-      commandedThrottle = apThrottle;
+      commandedThrottle = PWMToCounter(zeroThrottle) + apThrottle;
       commandedRoll = apRoll;
       commandedPitch = apPitch;
       commandedYaw = apYaw;
@@ -176,18 +173,18 @@ inline void CombineCommands()
       IndicateAutopilot();
 #ifdef _GYRO_ 
       // Let Gyro Mix the AP Guidance Commands 
-      commandedThrottle = apThrottle;
-      commandedRoll = apRoll;
-      commandedPitch = apPitch;
-      commandedYaw = apYaw;
+      commandedThrottle = PWMToCounter(zeroThrottle) + apThrottle;
+      commandedRoll = PWMToCounter(zeroRoll) + apRoll;
+      commandedPitch = PWMToCounter(zeroPitch) + apPitch;
+      commandedYaw = PWMToCounter(zeroYaw) - apYaw;
       GiveRC();
-      ESC1_COUNTER = escLimits[0][ESC_MIN] + commandedThrottle;
-      ESC2_COUNTER = escLimits[1][ESC_MIN] + commandedRoll;
-      ESC3_COUNTER = escLimits[2][ESC_MIN] + commandedPitch;
-      ESC4_COUNTER = escLimits[3][ESC_MIN] + commandedYaw;
+      ESC1_COUNTER = commandedThrottle;
+      ESC2_COUNTER = commandedRoll;
+      ESC3_COUNTER = commandedPitch;
+      ESC4_COUNTER = commandedYaw;
 #else
       // RC Commands still sent to FC but not used
-      commandedThrottle = apThrottle;
+      commandedThrottle = PWMToCounter(zeroThrottle) + apThrottle;
       commandedRoll = apRoll;
       commandedPitch = apPitch;
       commandedYaw = apYaw;
@@ -196,7 +193,7 @@ inline void CombineCommands()
 #endif
       break;
     default:
-      commandedThrottle = 0;
+      commandedThrottle = PWMToCounter(zeroThrottle);
       commandedRoll = 0;
       commandedPitch = 0;
       commandedYaw = 0;
@@ -216,12 +213,76 @@ static inline void CheckAPFailSafe()
   return;
 }
 
+static const double controlFactor = 1;
 static inline void GiveRC()
 {
+#ifdef _GYRO_
       switch (apMode)
       {
         case RC_THROTTLE:
-          commandedThrottle = rcThrottle;
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
+          break;
+        case RC_ROLL:
+          commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
+          break;
+        case RC_PITCH:
+          commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
+          break;
+        case RC_YAW:
+          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          break;
+        case RC_THROTTLE_ROLL:
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
+          commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
+          break;
+        case RC_THROTTLE_PITCH:
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
+          commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
+          break;
+        case RC_THROTTLE_YAW:
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
+          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          break;
+        case RC_ROLL_PITCH:
+          commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
+          commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
+          break;
+        case RC_ROLL_YAW:
+          commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
+          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          break;
+        case RC_PITCH_YAW:
+          commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
+          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          break;
+        case RC_THROTTLE_ROLL_PITCH:
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
+          commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
+          commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
+          break;
+        case RC_THROTTLE_ROLL_YAW:
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
+          commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
+          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          break;
+        case RC_THROTTLE_PITCH_YAW:
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
+          commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
+          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          break;
+        case RC_ROLL_PITCH_YAW:
+          commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
+          commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
+          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          break;
+        case RC_NONE:
+          break;
+      }
+#else
+      switch (apMode)
+      {
+        case RC_THROTTLE:
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           break;
         case RC_ROLL:
           commandedRoll = controlFactor*rcRoll;
@@ -233,15 +294,15 @@ static inline void GiveRC()
           commandedYaw = controlFactor*rcYaw;
           break;
         case RC_THROTTLE_ROLL:
-          commandedThrottle = rcThrottle;
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           commandedRoll = controlFactor*rcRoll;
           break;
         case RC_THROTTLE_PITCH:
-          commandedThrottle = rcThrottle;
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           commandedPitch = controlFactor*rcPitch;
           break;
         case RC_THROTTLE_YAW:
-          commandedThrottle = rcThrottle;
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           commandedYaw = controlFactor*rcYaw;
           break;
         case RC_ROLL_PITCH:
@@ -257,17 +318,17 @@ static inline void GiveRC()
           commandedYaw = controlFactor*rcYaw;
           break;
         case RC_THROTTLE_ROLL_PITCH:
-          commandedThrottle = rcThrottle;
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           commandedRoll = controlFactor*rcRoll;
           commandedPitch = controlFactor*rcPitch;
           break;
         case RC_THROTTLE_ROLL_YAW:
-          commandedThrottle = rcThrottle;
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           commandedRoll = controlFactor*rcRoll;
           commandedYaw = controlFactor*rcYaw;
           break;
         case RC_THROTTLE_PITCH_YAW:
-          commandedThrottle = rcThrottle;
+          commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           commandedPitch = controlFactor*rcPitch;
           commandedYaw = controlFactor*rcYaw;
           break;
@@ -279,4 +340,5 @@ static inline void GiveRC()
         case RC_NONE:
           break;
       }
+#endif
 }

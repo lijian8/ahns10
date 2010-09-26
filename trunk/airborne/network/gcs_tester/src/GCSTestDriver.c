@@ -184,12 +184,12 @@ main (int argc, char *argv[])
         {
           // Test the Server's Response to Packets
           APStateData(count, &apState);
-          printf ("\n\nSending apState: Size %d \n",sizeof(ap_state_t)),
+          /*printf ("\n\nSending apState: Size %d \n",sizeof(ap_state_t)),
           fprintf (stderr, "referencePhi = %f   \t referenceTheta = %f \t referencePsi = %f \n", apState.referencePhi, apState.referenceTheta, apState.referencePsi);
           fprintf (stderr, "referenceX = %f \t referenceY = %f \t referenceZ = %f \n", apState.referenceX, apState.referenceY, apState.referenceZ);
           fprintf (stderr, "phiActive = %u \t thetaActive = %u \t psiActive = %u \n", apState.phiActive, apState.thetaActive, apState.psiActive);
           fprintf (stderr, "xActive = %u \t yActive = %u \t zActive = %u \n", apState.xActive, apState.yActive, apState.zActive);
-
+*/
 	  dataLength = PackAPState(buffer,&apState);	  
           server_send_packet (&server, AUTOPILOT_STATE, buffer, dataLength);
           init = 0;

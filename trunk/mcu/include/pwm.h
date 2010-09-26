@@ -30,29 +30,6 @@
 #define ESC3_PIN PB1
 #define ESC4_PIN PB2
 
-/** @name Maximum and Minimum ESC PWM Values*/ 
-#define ESC1_MAX 2000
-#define ESC1_MIN 1000
-
-#define ESC2_MAX 2000
-#define ESC2_MIN 1000
-
-#define ESC3_MAX 2000
-#define ESC3_MIN 1000
-
-#define ESC4_MAX 2000
-#define ESC4_MIN 1000
-
-#define ESC_MIN 0
-#define ESC_MAX 1
-
-/** 
- * @name ESC Limits Array
- * First Column is min values
- * Second Column is max values 
- */
-extern uint8_t escLimits[4][2];
-
 /** @name PWM Timer Functions */
 extern uint8_t InitialiseTimer0();
 extern uint8_t InitialiseTimer1();

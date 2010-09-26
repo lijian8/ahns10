@@ -51,6 +51,8 @@ int main (void)
   init();
   sei();
 
+  //DEBUG
+  StartPWM();
   // Initialise and detect the Inputs
   uint8_t loopCount = 0;
   do 
@@ -92,10 +94,10 @@ int main (void)
         static uint8_t toggleEnabled = 0;
         
         // Minimum Commands
-  	ESC1_COUNTER = escLimits[0][ESC_MIN];
-	ESC2_COUNTER = escLimits[1][ESC_MIN];
-	ESC3_COUNTER = escLimits[2][ESC_MIN];
-        ESC4_COUNTER = escLimits[3][ESC_MIN];
+  	ESC1_COUNTER = PWMToCounter(1000);
+  	ESC2_COUNTER = PWMToCounter(1000);
+  	ESC3_COUNTER = PWMToCounter(1000);
+  	ESC4_COUNTER = PWMToCounter(1000);
   
         if (!toggleEnabled) // prepare to go into failsafe
         {

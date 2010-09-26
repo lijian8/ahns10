@@ -57,12 +57,6 @@ signals:
     /** @name Signals for Received Messages */
     void NewViconState(const vicon_state_t receivedState);
 
-protected:
-
-public slots:
-
-private slots:
-
 private:
     /** Last Vicon Packet rx Time*/
     struct timeval lastPacket;

@@ -21,8 +21,6 @@
 
 #include "pwm.h"
 
-uint8_t escLimits[4][2];
-
 volatile uint32_t systemSec = 0;
 
 inline uint8_t InitialiseTimer0()
@@ -87,28 +85,17 @@ inline uint8_t StartPWM()
   ESC3_COUNTER = 0;
   ESC4_COUNTER = 0;
   
+//#ifndef _GYRO_
   // CS0_210 = 011 for N = 64
   TCCR0B |= (0 << CS02) | (1 << CS01) | (1 << CS00);
+//#else
+  // CS_210 = 100 for N = 256
+//  TCCR0B |= (1 << CS02) | (0 << CS01) | (0 << CS00);
+//#endif  
+
+  // Time Keeping
   TCCR1B |= (0 << CS12) | (1 << CS11) | (1 << CS10);
-  
-  escLimits[0][0] = ESC1_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-  escLimits[1][0] = ESC2_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-  escLimits[2][0] = ESC3_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-  escLimits[3][0] = ESC4_MIN / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-  escLimits[0][1] = ESC1_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-  escLimits[1][1] = ESC2_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-  escLimits[2][1] = ESC3_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-  escLimits[3][1] = ESC4_MAX / (2.0 * (1e6 * PWM_PRESCALAR / F_CPU));
-  
-  ESC1_COUNTER = escLimits[0][ESC_MIN];
-  _delay_ms(750);
-  ESC2_COUNTER = escLimits[1][ESC_MIN];
-  _delay_ms(750);
-  ESC3_COUNTER = escLimits[2][ESC_MIN];
-  _delay_ms(750);
-  ESC4_COUNTER = escLimits[3][ESC_MIN];
-  _delay_ms(750); 
-  
+ 
   return 1;
 }
 

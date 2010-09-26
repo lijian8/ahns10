@@ -32,7 +32,7 @@ const uint8_t PC_DT_US = (1e6*64.0/F_CPU);
 volatile uint8_t newRC = 0;
 
 /** @name Input Commands Zero PWM Signals, us*/
-uint16_t zeroThrottle = 1100; /** 1000 too aggressive, 1250 too slow*/
+uint16_t zeroThrottle = 1000; /** 1000 too aggressive, 1250 too slow*/
 uint16_t zeroRoll = 1500;
 uint16_t zeroPitch = 1500; 
 uint16_t zeroYaw = 1500;
@@ -103,11 +103,11 @@ inline void UpdateRC()
   armPulse = MovingAverage(armHistory,SWITCH_HISTORY_SIZE);
   
   // Throttle Fail safe and turn off engines on throttle
-  if (throttlePulse < 1180) // failsafe; was 1100
+  /*if (throttlePulse < 1180) // failsafe; was 1100
   {
     failSafe = 1;
   }
-  else if (throttlePulse < 1260)/* 1275*/
+  else if (throttlePulse < 1260)// 1275
   {
     rcThrottle = -120;
     rcRoll = 0;
@@ -115,12 +115,12 @@ inline void UpdateRC()
     rcYaw = 0;
   }
   else
-  {
+  {*/
     rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
-    rcRoll = PWMToCounter(-(rollPulse - zeroRoll));
-    rcPitch = PWMToCounter(-(pitchPulse - zeroPitch));
-    rcYaw = PWMToCounter((yawPulse - zeroYaw));
-  }
+    rcRoll = PWMToCounter((rollPulse - zeroRoll));    //+ve for gyro
+    rcPitch = PWMToCounter((pitchPulse - zeroPitch)); // +ve for gyro
+    rcYaw = PWMToCounter(-(yawPulse - zeroYaw));      // -ve for gyro
+  //}
   
   // Determine AP Mode
   if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
