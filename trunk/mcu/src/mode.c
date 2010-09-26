@@ -277,6 +277,9 @@ static inline void GiveRC()
           break;
         case RC_NONE:
           break;
+        case FAIL_SAFE:
+          failSafe = 1;
+          break;
       }
 #else
       switch (apMode)
@@ -338,6 +341,9 @@ static inline void GiveRC()
           commandedYaw = controlFactor*rcYaw;
           break;
         case RC_NONE:
+          break;
+        case FAIL_SAFE:
+          failSafe = 1;
           break;
       }
 #endif

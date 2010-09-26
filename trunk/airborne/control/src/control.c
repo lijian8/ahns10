@@ -68,6 +68,13 @@ pthread_mutex_t apMutex;
 uint8_t setAPConfig(const ap_config_t* const srcConfig)
 {
   uint8_t bRet = 0;
+  
+  pthread_mutex_lock(&apMutex);
+  if (srcConfig->failSafe == 1)
+  {
+    apMode = FAIL_SAFE;
+  }
+  pthread_mutex_unlock(&apMutex);
 
   if ((srcConfig->xActive) && (srcConfig->yActive) && (srcConfig->zActive)) // Guidance On
   {
@@ -197,6 +204,14 @@ uint8_t setParameters(const loop_parameters_t* const srcParameters)
     zLoop.maximum = srcParameters->zMaximum;
     zLoop.minimum = srcParameters->zMinimum;
     zLoop.neutral = srcParameters->zNeutral;
+    
+    // TODO actually tune these
+    rollLoop.windup = 10;
+    pitchLoop.windup = 10;
+    yawLoop.windup = 10;
+    xLoop.windup = 10;
+    yLoop.windup = 10;
+    zLoop.windup = 10;
     
   }
 
@@ -331,8 +346,9 @@ void MutexUnlockGuidanceLoops()
  * @brief Function to Update the control loops
  * @param controlLoop Control Loop to be activated
  * @param state Current state variable to be controlled by the loop
+ * @param stateDot Current state derivative
  */
-inline void updateControlLoop(volatile control_loop_t* controlLoop, double state)
+inline void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot)
 {
   double tempOutput = 0.0;
   double tempError = 0.0;
@@ -340,12 +356,12 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
   gettimeofday(&currentTimeStruct,NULL);
   double currentTime = currentTimeStruct.tv_sec + currentTimeStruct.tv_usec / 1e6;
   double dt = currentTime - controlLoop->previousTime;
- 
 
   if (controlLoop->active)
   {
-    // scale the IMU rates from 300 deg to -300 deg to  to 2000 then convert to PWM Timer values
-    state = PWMToCounter((state + 300) * (500 + 500) / (300 + 300) - 500);
+    // scale the rc reference from PWM(-500) < x < PWM(500) to -10 < x < 10 also apply trim from neutral
+    /** @TODO reverse the mapping if the rc sticks are reversed */
+    controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
     
     // reset integrators if reference changed 
     if (controlLoop->previousReference != controlLoop->reference)
@@ -357,28 +373,13 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
     tempError = controlLoop->reference - state;
     
     // integrate error
-    // only integrate if not in saturation
-    if (controlLoop->output < controlLoop->maximum)
+    if (controlLoop->integralError < controlLoop->windup)
     {
       controlLoop->integralError += dt*tempError;
     }
-    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(state - controlLoop->previousState) + controlLoop->Ki*(controlLoop->integralError) + controlLoop->neutral;
+    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(stateDot - controlLoop->referenceDot) + controlLoop->Ki*(controlLoop->integralError);
 
-    // bound the output
-    if (tempOutput > controlLoop->maximum)
-    {
-      controlLoop->output = controlLoop->maximum;
-    }
-    else if (tempOutput < controlLoop->minimum)
-    {
-      controlLoop->output = controlLoop->minimum;
-    }
-    else
-    {
-      controlLoop->output = tempOutput; 
-    }
-    
-    // Store previous time
+    // Store previous loop info
     controlLoop->previousTime = currentTime;
     controlLoop->previousReference = controlLoop->reference; 
     controlLoop->previousState = state;
@@ -468,6 +469,10 @@ inline void updateYawLoop(volatile control_loop_t* controlLoop, double state, do
 
   if (controlLoop->active)
   {
+    // scale the rc reference from PWM(-500) < x < PWM(500) to -10 < x < 10 also apply trim from neutral
+    /** @TODO reverse the mapping if the rc sticks are reversed */
+    controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
+    
     // reset integrators if reference changed 
     if (controlLoop->previousReference != controlLoop->reference)
     {
@@ -494,32 +499,18 @@ inline void updateYawLoop(volatile control_loop_t* controlLoop, double state, do
     {
       tempError = tempError - 2*M_PI;
     }
-
+     
     // integrate error
-    // only integrate if not in saturation
-    if (controlLoop->output < controlLoop->maximum)
+    if (controlLoop->integralError < controlLoop->windup)
     {
       controlLoop->integralError += dt*tempError;
     }
-    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(controlLoop->referenceDot - stateDot) + controlLoop->Ki*(controlLoop->integralError) + controlLoop->neutral;
+    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(stateDot - controlLoop->referenceDot) + controlLoop->Ki*(controlLoop->integralError);
 
-    // bound the output
-    if (tempOutput > controlLoop->maximum)
-    {
-      controlLoop->output = controlLoop->maximum;
-    }
-    else if (tempOutput < controlLoop->minimum)
-    {
-      controlLoop->output = controlLoop->minimum;
-    }
-    else
-    {
-      controlLoop->output = tempOutput; 
-    }
-    
-    // Store previous time
+    // Store previous loop info
     controlLoop->previousTime = currentTime;
     controlLoop->previousReference = controlLoop->reference; 
+    controlLoop->previousState = state;
   }
   else
   {

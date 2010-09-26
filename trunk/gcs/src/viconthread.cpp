@@ -117,8 +117,8 @@ int ViconThread::ViconServerConnect()
         // set the global axis
         myClient.SetAxisMapping(Direction::Forward, Direction::Left, Direction::Up);
         // start the timer
-        viconTimer.start();
-        viconTimeElapsed = 0;
+        //viconTimer.start();
+        //viconTimeElapsed = 0;
         // initialise values
         prevX = 0.0;
         prevY = 0.0;
@@ -177,14 +177,14 @@ void ViconThread::ProcessViconState()
     psi =  _Output_GetSegmentGlobalRotationEulerXYZ.Rotation[ 2 ];
 
     // take a time stamp
-    viconTimeElapsed = viconTimer.elapsed();
+    //viconTimeElapsed = viconTimer.elapsed();
     // restart the timer
-    viconTimer.restart();
+    //viconTimer.restart();
 
     // calculate the velocity from previous position measurements
-    vx = (X-prevX)/((qreal)viconTimeElapsed/1000);
-    vy = (Y-prevY)/((qreal)viconTimeElapsed/1000);
-    vz = (Z-prevZ)/((qreal)viconTimeElapsed/1000);
+    //vx = (X-prevX)/((qreal)viconTimeElapsed/1000);
+    //vy = (Y-prevY)/((qreal)viconTimeElapsed/1000);
+    //vz = (Z-prevZ)/((qreal)viconTimeElapsed/1000);
 
     // store the position values
     prevX = X;

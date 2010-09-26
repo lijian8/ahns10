@@ -79,8 +79,26 @@ int main (void)
   // Calibrate Neutral Pulse Widths
   _delay_ms(1000);
   
-  // Minimum Output
+  // Start Output
   StartPWM();
+
+// Minimum Outputs
+#ifdef _GYRO_
+        ESC1_COUNTER = PWMToCounter(zeroThrottle);
+  	ESC2_COUNTER = PWMToCounter(zeroRoll);
+  	ESC3_COUNTER = PWMToCounter(zeroPitch);
+  	ESC4_COUNTER = PWMToCounter(zeroYaw);
+        _delay_ms(750);
+#else
+        _delay_ms(750);
+  	ESC1_COUNTER = PWMToCounter(1000);
+        _delay_ms(750);
+  	ESC2_COUNTER = PWMToCounter(1000);
+        _delay_ms(750);
+  	ESC3_COUNTER = PWMToCounter(1000);
+        _delay_ms(750);
+  	ESC4_COUNTER = PWMToCounter(1000);
+#endif
   
   for ( ; ; )
   {
@@ -94,10 +112,17 @@ int main (void)
         static uint8_t toggleEnabled = 0;
         
         // Minimum Commands
+#ifdef _GYRO_
+        ESC1_COUNTER = PWMToCounter(zeroThrottle);
+  	ESC2_COUNTER = PWMToCounter(zeroRoll);
+  	ESC3_COUNTER = PWMToCounter(zeroPitch);
+  	ESC4_COUNTER = PWMToCounter(zeroYaw);
+#else
   	ESC1_COUNTER = PWMToCounter(1000);
   	ESC2_COUNTER = PWMToCounter(1000);
   	ESC3_COUNTER = PWMToCounter(1000);
   	ESC4_COUNTER = PWMToCounter(1000);
+#endif
   
         if (!toggleEnabled) // prepare to go into failsafe
         {

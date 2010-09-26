@@ -50,6 +50,7 @@ private:
 private slots:
 
     /** Uplink Commands */
+    void on_failsafeBtn_clicked();
     void on_saveBtn_clicked();
     void on_sendSetConfigBtn_clicked();
     void on_sendPositionBtn_clicked();

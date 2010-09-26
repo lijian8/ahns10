@@ -321,7 +321,8 @@ void* updateMCU(void *pointer)
 
     // Query and Receive RC Commands
     pthread_mutex_lock(&rcMutex);
-    getRCCommands(&rcThrottle,&rcRoll,&rcPitch,&rcYaw);    
+    getRCCommands(&rcThrottle,&rcRoll,&rcPitch,&rcYaw);
+    printf("rcThrottle >> %d\nrcRoll >> %d\nrcPitch >> %d\nrcYaw >> %\n",(int) rcThrottle, (int) rcRoll, (int) rcPitch, (int) rcYaw);    
     pthread_mutex_unlock(&rcMutex);
 
     // Query and Receive Engine Data at slower rate
@@ -546,17 +547,17 @@ void* updateControl(void *pointer)
     pthread_mutex_lock(&rcMutex);
 
     pthread_mutex_lock(&rollLoopMutex);
-    rollLoop.reference = rcRoll;
-    updateControlLoop(&rollLoop,p);
+    rollLoop.rcReference = rcRoll;
+    updateControlLoop(&rollLoop,phi,p);
     pthread_mutex_unlock(&rollLoopMutex);
 
     pthread_mutex_lock(&pitchLoopMutex);
-    pitchLoop.reference = rcPitch;
-    updateControlLoop(&pitchLoop,q);
+    pitchLoop.rcReference = rcPitch;
+    updateControlLoop(&pitchLoop,theta,q);
     pthread_mutex_unlock(&pitchLoopMutex);
 
     pthread_mutex_lock(&yawLoopMutex);
-    yawLoop.reference = rcYaw;
+    yawLoop.rcReference = rcYaw;
     updateYawLoop(&yawLoop,psi,r);
     pthread_mutex_unlock(&yawLoopMutex);
     
@@ -567,7 +568,12 @@ void* updateControl(void *pointer)
     pthread_mutex_lock(&apMutex);
 #ifdef _GYRO_
     // Gyro will do the mixing so roll and pitch loops will not be active
-    if (zLoop.active && xLoop.active && yLoop.active && yawLoop.active)
+    if (apMode == FAIL_SAFE)
+    {
+      apMode = FAIL_SAFE;
+      printf("CONTROL >> COMMANDED FAILSAFE");
+    }
+    else if (zLoop.active && xLoop.active && yLoop.active && yawLoop.active)
     {
       apMode = RC_NONE;
     }
@@ -635,7 +641,12 @@ void* updateControl(void *pointer)
     apYaw = yawLoop.output;
 #else
     // No Gyro thus roll and pitch control loops in use
-    if (zLoop.active && rollLoop.active && pitchLoop.active && yawLoop.active)
+    if (apMode == FAIL_SAFE)
+    {
+      apMode = FAIL_SAFE;
+      printf("CONTROL >> COMMANDED FAILSAFE");
+    }
+    else if (zLoop.active && xLoop.active && yLoop.active && yawLoop.active)
     {
       apMode = RC_NONE;
     }
