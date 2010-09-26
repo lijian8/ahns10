@@ -158,19 +158,19 @@ void ParameterControl::on_loadBtn_clicked()
             else
             {
                 // Set Roll Boxes
-                ui->rollMaxBox->setValue(parameters[0][0]);
-                ui->rollNeutralBox->setValue(parameters[0][1]);
-                ui->rollMinBox->setValue(parameters[0][2]);
+                ui->rollMaxBox->setValue(180.0/M_PI*parameters[0][0]);
+                ui->rollNeutralBox->setValue(180.0/M_PI*parameters[0][1]);
+                ui->rollMinBox->setValue(180.0/M_PI*parameters[0][2]);
 
                 // Set Pitch Boxes
-                ui->pitchMaxBox->setValue(parameters[1][0]);
-                ui->pitchNeutralBox->setValue(parameters[1][1]);
-                ui->pitchMinBox->setValue(parameters[1][2]);
+                ui->pitchMaxBox->setValue(180.0/M_PI*parameters[1][0]);
+                ui->pitchNeutralBox->setValue(180.0/M_PI*parameters[1][1]);
+                ui->pitchMinBox->setValue(180.0/M_PI*parameters[1][2]);
 
                 // Set Yaw Boxes
-                ui->yawMaxBox->setValue(parameters[2][0]);
-                ui->yawNeutralBox->setValue(parameters[2][1]);
-                ui->yawMinBox->setValue(parameters[2][2]);
+                ui->yawMaxBox->setValue(180.0/M_PI*parameters[2][0]);
+                ui->yawNeutralBox->setValue(180.0/M_PI*parameters[2][1]);
+                ui->yawMinBox->setValue(180.0/M_PI*parameters[2][2]);
 
                 // Set x Boxes
                 ui->xMaxBox->setValue(parameters[3][0]);
@@ -220,9 +220,9 @@ void ParameterControl::on_SaveBtn_clicked()
         else
         {
             // Output in 6 x 3 Matrix of Values
-            saveFile << ui->rollMaxBox->value() << '\t' << ui->rollNeutralBox->value() << '\t' << ui->rollMinBox->value() << endl;
-            saveFile << ui->pitchMaxBox->value() << '\t' << ui->pitchNeutralBox->value() << '\t' << ui->pitchMinBox->value() << endl;
-            saveFile << ui->yawMaxBox->value() << '\t' << ui->yawNeutralBox->value() << '\t' << ui->yawMinBox->value() << endl;
+            saveFile << M_PI/180.0*ui->rollMaxBox->value() << '\t' << M_PI/180.0*ui->rollNeutralBox->value() << '\t' << M_PI/180.0*ui->rollMinBox->value() << endl;
+            saveFile << M_PI/180.0*ui->pitchMaxBox->value() << '\t' << M_PI/180.0*ui->pitchNeutralBox->value() << '\t' << M_PI/180.0*ui->pitchMinBox->value() << endl;
+            saveFile << M_PI/180.0*ui->yawMaxBox->value() << '\t' << M_PI/180.0*ui->yawNeutralBox->value() << '\t' << M_PI/180.0*ui->yawMinBox->value() << endl;
 
             saveFile << ui->xMaxBox->value() << '\t' << ui->xNeutralBox->value() << '\t' << ui->xMinBox->value() << endl;
             saveFile << ui->yMaxBox->value() << '\t' << ui->yNeutralBox->value() << '\t' << ui->yMinBox->value() << endl;
@@ -250,19 +250,19 @@ void ParameterControl::on_SendBtn_clicked()
     loop_parameters_t loopConfig;
 
     // Set Roll Parameters
-    loopConfig.rollMaximum = ui->rollMaxBox->value();
-    loopConfig.rollMinimum = ui->rollMinBox->value();
-    loopConfig.rollNeutral = ui->rollNeutralBox->value();
+    loopConfig.rollMaximum = M_PI/180.0*ui->rollMaxBox->value();
+    loopConfig.rollMinimum = M_PI/180.0*ui->rollMinBox->value();
+    loopConfig.rollNeutral = M_PI/180.0*ui->rollNeutralBox->value();
 
     // Set Pitch Parameters
-    loopConfig.pitchMaximum = ui->pitchMaxBox->value();
-    loopConfig.pitchMinimum = ui->pitchMinBox->value();
-    loopConfig.pitchNeutral = ui->pitchNeutralBox->value();
+    loopConfig.pitchMaximum = M_PI/180.0*ui->pitchMaxBox->value();
+    loopConfig.pitchMinimum = M_PI/180.0*ui->pitchMinBox->value();
+    loopConfig.pitchNeutral = M_PI/180.0*ui->pitchNeutralBox->value();
 
     // Set Yaw Parameters
-    loopConfig.yawMaximum = ui->yawMaxBox->value();
-    loopConfig.yawMinimum = ui->yawMinBox->value();
-    loopConfig.yawNeutral = ui->yawNeutralBox->value();
+    loopConfig.yawMaximum = M_PI/180.0*ui->yawMaxBox->value();
+    loopConfig.yawMinimum = M_PI/180.0*ui->yawMinBox->value();
+    loopConfig.yawNeutral = M_PI/180.0*ui->yawNeutralBox->value();
 
     // Set x Parameters
     loopConfig.xMaximum = ui->xMaxBox->value();
