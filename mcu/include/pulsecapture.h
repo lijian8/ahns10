@@ -39,10 +39,10 @@ extern const uint8_t PC_DT_US;
 #define PULSE_TOLERANCE 500
 
 /** @name Pulses corresponding to zero inputs */
-extern uint16_t zeroThrottle;
-extern uint16_t zeroRoll;
-extern uint16_t zeroPitch;
-extern uint16_t zeroYaw;
+//extern uint16_t zeroThrottle;
+//extern uint16_t zeroRoll;
+//extern uint16_t zeroPitch;
+//extern uint16_t zeroYaw;
 
 /** @name Input Channel Data Structure */
 typedef struct

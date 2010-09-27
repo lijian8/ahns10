@@ -122,8 +122,16 @@ inline int16_t MovingAverage(int16_t* valueArray, uint8_t arrayLength)
 
 inline void CombineCommands()
 {
-  // Flight Mode Choice limited to RC
-  flightMode = rcMode;
+  if (apMode == FAIL_SAFE)
+  {
+    flightMode = FAIL_SAFE;
+    failSafe = 1;
+  }
+  else
+  {
+    // Flight Mode Choice limited to RC
+    flightMode = rcMode;
+  }
   
   switch (flightMode)
   {
