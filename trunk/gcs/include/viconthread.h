@@ -21,7 +21,7 @@
 
 #include <QThread>
 #include <QMutex>
-#include <QTimer>
+#include <QTime>
 
 #include <QHostAddress>
 #include <QUdpSocket>
@@ -73,5 +73,9 @@ private:
     QMutex m_mutex;
     volatile bool m_connected;
     volatile bool m_stopped;
+
+    /** @name Time Keeping */
+    QTime viconTimer;
+    int viconTimeElapsed;
 };
 #endif // VICONTHREAD_H

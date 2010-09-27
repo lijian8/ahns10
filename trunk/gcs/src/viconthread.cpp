@@ -117,8 +117,8 @@ int ViconThread::ViconServerConnect()
         // set the global axis
         myClient.SetAxisMapping(Direction::Forward, Direction::Left, Direction::Up);
         // start the timer
-        //viconTimer.start();
-        //viconTimeElapsed = 0;
+        viconTimer.start();
+        viconTimeElapsed = 0;
         // initialise values
         prevX = 0.0;
         prevY = 0.0;
@@ -161,12 +161,12 @@ void ViconThread::ProcessViconState()
     SubjectName = myClient.GetSubjectName(SubjectIndex).SubjectName;
 
     // Get the global segment translation
-    Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation = myClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
+    Output_GetSegmentStaticTranslation _Output_GetSegmentStaticTranslation = myClient.GetSegmentStaticTranslation(SubjectName, SegmentName);
 
     //store locally X,Y,Z. data comes by defaults in mm and radians
-    X = _Output_GetSegmentGlobalTranslation.Translation[ 0 ]*mm2M;
-    Y = _Output_GetSegmentGlobalTranslation.Translation[ 1 ]*mm2M;
-    Z = _Output_GetSegmentGlobalTranslation.Translation[ 2 ]*mm2M;
+    X = _Output_GetSegmentStaticTranslation.Translation[ 0 ]*mm2M;
+    Y = _Output_GetSegmentStaticTranslation.Translation[ 1 ]*mm2M;
+    Z = _Output_GetSegmentStaticTranslation.Translation[ 2 ]*mm2M;
 
     // Get the global segment orientation
     Output_GetSegmentGlobalRotationEulerXYZ _Output_GetSegmentGlobalRotationEulerXYZ = myClient.GetSegmentGlobalRotationEulerXYZ(SubjectName,SegmentName);
@@ -177,14 +177,14 @@ void ViconThread::ProcessViconState()
     psi =  _Output_GetSegmentGlobalRotationEulerXYZ.Rotation[ 2 ];
 
     // take a time stamp
-    //viconTimeElapsed = viconTimer.elapsed();
+    viconTimeElapsed = viconTimer.elapsed();
     // restart the timer
-    //viconTimer.restart();
+    viconTimer.restart();
 
     // calculate the velocity from previous position measurements
-    //vx = (X-prevX)/((qreal)viconTimeElapsed/1000);
-    //vy = (Y-prevY)/((qreal)viconTimeElapsed/1000);
-    //vz = (Z-prevZ)/((qreal)viconTimeElapsed/1000);
+    vx = (X-prevX)/((qreal)viconTimeElapsed/1000);
+    vy = (Y-prevY)/((qreal)viconTimeElapsed/1000);
+    vz = (Z-prevZ)/((qreal)viconTimeElapsed/1000);
 
     // store the position values
     prevX = X;
@@ -229,17 +229,17 @@ void ViconThread::run()
         while (!m_stopped)
         {
             //std::cerr << "Vicon Thread running.." << std::endl;
-//            vicon_state_t viconState;
-//            viconState.phi = 8;
-//            viconState.theta = 7;
-//            viconState.psi = 6;
-//            viconState.x = 6;
-//            viconState.y = 5;
-//            viconState.z = 4;
-//            viconState.vx = 3;
-//            viconState.vy = 2;
-//            viconState.vz = 1;
-//            emit NewViconState(viconState);
+            vicon_state_t viconState;
+            viconState.phi = 8;
+            viconState.theta = 7;
+            viconState.psi = 6;
+            viconState.x = 6;
+            viconState.y = 5;
+            viconState.z = 4;
+            viconState.vx = 3;
+            viconState.vy = 2;
+            viconState.vz = 1;
+            emit NewViconState(viconState);
             ProcessViconState();
             msleep(1);
             //exec(); this line is bad, stops the vicon data from coming in
