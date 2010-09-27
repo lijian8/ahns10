@@ -207,6 +207,12 @@ inline void USARTtxPeriodic()
   volatile unsigned char tempEngine = 0;
 
   USARTtxData(flightMode);
+  USARTtxData(rcThrottle + PWMToCounter(zeroThrottle));
+  USARTtxData(rcRoll + PWMToCounter(zeroRoll));
+  USARTtxData(rcPitch + PWMToCounter(zeroPitch));
+  USARTtxData(-rcYaw + PWMToCounter(zeroYaw));
+ 
+/* USARTtxData(flightMode);
   tempEngine = ESC1_COUNTER;
   USARTtxData(tempEngine);
 
@@ -218,6 +224,6 @@ inline void USARTtxPeriodic()
 
   tempEngine = ESC4_COUNTER;
   USARTtxData(tempEngine);
-
+*/
   return;
 }
