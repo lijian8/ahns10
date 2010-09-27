@@ -24,9 +24,16 @@ axis phi_axis;
 axis theta_axis;
 // accelerometer value storage (used for filtering)
 double acc_previous[3];
-double acc_current[3];
-// euler agnle storage (calculation of filtered rate)
+// filtered accelerometer readings (from the raw sensor data)
+double accXf = 0.0;
+double accYf = 0.0;
+double accZf = 0.0;
+// euler angle storage (calculation of filtered rate)
 double angle_previous[3];
+// calibration flag
+int calib = 0;
+// calibration cycle counter
+int cyc_count = 0;
 
 // function to initialise the values in the axis structures
 int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
@@ -57,6 +64,8 @@ int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
   phi_axis.R = PHI_R;
   // initialise the direction term
   phi_axis.direction = PHI_DIRECTION;
+  // initialise the offset term
+  phi_axis.offset = 0.0;
 
 
   /* theta axis */
@@ -85,6 +94,8 @@ int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
   theta_axis.R = THETA_R;
   // initialise the direction term
   theta_axis.direction = THETA_DIRECTION;
+  // initialise the offset term
+  theta_axis.offset = 0.0;
 
   /* accelerometer previous values */
   acc_previous[0] = *accXr;
@@ -94,6 +105,15 @@ int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
   /* euler angle previous values */
   angle_previous[0] = phi_axis.X[0]*M_PI/180;
   angle_previous[1] = theta_axis.X[0]*M_PI/180;
+
+  // initialise the text file for data logging
+  FILE *kfilterfd = fopen("kfilter.ahnskfilter","a");
+  if(kfilterfd)
+  {
+    // print header information
+    fprintf(kfilterfd,"### Kalman Filter data ###\n");
+    fclose(kfilterfd);
+  }
 
   return 1;
 }
@@ -106,17 +126,17 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   // time update for theta axis
   kFilterTimeUpdate(&theta_axis,rateYr,dT);
   // calculate the coarse angle for phi from the sensors
-  phi_axis.Y = coarseRollAngle(accXr,accYr,accZr);
+  phi_axis.Y = coarseRollAngle(&accXf,&accYf,&accZf);
   // measurement update for phi axis
   kFilterMeasureUpdate(&phi_axis);
   // calculate the coarse angle for theta from the sensors
-  theta_axis.Y = coarsePitchAngle(accXr,accYr,accZr);
+  theta_axis.Y = coarsePitchAngle(&accXf,&accYf,&accZf);
   // measurement update for phi axis
   kFilterMeasureUpdate(&theta_axis);
   // assign new phi angle (radians)
-  *phif = phi_axis.X[0]*M_PI/180;
+  *phif = (phi_axis.X[0]-phi_axis.offset)*M_PI/180;
   // assign new theta angle (radians)
-  *thetaf = theta_axis.X[0]*M_PI/180;
+  *thetaf = (theta_axis.X[0]-theta_axis.offset)*M_PI/180;
   // assign new phi rate
   *rateXf = (*phif - angle_previous[0])/dT;
   // assign new theta rate
@@ -124,7 +144,16 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   // update the previous angles
   angle_previous[0] = *phif;
   angle_previous[1] = *thetaf;
-
+  // check if calibration is taking place
+  if(!calib)
+  {
+    calibrateEulerAngles(phif, thetaf, psif);
+  }
+  // write all filtered data out to a file
+  if(DATA_LOGGER)
+  {
+    printkFilterData(accXr,accYr,accZr,rateXr,rateYr,rateZr,rateXf,rateYf,rateZf,dT);
+  }
   return 1;
 }
 
@@ -176,20 +205,59 @@ double coarseRollAngle(double *accXr, double *accYr, double *accZr)
   return atan2(*accYr,sqrt(*accXr * *accXr + *accZr * *accZr))*180/M_PI;
 }
 
-double accLPF (double *accXr, double *accYr, double *accZr, double dT)
+int accLPF (double *accXr, double *accYr, double *accZr, double dT)
 {
-  acc_current[0] = *accXr;
-  acc_current[1] = *accYr;
-  acc_current[2] = *accZr;
   // LPF the X accelerometer value
-  *accXr = acc_previous[0]*(1-ACCX_ALPHA) + (acc_current[0]*ACCX_ALPHA);
+  accXf = acc_previous[0]*(1-ACCX_ALPHA) + (*accXr * ACCX_ALPHA);
   // LPF the Y accelerometer value
-  *accYr = acc_previous[1]*(1-ACCY_ALPHA) + (acc_current[1]*ACCY_ALPHA);  
+  accYf = acc_previous[1]*(1-ACCY_ALPHA) + (*accYr * ACCY_ALPHA);  
   // LPF the Z accelerometer value
-  *accZr = acc_previous[2]*(1-ACCZ_ALPHA) + (acc_current[2]*ACCZ_ALPHA);
+  accZf = acc_previous[2]*(1-ACCZ_ALPHA) + (*accZr * ACCZ_ALPHA);
   // store the filtered values
-  acc_previous[0] = *accXr;
-  acc_previous[1] = *accYr;
-  acc_previous[2] = *accZr;
+  acc_previous[0] = accXf;
+  acc_previous[1] = accYf;
+  acc_previous[2] = accZf;
+  return 1;
+}
+
+// function to calibrate the euler angles obtained from the IMU by computing an offset
+int calibrateEulerAngles(double *phif, double *thetaf, double *psif)
+{
+  // calculate offset sum
+  phi_axis.offset += *phif;
+  theta_axis.offset += *thetaf;
+  cyc_count++;
+  // check if calibration has been completed
+  if (cyc_count >= CYCLES)
+  {
+    // calibration complete, compute the mean for each axis
+    phi_axis.offset /= CYCLES;
+    theta_axis.offset /= CYCLES;
+    // change calibration flag
+    calib = 1;
+  }
+  return 1;
+}
+
+// function to print the kalman filter data
+int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double dT)
+{
+  FILE *kfilterfd = fopen("kfilter.ahnskfilter","a");
+  if(kfilterfd)
+  {
+    // print the time stamp
+    fprintf(kfilterfd,"%lf,",dT);
+    // print the raw accelerometer data
+    fprintf(kfilterfd,"%lf,%lf,%lf,",*accXr,*accYr,*accZr);
+    // print the raw gyroscope data
+    fprintf(kfilterfd,"%lf,%lf,%lf,",*rateXr,*rateYr,*rateZr);
+    // print phi axis data (angle,bias,measurement,offset)
+    fprintf(kfilterfd,"%lf,%lf,%lf,%lf,",phi_axis.X[0],phi_axis.X[1],phi_axis.Y,phi_axis.offset);
+    // print theta axis data (angle,bias,measurement,offset)
+    fprintf(kfilterfd,"%lf,%lf,%lf,%lf\n",theta_axis.X[0],theta_axis.X[1],theta_axis.Y,theta_axis.offset);
+    // all data saved, close the file
+    fclose(kfilterfd);
+  }
+  return 1;
 }
 
