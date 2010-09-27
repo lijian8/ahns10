@@ -77,4 +77,12 @@ enum FlightModes {
  */
 #define CounterToPWM(n) (2.0 * PWM_DT_US * (n));
 
+/**
+ * @brief Zero Pulse lengths
+ */
+#define zeroThrottle 1000.0
+#define zeroRoll 1500.0
+#define zeroPitch 1500.0
+#define zeroYaw 1500.0
+
 #endif // MCU_COMMANDS_H
