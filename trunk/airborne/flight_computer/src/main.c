@@ -324,11 +324,19 @@ void* updateMCU(void *pointer)
     // Query and Receive RC Commands
     pthread_mutex_lock(&rcMutex);
     getRCCommands(&rcThrottle,&rcRoll,&rcPitch,&rcYaw);
-    printf("rcThrottle >> %d\nrcRoll >> %d\nrcPitch >> %d\nrcYaw >> %\n",(int) rcThrottle, (int) rcRoll, (int) rcPitch, (int) rcYaw);    
+    //printf("rcThrottle >> %d\nrcRoll >> %d\nrcPitch >> %d\nrcYaw >> %\n",(int) rcThrottle, (int) rcRoll, (int) rcPitch, (int) rcYaw);    
+    
+    pthread_mutex_lock(&fcMut);
+    fcState.commandedEngine1 = rcThrottle;
+    fcState.commandedEngine2 = rcRoll;
+    fcState.commandedEngine3 = rcPitch;
+    fcState.commandedEngine4 = rcYaw;
+    pthread_mutex_unlock(&fcMut);
+    
     pthread_mutex_unlock(&rcMutex);
 
     // Query and Receive Engine Data at slower rate
-    if (mcuDelayCount > (double) MCU_QUERY_DELAY/(double) MCU_UPDATE_DELAY)
+    /*if (mcuDelayCount > (double) MCU_QUERY_DELAY/(double) MCU_UPDATE_DELAY)
     {
       mcuDelayCount = 0;
       getMCUPeriodic(&mcuMode,readEngine);
@@ -347,7 +355,7 @@ void* updateMCU(void *pointer)
       fcState.commandedEngine4 = readEngine[3];
       pthread_mutex_unlock(&fcMut);
     }
-    mcuDelayCount++;
+    mcuDelayCount++;*/
     usleep(MCU_UPDATE_DELAY*1e3);
   }
   
