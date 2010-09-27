@@ -78,6 +78,6 @@ double coarsePitchAngle(double *accXr, double *accYr, double *accZr);
 double coarseRollAngle(double *accXr, double *accYr, double *accZr);
 int accLPF (double *accXr, double *accYr, double *accZr, double dT);
 int calibrateEulerAngles(double *phif, double *thetaf, double *psif);
-int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double dT);
+int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double dT);
 
 #endif
