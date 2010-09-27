@@ -34,10 +34,16 @@
 #define THETA_R 1.7
 #define THETA_DIRECTION -1.0
 
+// Euler angle calibration cycles
+#define CYCLES 1000
+
 // LPF alpha constants
 #define ACCX_ALPHA 0.1
 #define ACCY_ALPHA 0.1
 #define ACCZ_ALPHA 0.1
+
+// Data logger flag
+#define DATA_LOGGER 1
 
 // struct definition for each axis
 typedef struct _axis {
@@ -59,6 +65,8 @@ typedef struct _axis {
   double R;
   // direction of axis
   double direction;
+  // angle offset
+  double offset;
 } axis;
 
 // function defintions
@@ -68,6 +76,8 @@ int kFilterTimeUpdate(axis *axis_t, double *gyroRate, double dT);
 int kFilterMeasureUpdate (axis *axis_t);
 double coarsePitchAngle(double *accXr, double *accYr, double *accZr);
 double coarseRollAngle(double *accXr, double *accYr, double *accZr);
-double accLPF (double *accXr, double *accYr, double *accZr, double dT);
+int accLPF (double *accXr, double *accYr, double *accZr, double dT);
+int calibrateEulerAngles(double *phif, double *thetaf, double *psif);
+int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double dT);
 
 #endif
