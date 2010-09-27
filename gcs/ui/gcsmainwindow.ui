@@ -33,7 +33,68 @@
     <normaloff>:/about/AHNS_Logo.png</normaloff>:/about/AHNS_Logo.png</iconset>
   </property>
   <property name="styleSheet">
-   <string notr="true">/* Progress Bar */
+   <string notr="true">QDockWidget{
+	background-color: rgb(0, 0, 0);
+    border: 1px solid rgb(255,255,255);
+}
+
+QDockWidget::title {
+  text-align: Center;
+  border-bottom-color: rgb(86, 86, 86);
+  border-style: inset;
+  border-width: 1px;
+  background-color: qlineargradient(spread:pad, x1:0.545455, y1:0.449, x2:1, y2:0, stop:0 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));
+}
+
+QWidget {
+    color: rgb(255,255,255);
+	background-color: rgb(0, 0, 0);
+}
+
+QMenu{
+    color: rgb(0,0,0);
+	background-color: rgb(255, 255, 255);
+}
+
+QMenuBar{
+    color: rgb(255,255,255);
+	background-color: rgb(0, 0, 0);
+}
+
+QMenuBar::item{
+  background-color: transparent;
+}
+
+QMenuBar::item:selected, QMenuBar::item:pressed{
+  color: rgb(0, 0, 0);  
+  background-color: rgb(255,255,255);
+}
+
+QMenu::item {
+  background-color: transparent;
+}
+
+QMenu::item:selected {
+    color: rgb(255,255,255);
+	background-color: rgb(0, 0, 0);
+}
+
+QMessageBox {
+    color: rgb(255,255,255);
+	background-color: rgb(0, 0, 0);
+}
+
+QPushButton:hover, QPushButton:focus{
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);  
+}
+
+QLineEdit:hover, QLineEdit:focus{
+  background-color: rgb(255, 255, 255);
+  color: rgb(0, 0, 0);  
+}
+
+/* Progress Bar */
 /*QProgressBar {
   border: 2px solid white;
   border-radius: 5px;
@@ -109,8 +170,7 @@ QLineEdit:hover, QLineEdit:focus{
 QProgressBar {
   border: 2px solid white;
   border-radius: 5px;
-  text-align: left;
-  margin-left: 4ex;
+  text-align: center;
 }
 
 QProgressBar::chunk {
