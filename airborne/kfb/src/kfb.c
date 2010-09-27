@@ -147,12 +147,12 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   // check if calibration is taking place
   if(!calib)
   {
-    calibrateEulerAngles(phif, thetaf, psif);
+    calibrateEulerAngles(&phi_axis.X[0], &theta_axis.X[0], psif);
   }
   // write all filtered data out to a file
   if(DATA_LOGGER)
   {
-    printkFilterData(accXr,accYr,accZr,rateXr,rateYr,rateZr,rateXf,rateYf,rateZf,dT);
+    printkFilterData(rateXr,rateYr,rateZr,accXr,accYr,accZr,dT);
   }
   return 1;
 }
@@ -240,17 +240,17 @@ int calibrateEulerAngles(double *phif, double *thetaf, double *psif)
 }
 
 // function to print the kalman filter data
-int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double dT)
+int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double dT)
 {
   FILE *kfilterfd = fopen("kfilter.ahnskfilter","a");
   if(kfilterfd)
   {
     // print the time stamp
     fprintf(kfilterfd,"%lf,",dT);
-    // print the raw accelerometer data
-    fprintf(kfilterfd,"%lf,%lf,%lf,",*accXr,*accYr,*accZr);
     // print the raw gyroscope data
     fprintf(kfilterfd,"%lf,%lf,%lf,",*rateXr,*rateYr,*rateZr);
+    // print the raw accelerometer data
+    fprintf(kfilterfd,"%lf,%lf,%lf,",*accXr,*accYr,*accZr);
     // print phi axis data (angle,bias,measurement,offset)
     fprintf(kfilterfd,"%lf,%lf,%lf,%lf,",phi_axis.X[0],phi_axis.X[1],phi_axis.Y,phi_axis.offset);
     // print theta axis data (angle,bias,measurement,offset)
