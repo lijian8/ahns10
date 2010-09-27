@@ -39,7 +39,7 @@ fc_state_t fcState;
 ap_state_t apState;
 
 pthread_mutex_t fcMut = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t apMut = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t apStateMut = PTHREAD_MUTEX_INITIALIZER;
 
 pthread_mutex_t mut = PTHREAD_MUTEX_INITIALIZER;
 pthread_cond_t cond = PTHREAD_COND_INITIALIZER;
@@ -294,10 +294,10 @@ void * sendUDPData(void *pointer)
       pthread_mutex_unlock(&fcMut);
       server_send_packet(&server, FC_STATE, buffer, dataLength);
       // send ap state packet
-      pthread_mutex_lock(&apMut);
+      pthread_mutex_lock(&apStateMut);
       dataLength = PackAPState(buffer,&apState);
       server_send_packet(&server, AUTOPILOT_STATE, buffer, dataLength);
-      pthread_mutex_unlock(&apMut);
+      pthread_mutex_unlock(&apStateMut);
       init = 0;
       // reinitialise startTime
       gettimeofday(&timestamp, NULL); 
@@ -314,6 +314,8 @@ void* updateMCU(void *pointer)
   static int mcuDelayCount = 0;
   while (1)
   {
+    //fprintf(stderr,"void* updateMCU()");
+    
     // Send Data
     pthread_mutex_lock(&apMutex);
     sendMCUCommands(&apMode, &apThrottle, &apRoll, &apPitch, &apYaw);
@@ -452,6 +454,8 @@ void* updateControl(void *pointer)
   startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
   while(1)
   {
+    //fprintf(stderr,"void* updateControl()");
+    
     pthread_mutex_lock(&mut);
     pthread_mutex_lock(&viconMutex);
     if (xLoop.vicon)
@@ -713,8 +717,10 @@ void* updateControl(void *pointer)
     apPitch = pitchLoop.output;
     apYaw = yawLoop.output;
 #endif
-    
+    pthread_mutex_unlock(&apMutex);
+   
     // Update AP State
+    pthread_mutex_lock(&apStateMut); 
     apState.referencePhi = rollLoop.reference;
     apState.referenceTheta = pitchLoop.reference;
     apState.referencePsi = yawLoop.reference;
@@ -728,15 +734,15 @@ void* updateControl(void *pointer)
     apState.xActive = xLoop.active;
     apState.yActive = yLoop.active;
     apState.zActive = zLoop.active;
+    pthread_mutex_unlock(&apStateMut); 
     
-    pthread_mutex_unlock(&apMut);
     MutexUnlockAllLoops();
     // calculate the control thread update time
     gettimeofday(&timestamp1, NULL);
     endControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
     diffControlTime = endControlTime - startControlTime;
     startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-    //printf(">> Control update: %lf\n",1/diffControlTime);
+    printf(">> Control update: %lf\n",1/diffControlTime);
     
     usleep(CONTROL_DELAY*1e3); 
   }
