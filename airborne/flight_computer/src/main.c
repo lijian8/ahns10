@@ -321,22 +321,9 @@ void* updateMCU(void *pointer)
     sendMCUCommands(&apMode, &apThrottle, &apRoll, &apPitch, &apYaw);
     pthread_mutex_unlock(&apMutex);
 
-    // Query and Receive RC Commands
-    pthread_mutex_lock(&rcMutex);
-    getRCCommands(&rcThrottle,&rcRoll,&rcPitch,&rcYaw);
-    //printf("rcThrottle >> %d\nrcRoll >> %d\nrcPitch >> %d\nrcYaw >> %\n",(int) rcThrottle, (int) rcRoll, (int) rcPitch, (int) rcYaw);    
-    
-    pthread_mutex_lock(&fcMut);
-    fcState.commandedEngine1 = zeroThrottle + CounterToPWM(rcThrottle);
-    fcState.commandedEngine2 = zeroRoll + CounterToPWM(rcRoll);
-    fcState.commandedEngine3 = zeroPitch + CounterToPWM(rcPitch);
-    fcState.commandedEngine4 = zeroYaw + CounterToPWM(rcYaw);
-    pthread_mutex_unlock(&fcMut);
-    
-    pthread_mutex_unlock(&rcMutex);
 
-    // Query and Receive Engine Data at slower rate
-    /*if (mcuDelayCount > (double) MCU_QUERY_DELAY/(double) MCU_UPDATE_DELAY)
+    // Query and Receive RC Commands
+    if (mcuDelayCount > (double) MCU_QUERY_DELAY/(double) MCU_UPDATE_DELAY)
     {
       mcuDelayCount = 0;
       getMCUPeriodic(&mcuMode,readEngine);
@@ -354,8 +341,15 @@ void* updateMCU(void *pointer)
       fcState.commandedEngine3 = readEngine[2];
       fcState.commandedEngine4 = readEngine[3];
       pthread_mutex_unlock(&fcMut);
+      
+      pthread_mutex_lock(&rcMutex);
+      rcThrottle = PWMToCounter(readEngine[0] - zeroThrottle);
+      rcRoll = PWMToCounter(readEngine[1] - zeroRoll);
+      rcPitch = PWMToCounter(readEngine[2] - zeroPitch);
+      rcYaw = PWMToCounter(-readEngine[3] + zeroYaw);
+      pthread_mutex_unlock(&rcMutex);
     }
-    mcuDelayCount++;*/
+    mcuDelayCount++;
     usleep(MCU_UPDATE_DELAY*1e3);
   }
   
