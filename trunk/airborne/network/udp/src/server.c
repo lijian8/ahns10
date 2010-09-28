@@ -279,6 +279,9 @@ static int vicon_state(void *priv, const Host_t *src, int type, const struct tim
         // Unpack vicon_state_t structure
         pthread_mutex_lock(&viconMutex);
         UnpackViconState((unsigned char*) data, &viconState);
+
+        fprintf(stderr,"Position: %d %d %d\n",viconState.x,viconState.y,viconState.z);
+        
         pthread_mutex_unlock(&viconMutex);
 
        fprintf(stderr,"%lf %lf %lf\n%lf %lf %lf\n%lf %lf %lf",viconState.x,viconState.y,viconState.z,viconState.vx,viconState.vy,viconState.vz,viconState.phi,viconState.theta,viconState.psi);
