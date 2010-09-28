@@ -154,7 +154,7 @@ uint8_t setParameters(const loop_parameters_t* const srcParameters)
 
   MutexLockAllLoops();
 
-  if(!(srcParameters->rollMaximum >= srcParameters->rollNeutral) || !(srcParameters->rollNeutral >= srcParameters->rollMinimum))
+  /*if(!(srcParameters->rollMaximum >= srcParameters->rollNeutral) || !(srcParameters->rollNeutral >= srcParameters->rollMinimum))
   {
     bRet = 0;
   }
@@ -179,7 +179,7 @@ uint8_t setParameters(const loop_parameters_t* const srcParameters)
     bRet = 0;
   }
   else
-  {
+  {*/
     bRet = 1;
     rollLoop.maximum = srcParameters->rollMaximum;
     rollLoop.minimum = srcParameters->rollMinimum;
@@ -213,7 +213,7 @@ uint8_t setParameters(const loop_parameters_t* const srcParameters)
     yLoop.windup = 10;
     zLoop.windup = 10;
     
-  }
+  //}
 
 
   MutexUnlockAllLoops();  
@@ -360,8 +360,8 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
   {
     // scale the rc reference from PWM(-500) < x < PWM(500) to -10 < x < 10 also apply trim from neutral
     /** @TODO reverse the mapping if the rc sticks are reversed */
-    controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
-    //controlLoop->reference = 0;
+    controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(+500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
+    fprintf(stderr,"Reference from RC >> %f\n>> Ref %f\n",controlLoop->reference, controlLoop->rcReference);
     // reset integrators if reference changed 
     if (controlLoop->previousReference != controlLoop->reference)
     {
