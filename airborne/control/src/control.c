@@ -350,7 +350,6 @@ void MutexUnlockGuidanceLoops()
  */
 inline void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot)
 {
-  double tempOutput = 0.0;
   double tempError = 0.0;
   struct timeval currentTimeStruct;
   gettimeofday(&currentTimeStruct,NULL);
@@ -361,8 +360,8 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
   {
     // scale the rc reference from PWM(-500) < x < PWM(500) to -10 < x < 10 also apply trim from neutral
     /** @TODO reverse the mapping if the rc sticks are reversed */
-    controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
-    
+    //controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
+    controlLoop->reference = 0;
     // reset integrators if reference changed 
     if (controlLoop->previousReference != controlLoop->reference)
     {
@@ -377,7 +376,7 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
     {
       controlLoop->integralError += dt*tempError;
     }
-    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(stateDot - controlLoop->referenceDot) + controlLoop->Ki*(controlLoop->integralError);
+    controlLoop->output = controlLoop->Kp*(tempError) + controlLoop->Kd*(stateDot - controlLoop->referenceDot) + controlLoop->Ki*(controlLoop->integralError);
 
     // Store previous loop info
     controlLoop->previousTime = currentTime;
@@ -505,7 +504,7 @@ inline void updateYawLoop(volatile control_loop_t* controlLoop, double state, do
     {
       controlLoop->integralError += dt*tempError;
     }
-    tempOutput = controlLoop->Kp*(tempError) + controlLoop->Kd*(stateDot - controlLoop->referenceDot) + controlLoop->Ki*(controlLoop->integralError);
+    controlLoop->output = controlLoop->Kp*(tempError) + controlLoop->Kd*(stateDot - controlLoop->referenceDot) + controlLoop->Ki*(controlLoop->integralError);
 
     // Store previous loop info
     controlLoop->previousTime = currentTime;

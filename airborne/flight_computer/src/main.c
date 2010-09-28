@@ -342,6 +342,7 @@ void* updateMCU(void *pointer)
       fcState.commandedEngine4 = readEngine[3];
       pthread_mutex_unlock(&fcMut);
       
+      // Query and Receive RC Commands
       pthread_mutex_lock(&rcMutex);
       rcThrottle = PWMToCounter(readEngine[0] - zeroThrottle);
       rcRoll = PWMToCounter(readEngine[1] - zeroRoll);
@@ -740,12 +741,12 @@ void* updateControl(void *pointer)
     
     MutexUnlockAllLoops();
     // calculate the control thread update time
-    gettimeofday(&timestamp1, NULL);
+    /*gettimeofday(&timestamp1, NULL);
     endControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
     diffControlTime = endControlTime - startControlTime;
     startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
     printf(">> Control update: %lf\n",1/diffControlTime);
-    
+    */
     usleep(CONTROL_DELAY*1e3); 
   }
   return NULL;

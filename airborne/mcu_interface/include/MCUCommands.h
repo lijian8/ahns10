@@ -29,7 +29,7 @@ enum {
 };
 
 /** RC Hardware Rate Gyro in use */
-#define _GYRO_
+//#define _GYRO_
 
 /** PWM Output Prescalar */
 //#ifdef _GYRO_
