@@ -184,7 +184,7 @@ void * updateIMUdata(void *pointer)
     startFilterTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
     // perform the attitude filtering using the imu data
     //attitudeFilter(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, compass_heading, diffFilterTime);
-    attitudeFilterB(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, diffFilterTime);
+    attitudeFilterB(&raw_IMU.p, &raw_IMU.q, &raw_IMU.r, &raw_IMU.ax, &raw_IMU.ay, &raw_IMU.az, &state.p, &state.q, &state.r, &state.phi, &state.theta, &state.psi, &compass_heading, diffFilterTime);
     //printf(">> kf update : %f\n",1/diffFilterTime);
     state.trace = (1/diffFilterTime);
 
