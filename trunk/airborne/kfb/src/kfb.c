@@ -22,18 +22,29 @@
 axis phi_axis;
 // theta axis struct
 axis theta_axis;
+// psi axis struct
+axis psi_axis;
 // accelerometer value storage (used for filtering)
 double acc_previous[3];
 // filtered accelerometer readings (from the raw sensor data)
 double accXf = 0.0;
 double accYf = 0.0;
 double accZf = 0.0;
+// gyro value storage (used for filtering)
+double rate_previous[3];
+double rate_current[3];
+// compass heading value storage (used for filtering)
+double compass_heading_previous = 0.0;
+double compass_heading_current = 0.0;
 // euler angle storage (calculation of filtered rate)
 double angle_previous[3];
 // calibration flag
 int calib = 0;
 // calibration cycle counter
 int cyc_count = 0;
+// phi and theta angle storage for calibration
+double phi_sum = 0.0;
+double theta_sum = 0.0;
 
 // function to initialise the values in the axis structures
 int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
@@ -97,34 +108,75 @@ int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
   // initialise the offset term
   theta_axis.offset = 0.0;
 
+  /* psi axis */
+  // initialise psi angle to compass
+  psi_axis.X[0] = 0.0;
+  // no initial bias
+  psi_axis.X[1] = 0.0;
+  // initialise covariance matrix to 1
+  psi_axis.P[0][0] = 1.0;
+  psi_axis.P[0][1] = 1.0;
+  psi_axis.P[1][0] = 1.0;
+  psi_axis.P[1][1] = 1.0;
+  // initialise S term
+  psi_axis.S = 0.0;
+  // initialise measurement term
+  psi_axis.Y = theta_axis.X[0];
+  // initialise correction term
+  psi_axis.err = 0.0;
+  // initialise the kalman gain
+  psi_axis.L[0] = 0.0;
+  psi_axis.L[1] = 0.0;
+  // initialise the Q terms
+  psi_axis.Q[0] = PSI_ANGLE_Q;
+  psi_axis.Q[1] = PSI_GYRO_Q;
+  // initialise the R term
+  psi_axis.R = PSI_R;
+  // initialise the direction term
+  psi_axis.direction = PSI_DIRECTION;
+  // initialise the offset term
+  psi_axis.offset = 0.0;
+
+
   /* accelerometer previous values */
   acc_previous[0] = *accXr;
   acc_previous[1] = *accYr;
   acc_previous[2] = *accZr;
+
+  /* gyro previous values */
+  rate_previous[0] = 0.0;
+  rate_previous[1] = 0.0;
+  rate_previous[2] = 0.0;
 
   /* euler angle previous values */
   angle_previous[0] = phi_axis.X[0]*M_PI/180;
   angle_previous[1] = theta_axis.X[0]*M_PI/180;
 
   // initialise the text file for data logging
-  FILE *kfilterfd = fopen("kfilter.ahnskfilter","a");
-  if(kfilterfd)
+  if(!calib)
   {
-    // print header information
-    fprintf(kfilterfd,"### Kalman Filter data ###\n");
-    fclose(kfilterfd);
+    FILE *kfilterfd = fopen("kfilter.ahnskfilter","a");
+    if(kfilterfd)
+    {
+      // print header information
+      fprintf(kfilterfd,"### Kalman Filter data ###\n");
+      fclose(kfilterfd);
+    }
   }
-
   return 1;
 }
-int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double dT)
+int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double *compassZr, double dT)
 {
   // LPF the accelerometer values
   accLPF(accXr,accYr,accZr,dT); 
+  // Bound and LPF the compass value
+  compassLPF(compassZr);
   // time update for phi axis
   kFilterTimeUpdate(&phi_axis,rateXr,dT);
   // time update for theta axis
   kFilterTimeUpdate(&theta_axis,rateYr,dT);
+  // time update for psi axis
+  kFilterTimeupdate(&psi_axis,rateZr,dT);
   // calculate the coarse angle for phi from the sensors
   phi_axis.Y = coarseRollAngle(&accXf,&accYf,&accZf);
   // measurement update for phi axis
@@ -133,14 +185,22 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   theta_axis.Y = coarsePitchAngle(&accXf,&accYf,&accZf);
   // measurement update for phi axis
   kFilterMeasureUpdate(&theta_axis);
+  // allocate measurement angle for the psi axis
+  psi_axis.Y = *compassZr;
+  // measurement update for psi axis
+  kFilterMeasureUpdate(&psi_axis);
   // assign new phi angle (radians)
   *phif = (phi_axis.X[0]-phi_axis.offset)*M_PI/180;
   // assign new theta angle (radians)
   *thetaf = (theta_axis.X[0]-theta_axis.offset)*M_PI/180;
+  // assign new psi angle (radians)
+  *psif = (psi_axis.X[0]-psi_axis.offset)*M_PI/180;
   // assign new phi rate
   *rateXf = (*phif - angle_previous[0])/dT;
   // assign new theta rate
   *rateYf = (*thetaf - angle_previous[1])/dT;
+  // LPF the rate values (raw rate for the psi rate)
+  rateLPF(rateXf,rateYf,rateZr);
   // update the previous angles
   angle_previous[0] = *phif;
   angle_previous[1] = *thetaf;
@@ -205,6 +265,7 @@ double coarseRollAngle(double *accXr, double *accYr, double *accZr)
   return atan2(*accYr,sqrt(*accXr * *accXr + *accZr * *accZr))*180/M_PI;
 }
 
+// function to low pass filter the accelerometer values
 int accLPF (double *accXr, double *accYr, double *accZr, double dT)
 {
   // LPF the X accelerometer value
@@ -220,21 +281,42 @@ int accLPF (double *accXr, double *accYr, double *accZr, double dT)
   return 1;
 }
 
+// function to low pass filter the rates values
+int rateLPF(double *rateXf, double *rateYf, double *rateZr)
+{
+  rate_current[0] = *rateXf;
+  rate_current[1] = *rateYf;
+  rate_current[2] = *rateZr;
+  // LPF the phi rate
+  *rateXf = rate_previous[0]*(1-RATEX_ALPHA) + (rate_current[0] * RATEX_ALPHA);
+  // LPF the theta rate
+  *rateYf = rate_previous[1]*(1-RATEY_ALPHA) + (rate_current[1] * RATEY_ALPHA);
+  // LPF the psi rate
+  *rateZr = rate_previous[2]*(1-RATEZ_ALPHA) + (rate_current[2] * RATEZ_ALPHA);
+  // save the new rates
+  rate_previous[0] = *rateXf;
+  rate_previous[1] = *rateYf;
+  rate_previous[2] = *rateZr;
+  return 1;
+}
+
 // function to calibrate the euler angles obtained from the IMU by computing an offset
 int calibrateEulerAngles(double *phif, double *thetaf, double *psif)
 {
   // calculate offset sum
-  phi_axis.offset += *phif;
-  theta_axis.offset += *thetaf;
+  phi_sum += *phif;
+  theta_sum += *thetaf;
   cyc_count++;
   // check if calibration has been completed
   if (cyc_count >= CYCLES)
   {
     // calibration complete, compute the mean for each axis
-    phi_axis.offset /= CYCLES;
-    theta_axis.offset /= CYCLES;
+    phi_axis.offset = phi_sum/CYCLES;
+    theta_axis.offset = theta_sum/CYCLES;
     // change calibration flag
     calib = 1;
+    printf("Phi: %lf\n",phi_axis.offset);
+    printf("Theta: %lf\n",theta_axis.offset);
   }
   return 1;
 }
@@ -258,6 +340,22 @@ int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *acc
     // all data saved, close the file
     fclose(kfilterfd);
   }
+  return 1;
+}
+
+int compassLPF(double *compass_heading)
+{
+  compass_heading_current = *compass_heading;
+  if(*compass_heading > 360.0)
+  {
+    // bound the compass heading by applying previous reading
+    *compass_heading = compass_heading_previous;
+  } else 
+    {
+      // reading ok, LPF the value
+      *compass_heading = compass_heading_previous*(1-COMPASS_ALPHA) + (*compass_heading * COMPASS_ALPHA);
+      compass_heading_previous = *compass_heading; 
+    }
   return 1;
 }
 

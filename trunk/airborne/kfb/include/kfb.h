@@ -22,28 +22,42 @@
 #include <unistd.h>
 #include <math.h>
 
-// Kalman filter constants for phi
-#define PHI_ANGLE_Q 0.001
-#define PHI_GYRO_Q 0.003
+// Kalman filter constants for phi (Q1=0.001,Q2=0.003)
+#define PHI_ANGLE_Q 0.057296
+#define PHI_GYRO_Q 0.171887
 #define PHI_R 1.7
 #define PHI_DIRECTION 1.0
 
 // Kalman filter constants for theta
-#define THETA_ANGLE_Q 0.001
-#define THETA_GYRO_Q 0.003
+#define THETA_ANGLE_Q 0.057296
+#define THETA_GYRO_Q 0.171887
 #define THETA_R 1.7
 #define THETA_DIRECTION -1.0
+
+// Kalman filter constants for psi
+#define PSI_ANGLE_Q 0.057296
+#define PSI_GYRO_Q 0.171887
+#define PSI_R 1.7
+#define PSI_DIRECTION 1.0
 
 // Euler angle calibration cycles
 #define CYCLES 1000
 
-// LPF alpha constants
+// LPF alpha constants for accelerometers
 #define ACCX_ALPHA 0.1
 #define ACCY_ALPHA 0.1
 #define ACCZ_ALPHA 0.1
 
+// LPF alpha constants for gyro rates
+#define RATEX_ALPHA 1.0
+#define RATEY_ALPHA 1.0
+#define RATEZ_ALPHA 1.0
+
+// LPF alpha constant for compass reading
+#define COMPASS_ALPHA 1.0
+
 // Data logger flag
-#define DATA_LOGGER 1
+#define DATA_LOGGER 0
 
 // struct definition for each axis
 typedef struct _axis {
@@ -71,12 +85,14 @@ typedef struct _axis {
 
 // function defintions
 int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr);
-int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double dT);
+int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double *compassZr, double dT);
 int kFilterTimeUpdate(axis *axis_t, double *gyroRate, double dT);
 int kFilterMeasureUpdate (axis *axis_t);
 double coarsePitchAngle(double *accXr, double *accYr, double *accZr);
 double coarseRollAngle(double *accXr, double *accYr, double *accZr);
 int accLPF (double *accXr, double *accYr, double *accZr, double dT);
+int rateLPF(double *rateXf, double *rateYf, double *rateZr);
+int compassLPF(double *compass_heading);
 int calibrateEulerAngles(double *phif, double *thetaf, double *psif);
 int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double dT);
 
