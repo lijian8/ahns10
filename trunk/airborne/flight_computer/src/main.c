@@ -565,7 +565,8 @@ void* updateControl(void *pointer)
 
     pthread_mutex_lock(&yawLoopMutex);
     yawLoop.rcReference = rcYaw;
-    updateYawLoop(&yawLoop,psi,r);
+    //updateYawLoop(&yawLoop,psi,r);
+    updateYawRateLoop(&yawLoop,r);
     pthread_mutex_unlock(&yawLoopMutex);
     
     pthread_mutex_unlock(&rcMutex);

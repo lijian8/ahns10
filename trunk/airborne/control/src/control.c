@@ -360,8 +360,8 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
   {
     // scale the rc reference from PWM(-500) < x < PWM(500) to -10 < x < 10 also apply trim from neutral
     /** @TODO reverse the mapping if the rc sticks are reversed */
-    //controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
-    controlLoop->reference = 0;
+    controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
+    //controlLoop->reference = 0;
     // reset integrators if reference changed 
     if (controlLoop->previousReference != controlLoop->reference)
     {
@@ -518,3 +518,54 @@ inline void updateYawLoop(volatile control_loop_t* controlLoop, double state, do
   
   return;
 }
+
+/**
+ * @brief Function to Update the yaw loop with angular rate hold
+ * @param controlLoop Yaw Loop to be activated
+ * @param state Current state variable to be controlled by the loop
+ * @param stateDot Current Derivative of the state being controlled by the loop
+ */
+inline void updateYawRateLoop(volatile control_loop_t* controlLoop, double state)
+{
+  double tempOutput = 0.0;
+  double tempError = 0.0;
+  struct timeval currentTimeStruct;
+  gettimeofday(&currentTimeStruct,NULL);
+  double currentTime = currentTimeStruct.tv_sec + currentTimeStruct.tv_usec / 1e6;
+  double dt = currentTime - controlLoop->previousTime;
+
+  if (controlLoop->active)
+  {
+    // scale the rc reference from PWM(-500) < x < PWM(500) to -min < x < max also apply trim from neutral
+    /** @TODO reverse the mapping if the rc sticks are reversed */
+    controlLoop->reference = (controlLoop->rcReference - PWMToCounter(-500))*(controlLoop->maximum - controlLoop->minimum) / (PWMToCounter(500) - PWMToCounter(-500)) + controlLoop->minimum + controlLoop->neutral;
+ 
+    // reset integrators if reference changed 
+    if (controlLoop->previousReference != controlLoop->reference)
+    {
+      controlLoop->integralError = 0.0;
+    }
+    // calculate error
+    tempError = controlLoop->reference - state;
+    
+    // integrate error
+    // only integrate if not in saturation
+    if (controlLoop->output < controlLoop->maximum)
+    {
+      controlLoop->integralError += dt*tempError;
+    }
+    controlLoop->output = controlLoop->Kp*(tempError) + controlLoop->Kd*(state - controlLoop->previousState) + controlLoop->Ki*(controlLoop->integralError);
+    
+    // Store previous time
+    controlLoop->previousTime = currentTime;
+    controlLoop->previousReference = controlLoop->reference; 
+    controlLoop->previousState = state;
+  }
+  else
+  {
+    controlLoop->output = 0.0;
+  }
+  
+  return;
+}
+
