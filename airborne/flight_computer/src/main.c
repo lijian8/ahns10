@@ -32,7 +32,7 @@ state_t state;
 // sensor data variable
 sensor_data_t raw_IMU;
 // compass heading
-double compass_heading = 0;
+double compass_heading = 0.0;
 // flight computer + engine state
 fc_state_t fcState;
 // autopilot state

@@ -37,8 +37,8 @@
 // Kalman filter constants for psi
 #define PSI_ANGLE_Q 0.057296
 #define PSI_GYRO_Q 0.171887
-#define PSI_R 1.7
-#define PSI_DIRECTION 1.0
+#define PSI_R 5.0
+#define PSI_DIRECTION -1.0
 
 // Euler angle calibration cycles
 #define CYCLES 1000
@@ -49,12 +49,12 @@
 #define ACCZ_ALPHA 0.1
 
 // LPF alpha constants for gyro rates
-#define RATEX_ALPHA 1.0
-#define RATEY_ALPHA 1.0
-#define RATEZ_ALPHA 1.0
+#define RATEX_ALPHA 0.1
+#define RATEY_ALPHA 0.1
+#define RATEZ_ALPHA 0.1
 
 // LPF alpha constant for compass reading
-#define COMPASS_ALPHA 1.0
+#define COMPASS_ALPHA 0.1
 
 // Data logger flag
 #define DATA_LOGGER 0

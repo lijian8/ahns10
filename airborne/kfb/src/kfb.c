@@ -168,15 +168,17 @@ int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
 int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double *compassZr, double dT)
 {
   // LPF the accelerometer values
-  accLPF(accXr,accYr,accZr,dT); 
+  accLPF(accXr,accYr,accZr,dT);
+  //*rateZf = (*rateZr)*M_PI/180;
+  //rateLPF(rateXf,rateYf,rateZf);
   // Bound and LPF the compass value
   compassLPF(compassZr);
   // time update for phi axis
-  kFilterTimeUpdate(&phi_axis,rateXr,dT);
+  kFilterTimeUpdate(&phi_axis,rateXf,dT);
   // time update for theta axis
-  kFilterTimeUpdate(&theta_axis,rateYr,dT);
+  kFilterTimeUpdate(&theta_axis,rateYf,dT);
   // time update for psi axis
-  kFilterTimeupdate(&psi_axis,rateZr,dT);
+  kFilterTimeUpdate(&psi_axis,rateZf,dT);
   // calculate the coarse angle for phi from the sensors
   phi_axis.Y = coarseRollAngle(&accXf,&accYf,&accZf);
   // measurement update for phi axis
@@ -185,6 +187,8 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   theta_axis.Y = coarsePitchAngle(&accXf,&accYf,&accZf);
   // measurement update for phi axis
   kFilterMeasureUpdate(&theta_axis);
+  // LPF the compass values
+  compassLPF(compassZr);
   // allocate measurement angle for the psi axis
   psi_axis.Y = *compassZr;
   // measurement update for psi axis
@@ -194,13 +198,14 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   // assign new theta angle (radians)
   *thetaf = (theta_axis.X[0]-theta_axis.offset)*M_PI/180;
   // assign new psi angle (radians)
-  *psif = (psi_axis.X[0]-psi_axis.offset)*M_PI/180;
+  *psif = fmod(((psi_axis.X[0]-psi_axis.offset)*M_PI/180),2*M_PI);
   // assign new phi rate
   *rateXf = (*phif - angle_previous[0])/dT;
   // assign new theta rate
   *rateYf = (*thetaf - angle_previous[1])/dT;
   // LPF the rate values (raw rate for the psi rate)
-  rateLPF(rateXf,rateYf,rateZr);
+  *rateZf = (*rateZr)*M_PI/180;
+  rateLPF(rateXf,rateYf,rateZf);
   // update the previous angles
   angle_previous[0] = *phif;
   angle_previous[1] = *thetaf;
@@ -282,21 +287,21 @@ int accLPF (double *accXr, double *accYr, double *accZr, double dT)
 }
 
 // function to low pass filter the rates values
-int rateLPF(double *rateXf, double *rateYf, double *rateZr)
+int rateLPF(double *rateXf, double *rateYf, double *rateZf)
 {
   rate_current[0] = *rateXf;
   rate_current[1] = *rateYf;
-  rate_current[2] = *rateZr;
+  rate_current[2] = *rateZf;
   // LPF the phi rate
   *rateXf = rate_previous[0]*(1-RATEX_ALPHA) + (rate_current[0] * RATEX_ALPHA);
   // LPF the theta rate
   *rateYf = rate_previous[1]*(1-RATEY_ALPHA) + (rate_current[1] * RATEY_ALPHA);
   // LPF the psi rate
-  *rateZr = rate_previous[2]*(1-RATEZ_ALPHA) + (rate_current[2] * RATEZ_ALPHA);
+  *rateZf = rate_previous[2]*(1-RATEZ_ALPHA) + (rate_current[2] * RATEZ_ALPHA);
   // save the new rates
   rate_previous[0] = *rateXf;
   rate_previous[1] = *rateYf;
-  rate_previous[2] = *rateZr;
+  rate_previous[2] = *rateZf;
   return 1;
 }
 
@@ -336,7 +341,9 @@ int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *acc
     // print phi axis data (angle,bias,measurement,offset)
     fprintf(kfilterfd,"%lf,%lf,%lf,%lf,",phi_axis.X[0],phi_axis.X[1],phi_axis.Y,phi_axis.offset);
     // print theta axis data (angle,bias,measurement,offset)
-    fprintf(kfilterfd,"%lf,%lf,%lf,%lf\n",theta_axis.X[0],theta_axis.X[1],theta_axis.Y,theta_axis.offset);
+    fprintf(kfilterfd,"%lf,%lf,%lf,%lf,",theta_axis.X[0],theta_axis.X[1],theta_axis.Y,theta_axis.offset);
+    // print psi axis data (angle,bias,measurement,offset)
+    fprintf(kfilterfd,"%lf,%lf,%lf,%lf\n",psi_axis.X[0],psi_axis.X[1],psi_axis.Y,psi_axis.offset);
     // all data saved, close the file
     fclose(kfilterfd);
   }
