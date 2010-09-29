@@ -107,20 +107,25 @@ inline void UpdateRC()
   {
     failSafe = 1;
   }
-  else if (throttlePulse < 1260)// 1275
+  else*/ 
+#ifndef _GYRO_
+  if (throttlePulse < 1250)// 1275
   {
-    rcThrottle = -120;
+    rcThrottle = -100;
     rcRoll = 0;
     rcPitch = 0;
     rcYaw = 0;
   }
   else
-  {*/
+  {
+#endif
     rcThrottle = PWMToCounter(throttlePulse - zeroThrottle);
     rcRoll = PWMToCounter((rollPulse - zeroRoll));    //+ve for gyro
     rcPitch = PWMToCounter((pitchPulse - zeroPitch)); // +ve for gyro
     rcYaw = PWMToCounter(-(yawPulse - zeroYaw));      // -ve for gyro
-  //}
+#ifndef _GYRO_
+  }
+#endif
   
   // Determine AP Mode
   if (armPulse > (PC_PWM_MAX - PULSE_TOLERANCE)) // autopilot armed
