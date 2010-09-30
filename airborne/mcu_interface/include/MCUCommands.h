@@ -29,14 +29,10 @@ enum {
 };
 
 /** RC Hardware Rate Gyro in use */
-//#define _GYRO_
+#define _GYRO_
 
 /** PWM Output Prescalar */
-//#ifdef _GYRO_
-//  #define PWM_PRESCALAR 256.0
-//#else
-  #define PWM_PRESCALAR 64.0
-//#endif
+#define PWM_PRESCALAR 64.0
 
 enum FlightModes {
        MANUAL_DEBUG,  /**< Manual Mode with no AP mixing */

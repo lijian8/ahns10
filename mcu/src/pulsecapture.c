@@ -111,10 +111,14 @@ inline void UpdateRC()
 #ifndef _GYRO_
   if (throttlePulse < 1250)// 1275
   {
-    rcThrottle = -100;
-    rcRoll = 0;
-    rcPitch = 0;
-    rcYaw = 0;
+    rcThrottle = -30;
+    ESC1_COUNTER = PWMToCounter(1000);
+    ESC2_COUNTER = PWMToCounter(1000);
+    ESC3_COUNTER = PWMToCounter(1000);
+    ESC4_COUNTER = PWMToCounter(1000);
+    //rcRoll = 0;
+    //rcPitch = 0;
+    //rcYaw = 0;
   }
   else
   {

@@ -28,7 +28,6 @@ typedef struct {
   uint8_t active;      /**< Active Flag */
   uint8_t vicon;       /**< Flag to Choose Vicon */
   
-  int8_t rcReference;  /**< Commanded RC Reference */
   double reference;    /**< Commanded Reference */
   double referenceDot; /**< Commanded Dot Reference */
   
@@ -54,10 +53,11 @@ extern volatile enum FlightModes apMode;
 
 /** @name RC Commands */
 extern pthread_mutex_t rcMutex;
+extern uint8_t rcMode;
 extern int8_t rcThrottle;
-extern int8_t rcRoll;
-extern int8_t rcPitch;
-extern int8_t rcYaw;
+extern int8_t rcRoll, rollTrim;
+extern int8_t rcPitch, pitchTrim;
+extern int8_t rcYaw, yawTrim;
 
 /** @name Roll Control Loop */
 extern volatile control_loop_t rollLoop;
@@ -94,7 +94,7 @@ extern pthread_mutex_t apMutex;
 void updateControlLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
 
 /** @name Calculate Guidance Loop */
-void updateGuidanceLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
+void updateGuidanceLoop(volatile control_loop_t* controlLoop, double tempError, double state, double stateDot);
 
 /** @name Calculate Yaw Loop */
 void updateYawLoop(volatile control_loop_t* controlLoop, double state, double stateDot);
@@ -110,6 +110,18 @@ uint8_t saveConfig();
 /** @name Vicon State */
 extern volatile vicon_state_t viconState;
 extern pthread_mutex_t viconMutex;
+
+/** @name Scale number in range [max1,min1] to [max2,min2] */
+extern double MapCommands(double x, double max1, double min1, double max2, double min2);
+
+/** @name Information for a Stable Flight Mode */
+#define LEVEL_ROLL 0
+#define LEVEL_PITCH 1
+extern double levelAdjust[2];
+extern double rollError, pitchError;
+extern const double levelLimit, levelOff;
+extern control_loop_t levelRollLoop, levelPitchLoop;
+
 
 extern void MutexLockAllLoops();
 extern void MutexUnlockAllLoops();
