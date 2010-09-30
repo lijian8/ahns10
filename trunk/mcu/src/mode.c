@@ -58,6 +58,7 @@ inline void MixCommands()
   // Mix the Signals
   if (commandedThrottle)
   {
+    // reveresed pitch sign
     escHistory[0][index] = commandedThrottle + commandedPitch - commandedYaw;
     escHistory[1][index] = commandedThrottle - commandedRoll + commandedYaw;
     escHistory[2][index] = commandedThrottle - commandedPitch - commandedYaw;
@@ -191,7 +192,7 @@ inline void CombineCommands()
       ESC3_COUNTER = commandedPitch;
       ESC4_COUNTER = commandedYaw;
 #else
-      // RC Commands still sent to FC but not used
+      // RC Commands still sent to FC but may not used
       commandedThrottle = PWMToCounter(zeroThrottle) + apThrottle;
       commandedRoll = apRoll;
       commandedPitch = apPitch;

@@ -51,7 +51,6 @@ int main (void)
   init();
   sei();
 
-  //DEBUG
   StartPWM();
   // Initialise and detect the Inputs
   uint8_t loopCount = 0;

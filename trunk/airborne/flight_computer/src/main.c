@@ -321,36 +321,42 @@ void* updateMCU(void *pointer)
     sendMCUCommands(&apMode, &apThrottle, &apRoll, &apPitch, &apYaw);
     pthread_mutex_unlock(&apMutex);
 
+    // Get RC Data
+    getMCUPeriodic(&mcuMode,readEngine);
+    
+    // RC Commands
+    pthread_mutex_lock(&rcMutex);
+    rcMode = mcuMode;
+    rcThrottle = PWMToCounter(readEngine[0] - zeroThrottle);
+    rcRoll = PWMToCounter(readEngine[1] - zeroRoll);
+    rcPitch = PWMToCounter(readEngine[2] - zeroPitch);
+    rcYaw = PWMToCounter(-readEngine[3] + zeroYaw);
 
-    // Query and Receive RC Commands
-    if (mcuDelayCount > (double) MCU_QUERY_DELAY/(double) MCU_UPDATE_DELAY)
+    if (rcThrottle <= 0)
     {
-      mcuDelayCount = 0;
-      getMCUPeriodic(&mcuMode,readEngine);
-      pthread_mutex_lock(&fcMut);
-      if (mcuMode == FAIL_SAFE)
-      {
-        fcState.rclinkActive = 0;
-      }
-      else
-      {
-        fcState.rclinkActive = 1;
-      }
-      fcState.commandedEngine1 = readEngine[0];
-      fcState.commandedEngine2 = readEngine[1];
-      fcState.commandedEngine3 = readEngine[2];
-      fcState.commandedEngine4 = readEngine[3];
-      pthread_mutex_unlock(&fcMut);
-      
-      // Query and Receive RC Commands
-      pthread_mutex_lock(&rcMutex);
-      rcThrottle = PWMToCounter(readEngine[0] - zeroThrottle);
-      rcRoll = PWMToCounter(readEngine[1] - zeroRoll);
-      rcPitch = PWMToCounter(readEngine[2] - zeroPitch);
-      rcYaw = PWMToCounter(-readEngine[3] + zeroYaw);
-      pthread_mutex_unlock(&rcMutex);
+      rollTrim = rcRoll;
+      pitchTrim = rcPitch;
+      yawTrim = rcYaw;
+      fprintf(stderr,">> RC Trims Set...");
     }
-    mcuDelayCount++;
+    pthread_mutex_unlock(&rcMutex);
+    
+    // Report to GCS
+    pthread_mutex_lock(&fcMut);
+    if (mcuMode == FAIL_SAFE)
+    {
+      fcState.rclinkActive = 0;
+    }
+    else
+    {
+        fcState.rclinkActive = 1;
+    }
+    fcState.commandedEngine1 = readEngine[0];
+    fcState.commandedEngine2 = readEngine[1];
+    fcState.commandedEngine3 = readEngine[2];
+    fcState.commandedEngine4 = readEngine[3];
+    pthread_mutex_unlock(&fcMut);
+    
     usleep(MCU_UPDATE_DELAY*1e3);
   }
   
@@ -458,7 +464,8 @@ void* updateControl(void *pointer)
   while(1)
   {
     //fprintf(stderr,"void* updateControl()");
-    
+   
+    //Sort Vicon or State Data 
     pthread_mutex_lock(&mut);
     pthread_mutex_lock(&viconMutex);
     if (xLoop.vicon)
@@ -531,55 +538,54 @@ void* updateControl(void *pointer)
     
     // Update Guidance Loops
     pthread_mutex_lock(&xLoopMutex);
-    updateGuidanceLoop(&xLoop,x,vx); 
+    pthread_mutex_lock(&yLoopMutex);
+    // Calculate Position Error in Vicon Frame
+    double xError_v = xLoop.reference - x;
+    double yError_v = yLoop.reference - y;
+    // Rotate Position Error Displacement Vector into Body Frame
+    double xError_b = xError_v * cos(psi) + yError_v * sin(psi);
+    double yError_b = xError_v * cos(psi) - yError_v * sin(psi);
+    // Rotate Velocity Vector into Body Frame
+    double vx_b = vx * cos(psi) + vy * sin(psi);
+    double vy_b = vy * cos(psi) - vy * sin(psi);
+    // Feed these errors to the PID Guidance Loops
+    // x Loop
+    updateGuidanceLoop(&xLoop,xError_b,x,vx_b); 
     if (xLoop.active)
     {
       pitchLoop.reference = xLoop.output;
     }
-    pthread_mutex_unlock(&xLoopMutex);
-    
-    pthread_mutex_lock(&yLoopMutex);
-    updateGuidanceLoop(&yLoop,y,vy);
+    // y Loop
+    updateGuidanceLoop(&yLoop,yError_b,y,vy_b);
     if (yLoop.active)
     {
       rollLoop.reference = yLoop.output;
     }
     pthread_mutex_unlock(&yLoopMutex);
+    pthread_mutex_unlock(&xLoopMutex);
 
+    // Altitude Loop
     pthread_mutex_lock(&zLoopMutex);
-    updateGuidanceLoop(&zLoop,z,vz);
+    // Assume the quad is horizontally level
+    double zError = zLoop.reference - z;
+    updateGuidanceLoop(&zLoop,zError,z,vz);
     pthread_mutex_unlock(&zLoopMutex);
 
-    // Update Control Loops
-    pthread_mutex_lock(&rcMutex);
-
-    pthread_mutex_lock(&rollLoopMutex);
-    rollLoop.rcReference = rcRoll;
-    updateControlLoop(&rollLoop,phi,p);
-    pthread_mutex_unlock(&rollLoopMutex);
-
-    pthread_mutex_lock(&pitchLoopMutex);
-    pitchLoop.rcReference = rcPitch;
-    updateControlLoop(&pitchLoop,theta,q);
-    pthread_mutex_unlock(&pitchLoopMutex);
-
+#ifdef _GYRO_
+    // RC Gyro will do the mixing so roll, pitch and yaw loops will not be active   
+    // Yaw Loop as Heading Hold
     pthread_mutex_lock(&yawLoopMutex);
-    yawLoop.rcReference = rcYaw;
-    //updateYawLoop(&yawLoop,psi,r);
-    updateYawRateLoop(&yawLoop,r);
+    updateYawLoop(&yawLoop,phi,r);
     pthread_mutex_unlock(&yawLoopMutex);
-    
-    pthread_mutex_unlock(&rcMutex);
-   
+
     // Generate Commands for the MCU 
     MutexLockAllLoops();
     pthread_mutex_lock(&apMutex);
-#ifdef _GYRO_
-    // Gyro will do the mixing so roll and pitch loops will not be active
+
     if (apMode == FAIL_SAFE)
     {
       apMode = FAIL_SAFE;
-      printf("CONTROL >> COMMANDED FAILSAFE");
+      //printf("CONTROL >> COMMANDED FAILSAFE");
     }
     else if (zLoop.active && xLoop.active && yLoop.active && yawLoop.active)
     {
@@ -647,12 +653,119 @@ void* updateControl(void *pointer)
     apRoll = yLoop.output;
     apPitch = xLoop.output;
     apYaw = yawLoop.output;
+
 #else
-    // No Gyro thus roll and pitch control loops in use
+    // Update Attitude Loops
+    // No RC Gyro thus roll, pitch and yaw control loops in use
+    pthread_mutex_lock(&rcMutex);
+
+    double rcFactor = 1.0;
+    if (rcMode == AUGMENTED) // use the gyro rates
+    {
+      // Roll Rate Control
+      pthread_mutex_lock(&rollLoopMutex);
+      rollLoop.reference = CounterToPWM(rcFactor*rcRoll) + zeroRoll;
+      rollLoop.referenceDot = rollLoop.previousState; // Roll Loop D term is now Kd*(pNew - pOld);
+      // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
+      p = MapCommands(p*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
+      updateControlLoop(&rollLoop,p,p);
+      // Scale Output to Timer Value
+      rollLoop.output = PWMToCounter(rollLoop.output);
+      pthread_mutex_unlock(&rollLoopMutex);
+
+      // Pitch Rate Control
+      pthread_mutex_lock(&pitchLoopMutex);
+      pitchLoop.reference = CounterToPWM(rcFactor*rcPitch) + zeroPitch;
+      pitchLoop.referenceDot = pitchLoop.previousState; // Pitch Loop D term is now Kd*(qNew - qOld);
+      // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
+      q = MapCommands(q*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
+      updateControlLoop(&pitchLoop,q,q);
+      // Scale Output to Timer Value
+      pitchLoop.output = PWMToCounter(pitchLoop.output);
+      pthread_mutex_unlock(&pitchLoopMutex);
+    
+    }
+    else if (rcMode == AUTOPILOT) // use the filtered angles
+    {
+      pthread_mutex_lock(&rollLoopMutex);
+      pthread_mutex_lock(&pitchLoopMutex);
+
+      // TODO actually give these dedicated packets
+      // at the moment these are coming from the angular loops
+      levelRollLoop.Kp = rollLoop.maximum;
+      levelRollLoop.Ki = rollLoop.minimum;
+      levelPitchLoop.Kp = pitchLoop.maximum;
+      levelPitchLoop.Ki = pitchLoop.minimum;
+
+      // Level Control
+      rollError = MapCommands(rcRoll,PWMToCounter(500),PWMToCounter(-500),M_PI/4.0,-M_PI/4.0) - phi;
+      pitchError = MapCommands(rcPitch,PWMToCounter(500),PWMToCounter(-500),M_PI/4.0,-M_PI/4.0) + theta;
+      levelAdjust[LEVEL_ROLL] = rollError*levelRollLoop.Kp;
+      levelAdjust[LEVEL_PITCH] = pitchError*levelPitchLoop.Kp;
+      // Check if the controller should try and return to hover
+      if ((abs(rcRoll - rollTrim) > levelOff) || (abs(rcPitch - pitchTrim) > levelOff))
+      {
+        levelRollLoop.integralError = 0.0;
+        levelPitchLoop.integralError = 0.0;
+      }
+      else
+      {
+        levelRollLoop.integralError += (rollError * diffControlTime) * levelRollLoop.Ki;
+	if (abs(levelRollLoop.integralError) > levelLimit)
+	{
+	  levelRollLoop.integralError = levelLimit;
+	}
+
+        levelPitchLoop.integralError = (pitchError * diffControlTime) * levelPitchLoop.Ki;
+	if (abs(levelPitchLoop.integralError) > levelLimit)
+	{
+	  levelPitchLoop.integralError = levelLimit;
+	}
+      }
+
+      // Roll Control
+      rollLoop.reference = CounterToPWM(rcFactor*rcRoll) + zeroRoll + levelAdjust[LEVEL_ROLL];
+      rollLoop.referenceDot = rollLoop.previousState; // Roll Loop D term is now Kd*(pNew - pOld);
+      // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
+      p = MapCommands(p*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
+      updateControlLoop(&rollLoop,p,p);
+      // Scale Output to Timer Value
+      rollLoop.output = PWMToCounter(rollLoop.output + levelRollLoop.integralError);
+
+      // Pitch Control   
+      pitchLoop.reference = CounterToPWM(rcFactor*rcPitch) + zeroPitch + levelAdjust[LEVEL_PITCH];
+      pitchLoop.referenceDot = pitchLoop.previousState; // Pitch Loop D term is now Kd*(qNew - qOld);
+      // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
+      q = MapCommands(q*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
+      updateControlLoop(&pitchLoop,q,q);
+      // Scale Output to Timer Value
+      pitchLoop.output = PWMToCounter(pitchLoop.output + levelPitchLoop.integralError);
+      
+      pthread_mutex_unlock(&pitchLoopMutex);
+      pthread_mutex_unlock(&rollLoopMutex);
+    }
+    
+    // Yaw Control
+    pthread_mutex_lock(&yawLoopMutex);
+    yawLoop.reference = CounterToPWM(rcFactor*rcYaw) + zeroYaw;
+    yawLoop.referenceDot = yawLoop.previousState; // Yaw Loop D term is now Kd*(rNew - rOld);
+    // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
+    r = MapCommands(r*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
+    updateControlLoop(&yawLoop,r,r);
+    // Scale Output to Timer Value
+    yawLoop.output = PWMToCounter(yawLoop.output);
+    pthread_mutex_unlock(&yawLoopMutex);
+    
+    pthread_mutex_unlock(&rcMutex);
+    
+    // Generate Commands for the MCU 
+    MutexLockAllLoops();
+    pthread_mutex_lock(&apMutex);
+    
     if (apMode == FAIL_SAFE)
     {
       apMode = FAIL_SAFE;
-      printf("CONTROL >> COMMANDED FAILSAFE");
+      //printf("CONTROL >> COMMANDED FAILSAFE");
     }
     else if (zLoop.active && xLoop.active && yLoop.active && yawLoop.active)
     {
@@ -742,12 +855,12 @@ void* updateControl(void *pointer)
     
     MutexUnlockAllLoops();
     // calculate the control thread update time
-    /*gettimeofday(&timestamp1, NULL);
+    gettimeofday(&timestamp1, NULL);
     endControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
     diffControlTime = endControlTime - startControlTime;
     startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
     printf(">> Control update: %lf\n",1/diffControlTime);
-    */
+    
     usleep(CONTROL_DELAY*1e3); 
   }
   return NULL;
