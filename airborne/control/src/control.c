@@ -371,7 +371,8 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
     controlLoop->reference += controlLoop->neutral;
 
     // reset integrators if reference changed 
-    if (controlLoop->previousReference != controlLoop->reference)
+    if ((controlLoop->previousReference != controlLoop->reference) ||
+       (controlLoop->Ki == 0))
     {
       controlLoop->integralError = 0.0;
     }
@@ -418,7 +419,8 @@ inline void updateGuidanceLoop(volatile control_loop_t* controlLoop, double temp
   if (controlLoop->active)
   {
     // reset integrators if reference changed 
-    if (controlLoop->previousReference != controlLoop->reference)
+    if ((controlLoop->previousReference != controlLoop->reference) ||
+       (controlLoop->Ki == 0))
     {
       controlLoop->integralError = 0.0;
     }

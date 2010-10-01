@@ -567,9 +567,12 @@ void* updateControl(void *pointer)
     // Altitude Loop
     pthread_mutex_lock(&zLoopMutex);
     // Assume the quad is horizontally level
+    pthread_mutex_lock(&viconMutex);
+    z = viconState.z;
     double zError = zLoop.reference - z;
-    fprintf(stderr,"zError = %lf\n",zError);
+    fprintf(stderr,"zError = %lf\tz=%lf\n",zError,z);
     updateGuidanceLoop(&zLoop,zError,z,vz);
+    pthread_mutex_unlock(&viconMutex);
     pthread_mutex_unlock(&zLoopMutex);
 
 #ifdef _GYRO_
