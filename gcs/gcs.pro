@@ -27,7 +27,9 @@ linux-g++ {
         -lGLU \
         -lqwt \
         -L/usr/lib \
-        -lViconDataStreamSDK_CPP
+        -lViconDataStreamSDK_CPP \
+        -lgsl \
+        -lgslcblas
 }
 macx-g++ { 
     message(QMAKE BUIDING FOR MACOSX)
