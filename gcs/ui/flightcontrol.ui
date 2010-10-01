@@ -50,7 +50,7 @@
     <enum>QTabWidget::North</enum>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab">
     <property name="sizePolicy">
@@ -1581,7 +1581,7 @@
       <property name="bottomMargin">
        <number>0</number>
       </property>
-      <item row="0" column="0">
+      <item row="0" column="1">
        <widget class="QCheckBox" name="rollAngleViconChkbox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1600,7 +1600,7 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0">
+      <item row="1" column="1">
        <widget class="QCheckBox" name="pitchAngleViconChkbox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1619,7 +1619,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="2" column="1">
        <widget class="QCheckBox" name="yawAngleViconChkbox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1638,7 +1638,7 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="3" column="1">
        <widget class="QCheckBox" name="zViconChkbox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
@@ -1654,6 +1654,19 @@
         </property>
         <property name="text">
          <string>Vicon for Z Loop</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="sendViconChkbox">
+        <property name="text">
+         <string>Send Vicon Data</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>

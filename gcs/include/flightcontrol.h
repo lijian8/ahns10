@@ -36,6 +36,7 @@ signals:
     void sendPosition(position_t desiredPosition);
     void sendAttitude(attitude_t desiredAttitude);
     void sendSaveConfig();
+    void forwardViconState(int state);
 
 public slots:
     void SetAPState(const ap_state_t* const srcState);

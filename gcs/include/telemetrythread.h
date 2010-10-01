@@ -87,6 +87,7 @@ public slots:
     void sendViconState(const vicon_state_t viconState);
     void sendGetConfig();
     void sendSaveConfig();
+    void forwardVicon(int state);
 
 private slots:
     void DataPending();
@@ -163,6 +164,7 @@ private:
     quint8 m_saveTryCount;        /**< Counter of tries */
     volatile bool m_saveReceived; /**< Flag used to check for SAVE_CONFIG received at FC*/
 
+    bool m_forwardVicon;
 };
 
 #endif // TELEMETRYTHREAD_H

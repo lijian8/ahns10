@@ -362,6 +362,7 @@ void gcsMainWindow::StartTelemetry(quint16& serverPort, QString& serverIP, quint
             connect(m_TelemetryThread,SIGNAL(SentMessage(uint32_t,bool)),m_transmitConsoleWidget,SLOT(SentItem(uint32_t, bool)));
 
             // Vicon Data
+                            connect(m_flightControlWidget,SIGNAL(forwardViconState(int)),m_TelemetryThread,SLOT(forwardVicon(int)));
             if(m_ViconThread != NULL)
             {
                 connect(m_ViconThread,SIGNAL(NewViconState(const vicon_state_t)),m_TelemetryThread,SLOT(sendViconState(const vicon_state_t)));
