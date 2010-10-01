@@ -468,38 +468,15 @@ void* updateControl(void *pointer)
     //Sort Vicon or State Data 
     pthread_mutex_lock(&mut);
     pthread_mutex_lock(&viconMutex);
-    if (xLoop.vicon)
-    {
-      x = viconState.x;
-      vx = viconState.vx;
-    }
-    else
-    {
-      x = state.x;
-      vx = state.vx;
-    }
+    
+    x = viconState.x;
+    vx = viconState.vx;
  
-    if (yLoop.vicon)
-    {
-      y = viconState.y;
-      vy = viconState.vy;
-    }
-    else
-    {
-      y = state.y;
-      vy = state.vy;
-    }
+    y = viconState.y;
+    vy = viconState.vy;
  
-    if (zLoop.vicon)
-    {
-      z = viconState.z;
-      vz = viconState.vz;
-    }
-    else
-    {
-      z = state.z;
-      vz = state.vz;
-    }
+    z = viconState.z;
+    vz = viconState.vz;
     
     if (rollLoop.vicon)
     {
@@ -567,12 +544,18 @@ void* updateControl(void *pointer)
     // Altitude Loop
     pthread_mutex_lock(&zLoopMutex);
     // Assume the quad is horizontally level
-    pthread_mutex_lock(&viconMutex);
-    z = viconState.z;
     double zError = zLoop.reference - z;
-    fprintf(stderr,"zError = %lf\tz=%lf\n",zError,z);
+    #define MAX_RATE zLoop.Ki
+    if ((zError < 0) && (vz < MAX_RATE)) // needs to go up
+    {
+      zLoop.neutral += 2.0/60.0*diffControlTime;
+    }
+    else if((zError > 0) && (vz > -MAX_RATE)) // needs to go down 
+    {
+      zLoop.neutral -= 2.0/60.0*diffControlTime;
+    }
+    // add accumulator value to netural
     updateGuidanceLoop(&zLoop,zError,z,vz);
-    pthread_mutex_unlock(&viconMutex);
     pthread_mutex_unlock(&zLoopMutex);
 
 #ifdef _GYRO_
