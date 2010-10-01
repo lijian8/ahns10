@@ -998,7 +998,25 @@ void TelemetryThread::sendViconState(const vicon_state_t viconState)
   AHNS_ALERT("Vicon Angles: " << viconState.phi << " " << viconState.theta << " " << viconState.psi);
 
   // Send the Message
-  PackViconState(buffer, &viconState);
-  sendMessage(VICON_STATE, buffer, sizeof(vicon_state_t));
-  emit SentMessage(VICON_STATE);
+  if (m_forwardVicon)
+  {
+      PackViconState(buffer, &viconState);
+      sendMessage(VICON_STATE, buffer, sizeof(vicon_state_t));
+      emit SentMessage(VICON_STATE);
+  }
+}
+
+void TelemetryThread::forwardVicon(int state)
+{
+    AHNS_ALERT("void TelemetryThread::forwardVicon(int state) [ SEND ]");
+    if (state == Qt::Checked)
+    {
+      AHNS_DEBUG("void TelemetryThread::forwardVicon(int state) [ SEND ]");
+      m_forwardVicon = true;
+    }
+    else
+    {
+        AHNS_DEBUG("void TelemetryThread::forwardVicon(int state) [ DONT SEND ]");
+        m_forwardVicon = false;
+    }
 }

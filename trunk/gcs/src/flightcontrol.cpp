@@ -25,8 +25,8 @@ FlightControl::FlightControl(QWidget *parent) :
     ui(new Ui::FlightControl)
 {
     AHNS_DEBUG("FlightControl::FlightControl(QWidget *parent)");
-
     ui->setupUi(this);
+    connect(ui->sendViconChkbox,SIGNAL(stateChanged(int)),this,SIGNAL(forwardViconState(int)));
 }
 
 FlightControl::~FlightControl()
