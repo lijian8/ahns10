@@ -568,6 +568,7 @@ void* updateControl(void *pointer)
     pthread_mutex_lock(&zLoopMutex);
     // Assume the quad is horizontally level
     double zError = zLoop.reference - z;
+    fprintf(stderr,"zError = %lf\n",zError);
     updateGuidanceLoop(&zLoop,zError,z,vz);
     pthread_mutex_unlock(&zLoopMutex);
 
