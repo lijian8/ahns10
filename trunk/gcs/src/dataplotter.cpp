@@ -318,17 +318,17 @@ DataPlotter::DataPlotter(QVector<double>* srcData, QWidget *parent) : QWidget(pa
     tempPen.setColor(QColor(255,120,255));
     m_plotCurves[RC_LINK].setPen(tempPen);
 
-    m_plotCurves[REF_PHI].setTitle(QwtText("Reference Roll Angle [rad]"));
+    m_plotCurves[REF_PHI].setTitle(QwtText("Reference Roll Angle [deg]"));
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(102,0,0));
     m_plotCurves[REF_PHI].setPen(tempPen);
 
-    m_plotCurves[REF_THETA].setTitle(QwtText("Reference Pitch Angle [rad]"));
+    m_plotCurves[REF_THETA].setTitle(QwtText("Reference Pitch Angle [deg]"));
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(153,0,255));
     m_plotCurves[REF_THETA].setPen(tempPen);
 
-    m_plotCurves[REF_PSI].setTitle(QwtText("Reference Yaw Angle [rad]"));
+    m_plotCurves[REF_PSI].setTitle(QwtText("Reference Yaw Angle [deg]"));
     tempPen.setStyle(Qt::DashLine);
     tempPen.setColor(QColor(0,0,102));
     m_plotCurves[REF_PSI].setPen(tempPen);

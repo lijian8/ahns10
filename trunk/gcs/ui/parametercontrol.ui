@@ -30,7 +30,7 @@
     <rect>
      <x>0</x>
      <y>10</y>
-     <width>421</width>
+     <width>427</width>
      <height>271</height>
     </rect>
    </property>
@@ -254,7 +254,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string> Roll Kp</string>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -279,7 +279,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string> Roll Ki</string>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -304,7 +304,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string> Pitch Kp</string>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -329,7 +329,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string/>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -354,7 +354,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string> Pitch Ki</string>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -379,7 +379,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string/>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -404,7 +404,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string/>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -429,7 +429,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string/>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -454,13 +454,13 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="decimals">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="minimum">
-       <double>-10.000000000000000</double>
+       <double>-500.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>10.000000000000000</double>
+       <double>500.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.500000000000000</double>
@@ -476,13 +476,13 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="decimals">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="minimum">
-       <double>-10.000000000000000</double>
+       <double>-500.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>10.000000000000000</double>
+       <double>500.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.500000000000000</double>
@@ -498,13 +498,13 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="decimals">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="minimum">
-       <double>-10.000000000000000</double>
+       <double>-500.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>10.000000000000000</double>
+       <double>500.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.500000000000000</double>
@@ -520,13 +520,13 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="decimals">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="minimum">
-       <double>-10.000000000000000</double>
+       <double>-500.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>10.000000000000000</double>
+       <double>500.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.500000000000000</double>
@@ -542,13 +542,13 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="decimals">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="minimum">
-       <double>-10.000000000000000</double>
+       <double>-500.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>10.000000000000000</double>
+       <double>500.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.500000000000000</double>
@@ -630,7 +630,7 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="suffix">
-       <string> deg</string>
+       <string/>
       </property>
       <property name="decimals">
        <number>2</number>
@@ -676,13 +676,13 @@ p, li { white-space: pre-wrap; }
        <string/>
       </property>
       <property name="decimals">
-       <number>4</number>
+       <number>2</number>
       </property>
       <property name="minimum">
-       <double>-10.000000000000000</double>
+       <double>-500.000000000000000</double>
       </property>
       <property name="maximum">
-       <double>10.000000000000000</double>
+       <double>500.000000000000000</double>
       </property>
       <property name="singleStep">
        <double>0.500000000000000</double>
