@@ -546,13 +546,16 @@ void* updateControl(void *pointer)
     // Assume the quad is horizontally level
     double zError = zLoop.reference - z;
     #define MAX_RATE zLoop.Ki
-    if ((zError < 0) && (vz < MAX_RATE)) // needs to go up
+    if ((rcMode != MANUAL_DEBUG) && (zLoop.active)) // in ap mode and active
     {
-      zLoop.neutral += 2.0/60.0*diffControlTime;
-    }
-    else if((zError > 0) && (vz > -MAX_RATE)) // needs to go down 
-    {
-      zLoop.neutral -= 2.0/60.0*diffControlTime;
+      if ((zError < 0) && (vz < MAX_RATE)) // needs to go up
+      {
+        zLoop.neutral += 2.0/60.0*diffControlTime;
+      }
+      else if((zError > 0) && (vz > -MAX_RATE)) // needs to go down 
+      {
+        zLoop.neutral -= 2.0/60.0*diffControlTime;
+      }
     }
     // add accumulator value to netural
     updateGuidanceLoop(&zLoop,zError,z,vz);
