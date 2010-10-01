@@ -33,7 +33,7 @@ typedef struct {
   
   double output;       /**< Current Output*/
   
-  double integralError;          /**< Integral Variable*/
+  double integralError;  /**< Integral Variable*/
   double windup;        
   
   double Kp;           /**< Proportional Gain */

@@ -425,8 +425,7 @@ inline void updateGuidanceLoop(volatile control_loop_t* controlLoop, double temp
       controlLoop->integralError = 0.0;
     }
  
-    // integrate error
-    // only integrate if not in saturation
+    // integrate error only integrate if not in saturation
     if (controlLoop->output < controlLoop->maximum)
     {
       controlLoop->integralError += dt*tempError;

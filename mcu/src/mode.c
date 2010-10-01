@@ -238,7 +238,7 @@ static inline void GiveRC()
           commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
           break;
         case RC_YAW:
-          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          commandedYaw = PWMToCounter(zeroYaw) - controlFactor*rcYaw;
           break;
         case RC_THROTTLE_ROLL:
           commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
@@ -250,7 +250,7 @@ static inline void GiveRC()
           break;
         case RC_THROTTLE_YAW:
           commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
-          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          commandedYaw = PWMToCounter(zeroYaw) - controlFactor*rcYaw;
           break;
         case RC_ROLL_PITCH:
           commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
@@ -258,11 +258,11 @@ static inline void GiveRC()
           break;
         case RC_ROLL_YAW:
           commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
-          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          commandedYaw = PWMToCounter(zeroYaw) - controlFactor*rcYaw;
           break;
         case RC_PITCH_YAW:
           commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
-          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          commandedYaw = PWMToCounter(zeroYaw) - controlFactor*rcYaw;
           break;
         case RC_THROTTLE_ROLL_PITCH:
           commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
@@ -272,17 +272,17 @@ static inline void GiveRC()
         case RC_THROTTLE_ROLL_YAW:
           commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
-          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          commandedYaw = PWMToCounter(zeroYaw) - controlFactor*rcYaw;
           break;
         case RC_THROTTLE_PITCH_YAW:
           commandedThrottle = PWMToCounter(zeroThrottle) + rcThrottle;
           commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
-          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          commandedYaw = PWMToCounter(zeroYaw) - controlFactor*rcYaw;
           break;
         case RC_ROLL_PITCH_YAW:
           commandedRoll = PWMToCounter(zeroRoll) + controlFactor*rcRoll;
           commandedPitch = PWMToCounter(zeroPitch) + controlFactor*rcPitch;
-          commandedYaw = PWMToCounter(zeroYaw) + controlFactor*rcYaw;
+          commandedYaw = PWMToCounter(zeroYaw) - controlFactor*rcYaw;
           break;
         case RC_NONE:
           break;
