@@ -200,10 +200,14 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   // assign new psi angle (radians)
   *psif = fmod(((psi_axis.X[0]-psi_axis.offset)*M_PI/180),2*M_PI);
   // assign new phi rate
-  *rateXf = (*phif - angle_previous[0])/dT;
+  //*rateXf = (*phif - angle_previous[0])/dT;
   // assign new theta rate
-  *rateYf = (*thetaf - angle_previous[1])/dT;
+  //*rateYf = (*thetaf - angle_previous[1])/dT;
   // LPF the rate values (raw rate for the psi rate)
+  //*rateZf = (*rateZr)*M_PI/180;
+  // LPF the rate values (all raw)
+  *rateXf = (*rateXr)*M_PI/180;
+  *rateYf = (*rateYr)*M_PI/180;
   *rateZf = (*rateZr)*M_PI/180;
   rateLPF(rateXf,rateYf,rateZf);
   // update the previous angles
