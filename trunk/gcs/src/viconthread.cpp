@@ -161,12 +161,12 @@ void ViconThread::ProcessViconState()
     SubjectName = myClient.GetSubjectName(SubjectIndex).SubjectName;
 
     // Get the global segment translation
-    Output_GetSegmentStaticTranslation _Output_GetSegmentStaticTranslation = myClient.GetSegmentStaticTranslation(SubjectName, SegmentName);
+    Output_GetSegmentGlobalTranslation _Output_GetSegmentGlobalTranslation = myClient.GetSegmentGlobalTranslation(SubjectName, SegmentName);
 
     //store locally X,Y,Z. data comes by defaults in mm and radians
-    X = _Output_GetSegmentStaticTranslation.Translation[ 0 ]*mm2M;
-    Y = _Output_GetSegmentStaticTranslation.Translation[ 1 ]*mm2M;
-    Z = _Output_GetSegmentStaticTranslation.Translation[ 2 ]*mm2M;
+    X = _Output_GetSegmentGlobalTranslation.Translation[ 0 ]*mm2M;
+    Y = _Output_GetSegmentGlobalTranslation.Translation[ 1 ]*mm2M;
+    Z = _Output_GetSegmentGlobalTranslation.Translation[ 2 ]*mm2M;
 
     // Get the global segment orientation
     Output_GetSegmentGlobalRotationEulerXYZ _Output_GetSegmentGlobalRotationEulerXYZ = myClient.GetSegmentGlobalRotationEulerXYZ(SubjectName,SegmentName);
