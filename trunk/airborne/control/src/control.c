@@ -368,7 +368,7 @@ inline void updateControlLoop(volatile control_loop_t* controlLoop, double state
   if (controlLoop->active)
   {
     // Add Neutral
-    controlLoop->reference += controlLoop->neutral;
+    //controlLoop->reference += controlLoop->neutral;
 
     // reset integrators if reference changed 
     if ((controlLoop->previousReference != controlLoop->reference) ||

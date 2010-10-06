@@ -546,18 +546,23 @@ void* updateControl(void *pointer)
     pthread_mutex_lock(&rcMutex);
     // Assume the quad is horizontally level
     double zError = zLoop.reference - z;
+
     #define MAX_RATE zLoop.Ki
     if (rcMode != MANUAL_DEBUG) // in ap mode and active
     {
-      if ((zError < 0) && (vz < MAX_RATE)) // needs to go up
+      if ((zError > 0) && (vz < MAX_RATE)) // needs to go up
       {
-        zLoop.neutral += 2.0/60.0*diffControlTime;
+        zLoop.neutral += 1.0/60.0*0.001;
       }
-      else if((zError > 0) && (vz > -MAX_RATE)) // needs to go down 
+      else if((zError < 0) && (vz > -MAX_RATE)) // needs to go down 
       {
-        zLoop.neutral -= 2.0/60.0*diffControlTime;
+        zLoop.neutral -= 1.0/60.0*0.001;
       }
-      printf("Accum = %ld",zLoop.neutral);
+      printf("Accum = %lf",zLoop.neutral);
+    }
+    if (zLoop.neutral > 27)
+    {
+      zLoop.neutral = 27;
     }
     // add accumulator value to netural
     updateGuidanceLoop(&zLoop,zError,z,vz);
@@ -652,12 +657,13 @@ void* updateControl(void *pointer)
     // No RC Gyro thus roll, pitch and yaw control loops in use
     pthread_mutex_lock(&rcMutex);
 
-    double rcFactor = 1.0;
-    if (rcMode == AUGMENTED) // use the gyro rates
-    {
+    double rcFactor = 1;
+    //if (rcMode == AUGMENTED) // use the gyro rates
+    //{
       // Roll Rate Control
       pthread_mutex_lock(&rollLoopMutex);
-      rollLoop.reference = CounterToPWM(rcFactor*rcRoll) + zeroRoll;
+      rollLoop.reference = 2*8*rcFactor*rcRoll + zeroRoll;
+      printf("%lf %d %lf",rollLoop.reference,rcRoll,zeroRoll);
       rollLoop.referenceDot = rollLoop.previousState; // Roll Loop D term is now Kd*(pNew - pOld);
       // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
       p = MapCommands(p*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
@@ -668,7 +674,8 @@ void* updateControl(void *pointer)
 
       // Pitch Rate Control
       pthread_mutex_lock(&pitchLoopMutex);
-      pitchLoop.reference = CounterToPWM(rcFactor*rcPitch) + zeroPitch;
+      pitchLoop.reference = 8*2*rcFactor*rcPitch + zeroPitch;
+      printf("%lf %d %lf",pitchLoop.reference,rcPitch,zeroPitch);
       pitchLoop.referenceDot = pitchLoop.previousState; // Pitch Loop D term is now Kd*(qNew - qOld);
       // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
       q = MapCommands(q*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
@@ -677,7 +684,7 @@ void* updateControl(void *pointer)
       pitchLoop.output = PWMToCounter(pitchLoop.output);
       pthread_mutex_unlock(&pitchLoopMutex);
     
-    }
+    //}
     else if (rcMode == AUTOPILOT) // use the filtered angles
     {
       pthread_mutex_lock(&rollLoopMutex);
