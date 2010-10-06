@@ -61,9 +61,9 @@ double bat_voltage = 0;
 // transmitted altitude reading
 double altitude = 0;
 // time counter adc
-unsigned long current_time_adc;
+unsigned long current_time;
 // previous time 
-unsigned long previous_time_adc;
+unsigned long previous_time;
 // battery voltage array
 double bat_voltage_avg[5];
 // battery voltage avg counter
@@ -102,7 +102,7 @@ void loop()
   // check the time
   current_time = millis() - previous_time;
   readCompass();
-  if (current_time_adc > ADC_READ)
+  if (current_time > ADC_READ)
   {
       readVoltage();
       readAltitude();
