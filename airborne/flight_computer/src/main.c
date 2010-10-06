@@ -559,8 +559,28 @@ void* updateControl(void *pointer)
       }
       printf("Accum = %ld",zLoop.neutral);
     }
+    
     // add accumulator value to netural
     updateGuidanceLoop(&zLoop,zError,z,vz);
+    
+
+    // DEBUG:
+    if (rcMode == FAIL_SAFE)
+    {
+      printf(">>FAILSAFE\n");
+    }
+    else if (rcMode == MANUAL_DEBUG)
+    {
+      printf(">>MANUAL\n");
+    }
+    else if (rcMode == AUTOPILOT)
+    {
+      printf(">>AUTOPILOT\n");
+    }
+    else if (rcMode == AUGMENTED)
+    {
+      printf(">>AUGMENTED\n");
+    }
     pthread_mutex_unlock(&rcMutex);
     pthread_mutex_unlock(&zLoopMutex);
 
@@ -678,7 +698,7 @@ void* updateControl(void *pointer)
       pthread_mutex_unlock(&pitchLoopMutex);
     
     }
-    else if (rcMode == AUTOPILOT) // use the filtered angles
+    /*else if (rcMode == AUTOPILOT) // use the filtered angles
     {
       pthread_mutex_lock(&rollLoopMutex);
       pthread_mutex_lock(&pitchLoopMutex);
@@ -736,7 +756,7 @@ void* updateControl(void *pointer)
       
       pthread_mutex_unlock(&pitchLoopMutex);
       pthread_mutex_unlock(&rollLoopMutex);
-    }
+    }*/
     
     // Yaw Control
     pthread_mutex_lock(&yawLoopMutex);
