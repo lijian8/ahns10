@@ -454,22 +454,13 @@ void* updateControl(void *pointer)
   double vx = 0, vy = 0, vz = 0;
   double phi = 0, theta = 0, psi = 0;
   double p = 0, q = 0, r = 0;
-  double vicon_phi_previous = 0.0, vicon_theta_previous = 0.0, vicon_psi_previous = 0.0;
   // time stamp
   struct timeval timestamp1;
   // time between updates
   double startControlTime, endControlTime, diffControlTime;
-  // time between update for the rates
-  double startPhiViconTime, startThetaViconTime, startPsiViconTime;
-  double endPhiViconTime, endThetaViconTime, endPsiViconTime;
-  double diffPhiViconTime, diffThetaViconTime, diffPsiViconTime;
   // calculate filter start time
   gettimeofday(&timestamp1, NULL);
   startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-  // initiate the filters for all angles
-  startPhiViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-  startThetaViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-  startPsiViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
   while(1)
   {
     //fprintf(stderr,"void* updateControl()");
@@ -490,16 +481,7 @@ void* updateControl(void *pointer)
     if (rollLoop.vicon)
     {
       phi = viconState.phi;
-      // get a time stamp and time difference
-      gettimeofday(&timestamp1, NULL);
-      endPhiViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-      diffPhiViconTime = endPhiViconTime - startPhiViconTime;
-      startPhiViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-      // calculate the phi rate from the vicon system
-      p = (phi-vicon_phi_previous)/diffPhiViconTime;
-      vicon_phi_previous = phi;
-      // overwrite the onboard rate
-      state.p = p;
+      p = state.p;
     }
     else
     {
@@ -510,16 +492,7 @@ void* updateControl(void *pointer)
     if (pitchLoop.vicon)
     {
       theta = viconState.theta;
-      // get a time stamp and time difference
-      gettimeofday(&timestamp1, NULL);
-      endThetaViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-      diffThetaViconTime = endThetaViconTime - startThetaViconTime;
-      startThetaViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-      // calculate the theta rate from the vicon system
-      q = (theta-vicon_theta_previous)/diffThetaViconTime;
-      vicon_theta_previous = theta;
-      // overwrite the onboard rate
-      state.q = q;
+      q = state.q;
     }
     else
     {
@@ -530,16 +503,7 @@ void* updateControl(void *pointer)
     if (yawLoop.vicon)
     {
       psi = viconState.psi;
-      // get a time stamp and time difference
-      gettimeofday(&timestamp1, NULL);
-      endPsiViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-      diffPsiViconTime = endPsiViconTime - startPsiViconTime;
-      startPsiViconTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-      // calculate the phi rate from the vicon system
-      r = (psi-vicon_psi_previous)/diffPsiViconTime;
-      vicon_psi_previous = psi;
-      // overwrite the onboard rate
-      state.r = r;
+      r = state.r;
     }
     else
     { 
@@ -595,28 +559,8 @@ void* updateControl(void *pointer)
       }
       printf("Accum = %ld",zLoop.neutral);
     }
-    
     // add accumulator value to netural
     updateGuidanceLoop(&zLoop,zError,z,vz);
-    
-
-    // DEBUG:
-    if (rcMode == FAIL_SAFE)
-    {
-      printf(">>FAILSAFE\n");
-    }
-    else if (rcMode == MANUAL_DEBUG)
-    {
-      printf(">>MANUAL\n");
-    }
-    else if (rcMode == AUTOPILOT)
-    {
-      printf(">>AUTOPILOT\n");
-    }
-    else if (rcMode == AUGMENTED)
-    {
-      printf(">>AUGMENTED\n");
-    }
     pthread_mutex_unlock(&rcMutex);
     pthread_mutex_unlock(&zLoopMutex);
 
@@ -734,7 +678,7 @@ void* updateControl(void *pointer)
       pthread_mutex_unlock(&pitchLoopMutex);
     
     }
-    /*else if (rcMode == AUTOPILOT) // use the filtered angles
+    else if (rcMode == AUTOPILOT) // use the filtered angles
     {
       pthread_mutex_lock(&rollLoopMutex);
       pthread_mutex_lock(&pitchLoopMutex);
@@ -792,7 +736,7 @@ void* updateControl(void *pointer)
       
       pthread_mutex_unlock(&pitchLoopMutex);
       pthread_mutex_unlock(&rollLoopMutex);
-    }*/
+    }
     
     // Yaw Control
     pthread_mutex_lock(&yawLoopMutex);
