@@ -543,10 +543,11 @@ void* updateControl(void *pointer)
 
     // Altitude Loop
     pthread_mutex_lock(&zLoopMutex);
+    pthread_mutex_lock(&rcMutex);
     // Assume the quad is horizontally level
     double zError = zLoop.reference - z;
     #define MAX_RATE zLoop.Ki
-    if ((rcMode != MANUAL_DEBUG) && (zLoop.active)) // in ap mode and active
+    if (rcMode != MANUAL_DEBUG) // in ap mode and active
     {
       if ((zError < 0) && (vz < MAX_RATE)) // needs to go up
       {
@@ -556,9 +557,11 @@ void* updateControl(void *pointer)
       {
         zLoop.neutral -= 2.0/60.0*diffControlTime;
       }
+      printf("Accum = %ld",zLoop.neutral);
     }
     // add accumulator value to netural
     updateGuidanceLoop(&zLoop,zError,z,vz);
+    pthread_mutex_unlock(&rcMutex);
     pthread_mutex_unlock(&zLoopMutex);
 
 #ifdef _GYRO_
