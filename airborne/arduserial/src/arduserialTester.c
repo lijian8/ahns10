@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
   for(i=0; i<100000; i++)
   {
     getArduinoDataCan(&compassHeading, &batteryVoltage, &altitudeReading);
-    //printf("%.2lf,%.3lf,%.3lf\n",compassHeading,batteryVoltage,altitudeReading);
+    printf("%.2lf,%.3lf,%.3lf\n",compassHeading,batteryVoltage,altitudeReading);
   } 
   // Close the arduino serial port
   closeArduSerial();
