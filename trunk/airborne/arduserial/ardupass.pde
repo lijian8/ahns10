@@ -2,10 +2,10 @@
  * @file   arduserial.pde
  * @author Liam O'Sullivan
  *
- * $Author$
- * $Date$
- * $Rev$
- * $Id$
+ * $Author: liamosullivan $
+ * $Date: 2010-09-19 15:54:08 +1000 (Sun, 19 Sep 2010) $
+ * $Rev: 388 $
+ * $Id: arduserial.pde 388 2010-09-19 05:54:08Z liamosullivan $
  *
  * Queensland University of Technology
  *
@@ -29,7 +29,7 @@
 // altitude sensor adc pin
 #define ALTITUDE_ADC 6
 // compass baud rate
-#define COMPASS_BAUDRATE 19200
+#define COMPASS_BAUDRATE 38400
 // overo baud rate
 #define OVERO_BAUDRATE 115200
 // battery voltage read time
@@ -61,9 +61,9 @@ double bat_voltage = 0;
 // transmitted altitude reading
 double altitude = 0;
 // time counter adc
-unsigned long current_time;
+unsigned long current_time_adc;
 // previous time 
-unsigned long previous_time;
+unsigned long previous_time_adc;
 // battery voltage array
 double bat_voltage_avg[5];
 // battery voltage avg counter
@@ -102,7 +102,7 @@ void loop()
   // check the time
   current_time = millis() - previous_time;
   readCompass();
-  if (current_time > ADC_READ)
+  if (current_time_adc > ADC_READ)
   {
       readVoltage();
       readAltitude();
