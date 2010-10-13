@@ -2,6 +2,7 @@
 # Project created by QtCreator 2010-04-25T11:58:01
 # -------------------------------------------------
 HELI = $(HELICONNECT)
+MCU = $(MCU_INTERFACE)
 QT += network \
     opengl
 CONFIG += debug
@@ -21,7 +22,8 @@ linux-g++ {
         reuse/ \
         /usr/include/qwt-qt4/ \
         $$HELI \
-        udp/
+        udp/ \
+        $$MCU/include
     LIBS += -lQtNetwork \
         -lglut \
         -lGLU \
@@ -41,7 +43,8 @@ macx-g++ {
         reuse/ \
         /usr/local/qwt-5.2.1-svn/include/ \
         $$HELI \
-        udp/
+        udp/ \
+        $$MCU/include
     LIBS += -L/usr/local/qwt-5.2.1-svn/lib \
         -lqwt \
         -framework \
@@ -99,7 +102,8 @@ HEADERS += include/gcsmainwindow.h \
     include/parametercontrol.h \
     include/transmitconsole.h \
     include/viconthread.h \
-    include/Client.h
+    include/Client.h \
+    $$MCU/include/MCUCommands.h
 FORMS += ui/gcsmainwindow.ui \
     ui/systemstatus.ui \
     ui/aboutform.ui \

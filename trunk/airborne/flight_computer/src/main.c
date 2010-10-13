@@ -343,14 +343,7 @@ void* updateMCU(void *pointer)
     
     // Report to GCS
     pthread_mutex_lock(&fcMut);
-    if (mcuMode == FAIL_SAFE)
-    {
-      fcState.rclinkActive = 0;
-    }
-    else
-    {
-        fcState.rclinkActive = 1;
-    }
+    fcState.rclinkActive = mcuMode;
     fcState.commandedEngine1 = readEngine[0];
     fcState.commandedEngine2 = readEngine[1];
     fcState.commandedEngine3 = readEngine[2];
@@ -658,8 +651,8 @@ void* updateControl(void *pointer)
     pthread_mutex_lock(&rcMutex);
 
     double rcFactor = 1;
-    //if (rcMode == AUGMENTED) // use the gyro rates
-    //{
+    if (rcMode == AUGMENTED) // use the gyro rates
+    {
       // Roll Rate Control
       pthread_mutex_lock(&rollLoopMutex);
       rollLoop.reference = 2*8*rcFactor*rcRoll + zeroRoll;
@@ -684,7 +677,7 @@ void* updateControl(void *pointer)
       pitchLoop.output = PWMToCounter(pitchLoop.output);
       pthread_mutex_unlock(&pitchLoopMutex);
     
-    //}
+    }
     else if (rcMode == AUTOPILOT) // use the filtered angles
     {
       pthread_mutex_lock(&rollLoopMutex);
