@@ -21,6 +21,7 @@
 
 #include "ahns_logger.h"
 #include "ahns_timeformat.h"
+#include "MCUCommands.h"
 
 #define PROGRESS_OK ""
 #define PROGRESS_WARNING "QProgressBar { color: orange }"
@@ -106,13 +107,21 @@ void SystemStatus::UpdateStatus()
 
     if (this->isVisible())
     {
-        if (m_rcLinkActive == 1)
+        if (m_rcLinkActive == AUTOPILOT)
         {
             ui->rclbl->setStyleSheet("QLabel { background-color: green }");
         }
-        else
+        else if (m_rcLinkActive == MANUAL_DEBUG)
         {
             ui->rclbl->setStyleSheet("QLabel { background-color: red }");
+        }
+        else if (m_rcLinkActive == AUGMENTED)
+        {
+            ui->rclbl->setStyleSheet("QLabel { background-color: blue }");
+        }
+        else if(m_rcLinkActive == FAIL_SAFE)
+        {
+             ui->rclbl->setStyleSheet("QLabel { background-color: yellow }");
         }
 
         ui->eng1prgbar->setValue((m_commandedEngine1-ENGINE_MIN_US)/(ENGINE_MAX_US-ENGINE_MIN_US)*100);
