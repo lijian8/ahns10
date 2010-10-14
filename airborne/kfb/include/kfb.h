@@ -56,6 +56,9 @@
 // LPF alpha constant for compass reading
 #define COMPASS_ALPHA 0.1
 
+// LPF alpha constant for ultrasonic sensor
+#define ALT_ALPHA 0.15
+
 // Data logger flag
 #define DATA_LOGGER 0
 
@@ -93,6 +96,7 @@ double coarseRollAngle(double *accXr, double *accYr, double *accZr);
 int accLPF (double *accXr, double *accYr, double *accZr, double dT);
 int rateLPF(double *rateXf, double *rateYf, double *rateZr);
 int compassLPF(double *compass_heading);
+int altLPF(double *altitude);
 int calibrateEulerAngles(double *phif, double *thetaf, double *psif);
 int printkFilterData(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double dT);
 
