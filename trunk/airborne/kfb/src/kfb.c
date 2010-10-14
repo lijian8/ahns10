@@ -36,6 +36,9 @@ double rate_current[3];
 // compass heading value storage (used for filtering)
 double compass_heading_previous = 0.0;
 double compass_heading_current = 0.0;
+// altitude value storage (used for filtering)
+double altitude_previous = 0.0;
+double altitude_current = 0.0;
 // euler angle storage (calculation of filtered rate)
 double angle_previous[3];
 // calibration flag
@@ -45,6 +48,8 @@ int cyc_count = 0;
 // phi and theta angle storage for calibration
 double phi_sum = 0.0;
 double theta_sum = 0.0;
+
+double psi_angle = 0.0;
 
 // function to initialise the values in the axis structures
 int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
@@ -370,3 +375,10 @@ int compassLPF(double *compass_heading)
   return 1;
 }
 
+int altLPF(double *altitude)
+{
+  altitude_current = *altitude;
+  *altitude = altitude_previous*(1-ALT_ALPHA) + (*altitude * ALT_ALPHA);
+  altitude_previous = *altitude;
+  return 1;
+}
