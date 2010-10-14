@@ -175,7 +175,7 @@ int readAltitude()
   adc_read = analogRead(ALTITUDE_ADC); 
   altitude = 0.0135*adc_read + 0.04155;
   // store the voltage data in an array
-  altitude_avg[altitude_avg_count] = altitude;
+  /*altitude_avg[altitude_avg_count] = altitude;
   altitude_avg_count++;
   if (altitude_avg_count > 4)
   {
@@ -188,7 +188,7 @@ int readAltitude()
     average = average + altitude_avg[i];
   }
   // store the filter battery voltage
-  altitude = average/5.0;
+  altitude = average/5.0;*/
 }
 
 // read serial data transmitted from the overo and reply with suitable response
