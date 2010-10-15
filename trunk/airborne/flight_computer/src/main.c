@@ -717,7 +717,7 @@ void* updateControl(void *pointer)
       }
 
       // Roll Control
-      rollLoop.reference = CounterToPWM(rcFactor*rcRoll) + zeroRoll + levelAdjust[LEVEL_ROLL];
+      rollLoop.reference = 2*8*rcFactor*rcRoll + zeroRoll + levelAdjust[LEVEL_ROLL];
       rollLoop.referenceDot = rollLoop.previousState; // Roll Loop D term is now Kd*(pNew - pOld);
       // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
       p = MapCommands(p*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
@@ -726,7 +726,7 @@ void* updateControl(void *pointer)
       rollLoop.output = PWMToCounter(rollLoop.output + levelRollLoop.integralError);
 
       // Pitch Control   
-      pitchLoop.reference = CounterToPWM(rcFactor*rcPitch) + zeroPitch + levelAdjust[LEVEL_PITCH];
+      pitchLoop.reference = 2*8*rcFactor*rcPitch + zeroPitch + levelAdjust[LEVEL_PITCH];
       pitchLoop.referenceDot = pitchLoop.previousState; // Pitch Loop D term is now Kd*(qNew - qOld);
       // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
       q = MapCommands(q*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
