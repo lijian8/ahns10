@@ -35,6 +35,7 @@
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-GC-DD-001.docx AHNS-2010-GC-DD-001 ] || Ground Control Station Design Document || TM || - || Yes || Not Finished || No || No ||
 || AHNS-2010-PL-DD-002 || Electronics Enclosure Design Document || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-AP-DD-003 || Flight Computer Design Document || LO || - || No || Not Finished || No || No ||
+|| AHNS-2010-PL-DD-004 || Testing Apparatus Design Document || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-TM-001 || Traceability Matrix || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-LL-001 || Lessons Learnt || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-OM-001 || Operations Manual || MH || - || No || Not Finished || No || No ||
