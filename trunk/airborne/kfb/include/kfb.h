@@ -44,20 +44,20 @@
 #define CYCLES 1000
 
 // LPF alpha constants for accelerometers
-#define ACCX_ALPHA 0.1
-#define ACCY_ALPHA 0.1
-#define ACCZ_ALPHA 0.1
+#define ACCX_ALPHA 1.0
+#define ACCY_ALPHA 1.0
+#define ACCZ_ALPHA 1.0
 
 // LPF alpha constants for gyro rates
-#define RATEX_ALPHA 0.1
-#define RATEY_ALPHA 0.1
-#define RATEZ_ALPHA 0.1
+#define RATEX_ALPHA 1.0
+#define RATEY_ALPHA 1.0
+#define RATEZ_ALPHA 1.0
 
 // LPF alpha constant for compass reading
 #define COMPASS_ALPHA 0.1
 
 // LPF alpha constant for ultrasonic sensor
-#define ALT_ALPHA 0.15
+#define ALT_ALPHA 0.07
 
 // Data logger flag
 #define DATA_LOGGER 0

@@ -132,6 +132,12 @@ void * updateArduinoData(void *pointer)
   double compass_heading_old = 0.0;
   double voltage_old = 0.0;
   double z_old = 0.0;
+  double state_vz_previous = 0.0;
+  // time stamp
+  struct timeval timestamp;
+  double startArduinoTime, endArduinoTime, diffArduinoTime;
+  gettimeofday(&timestamp, NULL);
+  startArduinoTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
   while(1)
   {
     // sleep the thread for updating the arduino
@@ -147,7 +153,21 @@ void * updateArduinoData(void *pointer)
       state.voltage = voltage_old;
       raw_IMU.z = z_old;
     }
+    gettimeofday(&timestamp, NULL);
+    endArduinoTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
+    diffArduinoTime = endArduinoTime - startArduinoTime;
+    // calculate start time
+    gettimeofday(&timestamp, NULL);
+    startArduinoTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
     //printf(">> Ard: %f %f %f\n",compass_heading,state.voltage,raw_IMU.z);
+    altLPF(&raw_IMU.z);
+    // set the altitude to the filtered sensor date
+    state.z = raw_IMU.z;
+    // calculate altitude velocity
+    state.vz = (state.z - state_vz_previous)/diffArduinoTime;
+    // assign old altitude value
+    state_vz_previous = state.z;
+    // assign compass heading
     raw_IMU.psi = compass_heading;
     pthread_mutex_unlock(&mut);
   }
@@ -467,9 +487,16 @@ void* updateControl(void *pointer)
  
     y = viconState.y;
     vy = viconState.vy;
- 
-    z = viconState.z;
-    vz = viconState.vz;
+    if (zLoop.vicon)
+    {
+      z = viconState.z;
+      vz = viconState.vz;
+    }
+    else
+    {
+      z = state.z;
+      vz = state.vz;
+    }
     
     if (rollLoop.vicon)
     {
@@ -541,7 +568,7 @@ void* updateControl(void *pointer)
     double zError = zLoop.reference - z;
 
     #define MAX_RATE zLoop.Ki
-    if (rcMode != MANUAL_DEBUG) // in ap mode and active
+    /*if (rcMode != MANUAL_DEBUG) // in ap mode and active
     {
       if ((zError > 0) && (vz < MAX_RATE)) // needs to go up
       {
@@ -556,7 +583,7 @@ void* updateControl(void *pointer)
     if (zLoop.neutral > 27)
     {
       zLoop.neutral = 27;
-    }
+    }*/
     // add accumulator value to netural
     updateGuidanceLoop(&zLoop,zError,z,vz);
     pthread_mutex_unlock(&rcMutex);
@@ -667,7 +694,7 @@ void* updateControl(void *pointer)
 
       // Pitch Rate Control
       pthread_mutex_lock(&pitchLoopMutex);
-      pitchLoop.reference = 8*2*rcFactor*rcPitch + zeroPitch;
+      pitchLoop.reference = -8*2*rcFactor*rcPitch + zeroPitch;
       printf("%lf %d %lf",pitchLoop.reference,rcPitch,zeroPitch);
       pitchLoop.referenceDot = pitchLoop.previousState; // Pitch Loop D term is now Kd*(qNew - qOld);
       // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
@@ -726,7 +753,7 @@ void* updateControl(void *pointer)
       rollLoop.output = PWMToCounter(rollLoop.output + levelRollLoop.integralError);
 
       // Pitch Control   
-      pitchLoop.reference = 2*8*rcFactor*rcPitch + zeroPitch + levelAdjust[LEVEL_PITCH];
+      pitchLoop.reference = -2*8*rcFactor*rcPitch + zeroPitch + levelAdjust[LEVEL_PITCH];
       pitchLoop.referenceDot = pitchLoop.previousState; // Pitch Loop D term is now Kd*(qNew - qOld);
       // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
       q = MapCommands(q*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
@@ -740,7 +767,7 @@ void* updateControl(void *pointer)
     
     // Yaw Control
     pthread_mutex_lock(&yawLoopMutex);
-    yawLoop.reference = CounterToPWM(rcFactor*rcYaw) + zeroYaw;
+    yawLoop.reference = 2*8*rcFactor*rcYaw + zeroYaw;
     yawLoop.referenceDot = yawLoop.previousState; // Yaw Loop D term is now Kd*(rNew - rOld);
     // Scale Gyro Rates to 1000 to 2000 us based on +-300 deg/s IMU
     r = MapCommands(r*180.0/M_PI,300.0,-300.0,2000.0,1000.0);
