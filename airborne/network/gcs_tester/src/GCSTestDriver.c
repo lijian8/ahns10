@@ -129,7 +129,7 @@ main (int argc, char *argv[])
 
 
       count++;
-      usleep (20e3);
+      usleep (0.1e6);
 
       if (count % 1 == 0) // non-zero count
       {
