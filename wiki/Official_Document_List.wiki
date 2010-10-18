@@ -51,7 +51,7 @@
 || AHNS-2010-SY-TR-002 || Attitude with IMU Test Report || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-TR-003 || Altitude with Vicon Test Report || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-TR-004 || Altitude with Ultrasonic Test Report || MH || - || No || Not Finished || No || No ||
-|| AHNS-2010-GC-TR-001 || Ground Control System Test Report || TM || - || No || Not Finished || No || No ||
+|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-GC-TR-001.docx AHNS-2010-GC-TR-001] || Ground Control System Test Report || TM || - || Yes || Not Finished || No || No ||
 || AHNS-2010-AP-TR-002 || Flight Computer Test Report || LO || - || No || Not Finished || No || No ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-004.docx AHNS-2010-SY-MM-004] || Minutes of Meeting 28/06/10|| MH || - || Yes || Finished || - || Yes ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-005.docx AHNS-2010-SY-MM-005] || Minutes of Meeting 19/07/10 || MH || - || Yes || Finished || - || Yes ||
