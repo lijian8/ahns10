@@ -126,7 +126,7 @@ int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr)
   // initialise S term
   psi_axis.S = 0.0;
   // initialise measurement term
-  psi_axis.Y = theta_axis.X[0];
+  psi_axis.Y = 0.0;
   // initialise correction term
   psi_axis.err = 0.0;
   // initialise the kalman gain

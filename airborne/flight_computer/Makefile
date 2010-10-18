@@ -55,7 +55,7 @@ $(CONTROL):
 
 .phony: all clean
 
-all:  clean $(ARDU) $(IMU) $(KF) $(MCU) $(CONTROL) $(LIB) $(SERVER)
+all:  $(ARDU) $(IMU) $(KF) $(MCU) $(CONTROL) $(LIB) $(SERVER)
 
 clean:
 	rm -f obj/* $(LIBDIR)/*.a $(SERVER) $(OBJS)
