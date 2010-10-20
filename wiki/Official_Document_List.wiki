@@ -28,7 +28,7 @@
 
 || *Document Number* || *Document Name* || *Writer* || *Checker* || *Written* || *Status* || *Checked* || *Done* ||
 || AHNS-2010-PL-DD-001 || Platform Electronics Design Document || MK || - || No || Not Finished || No || No ||
-|| AHNS-2010-AP-DD-001 || Control System Design Document || TM || - || No || Not Finished || No || No ||
+|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-AP-DD-001.docx AHNS-2010-AP-DD-001] || Control System Design Document || TM || - || Yes || Checks || No || No ||
 || AHNS-2010-AP-DD-002 || Mode Control Unit Design Document || TM || - || No || Not Finished || No || No ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SE-DD-001.docx AHNS-2010-SE-DD-001] || State Estimation Design Document || LO || - || Yes || Needs some checking || No || No ||
 || AHNS-2010-LO-DD-001 || Camera Vision Design Document || LO || - || No || Not Finished || No || No ||
@@ -49,7 +49,7 @@
 || AHNS-2010-SY-TR-002 || Attitude with IMU Test Report || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-TR-003 || Altitude with Vicon Test Report || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-TR-004 || Altitude with Ultrasonic Test Report || MH || - || No || Not Finished || No || No ||
-|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-GC-TR-001.docx AHNS-2010-GC-TR-001] || Ground Control System Test Report || TM || - || Yes || Not Finished || No || No ||
+|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-GC-TR-001.docx AHNS-2010-GC-TR-001] || Ground Control System Test Report || TM || - || Yes || checks || No || No ||
 || AHNS-2010-AP-TR-002 || Flight Computer Test Report || LO || - || No || Not Finished || No || No ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-004.docx AHNS-2010-SY-MM-004] || Minutes of Meeting 28/06/10|| MH || - || Yes || Finished || - || Yes ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-005.docx AHNS-2010-SY-MM-005] || Minutes of Meeting 19/07/10 || MH || - || Yes || Finished || - || Yes ||
