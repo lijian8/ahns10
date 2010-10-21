@@ -51,3 +51,7 @@
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-004.docx AHNS-2010-SY-MM-004] || Minutes of Meeting 28/06/10|| MH || - || Yes || Finished || - || Yes ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-005.docx AHNS-2010-SY-MM-005] || Minutes of Meeting 19/07/10 || MH || - || Yes || Finished || - || Yes ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-005.docx AHNS-2010-SY-MM-006] || Minutes of Meeting 12/10/10 || MH || - || Yes || Finished || - || Yes ||
+
+*[http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/presentations/Semester2_Pres_Temp.pptx Power Point Presentation Template]*
+
+*[http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/presentations/Presentation.docx Power Point Guide]*
