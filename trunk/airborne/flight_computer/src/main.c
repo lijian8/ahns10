@@ -329,12 +329,22 @@ void * sendUDPData(void *pointer)
 
 void* updateMCU(void *pointer)
 {
+  static FILE *fidMCU = NULL;
+  fidMCU = fopen("mcu.log","w");
   uint8_t mcuMode = 0;
   uint16_t readEngine[4];
   static int mcuDelayCount = 0;
+  // time stamp
+  struct timeval timestamp, timestamp1;
+  double startMCUTime, endMCUTime, diffMCUTime;
+  gettimeofday(&timestamp, NULL);
+  startMCUTime = timestamp.tv_sec+(timestamp.tv_usec/1000000.0);
+
   while (1)
   {
     //fprintf(stderr,"void* updateMCU()");
+    gettimeofday(&timestamp1, NULL);
+    startMCUTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
     
     // Send Data
     pthread_mutex_lock(&apMutex);
@@ -357,7 +367,7 @@ void* updateMCU(void *pointer)
       rollTrim = rcRoll;
       pitchTrim = rcPitch;
       yawTrim = rcYaw;
-      fprintf(stderr,">> RC Trims Set...");
+      //fprintf(stderr,">> RC Trims Set...");
     }
     pthread_mutex_unlock(&rcMutex);
     
@@ -369,6 +379,13 @@ void* updateMCU(void *pointer)
     fcState.commandedEngine3 = readEngine[2];
     fcState.commandedEngine4 = readEngine[3];
     pthread_mutex_unlock(&fcMut);
+
+    // calculate the mcu thread update time
+    gettimeofday(&timestamp1, NULL);
+    endMCUTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
+    diffMCUTime = endMCUTime - startMCUTime;
+    startMCUTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
+    fprintf(fidMCU,"%lf\n",1/diffMCUTime);
     
     usleep(MCU_UPDATE_DELAY*1e3);
   }
@@ -472,6 +489,7 @@ void* updateControl(void *pointer)
   // time between updates
   double startControlTime, endControlTime, diffControlTime;
   // calculate filter start time
+  FILE *fidc = fopen("control.log","w");
   gettimeofday(&timestamp1, NULL);
   startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
   while(1)
@@ -879,7 +897,7 @@ void* updateControl(void *pointer)
     endControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
     diffControlTime = endControlTime - startControlTime;
     startControlTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-    printf(">> Control update: %lf\n",1/diffControlTime);
+    fprintf(fidc,"%lf\n",1/diffControlTime);
     
     usleep(CONTROL_DELAY*1e3); 
   }
