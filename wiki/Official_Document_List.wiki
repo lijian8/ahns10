@@ -36,8 +36,8 @@
 || AHNS-2010-PL-DD-003 || Testing Apparatus Design Document || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-AP-DD-003 || Flight Computer Design Document || LO || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-TM-001 || Traceability Matrix || MH || - || No || Not Finished || No || No ||
-|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-TR-001 AHNS-2010-PL-TR-001] || Battery Logs || MK || - || No || Needs Checking || Yes || No ||
-|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-TR-002 AHNS-2010-PL-TR-002]|| Airframe Radio Control Test Report || MK || - || Yes|| Neds Checking || No || No ||
+|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-TR-001 AHNS-2010-PL-TR-001] || Battery Logs || MK || - || Yes || Needs Checking || No || No ||
+|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-TR-002 AHNS-2010-PL-TR-002]|| Airframe Radio Control Test Report || MK || - || Yes|| Needs Checking || No || No ||
 || AHNS-2010-PL-TR-003 || Platform Electronics Test Report || MK || - || No || Not Finished || No || No ||
 || AHNS-2010-CO-TR-001 || Communications Test Report || LO || - || No || Not Finished || No || No ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SE-TR-001.docx AHNS-2010-SE-TR-001] || State Estimation Update Rate Test Report || LO || - || Yes || Needs some checking || No || No ||
