@@ -31,13 +31,11 @@
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-AP-DD-001.docx AHNS-2010-AP-DD-001] || Control System Design Document || TM || - || Yes || Checks || No || No ||
 || AHNS-2010-AP-DD-002 || Mode Control Unit Design Document || TM || - || No || Not Finished || No || No ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SE-DD-001.docx AHNS-2010-SE-DD-001] || State Estimation Design Document || LO || - || Yes || Needs some checking || No || No ||
-|| AHNS-2010-LO-DD-001 || Camera Vision Design Document || LO || - || No || Not Finished || No || No ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-GC-DD-001.docx AHNS-2010-GC-DD-001 ] || Ground Control Station Design Document || TM || - || Yes || Need to be Checked. || No || No ||
 || AHNS-2010-PL-DD-002 || Electronics Enclosure Design Document || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-PL-DD-003 || Testing Apparatus Design Document || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-AP-DD-003 || Flight Computer Design Document || LO || - || No || Not Finished || No || No ||
 || AHNS-2010-SY-TM-001 || Traceability Matrix || MH || - || No || Not Finished || No || No ||
-|| AHNS-2010-SY-OM-001 || Operations Manual || MH || - || No || Not Finished || No || No ||
 || AHNS-2010-PL-TR-001 || Battery Logs || MK || - || No || Not Finished || No || No ||
 || AHNS-2010-PL-TR-002 || Airframe Radio Control Test Report || MK || - || No || Not Finished || No || No ||
 || AHNS-2010-PL-TR-004 || Platform Electronics Test Report || MK || - || No || Not Finished || No || No ||
