@@ -39,10 +39,14 @@
 NewSoftSerial compass(COMPASS_RX,COMPASS_TX);
 // compass heading (0.0 - 359.9)
 char compass_heading[10];
+// compass buffer
+char compass_buffer[10];
 // compass index
 int compass_index = 0;
 // compss heading index
 int compass_heading_index = 0;
+// compass buffer index
+int compass_buffer_index = 0;
 // compass index difference
 int compass_index_diff = 0;
 
@@ -81,7 +85,7 @@ int readCompass();
 // read the battery voltage
 int readVoltage();
 // read the overo data
-int readOvero();
+int printOvero();
 
 void setup()   
 {
@@ -106,7 +110,7 @@ void loop()
   {
       readVoltage();
       readAltitude();
-      readOvero();
+      printOvero();
       previous_time = millis();
   }
 }
@@ -119,30 +123,19 @@ int readCompass()
   {
     // read the compass character
     compass_char = compass.read();
-    // check if a P has been received, terminate compass reading
-    if (compass_char == 'P')
+    if (compass_char != '\n')
     {
-     compass_heading_index = compass_index-2;
-     compass_index = 0; 
+      compass_buffer[compass_buffer_index++] = compass_char;
     }
-    // if the index is equal or greater than 2 then receiving compass heading
-    if (compass_index >= 2)
+    if (compass_char == '\n')
     {
-      compass_heading[compass_index-2] = compass_char;
-      compass_index++;
-    }
-    // check if a $ has been received
-    if (compass_char == '$')
-    {
-      compass_char = compass.read();
-      if (compass_char == 'C')
+      compass_heading_index = compass_buffer_index; 
+      for(i=0; i<compass_heading_index; i++)
       {
-        compass_index = 2; 
-      } else 
-        {
-          compass_index = 0;
-        }
-    }  
+        compass_heading[i] = compass_buffer[i];
+      }
+      compass_buffer_index = 0;
+    }
   }
 }
 
@@ -192,57 +185,29 @@ int readAltitude()
 }
 
 // read serial data transmitted from the overo and reply with suitable response
-int readOvero()
+int printOvero()
 {
-  //if (Serial.available() > 0)
-  //{
-    overo_com = Serial.read();
-    // print the compass data
-    if (overo_com == 'C')
-    {
-      for(i=0; i<compass_heading_index; i++)
-      {
-        Serial.print(compass_heading[i],BYTE);
-      }
-      Serial.print('\n');     
-    }
-    // print the voltage data
-    if (overo_com == 'V')
-    {
-      Serial.print(bat_voltage,3);
-      Serial.print('\n'); 
-    }
-    // print the altitude data
-    if (overo_com == 'A')
-    {
-      Serial.print(altitude,3);
-      Serial.print('\n');
-    }
-    // print all arduino data
-    //if (overo_com == 'O')
-    //{
-      // print the compass data
-      Serial.print('C');
-      // format the compass data
-      // less than 10
-      if (compass_heading[1] == '.')
-      {
-        Serial.print('0'); 
-      }
-      // less than 100
-      if (compass_heading[2] == '.')
-      {
-        Serial.print('0'); 
-      }
-      for(i=0; i<compass_heading_index; i++)
-      {
-        Serial.print(compass_heading[i],BYTE);
-      }
-      Serial.print(",V");
-      Serial.print(bat_voltage,3);
-      Serial.print(",A");
-      Serial.print(altitude,3);
-      Serial.print('\n');      
-    //}
-  //}
+  // print the compass data
+  Serial.print('C');
+  // format the compass data
+  // less than 10
+  if (compass_heading[1] == '.')
+  {
+    Serial.print('0');
+    Serial.print('0'); 
+  }
+  // less than 100
+  if (compass_heading[2] == '.')
+  {
+    Serial.print('0'); 
+  }
+  for(i=0; i<compass_heading_index; i++)
+  {
+    Serial.print(compass_heading[i],BYTE);
+  }
+  Serial.print(",V");
+  Serial.print(bat_voltage,3);
+  Serial.print(",A");
+  Serial.print(altitude,3);
+  Serial.print('\n');      
 }
