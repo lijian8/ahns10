@@ -49,6 +49,7 @@ int compass_heading_index = 0;
 int compass_buffer_index = 0;
 // compass index difference
 int compass_index_diff = 0;
+int compass_received = 0;
 
 // compass character
 char compass_char = 0;
@@ -110,8 +111,11 @@ void loop()
   {
       readVoltage();
       readAltitude();
-      printOvero();
       previous_time = millis();
+  }
+  if (compass_received == 1)
+  {
+    printOvero(); 
   }
 }
 
@@ -135,6 +139,7 @@ int readCompass()
         compass_heading[i] = compass_buffer[i];
       }
       compass_buffer_index = 0;
+      compass_received = 1;
     }
   }
 }
@@ -201,7 +206,7 @@ int printOvero()
   {
     Serial.print('0'); 
   }
-  for(i=0; i<compass_heading_index; i++)
+  for(i=0; i<compass_heading_index-1; i++)
   {
     Serial.print(compass_heading[i],BYTE);
   }
@@ -209,5 +214,6 @@ int printOvero()
   Serial.print(bat_voltage,3);
   Serial.print(",A");
   Serial.print(altitude,3);
-  Serial.print('\n');      
+  Serial.print(0x0D,BYTE);
+  Serial.print(0x0A,BYTE);
 }
