@@ -27,7 +27,7 @@
 == Semester 2 ==
 
 || *Document Number* || *Document Name* || *Writer* || *Checker* || *Written* || *Status* || *Checked* || *Done* ||
-|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-DD-001.docx AHNS-2010-PL-DD-001] || Platform Electronics Design Document || MK || - || No || Needs Checking || No || No ||
+|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-DD-001.docx AHNS-2010-PL-DD-001] || Platform Electronics Design Document || MK || - || Yes || Needs Checking || No || No ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-AP-DD-001.docx AHNS-2010-AP-DD-001] || Control System Design Document || TM || - || Yes || Checks || No || No ||
 || AHNS-2010-AP-DD-002 || Mode Control Unit Design Document || TM || - || No || Not Finished || No || No ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SE-DD-001.docx AHNS-2010-SE-DD-001] || State Estimation Design Document || LO || - || Yes || Needs some checking || No || No ||
