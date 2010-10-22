@@ -342,10 +342,6 @@ void* updateMCU(void *pointer)
 
   while (1)
   {
-    //fprintf(stderr,"void* updateMCU()");
-    gettimeofday(&timestamp1, NULL);
-    startMCUTime = timestamp1.tv_sec+(timestamp1.tv_usec/1000000.0);
-    
     // Send Data
     pthread_mutex_lock(&apMutex);
     sendMCUCommands(&apMode, &apThrottle, &apRoll, &apPitch, &apYaw);
