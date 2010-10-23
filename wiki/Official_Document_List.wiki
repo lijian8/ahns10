@@ -27,8 +27,8 @@
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-DD-003.docx AHNS-2010-PL-DD-003] || Testing Apparatus Design Document || MH || - || Yes || Needs Checking || No || R ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-TR-002.docx AHNS-2010-PL-TR-002]|| Airframe Radio Control Test Report || MK || - || Yes|| Needs Checking || No || S ||
 || AHNS-2010-PL-TR-003 || Platform Electronics Test Report || MK || - || No || Not Finished || No || T ||
-|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SE-TR-001.docx AHNS-2010-SE-TR-001] || State Estimation Update Rate Test Report || LO || - || Yes || Needs some checking || No || V ||
-|| AHNS-2010-SE-TR-002 || Vicon Test Report || LO || - || No || Not Finished || No || U ||
+|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SE-TR-001.docx AHNS-2010-SE-TR-001] || State Estimation Update Rate Test Report || LO || - || Yes || Needs some checking || No || U ||
+|| AHNS-2010-SE-TR-002 || Vicon Test Report || LO || - || No || Not Finished || No || V ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-AP-TR-001.docx AHNS-2010-AP-TR-001] || Control System Update Rate Test Report || TM || - || Yes || Needs Checking || No || W ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-GC-TR-001.docx AHNS-2010-GC-TR-001] || Ground Control System Test Report || TM || - || Yes || checks || No || X ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-AP-TR-002.docx AHNS-2010-AP-TR-002] || Flight Computer Test Report || LO || - || Yes || Checking ... HA || No || Y ||
