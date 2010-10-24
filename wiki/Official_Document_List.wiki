@@ -34,9 +34,8 @@
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-AP-TR-002.docx AHNS-2010-AP-TR-002] || Flight Computer Test Report || LO || - || Yes || Checking ... HA || No || Y ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-PL-TR-001.docx AHNS-2010-PL-TR-001] || Battery Logs || MK || - || Yes || Needs Checking || No || Z ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-TR-001.docx AHNS-2010-SY-TR-001] || Attitude with Gyro Test Report || MH || - || No || Not Finished || No || AA ||
-|| AHNS-2010-SY-TR-002 || Attitude with IMU Test Report || MH || - || No || Not Finished || No || BB ||
+|| [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-TR-002.docx AHNS-2010-SY-TR-002] || Attitude with IMU Test Report || MH || - || No || Not Finished || No || BB ||
 || AHNS-2010-SY-TR-003 || Altitude with Vicon Test Report || MH || - || No || Not Finished || No || CC ||
-|| AHNS-2010-SY-TR-004 || Altitude with Ultrasonic Test Report || MH || - || No || Not Finished || No || DD ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-TM-001.docx AHNS-2010-SY-TM-001] || Traceability Matrix || MH || - || No || Needs all your Lessons Learnt || No || EE ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-001.docx AHNS-2010-SY-MM-001] || Minutes of Meeting 20/12/09 || MH || - || Yes || Finished. || - || FF ||
 || [http://code.google.com/p/ahns10/source/browse/docproject/official_ahns/AHNS-2010-SY-MM-002.docx AHNS-2010-SY-MM-002] || Minutes of Meeting 10/04/10 || MH || - || Yes || Finished. || - || GG ||
