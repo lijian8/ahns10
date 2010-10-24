@@ -6,7 +6,7 @@ Model {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.10"
+    ComputedModelVersion    "1.12"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -23,11 +23,11 @@ Model {
   Creator		  "tlmolloy"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "tlmolloy"
+  LastModifiedBy	  "Tim"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Jun 21 21:56:05 2010"
-  RTWModifiedTimeStamp	  199058058
-  ModelVersionFormat	  "1.%<AutoIncrement:10>"
+  LastModifiedDate	  "Wed Oct 20 19:36:46 2010"
+  RTWModifiedTimeStamp	  209504205
+  ModelVersionFormat	  "1.%<AutoIncrement:12>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -719,7 +719,7 @@ Model {
   }
   System {
     Name		    "altitude_control_diagrams"
-    Location		    [851, 148, 1869, 1025]
+    Location		    [518, 164, 1536, 1041]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -798,7 +798,7 @@ Model {
       System {
 	Name			"Motor Controller"
 	Location		[1114, 722, 1612, 1022]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -925,7 +925,7 @@ Model {
       System {
 	Name			"Plant Dynamics"
 	Location		[40, 88, 538, 388]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1049,7 +1049,7 @@ Model {
       System {
 	Name			"State Estimation Subsystem"
 	Location		[205, 634, 703, 934]
-	Open			on
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -1161,9 +1161,9 @@ Model {
     }
     Block {
       BlockType		      Constant
-      Name		      "Weight"
+      Name		      "Weight Trim/Accumulator"
       SID		      58
-      Position		      [130, 145, 160, 175]
+      Position		      [130, 160, 160, 190]
       BackgroundColor	      "magenta"
       DropShadow	      on
       Value		      "m*g"
@@ -1286,7 +1286,7 @@ Model {
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Weight"
+      SrcBlock		      "Weight Trim/Accumulator"
       SrcPort		      1
       Points		      [415, 0]
       DstBlock		      "Sum1"

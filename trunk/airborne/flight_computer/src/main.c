@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
   // initialise the Kalman filter
   //attitudeFilterInitialise();
   // all systems operational - begin the flight computer
-  if (sensorReady && mcuReady)
+  //if (sensorReady && mcuReady)
   {
     // create the flight computer threads
     pthread_t udpThread;

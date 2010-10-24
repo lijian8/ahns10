@@ -80,15 +80,15 @@ for ii = 1:2:2*size(resultRanges,1)
     axis([resultRanges(kk,:) rateRanges(kk,:)])
     
     subplot(2,1,2)
-    plot(t,rad2deg(theta))
-    grid on;
-    legend({'\theta'},'Orientation','Horizontal','Location','NorthEast')
-    ylabel('Pitch Angle \theta [deg]')
-    xlabel('Time t [sec]')
-    axis([resultRanges(kk,:) angleRanges(kk,:)])
-    
-    figure(ii+1)
-    subplot(2,1,1)
+%     plot(t,rad2deg(theta))
+%     grid on;
+%     legend({'\theta'},'Orientation','Horizontal','Location','NorthEast')
+%     ylabel('Pitch Angle \theta [deg]')
+%     xlabel('Time t [sec]')
+%     axis([resultRanges(kk,:) angleRanges(kk,:)])
+%     
+%     figure(ii+1)
+%     subplot(2,1,1)
     plot(t,rad2deg(p),t_ap,(ref_p),'LineWidth',2)
     title(['Roll Control : ' titles{kk}])
     grid on;
@@ -97,12 +97,12 @@ for ii = 1:2:2*size(resultRanges,1)
     xlabel('Time t [sec]')
     axis([resultRanges(kk,:) rateRanges(kk,:)])
     
-    subplot(2,1,2)
-    plot(t,rad2deg(phi))
-    grid on;
-    legend({'\phi'},'Orientation','Horizontal','Location','NorthEast')
-    ylabel('Roll Angle \phi [deg]')
-    xlabel('Time t [sec]')
-    axis([resultRanges(kk,:) angleRanges(kk,:)])
-    kk = kk + 1;
+%     subplot(2,1,2)
+%     plot(t,rad2deg(phi))
+%     grid on;
+%     legend({'\phi'},'Orientation','Horizontal','Location','NorthEast')
+%     ylabel('Roll Angle \phi [deg]')
+%     xlabel('Time t [sec]')
+%     axis([resultRanges(kk,:) angleRanges(kk,:)])
+     kk = kk + 1;
 end

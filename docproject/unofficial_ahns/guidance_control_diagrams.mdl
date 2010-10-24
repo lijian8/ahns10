@@ -1,12 +1,12 @@
 Model {
   Name			  "guidance_control_diagrams"
-  Version		  7.5
+  Version		  7.4
   MdlSubVersion		  0
   GraphicalInterface {
     NumRootInports	    0
     NumRootOutports	    0
     ParameterArgumentNames  ""
-    ComputedModelVersion    "1.24"
+    ComputedModelVersion    "1.57"
     NumModelReferences	    0
     NumTestPointedSignals   0
   }
@@ -23,11 +23,11 @@ Model {
   Creator		  "tlmolloy"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "tlmolloy"
+  LastModifiedBy	  "Tim"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue Oct 19 10:42:24 2010"
-  RTWModifiedTimeStamp	  209385742
-  ModelVersionFormat	  "1.%<AutoIncrement:24>"
+  LastModifiedDate	  "Sun Oct 24 19:23:06 2010"
+  RTWModifiedTimeStamp	  209848984
+  ModelVersionFormat	  "1.%<AutoIncrement:57>"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
@@ -102,13 +102,13 @@ Model {
     Dimension		    1
     Simulink.ConfigSet {
       $ObjectID		      1
-      Version		      "1.10.0"
+      Version		      "1.6.0"
       Array {
 	Type			"Handle"
 	Dimension		8
 	Simulink.SolverCC {
 	  $ObjectID		  2
-	  Version		  "1.10.0"
+	  Version		  "1.6.0"
 	  StartTime		  "0.0"
 	  StopTime		  "10.0"
 	  AbsTol		  "auto"
@@ -128,7 +128,6 @@ Model {
 	  SolverMode		  "Auto"
 	  Solver		  "ode45"
 	  SolverName		  "ode45"
-	  SolverJacobianMethodControl "auto"
 	  ShapePreserveControl	  "DisableAll"
 	  ZeroCrossControl	  "UseLocalSettings"
 	  ZeroCrossAlgorithm	  "Nonadaptive"
@@ -141,7 +140,7 @@ Model {
 	}
 	Simulink.DataIOCC {
 	  $ObjectID		  3
-	  Version		  "1.10.0"
+	  Version		  "1.6.0"
 	  Decimation		  "1"
 	  ExternalInput		  "[t, u]"
 	  FinalStateName	  "xFinal"
@@ -156,7 +155,6 @@ Model {
 	  SaveOutput		  on
 	  SaveState		  off
 	  SignalLogging		  on
-	  DSMLogging		  on
 	  InspectSignalLogs	  off
 	  SaveTime		  on
 	  ReturnWorkspaceOutputs  off
@@ -164,7 +162,6 @@ Model {
 	  TimeSaveName		  "tout"
 	  OutputSaveName	  "yout"
 	  SignalLoggingName	  "logsout"
-	  DSMLoggingName	  "dsmout"
 	  OutputOption		  "RefineOutputTimes"
 	  OutputTimes		  "[]"
 	  ReturnWorkspaceOutputsName "out"
@@ -172,7 +169,7 @@ Model {
 	}
 	Simulink.OptimizationCC {
 	  $ObjectID		  4
-	  Version		  "1.10.0"
+	  Version		  "1.6.0"
 	  Array {
 	    Type		    "Cell"
 	    Dimension		    7
@@ -198,7 +195,6 @@ Model {
 	  EnforceIntegerDowncast  on
 	  ExpressionFolding	  on
 	  BooleansAsBitfields	  off
-	  BitfieldContainerType	  "uint_T"
 	  EnableMemcpy		  on
 	  MemcpyThreshold	  64
 	  PassReuseOutputArgsAs	  "Structure reference"
@@ -218,14 +214,13 @@ Model {
 	  EfficientMapNaN2IntZero on
 	  OptimizeModelRefInitCode off
 	  LifeSpan		  "inf"
-	  MaxStackSize		  "Inherit from target"
 	  BufferReusableBoundary  on
 	  SimCompilerOptimization "Off"
 	  AccelVerboseBuild	  off
 	}
 	Simulink.DebuggingCC {
 	  $ObjectID		  5
-	  Version		  "1.10.0"
+	  Version		  "1.6.0"
 	  RTPrefix		  "error"
 	  ConsistencyChecking	  "none"
 	  ArrayBoundsChecking	  "none"
@@ -294,14 +289,12 @@ Model {
 	  StateNameClashWarn	  "warning"
 	  SimStateInterfaceChecksumMismatchMsg "warning"
 	  StrictBusMsg		  "Warning"
-	  BusNameAdapt		  "WarnAndRepair"
-	  NonBusSignalsTreatedAsBus "none"
 	  LoggingUnavailableSignals "error"
 	  BlockIODiagnostic	  "none"
 	}
 	Simulink.HardwareCC {
 	  $ObjectID		  6
-	  Version		  "1.10.0"
+	  Version		  "1.6.0"
 	  ProdBitPerChar	  8
 	  ProdBitPerShort	  16
 	  ProdBitPerInt		  32
@@ -328,21 +321,16 @@ Model {
 	}
 	Simulink.ModelReferenceCC {
 	  $ObjectID		  7
-	  Version		  "1.10.0"
+	  Version		  "1.6.0"
 	  UpdateModelReferenceTargets "IfOutOfDateOrStructuralChange"
 	  CheckModelReferenceTargetMessage "error"
-	  EnableParallelModelReferenceBuilds off
-	  ParallelModelReferenceMATLABWorkerInit "None"
 	  ModelReferenceNumInstancesAllowed "Multi"
-	  PropagateVarSize	  "Infer from blocks in model"
 	  ModelReferencePassRootInputsByReference on
 	  ModelReferenceMinAlgLoopOccurrences off
-	  PropagateSignalLabelsOutOfModel off
-	  SupportModelReferenceSimTargetCustomCode off
 	}
 	Simulink.SFSimCC {
 	  $ObjectID		  8
-	  Version		  "1.10.0"
+	  Version		  "1.6.0"
 	  SFSimEnableDebug	  on
 	  SFSimOverflowDetection  on
 	  SFSimEcho		  on
@@ -356,7 +344,7 @@ Model {
 	Simulink.RTWCC {
 	  $BackupClass		  "Simulink.RTWCC"
 	  $ObjectID		  9
-	  Version		  "1.10.0"
+	  Version		  "1.6.0"
 	  Array {
 	    Type		    "Cell"
 	    Dimension		    6
@@ -399,13 +387,12 @@ Model {
 	  GenerateCodeInfo	  off
 	  RTWCompilerOptimization "Off"
 	  CheckMdlBeforeBuild	  "Off"
-	  CustomRebuildMode	  "OnUpdate"
 	  Array {
 	    Type		    "Handle"
 	    Dimension		    2
 	    Simulink.CodeAppCC {
 	      $ObjectID		      10
-	      Version		      "1.10.0"
+	      Version		      "1.6.0"
 	      Array {
 		Type			"Cell"
 		Dimension		19
@@ -465,7 +452,7 @@ Model {
 	    Simulink.GRTTargetCC {
 	      $BackupClass	      "Simulink.TargetCC"
 	      $ObjectID		      11
-	      Version		      "1.10.0"
+	      Version		      "1.6.0"
 	      Array {
 		Type			"Cell"
 		Dimension		17
@@ -494,7 +481,6 @@ Model {
 	      TargetFunctionLibrary   "ANSI_C"
 	      UtilityFuncGeneration   "Auto"
 	      ERTMultiwordTypeDef     "System defined"
-	      ERTCodeCoverageTool     "None"
 	      ERTMultiwordLength      256
 	      MultiwordLength	      2048
 	      GenerateFullHeader      on
@@ -602,7 +588,6 @@ Model {
       LockScale		      off
       SampleTime	      "inf"
       FramePeriod	      "inf"
-      PreserveConstantTs      off
     }
     Block {
       BlockType		      DataTypeConversion
@@ -643,7 +628,7 @@ Model {
       SignalType	      "auto"
       SamplingMode	      "auto"
       LatchByDelayingOutsideSignal off
-      LatchInputForFeedbackSignals off
+      LatchByCopyingInsideSignal off
       Interpolate	      on
     }
     Block {
@@ -698,10 +683,10 @@ Model {
   }
   System {
     Name		    "guidance_control_diagrams"
-    Location		    [174, 101, 1614, 951]
+    Location		    [2, 74, 1438, 839]
     Open		    on
     ModelBrowserVisibility  off
-    ModelBrowserWidth	    200
+    ModelBrowserWidth	    212
     ScreenColor		    "white"
     PaperOrientation	    "landscape"
     PaperPositionMode	    "auto"
@@ -710,15 +695,15 @@ Model {
     TiledPaperMargins	    [1.270000, 1.270000, 1.270000, 1.270000]
     TiledPageScale	    1
     ShowPageBoundaries	    off
-    ZoomFactor		    "108"
+    ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    101
+    SIDHighWatermark	    109
     Block {
       BlockType		      SubSystem
       Name		      "Altitude Control"
       SID		      62
       Ports		      [2, 1]
-      Position		      [190, 77, 260, 173]
+      Position		      [315, 132, 385, 228]
       BackgroundColor	      "darkGreen"
       DropShadow	      on
       LibraryVersion	      "1.762"
@@ -782,9 +767,9 @@ Model {
     }
     Block {
       BlockType		      DataTypeConversion
-      Name		      "Duty Cycle to Yaw"
+      Name		      "Duty Cycle to Setpoint"
       SID		      99
-      Position		      [190, 433, 265, 467]
+      Position		      [455, 573, 530, 607]
       BackgroundColor	      "orange"
       DropShadow	      on
       OutDataType	      "fixdt(1, 16)"
@@ -794,10 +779,10 @@ Model {
     }
     Block {
       BlockType		      SubSystem
-      Name		      "Motor Controller"
+      Name		      "Mode Control Unit (MCU)"
       SID		      21
-      Ports		      [4, 4]
-      Position		      [590, 213, 690, 322]
+      Ports		      [5, 5]
+      Position		      [905, 273, 1005, 377]
       BackgroundColor	      "darkGreen"
       DropShadow	      on
       LibraryVersion	      "1.762"
@@ -809,9 +794,9 @@ Model {
       RequestExecContextInheritance off
       MaskHideContents	      off
       System {
-	Name			"Motor Controller"
-	Location		[1085, 581, 1583, 881]
-	Open			on
+	Name			"Mode Control Unit (MCU)"
+	Location		[900, 589, 1398, 904]
+	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
 	ScreenColor		"white"
@@ -825,9 +810,19 @@ Model {
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
+	  Name			  "RC Rx"
+	  SID			  103
+	  Position		  [145, 48, 175, 62]
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
+	Block {
+	  BlockType		  Inport
 	  Name			  "kU1"
 	  SID			  22
 	  Position		  [110, 103, 140, 117]
+	  Port			  "2"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "fixdt(1, 16)"
 	  OutScaling		  "2^0"
@@ -837,7 +832,7 @@ Model {
 	  Name			  "kU2"
 	  SID			  59
 	  Position		  [110, 148, 140, 162]
-	  Port			  "2"
+	  Port			  "3"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "fixdt(1, 16)"
 	  OutScaling		  "2^0"
@@ -847,7 +842,7 @@ Model {
 	  Name			  "kU3"
 	  SID			  60
 	  Position		  [110, 188, 140, 202]
-	  Port			  "3"
+	  Port			  "4"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "fixdt(1, 16)"
 	  OutScaling		  "2^0"
@@ -857,7 +852,7 @@ Model {
 	  Name			  "kU4"
 	  SID			  61
 	  Position		  [110, 233, 140, 247]
-	  Port			  "4"
+	  Port			  "5"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "fixdt(1, 16)"
 	  OutScaling		  "2^0"
@@ -901,6 +896,16 @@ Model {
 	  OutDataType		  "fixdt(1, 16)"
 	  OutScaling		  "2^0"
 	}
+	Block {
+	  BlockType		  Outport
+	  Name			  "RC USART"
+	  SID			  104
+	  Position		  [290, 33, 320, 47]
+	  Port			  "5"
+	  IconDisplay		  "Port number"
+	  OutDataType		  "fixdt(1, 16)"
+	  OutScaling		  "2^0"
+	}
 	Line {
 	  SrcBlock		  "kU1"
 	  SrcPort		  1
@@ -926,6 +931,13 @@ Model {
 	  DstBlock		  "kOmega4"
 	  DstPort		  1
 	}
+	Line {
+	  SrcBlock		  "RC Rx"
+	  SrcPort		  1
+	  Points		  [95, 0]
+	  DstBlock		  "RC USART"
+	  DstPort		  1
+	}
       }
     }
     Block {
@@ -933,7 +945,7 @@ Model {
       Name		      "Pitch Control"
       SID		      89
       Ports		      [2, 1]
-      Position		      [405, 297, 475, 393]
+      Position		      [675, 362, 745, 458]
       BackgroundColor	      "darkGreen"
       DropShadow	      on
       LibraryVersion	      "1.762"
@@ -1000,7 +1012,7 @@ Model {
       Name		      "Plant Dynamics"
       SID		      15
       Ports		      [4, 1]
-      Position		      [745, 220, 825, 315]
+      Position		      [1145, 275, 1220, 355]
       BackgroundColor	      "cyan"
       DropShadow	      on
       LibraryVersion	      "1.762"
@@ -1120,10 +1132,10 @@ Model {
     }
     Block {
       BlockType		      DiscretePulseGenerator
-      Name		      "RC PWM Pulse"
-      SID		      98
+      Name		      "RC Rx"
+      SID		      102
       Ports		      [0, 1]
-      Position		      [60, 434, 90, 466]
+      Position		      [125, 74, 155, 106]
       BackgroundColor	      "magenta"
       DropShadow	      on
       PulseType		      "Time based"
@@ -1138,7 +1150,7 @@ Model {
       Name		      "Roll Control"
       SID		      85
       Ports		      [2, 1]
-      Position		      [405, 177, 475, 273]
+      Position		      [675, 237, 745, 333]
       BackgroundColor	      "darkGreen"
       DropShadow	      on
       LibraryVersion	      "1.762"
@@ -1205,7 +1217,7 @@ Model {
       Name		      "State Estimation Subsystem"
       SID		      18
       Ports		      [1, 1]
-      Position		      [405, 559, 505, 601]
+      Position		      [585, 699, 685, 741]
       BlockMirror	      on
       BackgroundColor	      "yellow"
       DropShadow	      on
@@ -1259,11 +1271,74 @@ Model {
       }
     }
     Block {
+      BlockType		      Reference
+      Name		      "Switch"
+      SID		      109
+      Ports		      [2, 1]
+      Position		      [585, 542, 610, 573]
+      LibraryVersion	      "1.762"
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      sw		      "1"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Switch1"
+      SID		      105
+      Ports		      [2, 1]
+      Position		      [585, 297, 610, 328]
+      LibraryVersion	      "1.762"
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      sw		      "1"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
+      BlockType		      Reference
+      Name		      "Switch2"
+      SID		      106
+      Ports		      [2, 1]
+      Position		      [585, 367, 610, 398]
+      LibraryVersion	      "1.762"
+      SourceBlock	      "simulink/Signal\nRouting/Manual Switch"
+      SourceType	      "Manual Switch"
+      ShowPortLabels	      "FromPortIcon"
+      SystemSampleTime	      "-1"
+      FunctionWithSeparateData off
+      RTWMemSecFuncInitTerm   "Inherit from model"
+      RTWMemSecFuncExecute    "Inherit from model"
+      RTWMemSecDataConstants  "Inherit from model"
+      RTWMemSecDataInternal   "Inherit from model"
+      RTWMemSecDataParameters "Inherit from model"
+      sw		      "1"
+      action		      "0"
+      varsize		      off
+    }
+    Block {
       BlockType		      SubSystem
       Name		      "Yaw Control"
       SID		      93
       Ports		      [2, 1]
-      Position		      [405, 427, 475, 523]
+      Position		      [675, 487, 745, 583]
       BackgroundColor	      "darkGreen"
       DropShadow	      on
       LibraryVersion	      "1.762"
@@ -1291,18 +1366,18 @@ Model {
 	ZoomFactor		"100"
 	Block {
 	  BlockType		  Inport
-	  Name			  "Yaw Setpoint"
-	  SID			  94
-	  Position		  [110, 158, 140, 172]
+	  Name			  "Yaw"
+	  SID			  95
+	  Position		  [110, 103, 140, 117]
 	  IconDisplay		  "Port number"
 	  OutDataType		  "fixdt(1, 16)"
 	  OutScaling		  "2^0"
 	}
 	Block {
 	  BlockType		  Inport
-	  Name			  "Yaw"
-	  SID			  95
-	  Position		  [110, 103, 140, 117]
+	  Name			  "Yaw Setpoint"
+	  SID			  94
+	  Position		  [110, 158, 140, 172]
 	  Port			  "2"
 	  IconDisplay		  "Port number"
 	  OutDataType		  "fixdt(1, 16)"
@@ -1327,9 +1402,20 @@ Model {
     }
     Block {
       BlockType		      Constant
+      Name		      "Yaw Setpoint"
+      SID		      108
+      Position		      [240, 535, 270, 565]
+      BackgroundColor	      "magenta"
+      DropShadow	      on
+      Value		      "psi"
+      OutDataType	      "fixdt(1, 16)"
+      OutScaling	      "2^0"
+    }
+    Block {
+      BlockType		      Constant
       Name		      "x Setpoint"
       SID		      73
-      Position		      [60, 225, 90, 255]
+      Position		      [240, 275, 270, 305]
       BackgroundColor	      "magenta"
       DropShadow	      on
       Value		      "x"
@@ -1341,7 +1427,7 @@ Model {
       Name		      "x,y Control"
       SID		      74
       Ports		      [3, 2]
-      Position		      [190, 216, 305, 354]
+      Position		      [315, 267, 430, 413]
       BackgroundColor	      "darkGreen"
       DropShadow	      on
       LibraryVersion	      "1.762"
@@ -1427,7 +1513,7 @@ Model {
       BlockType		      Constant
       Name		      "y Setpoint"
       SID		      80
-      Position		      [60, 315, 90, 345]
+      Position		      [240, 375, 270, 405]
       BackgroundColor	      "magenta"
       DropShadow	      on
       Value		      "y"
@@ -1438,7 +1524,7 @@ Model {
       BlockType		      Constant
       Name		      "z Setpoint"
       SID		      32
-      Position		      [65, 85, 95, 115]
+      Position		      [245, 140, 275, 170]
       BackgroundColor	      "magenta"
       DropShadow	      on
       Value		      "z"
@@ -1449,30 +1535,30 @@ Model {
       Labels		      [2, 0]
       SrcBlock		      "Plant Dynamics"
       SrcPort		      1
-      Points		      [35, 0; 0, 310]
+      Points		      [85, 0; 0, 405]
       DstBlock		      "State Estimation Subsystem"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Motor Controller"
+      SrcBlock		      "Mode Control Unit (MCU)"
       SrcPort		      1
       DstBlock		      "Plant Dynamics"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Motor Controller"
+      SrcBlock		      "Mode Control Unit (MCU)"
       SrcPort		      2
       DstBlock		      "Plant Dynamics"
       DstPort		      2
     }
     Line {
-      SrcBlock		      "Motor Controller"
+      SrcBlock		      "Mode Control Unit (MCU)"
       SrcPort		      3
       DstBlock		      "Plant Dynamics"
       DstPort		      3
     }
     Line {
-      SrcBlock		      "Motor Controller"
+      SrcBlock		      "Mode Control Unit (MCU)"
       SrcPort		      4
       DstBlock		      "Plant Dynamics"
       DstPort		      4
@@ -1480,19 +1566,19 @@ Model {
     Line {
       SrcBlock		      "State Estimation Subsystem"
       SrcPort		      1
-      Points		      [-375, 0; 0, -80]
+      Points		      [-375, 0; 0, -210]
       Branch {
-	Points			[0, -130]
+	Points			[0, -75]
 	Branch {
-	  Points		  [0, -85]
+	  Points		  [0, -95]
 	  Branch {
 	    DstBlock		    "x,y Control"
 	    DstPort		    2
 	  }
 	  Branch {
-	    Points		    [0, -85]
+	    Points		    [0, -80]
 	    Branch {
-	      Points		      [0, -50]
+	      Points		      [0, -55]
 	      DstBlock		      "Altitude Control"
 	      DstPort		      2
 	    }
@@ -1509,16 +1595,16 @@ Model {
       }
       Branch {
 	DstBlock		"Yaw Control"
-	DstPort			2
+	DstPort			1
       }
     }
     Line {
-      Labels		      [3, 0]
+      Labels		      [2, 0]
       SrcBlock		      "Altitude Control"
       SrcPort		      1
-      Points		      [0, -5; 270, 0; 0, 110]
-      DstBlock		      "Motor Controller"
-      DstPort		      1
+      Points		      [450, 0; 0, 125]
+      DstBlock		      "Mode Control Unit (MCU)"
+      DstPort		      2
     }
     Line {
       SrcBlock		      "z Setpoint"
@@ -1539,55 +1625,106 @@ Model {
       DstPort		      3
     }
     Line {
-      SrcBlock		      "x,y Control"
+      SrcBlock		      "Roll Control"
+      SrcPort		      1
+      Points		      [80, 0; 0, 40]
+      DstBlock		      "Mode Control Unit (MCU)"
+      DstPort		      3
+    }
+    Line {
+      SrcBlock		      "Pitch Control"
+      SrcPort		      1
+      Points		      [80, 0; 0, -65]
+      DstBlock		      "Mode Control Unit (MCU)"
+      DstPort		      4
+    }
+    Line {
+      Labels		      [1, 0]
+      SrcBlock		      "Yaw Control"
+      SrcPort		      1
+      Points		      [95, 0; 0, -170]
+      DstBlock		      "Mode Control Unit (MCU)"
+      DstPort		      5
+    }
+    Line {
+      SrcBlock		      "Duty Cycle to Setpoint"
+      SrcPort		      1
+      Points		      [10, 0]
+      Branch {
+	Labels			[2, 0]
+	Points			[5, 0; 0, -270]
+	DstBlock		"Switch1"
+	DstPort			2
+      }
+      Branch {
+	Points			[15, 0]
+	Branch {
+	  Points		  [0, -200]
+	  DstBlock		  "Switch2"
+	  DstPort		  2
+	}
+	Branch {
+	  Points		  [10, 0]
+	  DstBlock		  "Switch"
+	  DstPort		  2
+	}
+      }
+    }
+    Line {
+      SrcBlock		      "RC Rx"
+      SrcPort		      1
+      Points		      [730, 0]
+      DstBlock		      "Mode Control Unit (MCU)"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Mode Control Unit (MCU)"
+      SrcPort		      5
+      Points		      [100, 0; 0, 295; -785, 0; 0, -70]
+      DstBlock		      "Duty Cycle to Setpoint"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Switch1"
       SrcPort		      1
       DstBlock		      "Roll Control"
       DstPort		      2
     }
     Line {
-      SrcBlock		      "Roll Control"
+      SrcBlock		      "x,y Control"
       SrcPort		      1
-      Points		      [40, 0; 0, 30]
-      DstBlock		      "Motor Controller"
-      DstPort		      2
-    }
-    Line {
-      SrcBlock		      "Pitch Control"
-      SrcPort		      1
-      Points		      [40, 0; 0, -65]
-      DstBlock		      "Motor Controller"
-      DstPort		      3
+      DstBlock		      "Switch1"
+      DstPort		      1
     }
     Line {
       SrcBlock		      "x,y Control"
       SrcPort		      2
+      DstBlock		      "Switch2"
+      DstPort		      1
+    }
+    Line {
+      SrcBlock		      "Switch2"
+      SrcPort		      1
       DstBlock		      "Pitch Control"
       DstPort		      1
     }
     Line {
-      SrcBlock		      "Yaw Control"
-      SrcPort		      1
-      Points		      [0, -5; 55, 0; 0, -165]
-      DstBlock		      "Motor Controller"
-      DstPort		      4
-    }
-    Line {
-      SrcBlock		      "RC PWM Pulse"
-      SrcPort		      1
-      DstBlock		      "Duty Cycle to Yaw"
-      DstPort		      1
-    }
-    Line {
-      SrcBlock		      "Duty Cycle to Yaw"
+      SrcBlock		      "Switch"
       SrcPort		      1
       DstBlock		      "Yaw Control"
+      DstPort		      2
+    }
+    Line {
+      SrcBlock		      "Yaw Setpoint"
+      SrcPort		      1
+      DstBlock		      "Switch"
       DstPort		      1
     }
     Annotation {
-      Position		      [8, 195]
+      Position		      [188, 255]
     }
     Annotation {
-      Position		      [10, 195]
+      Position		      [190, 255]
     }
   }
 }
