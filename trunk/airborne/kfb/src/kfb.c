@@ -42,7 +42,7 @@ double altitude_current = 0.0;
 // euler angle storage (calculation of filtered rate)
 double angle_previous[3];
 // calibration flag
-int calib = 0;
+int calib = 1;
 // calibration cycle counter
 int cyc_count = 0;
 // phi and theta angle storage for calibration
@@ -175,15 +175,15 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   // LPF the accelerometer values
   accLPF(accXr,accYr,accZr,dT);
   //*rateZf = (*rateZr)*M_PI/180;
-  //rateLPF(rateXf,rateYf,rateZf);
+  //rateLPF(rateXr,rateYr,rateZr,rateXf,rateYf,rateZf);
   // Bound and LPF the compass value
   compassLPF(compassZr);
   // time update for phi axis
-  kFilterTimeUpdate(&phi_axis,rateXf,dT);
+  kFilterTimeUpdate(&phi_axis,rateXr,dT);
   // time update for theta axis
-  kFilterTimeUpdate(&theta_axis,rateYf,dT);
+  kFilterTimeUpdate(&theta_axis,rateYr,dT);
   // time update for psi axis
-  kFilterTimeUpdate(&psi_axis,rateZf,dT);
+  kFilterTimeUpdate(&psi_axis,rateZr,dT);
   // calculate the coarse angle for phi from the sensors
   phi_axis.Y = coarseRollAngle(&accXf,&accYf,&accZf);
   // measurement update for phi axis
@@ -197,7 +197,7 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   // allocate measurement angle for the psi axis
   psi_axis.Y = *compassZr;
   // measurement update for psi axis
-  kFilterMeasureUpdate(&psi_axis);
+  kFilterMeasurePsiUpdate(&psi_axis);
   // assign new phi angle (radians)
   *phif = (phi_axis.X[0]-phi_axis.offset)*M_PI/180;
   // assign new theta angle (radians)
@@ -211,10 +211,10 @@ int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accX
   // LPF the rate values (raw rate for the psi rate)
   //*rateZf = (*rateZr)*M_PI/180;
   // LPF the rate values (all raw)
-  *rateXf = (*rateXr)*M_PI/180;
-  *rateYf = (*rateYr)*M_PI/180;
-  *rateZf = (*rateZr)*M_PI/180;
-  rateLPF(rateXf,rateYf,rateZf);
+  //*rateXf = (*rateXr)*M_PI/180;
+  //*rateYf = (*rateYr)*M_PI/180;
+  //*rateZf = (*rateZr)*M_PI/180;
+  //rateLPF(rateXf,rateYf,rateZf);
   // update the previous angles
   angle_previous[0] = *phif;
   angle_previous[1] = *thetaf;
@@ -267,6 +267,41 @@ int kFilterMeasureUpdate (axis *axis_t)
   return 1;
 }
 
+// Kalman filter measurement update for psi axis
+int kFilterMeasurePsiUpdate (axis *axis_t)
+{
+  // compute the error term
+  axis_t->S = axis_t->P[0][0] + axis_t->R;
+  // calculate the Kalman gain
+  axis_t->L[0] = axis_t->P[0][0] / axis_t->S;
+  axis_t->L[1] = axis_t->P[1][0] / axis_t->S;
+  // update the covariance matrix (careful of computation order)
+  axis_t->P[1][0] -= axis_t->L[1]*axis_t->P[0][0];
+  axis_t->P[1][1] -= axis_t->L[1]*axis_t->P[0][1];
+  axis_t->P[0][0] -= axis_t->L[0]*axis_t->P[0][0];
+  axis_t->P[0][1] -= axis_t->L[0]*axis_t->P[0][1];
+  // calculate the difference between prediction and measurement (perform psi quadrant checking)
+  if ((axis_t->Y - axis_t->X[0])>180.0) // ie the measurement is in < 360 and predict is above 0
+  {
+    axis_t->err = axis_t->Y - (360.0+axis_t->X[0]);
+  } else if ((axis_t->Y - axis_t->X[0])<(-180.0)) // ie the measurement is above 0 and predict is < 360
+         {
+           axis_t->err = axis_t->Y + (360.0-axis_t->X[0]);
+         } else { // normal update
+                  axis_t->err = axis_t->Y - axis_t->X[0];
+                }
+  // update the x states (angle and gyro bias)
+  axis_t->X[0] = fmod((axis_t->X[0] + (axis_t->err*axis_t->L[0])),360.0);
+  axis_t->X[1] += axis_t->err*axis_t->L[1];
+  // handle negative sign
+  if (axis_t->X[0] < 0.0)
+  {
+    axis_t->X[0] += 360.0;
+  }
+  // end measurement update
+  return 1;
+}
+
 // function to return the coarse pitch angle based on the accelerometer values (degrees)
 double coarsePitchAngle(double *accXr, double *accYr, double *accZr)
 {
@@ -296,11 +331,11 @@ int accLPF (double *accXr, double *accYr, double *accZr, double dT)
 }
 
 // function to low pass filter the rates values
-int rateLPF(double *rateXf, double *rateYf, double *rateZf)
+int rateLPF(double *rateXr, double *rateYr, double *rateZr, double *rateXf, double *rateYf, double *rateZf)
 {
-  rate_current[0] = *rateXf;
-  rate_current[1] = *rateYf;
-  rate_current[2] = *rateZf;
+  rate_current[0] = *rateXr;
+  rate_current[1] = *rateYr;
+  rate_current[2] = *rateZr;
   // LPF the phi rate
   *rateXf = rate_previous[0]*(1-RATEX_ALPHA) + (rate_current[0] * RATEX_ALPHA);
   // LPF the theta rate

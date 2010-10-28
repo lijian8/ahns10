@@ -37,7 +37,7 @@
 // Kalman filter constants for psi
 #define PSI_ANGLE_Q 0.057296
 #define PSI_GYRO_Q 0.171887
-#define PSI_R 5.0
+#define PSI_R 15.0
 #define PSI_DIRECTION -1.0
 
 // Euler angle calibration cycles
@@ -54,13 +54,13 @@
 #define RATEZ_ALPHA 1.0
 
 // LPF alpha constant for compass reading
-#define COMPASS_ALPHA 0.1
+#define COMPASS_ALPHA 1.0
 
 // LPF alpha constant for ultrasonic sensor
-#define ALT_ALPHA 0.07
+#define ALT_ALPHA 0.17
 
 // Data logger flag
-#define DATA_LOGGER 0
+#define DATA_LOGGER 1
 
 // struct definition for each axis
 typedef struct _axis {
@@ -91,10 +91,11 @@ int attitudeFilterInitialiseB(double *accXr, double *accYr, double *accZr);
 int attitudeFilterB(double *rateXr, double *rateYr, double *rateZr, double *accXr, double *accYr, double *accZr, double *rateXf, double *rateYf, double *rateZf, double *phif, double *thetaf, double *psif, double *compassZr, double dT);
 int kFilterTimeUpdate(axis *axis_t, double *gyroRate, double dT);
 int kFilterMeasureUpdate (axis *axis_t);
+int kFilterMeasurePsiUpdate (axis *axis_t);
 double coarsePitchAngle(double *accXr, double *accYr, double *accZr);
 double coarseRollAngle(double *accXr, double *accYr, double *accZr);
 int accLPF (double *accXr, double *accYr, double *accZr, double dT);
-int rateLPF(double *rateXf, double *rateYf, double *rateZr);
+int rateLPF(double *rateXr, double *rateYr, double *rateZr, double *rateXf, double *rateYf, double *rateZf);
 int compassLPF(double *compass_heading);
 int altLPF(double *altitude);
 int calibrateEulerAngles(double *phif, double *thetaf, double *psif);
